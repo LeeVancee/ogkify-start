@@ -11,60 +11,298 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as IndexImport } from './routes/index'
+import { Route as AuthImport } from './routes/auth'
+import { Route as ShopLayoutImport } from './routes/_shop/layout'
+import { Route as ShopIndexImport } from './routes/_shop/index'
+import { Route as ShopSearchImport } from './routes/_shop/search'
+import { Route as ShopMyordersImport } from './routes/_shop/myorders'
+import { Route as ShopCartImport } from './routes/_shop/cart'
+import { Route as ShopCategoriesLayoutImport } from './routes/_shop/categories/layout'
+import { Route as ShopCheckoutIndexImport } from './routes/_shop/checkout/index'
+import { Route as ShopCategoriesIndexImport } from './routes/_shop/categories/index'
+import { Route as ShopProductsIdImport } from './routes/_shop/products.$id'
+import { Route as ShopCheckoutSuccessImport } from './routes/_shop/checkout/success'
 
 // Create/Update Routes
 
-const IndexRoute = IndexImport.update({
+const AuthRoute = AuthImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ShopLayoutRoute = ShopLayoutImport.update({
+  id: '/_shop',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const ShopIndexRoute = ShopIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopSearchRoute = ShopSearchImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopMyordersRoute = ShopMyordersImport.update({
+  id: '/myorders',
+  path: '/myorders',
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopCartRoute = ShopCartImport.update({
+  id: '/cart',
+  path: '/cart',
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopCategoriesLayoutRoute = ShopCategoriesLayoutImport.update({
+  id: '/categories',
+  path: '/categories',
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopCheckoutIndexRoute = ShopCheckoutIndexImport.update({
+  id: '/checkout/',
+  path: '/checkout/',
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopCategoriesIndexRoute = ShopCategoriesIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopCategoriesLayoutRoute,
+} as any)
+
+const ShopProductsIdRoute = ShopProductsIdImport.update({
+  id: '/products/$id',
+  path: '/products/$id',
+  getParentRoute: () => ShopLayoutRoute,
+} as any)
+
+const ShopCheckoutSuccessRoute = ShopCheckoutSuccessImport.update({
+  id: '/checkout/success',
+  path: '/checkout/success',
+  getParentRoute: () => ShopLayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_shop': {
+      id: '/_shop'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ShopLayoutImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthImport
+      parentRoute: typeof rootRoute
+    }
+    '/_shop/categories': {
+      id: '/_shop/categories'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof ShopCategoriesLayoutImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/cart': {
+      id: '/_shop/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof ShopCartImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/myorders': {
+      id: '/_shop/myorders'
+      path: '/myorders'
+      fullPath: '/myorders'
+      preLoaderRoute: typeof ShopMyordersImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/search': {
+      id: '/_shop/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof ShopSearchImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/': {
+      id: '/_shop/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof ShopIndexImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/checkout/success': {
+      id: '/_shop/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof ShopCheckoutSuccessImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/products/$id': {
+      id: '/_shop/products/$id'
+      path: '/products/$id'
+      fullPath: '/products/$id'
+      preLoaderRoute: typeof ShopProductsIdImport
+      parentRoute: typeof ShopLayoutImport
+    }
+    '/_shop/categories/': {
+      id: '/_shop/categories/'
+      path: '/'
+      fullPath: '/categories/'
+      preLoaderRoute: typeof ShopCategoriesIndexImport
+      parentRoute: typeof ShopCategoriesLayoutImport
+    }
+    '/_shop/checkout/': {
+      id: '/_shop/checkout/'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof ShopCheckoutIndexImport
+      parentRoute: typeof ShopLayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface ShopCategoriesLayoutRouteChildren {
+  ShopCategoriesIndexRoute: typeof ShopCategoriesIndexRoute
+}
+
+const ShopCategoriesLayoutRouteChildren: ShopCategoriesLayoutRouteChildren = {
+  ShopCategoriesIndexRoute: ShopCategoriesIndexRoute,
+}
+
+const ShopCategoriesLayoutRouteWithChildren =
+  ShopCategoriesLayoutRoute._addFileChildren(ShopCategoriesLayoutRouteChildren)
+
+interface ShopLayoutRouteChildren {
+  ShopCategoriesLayoutRoute: typeof ShopCategoriesLayoutRouteWithChildren
+  ShopCartRoute: typeof ShopCartRoute
+  ShopMyordersRoute: typeof ShopMyordersRoute
+  ShopSearchRoute: typeof ShopSearchRoute
+  ShopIndexRoute: typeof ShopIndexRoute
+  ShopCheckoutSuccessRoute: typeof ShopCheckoutSuccessRoute
+  ShopProductsIdRoute: typeof ShopProductsIdRoute
+  ShopCheckoutIndexRoute: typeof ShopCheckoutIndexRoute
+}
+
+const ShopLayoutRouteChildren: ShopLayoutRouteChildren = {
+  ShopCategoriesLayoutRoute: ShopCategoriesLayoutRouteWithChildren,
+  ShopCartRoute: ShopCartRoute,
+  ShopMyordersRoute: ShopMyordersRoute,
+  ShopSearchRoute: ShopSearchRoute,
+  ShopIndexRoute: ShopIndexRoute,
+  ShopCheckoutSuccessRoute: ShopCheckoutSuccessRoute,
+  ShopProductsIdRoute: ShopProductsIdRoute,
+  ShopCheckoutIndexRoute: ShopCheckoutIndexRoute,
+}
+
+const ShopLayoutRouteWithChildren = ShopLayoutRoute._addFileChildren(
+  ShopLayoutRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '': typeof ShopLayoutRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/categories': typeof ShopCategoriesLayoutRouteWithChildren
+  '/cart': typeof ShopCartRoute
+  '/myorders': typeof ShopMyordersRoute
+  '/search': typeof ShopSearchRoute
+  '/': typeof ShopIndexRoute
+  '/checkout/success': typeof ShopCheckoutSuccessRoute
+  '/products/$id': typeof ShopProductsIdRoute
+  '/categories/': typeof ShopCategoriesIndexRoute
+  '/checkout': typeof ShopCheckoutIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/cart': typeof ShopCartRoute
+  '/myorders': typeof ShopMyordersRoute
+  '/search': typeof ShopSearchRoute
+  '/': typeof ShopIndexRoute
+  '/checkout/success': typeof ShopCheckoutSuccessRoute
+  '/products/$id': typeof ShopProductsIdRoute
+  '/categories': typeof ShopCategoriesIndexRoute
+  '/checkout': typeof ShopCheckoutIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
+  '/_shop': typeof ShopLayoutRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_shop/categories': typeof ShopCategoriesLayoutRouteWithChildren
+  '/_shop/cart': typeof ShopCartRoute
+  '/_shop/myorders': typeof ShopMyordersRoute
+  '/_shop/search': typeof ShopSearchRoute
+  '/_shop/': typeof ShopIndexRoute
+  '/_shop/checkout/success': typeof ShopCheckoutSuccessRoute
+  '/_shop/products/$id': typeof ShopProductsIdRoute
+  '/_shop/categories/': typeof ShopCategoriesIndexRoute
+  '/_shop/checkout/': typeof ShopCheckoutIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | ''
+    | '/auth'
+    | '/categories'
+    | '/cart'
+    | '/myorders'
+    | '/search'
+    | '/'
+    | '/checkout/success'
+    | '/products/$id'
+    | '/categories/'
+    | '/checkout'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/auth'
+    | '/cart'
+    | '/myorders'
+    | '/search'
+    | '/'
+    | '/checkout/success'
+    | '/products/$id'
+    | '/categories'
+    | '/checkout'
+  id:
+    | '__root__'
+    | '/_shop'
+    | '/auth'
+    | '/_shop/categories'
+    | '/_shop/cart'
+    | '/_shop/myorders'
+    | '/_shop/search'
+    | '/_shop/'
+    | '/_shop/checkout/success'
+    | '/_shop/products/$id'
+    | '/_shop/categories/'
+    | '/_shop/checkout/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  ShopLayoutRoute: typeof ShopLayoutRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  ShopLayoutRoute: ShopLayoutRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 
 export const routeTree = rootRoute
@@ -77,11 +315,64 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/"
+        "/_shop",
+        "/auth"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_shop": {
+      "filePath": "_shop/layout.tsx",
+      "children": [
+        "/_shop/categories",
+        "/_shop/cart",
+        "/_shop/myorders",
+        "/_shop/search",
+        "/_shop/",
+        "/_shop/checkout/success",
+        "/_shop/products/$id",
+        "/_shop/checkout/"
+      ]
+    },
+    "/auth": {
+      "filePath": "auth.tsx"
+    },
+    "/_shop/categories": {
+      "filePath": "_shop/categories/layout.tsx",
+      "parent": "/_shop",
+      "children": [
+        "/_shop/categories/"
+      ]
+    },
+    "/_shop/cart": {
+      "filePath": "_shop/cart.tsx",
+      "parent": "/_shop"
+    },
+    "/_shop/myorders": {
+      "filePath": "_shop/myorders.tsx",
+      "parent": "/_shop"
+    },
+    "/_shop/search": {
+      "filePath": "_shop/search.tsx",
+      "parent": "/_shop"
+    },
+    "/_shop/": {
+      "filePath": "_shop/index.tsx",
+      "parent": "/_shop"
+    },
+    "/_shop/checkout/success": {
+      "filePath": "_shop/checkout/success.tsx",
+      "parent": "/_shop"
+    },
+    "/_shop/products/$id": {
+      "filePath": "_shop/products.$id.tsx",
+      "parent": "/_shop"
+    },
+    "/_shop/categories/": {
+      "filePath": "_shop/categories/index.tsx",
+      "parent": "/_shop/categories"
+    },
+    "/_shop/checkout/": {
+      "filePath": "_shop/checkout/index.tsx",
+      "parent": "/_shop"
     }
   }
 }

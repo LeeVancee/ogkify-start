@@ -1,6 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
 import { prisma } from '@/lib/prisma'
-import type { Product } from '@/lib/types'
 
 /**
  * 获取特色商品列表

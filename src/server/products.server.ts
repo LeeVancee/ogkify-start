@@ -51,7 +51,7 @@ export const getProduct = createServerFn()
 
       return {
         ...product,
-        price: product.price.toString(),
+        price: product.price,
         colorIds: product.colors.map((color) => color.id),
         sizeIds: product.sizes.map((size) => size.id),
         images: product.images.map((image) => image.url),

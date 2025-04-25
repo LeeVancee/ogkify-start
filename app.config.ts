@@ -3,8 +3,12 @@ import viteTsConfigPaths from 'vite-tsconfig-paths'
 import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
+  server: {
+    preset: 'node-server',
+  },
   tsr: {
     appDirectory: 'src',
+    routeToken: 'layout',
   },
   vite: {
     plugins: [

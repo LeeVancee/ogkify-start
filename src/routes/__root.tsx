@@ -7,6 +7,8 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import appCss from '../styles.css?url'
+import { Toaster } from 'components/ui/sonner'
+import Loading from '@/components/loading'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -46,6 +48,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toaster />
         <Scripts />
       </body>
     </html>
