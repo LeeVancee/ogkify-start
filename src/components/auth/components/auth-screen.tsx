@@ -1,5 +1,3 @@
-'use client'
-
 import { useState } from 'react'
 import type { SignInFlow } from '../types'
 import { GalleryVerticalEnd } from 'lucide-react'

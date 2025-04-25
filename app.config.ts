@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
   server: {
-    preset: 'node-server',
+    preset: 'vercel',
   },
   tsr: {
     appDirectory: 'src',

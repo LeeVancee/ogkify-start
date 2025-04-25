@@ -1,25 +1,23 @@
-'use client';
-
-import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { cn } from '@/lib/utils'
+import { useState } from 'react'
 
 interface Product {
-  id: string;
-  name: string;
-  description: string;
+  id: string
+  name: string
+  description: string
 }
 
 interface ProductTabsProps {
-  product: Product;
+  product: Product
 }
 
 export function ProductTabs({ product }: ProductTabsProps) {
-  const [activeTab, setActiveTab] = useState('description');
+  const [activeTab, setActiveTab] = useState('description')
 
   const tabs = [
     { id: 'description', label: 'Description' },
     { id: 'specifications', label: 'Specifications' },
-  ];
+  ]
 
   return (
     <div className="mt-12">
@@ -33,7 +31,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
                 'px-4 py-2 text-sm font-medium whitespace-nowrap',
                 activeTab === tab.id
                   ? 'border-b-2 border-primary text-primary'
-                  : 'text-muted-foreground hover:text-foreground'
+                  : 'text-muted-foreground hover:text-foreground',
               )}
             >
               {tab.label}
@@ -50,5 +48,5 @@ export function ProductTabs({ product }: ProductTabsProps) {
         )}
       </div>
     </div>
-  );
+  )
 }

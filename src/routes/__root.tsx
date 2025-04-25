@@ -7,8 +7,7 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import appCss from '../styles.css?url'
-import { Toaster } from 'components/ui/sonner'
-import Loading from '@/components/loading'
+import { Toaster } from '@/components/ui/sonner'
 
 export const Route = createRootRoute({
   head: () => ({
@@ -42,7 +41,7 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>

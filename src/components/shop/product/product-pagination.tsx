@@ -1,5 +1,3 @@
-'use client'
-
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'

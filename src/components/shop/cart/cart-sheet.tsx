@@ -1,5 +1,3 @@
-'use client'
-
 import type React from 'react'
 import { useState, useEffect } from 'react'
 import { CartItem } from '@/components/shop/cart/cart-item'

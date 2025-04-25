@@ -4,7 +4,7 @@ import { getSession } from './getSession.server'
 import { formatPrice } from '@/lib/utils'
 
 import { stripe, formatAmountForStripe } from '@/lib/stripe'
-import { OrderStatus } from '@/generated/client'
+import { OrderStatus } from '../../generated'
 // 获取用户所有订单
 export const getUserOrders = createServerFn().handler(async () => {
   try {

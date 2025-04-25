@@ -1,5 +1,3 @@
-'use client'
-
 import { ProductGrid } from '@/components/shop/product/product-grid'
 import { useState } from 'react'
 import type { Product } from '@/lib/types'

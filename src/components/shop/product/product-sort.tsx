@@ -1,5 +1,3 @@
-'use client'
-
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import {
   Select,

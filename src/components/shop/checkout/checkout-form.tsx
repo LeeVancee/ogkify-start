@@ -1,20 +1,18 @@
-'use client';
+import type React from 'react'
 
-import type React from 'react';
-
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Loader2 } from 'lucide-react';
+import { useState } from 'react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Loader2 } from 'lucide-react'
 
 interface CheckoutFormProps {
-  onSubmit: (formData: any) => void;
-  isSubmitting: boolean;
+  onSubmit: (formData: any) => void
+  isSubmitting: boolean
 }
 
 export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
@@ -33,25 +31,25 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
     cardNumber: '',
     cardExpiry: '',
     cardCvc: '',
-  });
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
+  }
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, sameShippingAddress: checked }));
-  };
+    setFormData((prev) => ({ ...prev, sameShippingAddress: checked }))
+  }
 
   const handleRadioChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, paymentMethod: value }));
-  };
+    setFormData((prev) => ({ ...prev, paymentMethod: value }))
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit(formData);
-  };
+    e.preventDefault()
+    onSubmit(formData)
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -96,34 +94,76 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
             <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="firstName">First Name</Label>
-                <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="lastName">Last Name</Label>
-                <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="address">Address</Label>
-              <Input id="address" name="address" value={formData.address} onChange={handleChange} required />
+              <Input
+                id="address"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="grid grid-cols-3 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="city">City</Label>
-                <Input id="city" name="city" value={formData.city} onChange={handleChange} required />
+                <Input
+                  id="city"
+                  name="city"
+                  value={formData.city}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="state">State</Label>
-                <Input id="state" name="state" value={formData.state} onChange={handleChange} required />
+                <Input
+                  id="state"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  required
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="postalCode">Postal Code</Label>
-                <Input id="postalCode" name="postalCode" value={formData.postalCode} onChange={handleChange} required />
+                <Input
+                  id="postalCode"
+                  name="postalCode"
+                  value={formData.postalCode}
+                  onChange={handleChange}
+                  required
+                />
               </div>
             </div>
             <div className="grid gap-2">
               <Label htmlFor="country">Country</Label>
-              <Input id="country" name="country" value={formData.country} onChange={handleChange} required />
+              <Input
+                id="country"
+                name="country"
+                value={formData.country}
+                onChange={handleChange}
+                required
+              />
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox
@@ -131,7 +171,9 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
                 checked={formData.sameShippingAddress}
                 onCheckedChange={handleCheckboxChange}
               />
-              <Label htmlFor="sameShippingAddress">Billing address is the same as shipping address</Label>
+              <Label htmlFor="sameShippingAddress">
+                Billing address is the same as shipping address
+              </Label>
             </div>
           </CardContent>
         </Card>
@@ -141,7 +183,11 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
             <CardTitle>Payment Method</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-6">
-            <RadioGroup value={formData.paymentMethod} onValueChange={handleRadioChange} className="grid gap-4">
+            <RadioGroup
+              value={formData.paymentMethod}
+              onValueChange={handleRadioChange}
+              className="grid gap-4"
+            >
               <div className="flex items-center space-x-2 rounded-lg border p-4">
                 <RadioGroupItem value="card" id="payment-card" />
                 <Label htmlFor="payment-card" className="flex-1">
@@ -198,7 +244,9 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
                 </TabsContent>
                 <TabsContent value="billing" className="pt-4">
                   {formData.sameShippingAddress ? (
-                    <div className="text-sm text-muted-foreground">Using the same address as shipping address.</div>
+                    <div className="text-sm text-muted-foreground">
+                      Using the same address as shipping address.
+                    </div>
                   ) : (
                     <div className="grid gap-4">
                       <div className="grid gap-2">
@@ -243,5 +291,5 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
         </Button>
       </div>
     </form>
-  );
+  )
 }

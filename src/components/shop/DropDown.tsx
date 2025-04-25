@@ -1,4 +1,3 @@
-'use client'
 import { LogOut, ShoppingBag, LayoutDashboard, User } from 'lucide-react'
 import {
   DropdownMenu,
