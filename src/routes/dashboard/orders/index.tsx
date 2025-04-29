@@ -4,6 +4,7 @@ import { OrderManagement } from '@/components/dashboard/order/order-management'
 import Loading from '@/components/loading'
 export const Route = createFileRoute('/dashboard/orders/')({
   pendingComponent: Loading,
+  pendingMs: 0,
   component: RouteComponent,
   loader: async () => {
     const orders = await getUserOrders()

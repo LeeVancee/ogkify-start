@@ -27,6 +27,7 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
+        suppressHydrationWarning: true,
       },
     ],
   }),
@@ -41,7 +42,7 @@ export const Route = createRootRoute({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <HeadContent />
       </head>

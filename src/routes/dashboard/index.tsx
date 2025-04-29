@@ -12,6 +12,7 @@ import { createFileRoute } from '@tanstack/react-router'
 export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
   pendingComponent: Loading,
+  pendingMs: 0,
   loader: async () => {
     const productsCount = await getProductsCount()
     const categoriesCount = await getCategoriesCount()

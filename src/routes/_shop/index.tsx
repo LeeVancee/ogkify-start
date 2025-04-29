@@ -1,3 +1,4 @@
+import Loading from '@/components/loading'
 import { FeaturedCategories } from '@/components/shop/home/featured-categories'
 import { FeaturedProducts } from '@/components/shop/home/featured-products'
 import HeroSection from '@/components/shop/home/hero-section'
@@ -7,6 +8,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_shop/')({
   component: RouteComponent,
+  pendingComponent: () => <Loading />,
   loader: async () => {
     const featuredProducts = await getFeaturedProducts({
       data: 4,

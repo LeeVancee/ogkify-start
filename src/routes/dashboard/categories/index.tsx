@@ -4,6 +4,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import Loading from '@/components/loading'
 export const Route = createFileRoute('/dashboard/categories/')({
   pendingComponent: Loading,
+  pendingMs: 0,
   component: RouteComponent,
   loader: async () => {
     const categories = await getCategories()

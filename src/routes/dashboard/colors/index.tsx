@@ -4,6 +4,7 @@ import { ColorList } from '@/components/dashboard/color/color-list'
 import Loading from '@/components/loading'
 export const Route = createFileRoute('/dashboard/colors/')({
   pendingComponent: Loading,
+  pendingMs: 0,
   component: RouteComponent,
   loader: async () => {
     const colors = await getColors()

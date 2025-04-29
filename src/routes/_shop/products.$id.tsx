@@ -10,6 +10,7 @@ import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_shop/products/$id')({
   pendingComponent: () => <ProductInfoLoading />,
+  //  pendingMs: 0,
   component: RouteComponent,
   loader: async ({ params }) => {
     const product = await getProduct({ data: params.id })
