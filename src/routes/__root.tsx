@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       {
         rel: 'stylesheet',
         href: appCss,
-        suppressHydrationWarning: true,
+        //  suppressHydrationWarning: true,
       },
     ],
   }),

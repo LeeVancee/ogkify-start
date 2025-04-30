@@ -9,7 +9,7 @@ export const createRouter = () => {
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
     defaultPendingMs: 0,
-    defaultPreload: 'intent',
+    // defaultPreload: 'intent',
     // defaultPendingComponent: () => <Loading />,
   })
 
