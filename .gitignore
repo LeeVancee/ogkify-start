@@ -9,3 +9,4 @@ dist-ssr
 .cursor
 .env
 .vercel
+generated

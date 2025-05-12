@@ -4,7 +4,7 @@ import { getSession } from './getSession.server'
 import { formatPrice } from '@/lib/utils'
 
 import { stripe, formatAmountForStripe } from '@/lib/stripe'
-import { OrderStatus } from '@prisma/client'
+import { OrderStatus } from '../../generated/prisma'
 // 获取用户所有订单
 export const getUserOrders = createServerFn().handler(async () => {
   try {
@@ -42,7 +42,7 @@ export const getUserOrders = createServerFn().handler(async () => {
       orderNumber: order.orderNumber,
       customer: order.user?.name,
       email: order.user?.email,
-      createdAt: order.createdAt.toISOString(),
+      createdAt: formatDate(order.createdAt),
       status: order.status,
       paymentStatus: order.paymentStatus,
       totalAmount: order.totalAmount,
@@ -122,7 +122,7 @@ export const getOrderDetails = createServerFn()
       const formattedOrder = {
         id: order.id,
         orderNumber: order.orderNumber,
-        createdAt: order.createdAt.toISOString(),
+        createdAt: formatDate(order.createdAt),
         createdAtFormatted: new Date(order.createdAt).toLocaleDateString(
           'zh-CN',
           {
@@ -213,7 +213,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
     const formattedOrders = orders.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
-      createdAt: order.createdAt.toISOString(),
+      createdAt: formatDate(order.createdAt),
       status: order.status,
       paymentStatus: order.paymentStatus,
       totalAmount: order.totalAmount,
@@ -637,4 +637,11 @@ function getPaymentStatusText(status: string): string {
     FAILED: '支付失败',
   }
   return statusMap[status] || status
+}
+
+// 添加日期格式转换辅助函数
+function formatDate(date: Date | string | null): string {
+  if (!date) return ''
+  const d = typeof date === 'string' ? new Date(date) : date
+  return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : ''
 }

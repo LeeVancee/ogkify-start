@@ -33,7 +33,7 @@ export const getFeaturedProducts = createServerFn()
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-        category: product.category.name,
+        category: product.category?.name || '未分类',
         inStock: true, // 假设所有商品都有库存
         rating: 5, // 默认评分
         reviews: 0, // 默认评论数
