@@ -2,10 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client"
-  previewFeatures = ["queryCompiler", "driverAdapters"]
-  output          = "../src/generated/prisma"
-  moduleFormat    = "esm"
+  provider = "prisma-client-js"
 }
 
 datasource db {
