@@ -1,8 +1,7 @@
 import { SizeList } from '@/components/dashboard/size/size-list'
 import { getSizes } from '@/server/sizes.server'
-import { createFileRoute } from '@tanstack/react-router'
 import Loading from '@/components/loading'
-export const Route = createFileRoute('/dashboard/sizes/')({
+export const Route = createFileRoute({
   pendingComponent: Loading,
   pendingMs: 0,
   component: RouteComponent,

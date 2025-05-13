@@ -1,12 +1,11 @@
 import { json } from '@tanstack/react-start'
-import { createAPIFileRoute } from '@tanstack/react-start/api'
 import { stripe, formatAmountForStripe } from '@/lib/stripe'
 import { prisma } from '@/lib/prisma'
 import { getWebRequest } from '@tanstack/react-start/server'
 import { auth } from '@/lib/auth'
 
-export const APIRoute = createAPIFileRoute('/api/checkout')({
-  POST: async ({ request }) => {
+export const ServerRoute = createServerFileRoute().methods({
+  POST: async ({ request }: { request: any }) => {
     try {
       const { headers } = getWebRequest()!
 

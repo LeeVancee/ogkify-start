@@ -1,5 +1,5 @@
 // src/routes/categories.tsx
-import { createFileRoute } from '@tanstack/react-router'
+
 import { z } from 'zod'
 
 import { ProductGrid } from '@/components/shop/product/product-grid'
@@ -29,7 +29,7 @@ const searchParamsSchema = z.object({
 // 定义搜索参数类型
 type SearchParams = z.infer<typeof searchParamsSchema>
 
-export const Route = createFileRoute('/_shop/categories')({
+export const Route = createFileRoute({
   validateSearch: searchParamsSchema,
   loaderDeps: ({ search }: { search: SearchParams }) => ({
     category: search.category,
@@ -42,7 +42,7 @@ export const Route = createFileRoute('/_shop/categories')({
     size: search.size,
     page: search.page || '1',
   }),
-  loader: async ({ deps }) => {
+  loader: async ({ deps }: { deps: any }) => {
     // Parse search parameters
     const category = deps.category
     const sort = deps.sort

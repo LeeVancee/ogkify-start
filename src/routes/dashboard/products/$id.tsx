@@ -2,12 +2,12 @@ import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'
 import { getProduct } from '@/server/products.server'
 import { getSizes } from '@/server/sizes.server'
-import { createFileRoute } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import { EditProductForm } from '@/components/dashboard/product/edit-product-form'
 
-export const Route = createFileRoute('/dashboard/products/$id')({
+export const Route = createFileRoute({
   component: RouteComponent,
-  loader: async ({ params }) => {
+  loader: async ({ params }: { params: { id: string } }) => {
     const [product, categories, colors, sizes] = await Promise.all([
       getProduct({ data: params.id }),
       getCategories(),

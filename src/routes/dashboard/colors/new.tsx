@@ -1,7 +1,6 @@
 import { ColorForm } from '@/components/dashboard/color/color-form'
-import { createFileRoute } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard/colors/new')({
+export const Route = createFileRoute({
   component: RouteComponent,
 })
 

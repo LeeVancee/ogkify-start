@@ -3,10 +3,10 @@ import { CheckoutButton } from '@/components/shop/cart/checkout-button'
 import { Button } from '@/components/ui/button'
 import { formatPrice } from '@/lib/utils'
 import { getUserCart } from '@/server/cart.server'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { ShoppingBag } from 'lucide-react'
 
-export const Route = createFileRoute('/_shop/cart')({
+export const Route = createFileRoute({
   component: RouteComponent,
   loader: async () => {
     const { items, totalItems } = await getUserCart()
@@ -21,7 +21,7 @@ function RouteComponent() {
   const { items, totalItems } = Route.useLoaderData()
   const isEmpty = items.length === 0
   const subtotal = items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total: number, item: any) => total + item.price * item.quantity,
     0,
   )
 
@@ -46,7 +46,7 @@ function RouteComponent() {
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <div className="rounded-lg border">
-            {items.map((item) => (
+            {items.map((item: any) => (
               <CartItem key={item.id} item={item} />
             ))}
           </div>

@@ -1,10 +1,10 @@
 import { ColorEditForm } from '@/components/dashboard/color/color-edit-form'
 import { getColor } from '@/server/colors.server'
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { notFound } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard/colors/$id')({
+export const Route = createFileRoute({
   component: RouteComponent,
-  loader: async ({ params }) => {
+  loader: async ({ params }: { params: { id: string } }) => {
     const response = await getColor({ data: params.id })
     return { response }
   },

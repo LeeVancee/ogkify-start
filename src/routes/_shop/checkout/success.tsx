@@ -1,7 +1,7 @@
 import { useEffect, useState, Suspense } from 'react'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Loader2 } from 'lucide-react'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { z } from 'zod'
 
 // 订单类型定义
@@ -20,7 +20,7 @@ const searchParamsSchema = z.object({
   order_id: z.string().optional(),
 })
 
-export const Route = createFileRoute('/_shop/checkout/success')({
+export const Route = createFileRoute({
   validateSearch: searchParamsSchema,
   component: CheckoutSuccessPage,
 })

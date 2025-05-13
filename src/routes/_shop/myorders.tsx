@@ -24,7 +24,7 @@ import {
   AlertTriangle,
 } from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { PayOrderButton } from '@/components/shop/orders/pay-order-button'
 import { DeleteOrderButton } from '@/components/shop/orders/delete-order-button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -54,7 +54,7 @@ interface Order {
   firstItemImage: string | null
 }
 
-export const Route = createFileRoute('/_shop/myorders')({
+export const Route = createFileRoute({
   component: MyOrdersPage,
 })
 

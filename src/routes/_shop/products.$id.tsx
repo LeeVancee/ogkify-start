@@ -6,13 +6,13 @@ import { ProductTabs } from '@/components/shop/product/product-tabs'
 import { handleAddToCartFormAction } from '@/server/cart.server'
 import { getProduct, getRelatedProducts } from '@/server/product-shop.server'
 
-import { createFileRoute } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_shop/products/$id')({
+export const Route = createFileRoute({
   pendingComponent: () => <ProductInfoLoading />,
   //  pendingMs: 0,
   component: RouteComponent,
-  loader: async ({ params }) => {
+  loader: async ({ params }: { params: { id: string } }) => {
     const product = await getProduct({ data: params.id })
     if (!product) {
       throw new Error('Product not found')

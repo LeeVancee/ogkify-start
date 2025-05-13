@@ -1,9 +1,9 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { notFound } from '@tanstack/react-router'
 import { getSize } from '@/server/sizes.server'
 import { SizeEditForm } from '@/components/dashboard/size/size-edit-form'
-export const Route = createFileRoute('/dashboard/sizes/$id')({
+export const Route = createFileRoute({
   component: RouteComponent,
-  loader: async ({ params }) => {
+  loader: async ({ params }: { params: { id: string } }) => {
     const response = await getSize({ data: params.id })
     return { response }
   },

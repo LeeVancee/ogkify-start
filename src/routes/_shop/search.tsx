@@ -1,8 +1,8 @@
 import ProductCard from '@/components/shop/product/product-card'
 import { searchProducts } from '@/server/search.server'
-import { createFileRoute } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 
-export const Route = createFileRoute('/_shop/search')({
+export const Route = createFileRoute({
   component: RouteComponent,
   loader: async ({ search }: any) => {
     const query = search.q || ''
@@ -30,7 +30,7 @@ function RouteComponent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product) => (
+          {products.map((product: any) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

@@ -2,12 +2,12 @@ import { CheckoutForm } from '@/components/shop/checkout/checkout-form'
 import { CheckoutSummary } from '@/components/shop/checkout/checkout-summary'
 import { Button } from '@/components/ui/button'
 import { clearCart, getUserCart } from '@/server/cart.server'
-import { createFileRoute, Link, useRouter } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { ShoppingBag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
 
-export const Route = createFileRoute('/_shop/checkout/')({
+export const Route = createFileRoute({
   component: RouteComponent,
 })
 

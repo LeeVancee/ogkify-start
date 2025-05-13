@@ -1,8 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
+
 import { getUserOrders } from '@/server/orders.server'
 import { OrderManagement } from '@/components/dashboard/order/order-management'
 import Loading from '@/components/loading'
-export const Route = createFileRoute('/dashboard/orders/')({
+export const Route = createFileRoute({
   pendingComponent: Loading,
   pendingMs: 0,
   component: RouteComponent,

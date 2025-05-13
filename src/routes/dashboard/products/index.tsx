@@ -1,11 +1,10 @@
 import { Button } from '@/components/ui/button'
 import { getProducts } from '@/server/products.server'
-import { createFileRoute } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { ProductsView } from '@/components/dashboard/product/products-view'
 import Loading from '@/components/loading'
-export const Route = createFileRoute('/dashboard/products/')({
+export const Route = createFileRoute({
   pendingComponent: Loading,
   component: RouteComponent,
   loader: async () => {

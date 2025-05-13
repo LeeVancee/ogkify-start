@@ -7,9 +7,9 @@ import {
   getMonthlySalesData,
 } from '@/server/orders.server'
 import { getProductsCount } from '@/server/products.server'
-import { createFileRoute } from '@tanstack/react-router'
+import { } from '@tanstack/react-router'
 
-export const Route = createFileRoute('/dashboard/')({
+export const Route = createFileRoute({
   component: RouteComponent,
   pendingComponent: Loading,
   pendingMs: 0,
