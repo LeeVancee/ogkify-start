@@ -4,7 +4,8 @@ import { getSession } from './getSession.server'
 import { formatPrice } from '@/lib/utils'
 
 import { stripe, formatAmountForStripe } from '@/lib/stripe'
-import { OrderStatus } from '@prisma/client'
+// 定义订单状态类型
+type OrderStatus = 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCELLED'
 // 获取用户所有订单
 export const getUserOrders = createServerFn().handler(async () => {
   try {
@@ -42,7 +43,7 @@ export const getUserOrders = createServerFn().handler(async () => {
       orderNumber: order.orderNumber,
       customer: order.user?.name,
       email: order.user?.email,
-      createdAt: formatDate(order.createdAt),
+      createdAt: order.createdAt.toISOString(),
       status: order.status,
       paymentStatus: order.paymentStatus,
       totalAmount: order.totalAmount,
@@ -122,7 +123,7 @@ export const getOrderDetails = createServerFn()
       const formattedOrder = {
         id: order.id,
         orderNumber: order.orderNumber,
-        createdAt: formatDate(order.createdAt),
+        createdAt: order.createdAt.toISOString(),
         createdAtFormatted: new Date(order.createdAt).toLocaleDateString(
           'zh-CN',
           {
@@ -213,7 +214,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
     const formattedOrders = orders.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
-      createdAt: formatDate(order.createdAt),
+      createdAt: order.createdAt.toISOString(),
       status: order.status,
       paymentStatus: order.paymentStatus,
       totalAmount: order.totalAmount,
@@ -361,21 +362,21 @@ export const updateOrderStatus = createServerFn()
         return { error: '未授权', success: false }
       }
 
-      // 将字符串转换为OrderStatus枚举类型
+      // 将字符串转换为OrderStatus类型
       let orderStatus: OrderStatus
 
       switch (status) {
         case 'PENDING':
-          orderStatus = OrderStatus.PENDING
+          orderStatus = 'PENDING'
           break
         case 'PROCESSING':
-          orderStatus = OrderStatus.PAID // 在模型中，PAID对应处理中状态
+          orderStatus = 'PAID' // 在模型中，PAID对应处理中状态
           break
         case 'COMPLETED':
-          orderStatus = OrderStatus.COMPLETED
+          orderStatus = 'COMPLETED'
           break
         case 'CANCELLED':
-          orderStatus = OrderStatus.CANCELLED
+          orderStatus = 'CANCELLED'
           break
         default:
           return { error: '无效的订单状态', success: false }
@@ -637,11 +638,4 @@ function getPaymentStatusText(status: string): string {
     FAILED: '支付失败',
   }
   return statusMap[status] || status
-}
-
-// 添加日期格式转换辅助函数
-function formatDate(date: Date | string | null): string {
-  if (!date) return ''
-  const d = typeof date === 'string' ? new Date(date) : date
-  return d instanceof Date && !isNaN(d.getTime()) ? d.toISOString() : ''
 }
