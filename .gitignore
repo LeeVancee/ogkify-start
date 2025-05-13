@@ -8,6 +8,8 @@ yarn.lock
 .vercel
 .output
 .nitro
+.cursorrules
+.cursor
 /build/
 /api/
 /server/build
