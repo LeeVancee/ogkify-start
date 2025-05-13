@@ -1,6 +1,5 @@
 import { Link } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
-import { getCategories } from '@/server/categories.server'
+import { useState } from 'react'
 
 interface Category {
   id: string
@@ -8,38 +7,7 @@ interface Category {
   imageUrl: string | null
 }
 
-export function FeaturedCategories() {
-  const [categories, setCategories] = useState<Category[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const result = await getCategories()
-        setCategories(result)
-      } catch (error) {
-        console.error('获取分类失败:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchCategories()
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {[1, 2, 3, 4].map((i) => (
-          <div
-            key={i}
-            className="aspect-square rounded-lg bg-muted animate-pulse"
-          />
-        ))}
-      </div>
-    )
-  }
-
+export function FeaturedCategories({ categories }: { categories: Category[] }) {
   if (!categories.length) {
     return null
   }

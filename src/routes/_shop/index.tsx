@@ -2,9 +2,10 @@ import Loading from '@/components/loading'
 import { FeaturedCategories } from '@/components/shop/home/featured-categories'
 import { FeaturedProducts } from '@/components/shop/home/featured-products'
 import HeroSection from '@/components/shop/home/hero-section'
+import { getCategories } from '@/server/categories.server'
 import { getFeaturedProducts } from '@/server/get-featured-products.server'
 
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,
@@ -13,15 +14,17 @@ export const Route = createFileRoute({
     const featuredProducts = await getFeaturedProducts({
       data: 4,
     })
+    const categories = await getCategories()
 
     return {
       featuredProducts,
+      categories,
     }
   },
 })
 
 function RouteComponent() {
-  const { featuredProducts } = Route.useLoaderData()
+  const { featuredProducts, categories } = Route.useLoaderData()
   return (
     <div className="">
       <HeroSection />
@@ -33,7 +36,7 @@ function RouteComponent() {
         <h2 className="text-3xl font-bold text-center mt-16 mb-8">
           Shop by Category
         </h2>
-        <FeaturedCategories />
+        <FeaturedCategories categories={categories} />
       </div>
     </div>
   )

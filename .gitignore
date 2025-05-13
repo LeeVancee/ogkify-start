@@ -5,6 +5,10 @@ yarn.lock
 .DS_Store
 .cache
 .env
+.env.local
+.env.development
+.env.production
+
 .vercel
 .output
 .nitro
