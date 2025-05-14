@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import type { SignInFlow } from '../types'
 import { GalleryVerticalEnd } from 'lucide-react'
 import { SignupForm } from './signup-form'
 import { LoginForm } from './login-form'
+import type { SignInFlow } from '../types'
 
 export default function AuthScreen() {
   const [state, setState] = useState<SignInFlow>('signIn')

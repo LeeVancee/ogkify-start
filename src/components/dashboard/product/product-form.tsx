@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -25,7 +26,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { UploadThingImage } from '@/components/dashboard/upload-thing'
-import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import { createProduct } from '@/server/products.server'
 
@@ -47,9 +47,9 @@ interface Size {
 }
 
 interface ProductFormProps {
-  categories: Category[]
-  colors: Color[]
-  sizes: Size[]
+  categories: Array<Category>
+  colors: Array<Color>
+  sizes: Array<Size>
 }
 
 const productFormSchema = z.object({
@@ -105,7 +105,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
     try {
       const result = await createProduct({ data: values })
 
-      if (result?.error) {
+      if (result.error) {
         toast.error(result.error)
       }
       toast.success('Product created successfully!')

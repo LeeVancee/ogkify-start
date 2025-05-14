@@ -1,7 +1,8 @@
-import { ChevronRight, type LucideIcon } from 'lucide-react'
-import { useLocation } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
+import { ChevronRight  } from 'lucide-react'
+import { Link, useLocation  } from '@tanstack/react-router'
 
+import { ActiveLink } from './active-link'
+import type {LucideIcon} from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
@@ -17,19 +18,18 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
-import { ActiveLink } from './active-link'
 
 interface NavItem {
   title: string
   url: string
   icon?: LucideIcon
-  items?: {
+  items?: Array<{
     title: string
     url: string
-  }[]
+  }>
 }
 
-export function NavMain({ items }: { items: NavItem[] }) {
+export function NavMain({ items }: { items: Array<NavItem> }) {
   const location = useLocation()
 
   const isActiveGroup = (item: NavItem) => {
@@ -86,7 +86,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                 </CollapsibleTrigger>
                 <CollapsibleContent>
                   <SidebarMenuSub>
-                    {item.items?.map((subItem) => (
+                    {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
                           <ActiveLink href={subItem.url} exact>

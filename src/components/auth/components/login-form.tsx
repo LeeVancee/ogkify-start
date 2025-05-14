@@ -1,15 +1,16 @@
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import type { SignInFlow } from '../types'
 import { useState } from 'react'
-import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form'
+import {   useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useRouter } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
 import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
+import type {FieldValues, SubmitHandler} from 'react-hook-form';
+import type { SignInFlow } from '../types'
+import { authClient } from '@/lib/auth-client'
+import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface LoginFormProps extends React.ComponentProps<'form'> {
   setState: (state: SignInFlow) => void

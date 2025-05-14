@@ -1,16 +1,16 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
 import { getSession } from './getSession.server'
+import { prisma } from '@/lib/prisma'
 import { formatPrice } from '@/lib/utils'
 
-import { stripe, formatAmountForStripe } from '@/lib/stripe'
+import { formatAmountForStripe, stripe } from '@/lib/stripe'
 // 定义订单状态类型
 type OrderStatus = 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCELLED'
 // 获取用户所有订单
 export const getUserOrders = createServerFn().handler(async () => {
   try {
     const session = await getSession()
-    if (!session?.user?.id) {
+    if (!session?.user.id) {
       return { success: false, orders: [] }
     }
 
@@ -41,8 +41,8 @@ export const getUserOrders = createServerFn().handler(async () => {
     const formattedOrders = orders.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
-      customer: order.user?.name,
-      email: order.user?.email,
+      customer: order.user.name,
+      email: order.user.email,
       createdAt: order.createdAt.toISOString(),
       status: order.status,
       paymentStatus: order.paymentStatus,
@@ -85,7 +85,7 @@ export const getOrderDetails = createServerFn()
     try {
       const session = await getSession()
 
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return { error: '未授权', success: false }
       }
 
@@ -184,7 +184,7 @@ export const getOrderDetails = createServerFn()
 export const getUnpaidOrders = createServerFn().handler(async () => {
   try {
     const session = await getSession()
-    if (!session?.user?.id) {
+    if (!session?.user.id) {
       return { success: false, orders: [] }
     }
 
@@ -255,7 +255,7 @@ export const createPaymentSession = createServerFn()
     try {
       const session = await getSession()
 
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return { error: '未授权', success: false }
       }
 
@@ -358,7 +358,7 @@ export const updateOrderStatus = createServerFn()
     try {
       const session = await getSession()
 
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return { error: '未授权', success: false }
       }
 
@@ -489,7 +489,7 @@ export const getRecentOrders = createServerFn()
         id: order.id,
         orderNumber: order.orderNumber,
         date: order.createdAt,
-        customerName: order.user?.name || 'Guest',
+        customerName: order.user.name || 'Guest',
         status: order.status,
         paymentStatus: order.paymentStatus,
         amount: order.totalAmount,
@@ -575,7 +575,7 @@ export const deleteUnpaidOrder = createServerFn()
     try {
       const session = await getSession()
 
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return { success: false, error: 'Unauthorized' }
       }
 

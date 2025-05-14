@@ -1,3 +1,4 @@
+import { CreditCard, DollarSign, Package, Tag } from 'lucide-react'
 import {
   Card,
   CardContent,
@@ -8,7 +9,6 @@ import {
 import { Overview } from '@/components/dashboard/overview'
 import { RecentSales } from '@/components/dashboard/recent-sales'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { CreditCard, DollarSign, Package, Tag } from 'lucide-react'
 
 interface SalesData {
   name: string
@@ -21,9 +21,9 @@ interface DashboardClientProps {
   pendingOrders: number
   completedOrders: number
   totalRevenue: number
-  recentOrders: any[]
-  popularProducts: any[]
-  monthlySalesData?: SalesData[]
+  recentOrders: Array<any>
+  popularProducts: Array<any>
+  monthlySalesData?: Array<SalesData>
 }
 
 export function DashboardClient({

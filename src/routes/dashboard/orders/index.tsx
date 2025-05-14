@@ -1,7 +1,7 @@
-
 import { getUserOrders } from '@/server/orders.server'
 import { OrderManagement } from '@/components/dashboard/order/order-management'
 import Loading from '@/components/loading'
+
 export const Route = createFileRoute({
   pendingComponent: Loading,
   pendingMs: 0,

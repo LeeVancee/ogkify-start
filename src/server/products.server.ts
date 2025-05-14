@@ -266,7 +266,7 @@ export const getPopularProducts = createServerFn()
         name: product.name,
         price: product.price,
         imageUrl: product.images[0]?.url || null,
-        category: product.category?.name || '',
+        category: product.category.name || '',
         orderCount: product.orderItems.length,
       }))
     } catch (error) {

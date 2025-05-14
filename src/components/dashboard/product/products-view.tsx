@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import { Edit, Trash2, Grid, List, Search, X, Plus } from 'lucide-react'
+import { Edit, Grid, List, Plus, Search, Trash2, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 
+import { toast } from 'sonner'
+import { DeleteDialog } from '../delete-dialog'
+import { ProductCard } from './product-card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -14,10 +17,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { ProductCard } from './product-card'
-import { DeleteDialog } from '../delete-dialog'
 import { deleteProduct } from '@/server/products.server'
-import { toast } from 'sonner'
 
 // 定义产品类型
 interface Product {
@@ -34,7 +34,7 @@ interface Product {
 }
 
 interface ProductsViewProps {
-  products: Product[]
+  products: Array<Product>
 }
 
 export function ProductsView({ products: initialProducts }: ProductsViewProps) {

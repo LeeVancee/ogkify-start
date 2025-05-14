@@ -1,4 +1,4 @@
-import { Edit, Trash2, MoreHorizontal } from 'lucide-react'
+import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ interface Product {
   category: { id: string; name: string }
   colors: Array<{ id: string; name: string; value: string }>
   sizes: Array<{ id: string; name: string; value: string }>
-  images: string[]
+  images: Array<string>
 }
 
 interface ProductCardProps {

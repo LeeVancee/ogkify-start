@@ -1,10 +1,10 @@
-import { Link } from '@tanstack/react-router'
-import { useLocation } from '@tanstack/react-router'
+import { Link, useLocation  } from '@tanstack/react-router'
+import { Menu, Search, ShoppingCart } from 'lucide-react'
+import { useState } from 'react'
+import { DropDown } from '../DropDown'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ShoppingCart, Search, Menu } from 'lucide-react'
 import { CartSheet } from '@/components/shop/cart/cart-sheet'
-import { useState } from 'react'
 import { cn } from '@/lib/utils'
 import {
   Sheet,
@@ -13,7 +13,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 
-import { DropDown } from '../DropDown'
 
 const navigation = [
   { name: 'Home', href: '/' },

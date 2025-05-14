@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Heart, ShoppingCart } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Select,
@@ -7,10 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Heart, ShoppingCart, Star } from 'lucide-react'
-import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
-import { Label } from '@/components/ui/label'
 
 interface ProductColor {
   id: string
@@ -29,9 +28,9 @@ interface Product {
   name: string
   description: string
   price: number
-  colors: ProductColor[]
-  sizes: ProductSize[]
-  images: string[]
+  colors: Array<ProductColor>
+  sizes: Array<ProductSize>
+  images: Array<string>
   inStock?: boolean
   freeShipping?: boolean
 }

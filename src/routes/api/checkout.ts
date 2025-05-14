@@ -1,19 +1,19 @@
 import { json } from '@tanstack/react-start'
-import { stripe, formatAmountForStripe } from '@/lib/stripe'
-import { prisma } from '@/lib/prisma'
 import { getWebRequest } from '@tanstack/react-start/server'
+import { formatAmountForStripe, stripe } from '@/lib/stripe'
+import { prisma } from '@/lib/prisma'
 import { auth } from '@/lib/auth'
 
 export const ServerRoute = createServerFileRoute().methods({
   POST: async ({ request }: { request: any }) => {
     try {
-      const { headers } = getWebRequest()!
+      const { headers } = getWebRequest()
 
       const session = await auth.api.getSession({
         headers,
       })
       // 检查用户是否已登录
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return json({ error: '必须登录才能结账' }, { status: 401 })
       }
 

@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { createSize } from '@/server/sizes.server'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from 'sonner'
 
 export function SizeForm() {
   const [name, setName] = useState('')

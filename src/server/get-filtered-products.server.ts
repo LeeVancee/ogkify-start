@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
 import type { Product } from '@/lib/types'
+import { prisma } from '@/lib/prisma'
 
 export interface FilterOptions {
   category?: string
@@ -9,8 +9,8 @@ export interface FilterOptions {
   search?: string
   minPrice?: number
   maxPrice?: number
-  colors?: string[]
-  sizes?: string[]
+  colors?: Array<string>
+  sizes?: Array<string>
   page?: number
   limit?: number
 }

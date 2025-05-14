@@ -1,8 +1,8 @@
-import { useEffect, useState, Suspense } from 'react'
-import { Button } from '@/components/ui/button'
+import { Suspense, useEffect, useState } from 'react'
 import { CheckCircle, Loader2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { z } from 'zod'
+import { Button } from '@/components/ui/button'
 
 // 订单类型定义
 interface OrderData {

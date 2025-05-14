@@ -1,3 +1,13 @@
+import {
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  Package,
+  ShoppingBag,
+} from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import { NoOrders } from '@/components/shop/cart/empty-cart'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,21 +25,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import {
-  Package,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-  ShoppingBag,
-  AlertTriangle,
-} from 'lucide-react'
 import { formatPrice } from '@/lib/utils'
-import { Link } from '@tanstack/react-router'
 import { PayOrderButton } from '@/components/shop/orders/pay-order-button'
 import { DeleteOrderButton } from '@/components/shop/orders/delete-order-button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useEffect, useState } from 'react'
-import { getUserOrders, getUnpaidOrders } from '@/server/orders.server'
+import { getUnpaidOrders, getUserOrders } from '@/server/orders.server'
 
 // 定义类型
 interface OrderItem {
@@ -50,7 +50,7 @@ interface Order {
   status: string
   paymentStatus: string
   totalAmount: number
-  items: OrderItem[]
+  items: Array<OrderItem>
   firstItemImage: string | null
 }
 
@@ -60,8 +60,8 @@ export const Route = createFileRoute({
 
 function MyOrdersPage() {
   const [activeTab, setActiveTab] = useState('all')
-  const [allOrders, setAllOrders] = useState<Order[]>([])
-  const [unpaidOrders, setUnpaidOrders] = useState<Order[]>([])
+  const [allOrders, setAllOrders] = useState<Array<Order>>([])
+  const [unpaidOrders, setUnpaidOrders] = useState<Array<Order>>([])
   const [isLoading, setIsLoading] = useState(true)
 
   async function loadOrders() {
@@ -220,7 +220,7 @@ function MyOrdersPage() {
 
 // 订单列表组件
 interface OrdersListProps {
-  orders: Order[]
+  orders: Array<Order>
   showPayButton: boolean
   showDeleteButton: boolean
   getOrderStatusIcon: (status: string) => React.ReactNode

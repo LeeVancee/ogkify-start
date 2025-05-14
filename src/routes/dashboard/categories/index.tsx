@@ -1,7 +1,8 @@
 import { CategoryList } from '@/components/dashboard/category/category-list'
 import { getCategories } from '@/server/categories.server'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import Loading from '@/components/loading'
+
 export const Route = createFileRoute({
   pendingComponent: Loading,
   pendingMs: 0,

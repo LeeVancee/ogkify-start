@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { deleteColor } from '@/server/colors.server'
 import { toast } from 'sonner'
+import { Plus, Search, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { ColorCard } from './color-card'
-import { Search, X, Plus } from 'lucide-react'
+import { deleteColor } from '@/server/colors.server'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
 
 type Color = {
   id: string
@@ -14,11 +14,11 @@ type Color = {
 }
 
 interface ColorListProps {
-  initialColors: Color[]
+  initialColors: Array<Color>
 }
 
 export function ColorList({ initialColors }: ColorListProps) {
-  const [colors, setColors] = useState<Color[]>(initialColors)
+  const [colors, setColors] = useState<Array<Color>>(initialColors)
   const [searchQuery, setSearchQuery] = useState('')
 
   const filteredColors = colors.filter(

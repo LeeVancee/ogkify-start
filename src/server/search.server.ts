@@ -42,7 +42,7 @@ export const searchProducts = createServerFn()
         description: product.description,
         price: product.price,
         image: product.images[0]?.url || '/placeholder.svg',
-        category: product.category?.name || '',
+        category: product.category.name || '',
       }))
     } catch (error) {
       console.error('搜索产品时出错:', error)

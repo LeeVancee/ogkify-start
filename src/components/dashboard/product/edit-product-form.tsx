@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -25,7 +26,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { UploadThingImage } from '@/components/dashboard/upload-thing'
-import { toast } from 'sonner'
 import { Switch } from '@/components/ui/switch'
 import { updateProduct } from '@/server/products.server'
 
@@ -61,9 +61,9 @@ interface ProductFormValues {
   description: string
   price: string
   categoryId: string
-  colorIds: string[]
-  sizeIds: string[]
-  images: string[]
+  colorIds: Array<string>
+  sizeIds: Array<string>
+  images: Array<string>
   isFeatured: boolean
   isArchived: boolean
 }
@@ -87,9 +87,9 @@ interface Size {
 
 interface EditProductFormProps {
   product: ProductFormValues
-  categories: Category[]
-  colors: Color[]
-  sizes: Size[]
+  categories: Array<Category>
+  colors: Array<Color>
+  sizes: Array<Size>
 }
 
 export function EditProductForm({
@@ -124,7 +124,7 @@ export function EditProductForm({
         data: { id: product.id, data: values },
       })
 
-      if (result?.error) {
+      if (result.error) {
         toast.error(result.error)
         setIsLoading(false)
       }

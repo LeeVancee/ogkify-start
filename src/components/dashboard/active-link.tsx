@@ -1,7 +1,6 @@
-import type React from 'react'
 
-import { useLocation } from '@tanstack/react-router'
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation  } from '@tanstack/react-router'
+import type React from 'react'
 import type { LinkProps } from '@tanstack/react-router'
 import { cn } from '@/lib/utils'
 

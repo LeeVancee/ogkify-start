@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui/button'
 import { ShoppingBasket } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface NoOrdersProps {
   title: string

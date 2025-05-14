@@ -1,3 +1,4 @@
+import type { CartItem } from '@/lib/types'
 import {
   Card,
   CardContent,
@@ -6,11 +7,10 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import type { CartItem } from '@/lib/types'
 import { formatPrice } from '@/lib/utils'
 
 interface CheckoutSummaryProps {
-  items: CartItem[]
+  items: Array<CartItem>
 }
 
 export function CheckoutSummary({ items }: CheckoutSummaryProps) {

@@ -9,8 +9,5 @@
   "variableValues": {},
   "git": true,
   "version": 1,
-  "existingAddOns": [
-    "shadcn",
-    "start"
-  ]
+  "existingAddOns": ["shadcn", "start"]
 }

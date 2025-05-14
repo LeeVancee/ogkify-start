@@ -1,23 +1,24 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import {
+  AlertCircle,
+  AlertTriangle,
   ArrowDownUp,
   Calendar,
+  CheckCircle,
   ChevronDown,
+  Clock,
   Download,
+  Eye,
   Filter,
   MoreHorizontal,
+  Package,
   RefreshCw,
   Search,
-  CheckCircle,
-  AlertCircle,
-  Clock,
-  Package,
-  AlertTriangle,
   X,
-  Eye,
 } from 'lucide-react'
 
+import { UpdateOrderStatusDialog } from './update-order-status-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import {
@@ -42,13 +43,12 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from '@/components/ui/dialog'
 import { getOrderDetails } from '@/server/orders.server'
 import { formatPrice } from '@/lib/utils'
-import { UpdateOrderStatusDialog } from './update-order-status-dialog'
 
 // 定义订单项类型
 interface OrderItem {
@@ -77,7 +77,7 @@ interface Order {
   totalItems: number
   shippingAddress?: string
   phone?: string
-  items: OrderItem[]
+  items: Array<OrderItem>
   firstItemImage?: string | null
   user?: {
     id: string
@@ -97,7 +97,7 @@ interface FilterForm {
 }
 
 interface OrderManagementProps {
-  initialOrders: Order[]
+  initialOrders: Array<Order>
 }
 
 export function OrderManagement({
@@ -176,17 +176,17 @@ export function OrderManagement({
   // 过滤订单
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      (order.orderNumber?.toLowerCase() || '').includes(
+      (order.orderNumber.toLowerCase() || '').includes(
         searchQuery.toLowerCase(),
       ) ||
       (order.customer?.toLowerCase() || '').includes(
         searchQuery.toLowerCase(),
       ) ||
       (order.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (order.user?.name?.toLowerCase() || '').includes(
+      (order.user?.name.toLowerCase() || '').includes(
         searchQuery.toLowerCase(),
       ) ||
-      (order.user?.email?.toLowerCase() || '').includes(
+      (order.user?.email.toLowerCase() || '').includes(
         searchQuery.toLowerCase(),
       )
 
@@ -609,7 +609,7 @@ export function OrderManagement({
 
 // 订单表格组件
 interface OrdersTableProps {
-  orders: Order[]
+  orders: Array<Order>
   isLoading: boolean
   onViewDetails: (order: Order) => void
   onUpdateStatus: (order: Order) => void

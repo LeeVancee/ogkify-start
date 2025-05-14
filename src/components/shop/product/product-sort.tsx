@@ -1,4 +1,5 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
+import { Suspense } from 'react'
 import {
   Select,
   SelectContent,
@@ -7,7 +8,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Label } from '@/components/ui/label'
-import { Suspense } from 'react'
 
 const sortOptions = [
   { value: 'newest', label: 'Newest' },

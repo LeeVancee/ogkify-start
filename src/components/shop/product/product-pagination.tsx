@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Suspense } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface ProductPaginationProps {
   currentPage: number

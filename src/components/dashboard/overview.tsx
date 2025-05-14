@@ -6,7 +6,7 @@ interface SalesData {
 }
 
 interface OverviewProps {
-  data?: SalesData[]
+  data?: Array<SalesData>
 }
 
 export function Overview({ data }: OverviewProps) {

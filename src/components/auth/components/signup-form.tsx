@@ -1,14 +1,15 @@
+import { useState } from 'react'
+import {   useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import { FaGithub } from 'react-icons/fa'
+import { FcGoogle } from 'react-icons/fc'
+import type { SignInFlow } from '../types'
+import type {FieldValues, SubmitHandler} from 'react-hook-form';
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type { SignInFlow } from '../types'
-import { useState } from 'react'
-import { type FieldValues, type SubmitHandler, useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 import { authClient } from '@/lib/auth-client'
-import { FaGithub } from 'react-icons/fa'
-import { FcGoogle } from 'react-icons/fc'
 
 interface SignupFormProps extends React.ComponentProps<'form'> {
   setState: (state: SignInFlow) => void

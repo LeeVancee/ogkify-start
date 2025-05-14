@@ -1,5 +1,5 @@
 import { CategoryForm } from '@/components/dashboard/category/category-form'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,

@@ -1,6 +1,7 @@
 import { SizeList } from '@/components/dashboard/size/size-list'
 import { getSizes } from '@/server/sizes.server'
 import Loading from '@/components/loading'
+
 export const Route = createFileRoute({
   pendingComponent: Loading,
   pendingMs: 0,

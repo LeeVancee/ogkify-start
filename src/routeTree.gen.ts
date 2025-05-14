@@ -13,6 +13,7 @@ import type { CreateFileRoute, FileRoutesByPath } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardLayoutRouteImport } from './routes/dashboard/layout'
 import { Route as ShopLayoutRouteImport } from './routes/_shop/layout'
@@ -40,6 +41,12 @@ import { Route as ShopProductsIdRouteImport } from './routes/_shop/products.$id'
 import { Route as ShopCheckoutSuccessRouteImport } from './routes/_shop/checkout/success'
 
 // Create/Update Routes
+
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -214,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRoute
     }
     '/_shop/cart': {
@@ -400,6 +414,15 @@ declare module './routes/auth' {
     FileRoutesByPath['/auth']['id'],
     FileRoutesByPath['/auth']['path'],
     FileRoutesByPath['/auth']['fullPath']
+  >
+}
+declare module './routes/profile' {
+  const createFileRoute: CreateFileRoute<
+    '/profile',
+    FileRoutesByPath['/profile']['parentRoute'],
+    FileRoutesByPath['/profile']['id'],
+    FileRoutesByPath['/profile']['path'],
+    FileRoutesByPath['/profile']['fullPath']
   >
 }
 declare module './routes/_shop/cart' {
@@ -671,6 +694,7 @@ export interface FileRoutesByFullPath {
   '': typeof ShopLayoutRouteWithChildren
   '/dashboard': typeof DashboardLayoutRouteWithChildren
   '/auth': typeof AuthRoute
+  '/profile': typeof ProfileRoute
   '/cart': typeof ShopCartRoute
   '/categories': typeof ShopCategoriesRoute
   '/myorders': typeof ShopMyordersRoute
@@ -697,6 +721,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
+  '/profile': typeof ProfileRoute
   '/cart': typeof ShopCartRoute
   '/categories': typeof ShopCategoriesRoute
   '/myorders': typeof ShopMyordersRoute
@@ -726,6 +751,7 @@ export interface FileRoutesById {
   '/_shop': typeof ShopLayoutRouteWithChildren
   '/dashboard': typeof DashboardLayoutRouteWithChildren
   '/auth': typeof AuthRoute
+  '/profile': typeof ProfileRoute
   '/_shop/cart': typeof ShopCartRoute
   '/_shop/categories': typeof ShopCategoriesRoute
   '/_shop/myorders': typeof ShopMyordersRoute
@@ -756,6 +782,7 @@ export interface FileRouteTypes {
     | ''
     | '/dashboard'
     | '/auth'
+    | '/profile'
     | '/cart'
     | '/categories'
     | '/myorders'
@@ -781,6 +808,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
+    | '/profile'
     | '/cart'
     | '/categories'
     | '/myorders'
@@ -808,6 +836,7 @@ export interface FileRouteTypes {
     | '/_shop'
     | '/dashboard'
     | '/auth'
+    | '/profile'
     | '/_shop/cart'
     | '/_shop/categories'
     | '/_shop/myorders'
@@ -837,12 +866,14 @@ export interface RootRouteChildren {
   ShopLayoutRoute: typeof ShopLayoutRouteWithChildren
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ProfileRoute: typeof ProfileRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   ShopLayoutRoute: ShopLayoutRouteWithChildren,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
   AuthRoute: AuthRoute,
+  ProfileRoute: ProfileRoute,
 }
 
 export const routeTree = rootRoute
@@ -857,7 +888,8 @@ export const routeTree = rootRoute
       "children": [
         "/_shop",
         "/dashboard",
-        "/auth"
+        "/auth",
+        "/profile"
       ]
     },
     "/_shop": {
@@ -894,6 +926,9 @@ export const routeTree = rootRoute
     },
     "/auth": {
       "filePath": "auth.tsx"
+    },
+    "/profile": {
+      "filePath": "profile.tsx"
     },
     "/_shop/cart": {
       "filePath": "_shop/cart.tsx",

@@ -1,6 +1,6 @@
+import { Outlet } from '@tanstack/react-router'
 import Footer from '@/components/shop/layout/footer'
 import Header from '@/components/shop/layout/header'
-import {  Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,

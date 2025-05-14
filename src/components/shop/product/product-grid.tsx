@@ -7,7 +7,7 @@ export interface SimpleProduct {
   name: string
   description: string
   price: number
-  images: string[]
+  images: Array<string>
   category?: string
   inStock?: boolean
   rating?: number
@@ -17,7 +17,7 @@ export interface SimpleProduct {
 }
 
 interface ProductGridProps {
-  products: SimpleProduct[]
+  products: Array<SimpleProduct>
 }
 
 export function ProductGrid({ products }: ProductGridProps) {

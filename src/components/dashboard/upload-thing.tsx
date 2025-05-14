@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import Dropzone from 'react-dropzone'
-import { X, Upload } from 'lucide-react'
-import { useUploadThing } from '@/lib/uploadthing'
+import { Upload, X } from 'lucide-react'
 import { toast } from 'sonner'
+import { useUploadThing } from '@/lib/uploadthing'
 import { Button } from '@/components/ui/button'
 
 interface UploadThingImageProps {
-  value: string[]
-  onChange: (value: string[]) => void
+  value: Array<string>
+  onChange: (value: Array<string>) => void
   disabled?: boolean
 }
 
@@ -16,7 +16,7 @@ export function UploadThingImage({
   onChange,
   disabled,
 }: UploadThingImageProps) {
-  const [files, setFiles] = useState<File[]>([])
+  const [files, setFiles] = useState<Array<File>>([])
 
   const onRemove = (url: string) => {
     onChange(value.filter((current) => current !== url))

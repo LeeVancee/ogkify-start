@@ -1,8 +1,8 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { createColor } from '@/server/colors.server'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from 'sonner'
 
 export function ColorForm() {
   const [name, setName] = useState('')

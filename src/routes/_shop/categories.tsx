@@ -2,11 +2,11 @@
 
 import { z } from 'zod'
 
+import { Suspense } from 'react'
 import { ProductGrid } from '@/components/shop/product/product-grid'
 import { ProductPagination } from '@/components/shop/product/product-pagination'
 import { ProductSort } from '@/components/shop/product/product-sort'
 import { ProductsLoading } from '@/components/shop/product/products-loading'
-import { Suspense } from 'react'
 import { getFilteredProducts } from '@/server/get-filtered-products.server'
 import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'

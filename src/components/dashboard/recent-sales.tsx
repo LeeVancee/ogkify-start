@@ -13,7 +13,7 @@ interface Order {
 }
 
 interface RecentSalesProps {
-  recentOrders: Order[]
+  recentOrders: Array<Order>
 }
 
 export function RecentSales({ recentOrders = [] }: RecentSalesProps) {

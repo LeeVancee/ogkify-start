@@ -1,7 +1,7 @@
-
 import { getColors } from '@/server/colors.server'
 import { ColorList } from '@/components/dashboard/color/color-list'
 import Loading from '@/components/loading'
+
 export const Route = createFileRoute({
   pendingComponent: Loading,
   pendingMs: 0,

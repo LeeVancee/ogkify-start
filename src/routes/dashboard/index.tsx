@@ -2,12 +2,12 @@ import { DashboardClient } from '@/components/dashboard/dashboard-client'
 import Loading from '@/components/loading'
 import { getCategoriesCount } from '@/server/categories.server'
 import {
+  getMonthlySalesData,
   getOrdersStats,
   getRecentOrders,
-  getMonthlySalesData,
 } from '@/server/orders.server'
 import { getProductsCount } from '@/server/products.server'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,

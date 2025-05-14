@@ -1,6 +1,7 @@
 import { notFound } from '@tanstack/react-router'
 import { getSize } from '@/server/sizes.server'
 import { SizeEditForm } from '@/components/dashboard/size/size-edit-form'
+
 export const Route = createFileRoute({
   component: RouteComponent,
   loader: async ({ params }: { params: { id: string } }) => {

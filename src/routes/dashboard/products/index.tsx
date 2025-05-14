@@ -1,9 +1,10 @@
-import { Button } from '@/components/ui/button'
-import { getProducts } from '@/server/products.server'
 import { Plus } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
+import { getProducts } from '@/server/products.server'
 import { ProductsView } from '@/components/dashboard/product/products-view'
 import Loading from '@/components/loading'
+
 export const Route = createFileRoute({
   pendingComponent: Loading,
   component: RouteComponent,

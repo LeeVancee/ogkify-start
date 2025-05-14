@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { deleteSize } from '@/server/sizes.server'
 import { toast } from 'sonner'
+import { Plus, Search, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { SizeCard } from './size-card'
-import { Search, X, Plus } from 'lucide-react'
+import { deleteSize } from '@/server/sizes.server'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
 
 type Size = {
   id: string
@@ -14,11 +14,11 @@ type Size = {
 }
 
 interface SizeListProps {
-  initialSizes: Size[]
+  initialSizes: Array<Size>
 }
 
 export function SizeList({ initialSizes }: SizeListProps) {
-  const [sizes, setSizes] = useState<Size[]>(initialSizes)
+  const [sizes, setSizes] = useState<Array<Size>>(initialSizes)
   const [searchQuery, setSearchQuery] = useState('')
 
   const filteredSizes = sizes.filter(

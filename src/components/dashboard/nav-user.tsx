@@ -1,5 +1,6 @@
 import { ChevronsUpDown, LogOut, Store } from 'lucide-react'
 
+import { Link, useRouter  } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -16,9 +17,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
-import { Link } from '@tanstack/react-router'
 import { authClient } from '@/lib/auth-client'
-import { useRouter } from '@tanstack/react-router'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
@@ -46,19 +45,19 @@ export function NavUser() {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={session.user?.image ?? ''}
-                    alt={session.user?.name ?? ''}
+                    src={session.user.image ?? ''}
+                    alt={session.user.name ?? ''}
                   />
                   <AvatarFallback>
-                    {session.user?.name?.[0].toUpperCase()}
+                    {session.user.name[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {session.user?.name}
+                    {session.user.name}
                   </span>
                   <span className="truncate text-xs">
-                    {session.user?.email}
+                    {session.user.email}
                   </span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4" />
@@ -74,19 +73,19 @@ export function NavUser() {
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={session.user?.image ?? ''}
-                      alt={session.user?.name ?? ''}
+                      src={session.user.image ?? ''}
+                      alt={session.user.name ?? ''}
                     />
                     <AvatarFallback>
-                      {session.user?.name?.[0].toUpperCase()}
+                      {session.user.name[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {session.user?.name}
+                      {session.user.name}
                     </span>
                     <span className="truncate text-xs">
-                      {session.user?.email}
+                      {session.user.email}
                     </span>
                   </div>
                 </div>

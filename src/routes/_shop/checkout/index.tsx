@@ -1,18 +1,18 @@
-import { CheckoutForm } from '@/components/shop/checkout/checkout-form'
-import { CheckoutSummary } from '@/components/shop/checkout/checkout-summary'
-import { Button } from '@/components/ui/button'
-import { clearCart, getUserCart } from '@/server/cart.server'
 import { Link, useRouter } from '@tanstack/react-router'
 import { ShoppingBag } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner'
+import { CheckoutForm } from '@/components/shop/checkout/checkout-form'
+import { CheckoutSummary } from '@/components/shop/checkout/checkout-summary'
+import { Button } from '@/components/ui/button'
+import { clearCart, getUserCart } from '@/server/cart.server'
 
 export const Route = createFileRoute({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const [cartItems, setCartItems] = useState<any[]>([])
+  const [cartItems, setCartItems] = useState<Array<any>>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const router = useRouter()

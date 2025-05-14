@@ -1,5 +1,6 @@
-import { useTransition } from 'react'
-import { useSearch, useNavigate } from '@tanstack/react-router'
+import { Suspense, useTransition  } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import type { Category } from '@/lib/types'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
@@ -10,13 +11,11 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion'
 import { Slider } from '@/components/ui/slider'
-import type { Category } from '@/lib/types'
-import { Suspense } from 'react'
 
 interface ProductFiltersProps {
-  categories: Category[]
-  colors?: { id: string; name: string; value: string }[]
-  sizes?: { id: string; name: string; value: string }[]
+  categories: Array<Category>
+  colors?: Array<{ id: string; name: string; value: string }>
+  sizes?: Array<{ id: string; name: string; value: string }>
   maxPrice?: number
 }
 
@@ -27,8 +26,8 @@ interface SearchParams {
   featured?: boolean
   minPrice?: string
   maxPrice?: string
-  color?: string | string[]
-  size?: string | string[]
+  color?: string | Array<string>
+  size?: string | Array<string>
   [key: string]: any
 }
 
@@ -39,7 +38,7 @@ function ProductFiltersContent({
   maxPrice = 5000,
 }: ProductFiltersProps) {
   const navigate = useNavigate()
-  const search = useSearch({ strict: false }) as SearchParams
+  const search = useSearch({ strict: false })
   const [isPending, startTransition] = useTransition()
 
   const currentCategory = search.category
@@ -55,13 +54,13 @@ function ProductFiltersContent({
       : search.color
         ? [search.color]
         : []
-  ) as string[]
+  )
   const currentSizeNames = (
     Array.isArray(search.size) ? search.size : search.size ? [search.size] : []
-  ) as string[]
+  )
 
   const createQueryParams = (
-    params: Record<string, string | string[] | boolean | null | undefined>,
+    params: Record<string, string | Array<string> | boolean | null | undefined>,
   ): SearchParams => {
     const newParams = { ...search } as SearchParams
 
@@ -148,7 +147,7 @@ function ProductFiltersContent({
     })
   }
 
-  const handlePriceChange = (values: number[]) => {
+  const handlePriceChange = (values: Array<number>) => {
     if (values.length === 2) {
       const [min, max] = values
       startTransition(() => {

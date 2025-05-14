@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { deleteCategory } from '@/server/categories.server'
 import { toast } from 'sonner'
+import { Plus, Search, X } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { CategoryCard } from './category-card'
-import { Search, X, Plus } from 'lucide-react'
+import { deleteCategory } from '@/server/categories.server'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Link } from '@tanstack/react-router'
 
 type Category = {
   id: string
@@ -14,11 +14,11 @@ type Category = {
 }
 
 interface CategoryListProps {
-  initialCategories: Category[]
+  initialCategories: Array<Category>
 }
 
 export function CategoryList({ initialCategories }: CategoryListProps) {
-  const [categories, setCategories] = useState<Category[]>(initialCategories)
+  const [categories, setCategories] = useState<Array<Category>>(initialCategories)
   const [searchQuery, setSearchQuery] = useState('')
 
   const filteredCategories = categories.filter(

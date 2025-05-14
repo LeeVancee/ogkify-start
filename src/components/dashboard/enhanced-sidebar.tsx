@@ -1,14 +1,18 @@
-import type * as React from 'react'
 import {
+  Grid,
   LayoutDashboard,
-  ShoppingBag,
-  ShoppingCart,
   Package,
   Palette,
   Ruler,
-  Grid,
+  ShoppingBag,
+  ShoppingCart,
 } from 'lucide-react'
 
+
+import { ActiveLink } from './active-link'
+import { NavMain } from './nav-main'
+import { NavUser } from './nav-user'
+import type * as React from 'react'
 import {
   Sidebar,
   SidebarContent,
@@ -18,10 +22,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar'
-
-import { ActiveLink } from './active-link'
-import { NavMain } from './nav-main'
-import { NavUser } from './nav-user'
 
 // Navigation item type definition
 

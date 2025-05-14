@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
+import { ShoppingBag } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import type React from 'react'
-import { useState, useEffect } from 'react'
 import { CartItem } from '@/components/shop/cart/cart-item'
 import { Button } from '@/components/ui/button'
 import {
@@ -11,8 +13,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { formatPrice } from '@/lib/utils'
-import { ShoppingBag } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { getUserCart } from '@/server/cart.server'
 
 interface CartItemType {
@@ -32,7 +32,7 @@ interface CartItemType {
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const [cartData, setCartData] = useState<{
-    items: CartItemType[]
+    items: Array<CartItemType>
     totalItems: number
   }>({ items: [], totalItems: 0 })
   const [isLoading, setIsLoading] = useState(true)

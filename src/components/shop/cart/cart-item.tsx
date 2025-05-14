@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
 import { MinusIcon, PlusIcon, TrashIcon } from 'lucide-react'
-import { formatPrice } from '@/lib/utils'
-import { updateCartItemQuantity, removeFromCart } from '@/server/cart.server'
 import { toast } from 'sonner'
-
 import { Link } from '@tanstack/react-router'
+import { Button } from '@/components/ui/button'
+import { formatPrice } from '@/lib/utils'
+import { removeFromCart, updateCartItemQuantity } from '@/server/cart.server'
+
 
 interface CartItemProps {
   item: {

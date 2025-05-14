@@ -1,4 +1,5 @@
-import {  Outlet } from '@tanstack/react-router'
+import { Outlet } from '@tanstack/react-router'
+import React from 'react'
 import { EnhancedSidebar } from '@/components/dashboard/enhanced-sidebar'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -6,7 +7,6 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/components/ui/sidebar'
-import React from 'react'
 
 export const Route = createFileRoute({
   component: RouteComponent,

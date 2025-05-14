@@ -1,12 +1,12 @@
-import { ProductGrid } from '@/components/shop/product/product-grid'
 import { useState } from 'react'
-import type { Product } from '@/lib/types'
-import { Button } from '@/components/ui/button'
 import { ChevronRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import type { Product } from '@/lib/types'
+import { Button } from '@/components/ui/button'
+import { ProductGrid } from '@/components/shop/product/product-grid'
 
 interface FeaturedProductsProps {
-  initialProducts: Product[]
+  initialProducts: Array<Product>
   title?: string
   description?: string
 }

@@ -1,10 +1,10 @@
+import { Link } from '@tanstack/react-router'
+import { ShoppingBag } from 'lucide-react'
 import { CartItem } from '@/components/shop/cart/cart-item'
 import { CheckoutButton } from '@/components/shop/cart/checkout-button'
 import { Button } from '@/components/ui/button'
 import { formatPrice } from '@/lib/utils'
 import { getUserCart } from '@/server/cart.server'
-import { Link } from '@tanstack/react-router'
-import { ShoppingBag } from 'lucide-react'
 
 export const Route = createFileRoute({
   component: RouteComponent,

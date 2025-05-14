@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
 import { getSession } from './getSession.server'
+import { prisma } from '@/lib/prisma'
 
 export interface CartItemData {
   productId: string
@@ -17,7 +17,7 @@ export const addToCart = createServerFn()
       const session = await getSession()
 
       // 检查用户是否登录
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         console.error('add to cart failed: user not logged in')
         return { error: 'user not logged in, please login', success: false }
       }
@@ -120,7 +120,7 @@ export const getUserCart = createServerFn().handler(async () => {
   try {
     const session = await getSession()
 
-    if (!session?.user?.id) {
+    if (!session?.user.id) {
       return { items: [], totalItems: 0 }
     }
 
@@ -183,7 +183,7 @@ export const removeFromCart = createServerFn()
     try {
       const session = await getSession()
 
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return { error: 'user not logged in', success: false }
       }
 
@@ -219,7 +219,7 @@ export const updateCartItemQuantity = createServerFn()
     try {
       const session = await getSession()
 
-      if (!session?.user?.id) {
+      if (!session?.user.id) {
         return { error: 'user not logged in', success: false }
       }
 
@@ -258,7 +258,7 @@ export const clearCart = createServerFn().handler(async () => {
   try {
     const session = await getSession()
 
-    if (!session?.user?.id) {
+    if (!session?.user.id) {
       return { error: 'user not logged in', success: false }
     }
 

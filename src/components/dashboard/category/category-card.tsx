@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Edit, Trash2 } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { DeleteDialog } from '../delete-dialog'
 import { Link } from '@tanstack/react-router'
+import { DeleteDialog } from '../delete-dialog'
+import { Button } from '@/components/ui/button'
 
 interface CategoryCardProps {
   category: {
