@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ShoppingBag } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
 import { CartItem } from '@/components/shop/cart/cart-item'
 import { Button } from '@/components/ui/button'
@@ -13,7 +14,11 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { formatPrice } from '@/lib/utils'
-import { getUserCart } from '@/server/cart.server'
+import {
+  getUserCart,
+  removeFromCart,
+  updateCartItemQuantity,
+} from '@/server/cart.server'
 
 interface CartItemType {
   id: string
@@ -31,66 +36,57 @@ interface CartItemType {
 }
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
-  const [cartData, setCartData] = useState<{
-    items: Array<CartItemType>
-    totalItems: number
-  }>({ items: [], totalItems: 0 })
-  const [isLoading, setIsLoading] = useState(true)
   const [isOpen, setIsOpen] = useState(false)
+  const queryClient = useQueryClient()
 
-  // Fetch latest cart data when sidebar opens
-  useEffect(() => {
-    if (isOpen) {
-      fetchCartData()
-    }
-  }, [isOpen])
+  // 使用TanStack Query获取购物车数据
+  const {
+    data: cartData = { items: [], totalItems: 0 },
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['cart'],
+    queryFn: getUserCart,
+    enabled: isOpen, // 只有当侧边栏打开时才获取数据
+    staleTime: 1000 * 60 * 5, // 5分钟内不重新获取
+    refetchOnWindowFocus: false,
+  })
 
-  const fetchCartData = async () => {
-    setIsLoading(true)
-    try {
-      const data = await getUserCart()
-      setCartData(data)
-    } catch (error) {
-      console.error('Failed to get cart data:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // 移除购物车商品的mutation
+  const removeMutation = useMutation({
+    mutationFn: (itemId: string) => removeFromCart({ data: itemId }),
+    onSuccess: () => {
+      // 成功后刷新购物车数据
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+    },
+  })
+
+  // 更新购物车商品数量的mutation
+  const updateQuantityMutation = useMutation({
+    mutationFn: (params: { cartItemId: string; quantity: number }) =>
+      updateCartItemQuantity({ data: params }),
+    onSuccess: () => {
+      // 成功后刷新购物车数据
+      queryClient.invalidateQueries({ queryKey: ['cart'] })
+    },
+  })
 
   // 处理商品移除的函数
   const handleItemRemoved = (itemId: string) => {
-    // 更新本地状态，移除对应商品
-    const updatedItems = cartData.items.filter((item) => item.id !== itemId)
-    const newTotalItems = updatedItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0,
-    )
-
-    setCartData({
-      items: updatedItems,
-      totalItems: newTotalItems,
-    })
+    removeMutation.mutate(itemId)
   }
 
   // 处理数量变化的函数
   const handleQuantityChanged = (itemId: string, newQuantity: number) => {
-    const updatedItems = cartData.items.map((item) =>
-      item.id === itemId ? { ...item, quantity: newQuantity } : item,
-    )
-    const newTotalItems = updatedItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0,
-    )
-
-    setCartData({
-      items: updatedItems,
-      totalItems: newTotalItems,
+    updateQuantityMutation.mutate({
+      cartItemId: itemId,
+      quantity: newQuantity,
     })
   }
 
-  // Calculate total
+  // 计算总价
   const subtotal = cartData.items.reduce(
-    (total, item) => total + item.price * item.quantity,
+    (total: number, item: CartItemType) => total + item.price * item.quantity,
     0,
   )
 
@@ -114,6 +110,18 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
             <p className="text-center text-sm text-muted-foreground">
               Loading your cart...
             </p>
+          </div>
+        ) : isError ? (
+          <div className="flex flex-1 flex-col items-center justify-center gap-4 py-12">
+            <p className="text-center text-red-500">Failed to load cart data</p>
+            <Button
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: ['cart'] })
+              }
+              variant="outline"
+            >
+              Try Again
+            </Button>
           </div>
         ) : isEmpty ? (
           <div className="flex flex-1 flex-col items-center justify-center gap-4 py-12">

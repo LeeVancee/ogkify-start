@@ -7,7 +7,8 @@ import {
   ShoppingBag,
 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { NoOrders } from '@/components/shop/cart/empty-cart'
 import { Button } from '@/components/ui/button'
 import {
@@ -60,34 +61,34 @@ export const Route = createFileRoute({
 
 function MyOrdersPage() {
   const [activeTab, setActiveTab] = useState('all')
-  const [allOrders, setAllOrders] = useState<Array<Order>>([])
-  const [unpaidOrders, setUnpaidOrders] = useState<Array<Order>>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const queryClient = useQueryClient()
 
-  async function loadOrders() {
-    setIsLoading(true)
-    try {
-      const [allResponse, unpaidResponse] = await Promise.all([
-        getUserOrders({}),
-        getUnpaidOrders({}),
-      ])
+  // 使用TanStack Query获取所有订单
+  const { data: allOrders = [], isLoading: isLoadingAll } = useQuery({
+    queryKey: ['orders', 'all'],
+    queryFn: async () => {
+      const response = await getUserOrders({})
+      return response.success ? response.orders : []
+    },
+    staleTime: 1000 * 60 * 3, // 3分钟缓存
+  })
 
-      setAllOrders(allResponse.success ? allResponse.orders : [])
-      setUnpaidOrders(unpaidResponse.success ? unpaidResponse.orders : [])
-    } catch (error) {
-      console.error('加载订单失败:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  // 使用TanStack Query获取未支付订单
+  const { data: unpaidOrders = [], isLoading: isLoadingUnpaid } = useQuery({
+    queryKey: ['orders', 'unpaid'],
+    queryFn: async () => {
+      const response = await getUnpaidOrders({})
+      return response.success ? response.orders : []
+    },
+    staleTime: 1000 * 60 * 3, // 3分钟缓存
+  })
 
-  useEffect(() => {
-    loadOrders()
-  }, [])
+  const isLoading = isLoadingAll || isLoadingUnpaid
 
   // 处理订单删除后的刷新
   const handleOrderDeleted = () => {
-    loadOrders()
+    // 使用TanStack Query重新获取数据
+    queryClient.invalidateQueries({ queryKey: ['orders'] })
   }
 
   // 获取订单状态图标

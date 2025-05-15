@@ -1,6 +1,7 @@
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense } from 'react'
 import { CheckCircle, Loader2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 
@@ -27,67 +28,63 @@ export const Route = createFileRoute({
 
 function CheckoutSuccessContent() {
   const { session_id, order_id } = Route.useSearch()
-  const [isVerifying, setIsVerifying] = useState(true)
-  const [orderData, setOrderData] = useState<OrderData | null>(null)
-  const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    async function verifyPayment() {
+  // 使用TanStack Query获取订单数据
+  const {
+    data: orderData,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ['order', order_id, session_id],
+    queryFn: async () => {
       if (!session_id || !order_id) {
-        setIsVerifying(false)
-        return
+        return null
       }
 
-      try {
-        // 等待一小段时间，以确保 webhook 处理完成
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+      // 等待一小段时间，以确保 webhook 处理完成
+      await new Promise((resolve) => setTimeout(resolve, 1500))
 
-        // 从服务器获取订单信息
-        const response = await fetch(`/api/orders/${order_id}`)
+      // 从服务器获取订单信息
+      const response = await fetch(`/api/orders/${order_id}`)
 
-        if (!response.ok) {
-          throw new Error('Failed to get order information')
-        }
-
-        const data = await response.json()
-        setOrderData(data.order)
-      } catch (error) {
-        console.error('Failed to get order information', error)
-        setError(
-          error instanceof Error
-            ? error.message
-            : 'Failed to get order information',
-        )
-      } finally {
-        setIsVerifying(false)
+      if (!response.ok) {
+        throw new Error('Failed to get order information')
       }
-    }
 
-    verifyPayment()
-  }, [session_id, order_id])
+      const data = await response.json()
+      return data.order as OrderData
+    },
+    retry: 1,
+    staleTime: 1000 * 60 * 10, // 10分钟缓存，结账成功页面一般只访问一次
+    enabled: Boolean(session_id && order_id),
+  })
 
-  if (isVerifying) {
+  if (isLoading) {
     return (
       <div className="container flex flex-col items-center justify-center py-16">
         <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
-        <h1 className="mb-2 text-2xl font-bold">正在验证您的订单...</h1>
+        <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
         <p className="text-center text-muted-foreground">
-          请稍等，我们正在处理您的支付。
+          Please wait, we are processing your payment.
         </p>
       </div>
     )
   }
 
-  if (error || !orderData) {
+  if (isError || !orderData) {
     return (
       <div className="container flex flex-col items-center justify-center py-16">
-        <h1 className="mb-4 text-2xl font-bold">无法获取订单信息</h1>
+        <h1 className="mb-4 text-2xl font-bold">
+          Unable to get order information
+        </h1>
         <p className="mb-8 text-center text-muted-foreground">
-          {error ||
-            '无法获取订单详情，但您的付款可能已经处理。请检查您的电子邮件或联系客户支持。'}
+          {error instanceof Error
+            ? error.message
+            : 'Unable to get order details, but your payment may have been processed. Please check your email or contact customer support.'}
         </p>
         <Button asChild>
-          <Link to="/">返回首页</Link>
+          <Link to="/">Return to Home</Link>
         </Button>
       </div>
     )
@@ -97,45 +94,48 @@ function CheckoutSuccessContent() {
     <>
       <div className="container flex flex-col items-center justify-center py-16">
         <CheckCircle className="mb-4 h-16 w-16 text-green-500" />
-        <h1 className="mb-2 text-2xl font-bold">订单确认</h1>
+        <h1 className="mb-2 text-2xl font-bold">Order Confirmation</h1>
         <p className="mb-6 text-center text-muted-foreground">
-          感谢您的购买！您的订单已成功处理。
+          Thank you for your purchase! Your order has been successfully
+          processed.
         </p>
 
         <div className="mb-8 w-full max-w-md rounded-lg border bg-card p-6">
           <div className="mb-4">
-            <p className="mb-1 text-sm text-muted-foreground">订单号：</p>
+            <p className="mb-1 text-sm text-muted-foreground">Order Number:</p>
             <p className="text-xl font-semibold">{orderData.orderNumber}</p>
           </div>
 
           {orderData.shippingAddress && (
             <div className="mb-4">
-              <p className="mb-1 text-sm text-muted-foreground">配送地址：</p>
+              <p className="mb-1 text-sm text-muted-foreground">
+                Shipping Address:
+              </p>
               <p className="text-sm">{orderData.shippingAddress}</p>
             </div>
           )}
 
           {orderData.phone && (
             <div className="mb-4">
-              <p className="mb-1 text-sm text-muted-foreground">电话：</p>
+              <p className="mb-1 text-sm text-muted-foreground">Phone:</p>
               <p className="text-sm">{orderData.phone}</p>
             </div>
           )}
 
           <div>
-            <p className="mb-1 text-sm text-muted-foreground">订单状态：</p>
+            <p className="mb-1 text-sm text-muted-foreground">Order Status:</p>
             <div className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
-              已支付
+              Paid
             </div>
           </div>
         </div>
 
         <div className="flex gap-4">
           <Button asChild variant="outline">
-            <Link to="/">继续购物</Link>
+            <Link to="/">Continue Shopping</Link>
           </Button>
           <Button asChild>
-            <Link to="/">查看我的订单</Link>
+            <Link to="/myorders">View My Orders</Link>
           </Button>
         </div>
       </div>
@@ -149,7 +149,7 @@ function CheckoutSuccessPage() {
       fallback={
         <div className="container flex flex-col items-center justify-center py-16">
           <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
-          <h1 className="mb-2 text-2xl font-bold">加载中...</h1>
+          <h1 className="mb-2 text-2xl font-bold">Loading...</h1>
         </div>
       }
     >
