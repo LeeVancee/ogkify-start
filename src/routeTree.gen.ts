@@ -28,7 +28,6 @@ import { Route as DashboardProductsIndexRouteImport } from './routes/dashboard/p
 import { Route as DashboardOrdersIndexRouteImport } from './routes/dashboard/orders/index'
 import { Route as DashboardColorsIndexRouteImport } from './routes/dashboard/colors/index'
 import { Route as DashboardCategoriesIndexRouteImport } from './routes/dashboard/categories/index'
-import { Route as ShopCheckoutIndexRouteImport } from './routes/_shop/checkout/index'
 import { Route as DashboardSizesNewRouteImport } from './routes/dashboard/sizes/new'
 import { Route as DashboardSizesIdRouteImport } from './routes/dashboard/sizes/$id'
 import { Route as DashboardProductsNewRouteImport } from './routes/dashboard/products/new'
@@ -131,12 +130,6 @@ const DashboardCategoriesIndexRoute =
     path: '/categories/',
     getParentRoute: () => DashboardLayoutRoute,
   } as any)
-
-const ShopCheckoutIndexRoute = ShopCheckoutIndexRouteImport.update({
-  id: '/checkout/',
-  path: '/checkout/',
-  getParentRoute: () => ShopLayoutRoute,
-} as any)
 
 const DashboardSizesNewRoute = DashboardSizesNewRouteImport.update({
   id: '/sizes/new',
@@ -341,13 +334,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/sizes/new'
       preLoaderRoute: typeof DashboardSizesNewRouteImport
       parentRoute: typeof DashboardLayoutRouteImport
-    }
-    '/_shop/checkout/': {
-      id: '/_shop/checkout/'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof ShopCheckoutIndexRouteImport
-      parentRoute: typeof ShopLayoutRouteImport
     }
     '/dashboard/categories/': {
       id: '/dashboard/categories/'
@@ -569,15 +555,6 @@ declare module './routes/dashboard/sizes/new' {
     FileRoutesByPath['/dashboard/sizes/new']['fullPath']
   >
 }
-declare module './routes/_shop/checkout/index' {
-  const createFileRoute: CreateFileRoute<
-    '/_shop/checkout/',
-    FileRoutesByPath['/_shop/checkout/']['parentRoute'],
-    FileRoutesByPath['/_shop/checkout/']['id'],
-    FileRoutesByPath['/_shop/checkout/']['path'],
-    FileRoutesByPath['/_shop/checkout/']['fullPath']
-  >
-}
 declare module './routes/dashboard/categories/index' {
   const createFileRoute: CreateFileRoute<
     '/dashboard/categories/',
@@ -635,7 +612,6 @@ interface ShopLayoutRouteChildren {
   ShopIndexRoute: typeof ShopIndexRoute
   ShopCheckoutSuccessRoute: typeof ShopCheckoutSuccessRoute
   ShopProductsIdRoute: typeof ShopProductsIdRoute
-  ShopCheckoutIndexRoute: typeof ShopCheckoutIndexRoute
 }
 
 const ShopLayoutRouteChildren: ShopLayoutRouteChildren = {
@@ -647,7 +623,6 @@ const ShopLayoutRouteChildren: ShopLayoutRouteChildren = {
   ShopIndexRoute: ShopIndexRoute,
   ShopCheckoutSuccessRoute: ShopCheckoutSuccessRoute,
   ShopProductsIdRoute: ShopProductsIdRoute,
-  ShopCheckoutIndexRoute: ShopCheckoutIndexRoute,
 }
 
 const ShopLayoutRouteWithChildren = ShopLayoutRoute._addFileChildren(
@@ -713,7 +688,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
-  '/checkout': typeof ShopCheckoutIndexRoute
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors': typeof DashboardColorsIndexRoute
   '/dashboard/orders': typeof DashboardOrdersIndexRoute
@@ -740,7 +714,6 @@ export interface FileRoutesByTo {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
-  '/checkout': typeof ShopCheckoutIndexRoute
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors': typeof DashboardColorsIndexRoute
   '/dashboard/orders': typeof DashboardOrdersIndexRoute
@@ -770,7 +743,6 @@ export interface FileRoutesById {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
-  '/_shop/checkout/': typeof ShopCheckoutIndexRoute
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors/': typeof DashboardColorsIndexRoute
   '/dashboard/orders/': typeof DashboardOrdersIndexRoute
@@ -801,7 +773,6 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
-    | '/checkout'
     | '/dashboard/categories'
     | '/dashboard/colors'
     | '/dashboard/orders'
@@ -827,7 +798,6 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
-    | '/checkout'
     | '/dashboard/categories'
     | '/dashboard/colors'
     | '/dashboard/orders'
@@ -855,7 +825,6 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
-    | '/_shop/checkout/'
     | '/dashboard/categories/'
     | '/dashboard/colors/'
     | '/dashboard/orders/'
@@ -901,8 +870,7 @@ export const routeTree = rootRoute
         "/_shop/search",
         "/_shop/",
         "/_shop/checkout/success",
-        "/_shop/products/$id",
-        "/_shop/checkout/"
+        "/_shop/products/$id"
       ]
     },
     "/dashboard": {
@@ -994,10 +962,6 @@ export const routeTree = rootRoute
     "/dashboard/sizes/new": {
       "filePath": "dashboard/sizes/new.tsx",
       "parent": "/dashboard"
-    },
-    "/_shop/checkout/": {
-      "filePath": "_shop/checkout/index.tsx",
-      "parent": "/_shop"
     },
     "/dashboard/categories/": {
       "filePath": "dashboard/categories/index.tsx",
