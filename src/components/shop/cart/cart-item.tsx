@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { formatPrice } from '@/lib/utils'
 import { removeFromCart, updateCartItemQuantity } from '@/server/cart.server'
 
-
 interface CartItemProps {
   item: {
     id: string
@@ -22,9 +21,15 @@ interface CartItemProps {
     sizeName?: string | null
     sizeValue?: string | null
   }
+  onItemRemoved?: (itemId: string) => void
+  onQuantityChanged?: (itemId: string, newQuantity: number) => void
 }
 
-export function CartItem({ item }: CartItemProps) {
+export function CartItem({
+  item,
+  onItemRemoved,
+  onQuantityChanged,
+}: CartItemProps) {
   const [quantity, setQuantity] = useState(item.quantity)
   const [isUpdating, setIsUpdating] = useState(false)
   const [isRemoving, setIsRemoving] = useState(false)
@@ -42,7 +47,10 @@ export function CartItem({ item }: CartItemProps) {
       })
       if (result.success) {
         setQuantity(newQuantity)
-        // 无需显示成功消息，避免频繁提示打扰用户
+        // 通知父组件数量已更改
+        if (onQuantityChanged) {
+          onQuantityChanged(item.id, newQuantity)
+        }
       } else {
         toast.error(result.error || 'Failed to update quantity')
         setQuantity(item.quantity) // 恢复原有数量
@@ -63,8 +71,10 @@ export function CartItem({ item }: CartItemProps) {
       const result = await removeFromCart({ data: item.id })
       if (result.success) {
         toast.success('Product removed from cart')
-        // 刷新页面以反映更改
-        window.location.reload()
+        // 通知父组件商品已移除，而不是刷新页面
+        if (onItemRemoved) {
+          onItemRemoved(item.id)
+        }
       } else {
         toast.error(result.error || 'Failed to remove product')
       }

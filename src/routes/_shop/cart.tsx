@@ -27,13 +27,17 @@ function RouteComponent() {
 
   if (isEmpty) {
     return (
-      <div className="container flex flex-col items-center justify-center px-4 py-16 md:px-6">
-        <ShoppingBag className="mb-4 h-16 w-16 text-muted-foreground" />
-        <h1 className="mb-2 text-2xl font-bold">Your cart is empty</h1>
-        <p className="mb-8 text-center text-muted-foreground">
+      <div className="container flex flex-col items-center justify-center px-4 py-20 md:px-6">
+        <ShoppingBag className="mb-6 h-24 w-24 text-muted-foreground opacity-70" />
+        <h1 className="mb-3 text-2xl font-bold">Your cart is empty</h1>
+        <p className="mb-10 max-w-md text-center text-muted-foreground">
           Looks like you haven't added any items to your cart yet.
         </p>
-        <Button asChild>
+        <Button
+          asChild
+          size="lg"
+          className="px-8 transition-all hover:scale-105"
+        >
           <Link to="/categories">Browse Products</Link>
         </Button>
       </div>
@@ -41,19 +45,24 @@ function RouteComponent() {
   }
 
   return (
-    <div className="container px-4 py-8 md:px-6 md:py-12">
-      <h1 className="mb-8 text-3xl font-bold">Your Cart</h1>
+    <div className="container px-4 py-10 md:px-6 md:py-14">
+      <div className="mb-8 flex items-center justify-between">
+        <h1 className="text-3xl font-bold">Your Cart</h1>
+        <Button variant="outline" asChild>
+          <Link to="/categories">Continue Shopping</Link>
+        </Button>
+      </div>
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <div className="rounded-lg border">
+          <div className="rounded-lg border border-border shadow-sm">
             {items.map((item: any) => (
               <CartItem key={item.id} item={item} />
             ))}
           </div>
         </div>
-        <div className="rounded-lg border bg-card p-6">
-          <h2 className="mb-4 text-lg font-semibold">Order Summary</h2>
-          <div className="space-y-1.5">
+        <div className="rounded-lg border bg-card p-6 shadow-md">
+          <h2 className="mb-6 text-xl font-semibold">Order Summary</h2>
+          <div className="space-y-3">
             <div className="flex justify-between">
               <span className="text-muted-foreground">
                 Subtotal ({totalItems} items)
@@ -61,13 +70,15 @@ function RouteComponent() {
               <span>{formatPrice(subtotal)}</span>
             </div>
 
-            <div className="my-4 border-t pt-4">
-              <div className="flex justify-between font-medium">
+            <div className="my-5 border-t pt-5">
+              <div className="flex justify-between text-lg font-medium">
                 <span>Total</span>
-                <span>{formatPrice(subtotal)}</span>
+                <span className="text-primary">{formatPrice(subtotal)}</span>
               </div>
             </div>
-            <CheckoutButton />
+            <div className="pt-2">
+              <CheckoutButton />
+            </div>
           </div>
         </div>
       </div>
