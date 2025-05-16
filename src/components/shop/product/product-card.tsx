@@ -12,11 +12,9 @@ export default function ProductCard({ product }: { product: any }) {
         params={{ id: product.id }}
         className="block relative aspect-square overflow-hidden bg-muted"
       >
-        {product.images && product.images.length > 0 ? (
+        {product.image ? (
           <img
-            src={
-              product.images[0].url || '/placeholder.svg?height=300&width=300'
-            }
+            src={product.image}
             alt={product.name}
             className="object-cover transition-transform group-hover:scale-105"
           />

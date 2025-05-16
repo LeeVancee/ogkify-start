@@ -1,4 +1,4 @@
-import { Link, useLocation  } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 import { Menu, Search, ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
 import { DropDown } from '../DropDown'
@@ -12,7 +12,6 @@ import {
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet'
-
 
 const navigation = [
   { name: 'Home', href: '/' },

@@ -8,7 +8,6 @@ import {
   ShoppingCart,
 } from 'lucide-react'
 
-
 import { ActiveLink } from './active-link'
 import { NavMain } from './nav-main'
 import { NavUser } from './nav-user'

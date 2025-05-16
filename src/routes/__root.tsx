@@ -7,9 +7,9 @@ import {
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import appCss from '../styles.css?url'
+import type { QueryClient } from '@tanstack/react-query'
 import { Toaster } from '@/components/ui/sonner'
 import { NotFound } from '@/components/NotFound'
-import type { QueryClient } from '@tanstack/react-query'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient

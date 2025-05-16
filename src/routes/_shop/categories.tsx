@@ -26,12 +26,9 @@ const searchParamsSchema = z.object({
   page: z.string().optional(),
 })
 
-// 定义搜索参数类型
-type SearchParams = z.infer<typeof searchParamsSchema>
-
 export const Route = createFileRoute({
   validateSearch: searchParamsSchema,
-  loaderDeps: ({ search }: { search: SearchParams }) => ({
+  loaderDeps: ({ search }) => ({
     category: search.category,
     sort: search.sort,
     search: search.search,
@@ -42,7 +39,7 @@ export const Route = createFileRoute({
     size: search.size,
     page: search.page || '1',
   }),
-  loader: async ({ deps }: { deps: any }) => {
+  loader: async ({ deps }) => {
     // Parse search parameters
     const category = deps.category
     const sort = deps.sort
@@ -67,7 +64,7 @@ export const Route = createFileRoute({
         : []
 
     // Pagination
-    const page = parseInt(deps.page)
+    const page = parseInt(deps.page || '1')
 
     // Fetch filtered products
     const { products, total } = await getFilteredProducts({

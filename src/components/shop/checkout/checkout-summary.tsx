@@ -64,7 +64,7 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Shipping</span>
-            <span>{shipping === 0 ? 'Free' : formatPrice(shipping)}</span>
+            <span>Free</span>
           </div>
           <div className="flex items-center justify-between">
             <span className="text-muted-foreground">Tax (10%)</span>

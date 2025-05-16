@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import {   useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { useRouter } from '@tanstack/react-router'
 import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
-import type {FieldValues, SubmitHandler} from 'react-hook-form';
+import type { FieldValues, SubmitHandler } from 'react-hook-form'
 import type { SignInFlow } from '../types'
 import { authClient } from '@/lib/auth-client'
 import { Label } from '@/components/ui/label'

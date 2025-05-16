@@ -116,11 +116,11 @@ export const updateProduct = createServerFn()
           isArchived,
           colors: {
             set: [], // 先清空关联
-            connect: colorIds.map((id) => ({ id })),
+            connect: colorIds.map((colorId) => ({ id: colorId })),
           },
           sizes: {
             set: [], // 先清空关联
-            connect: sizeIds.map((id) => ({ id })),
+            connect: sizeIds.map((sizeId) => ({ id: sizeId })),
           },
           images: {
             create: newImages.map((url) => ({ url })),
@@ -191,10 +191,10 @@ export const createProduct = createServerFn()
           isFeatured,
           isArchived,
           colors: {
-            connect: colorIds.map((id) => ({ id })),
+            connect: colorIds.map((colorId) => ({ id: colorId })),
           },
           sizes: {
-            connect: sizeIds.map((id) => ({ id })),
+            connect: sizeIds.map((sizeId) => ({ id: sizeId })),
           },
           images: {
             create: images.map((url) => ({ url })),

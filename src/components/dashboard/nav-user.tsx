@@ -1,6 +1,6 @@
 import { ChevronsUpDown, LogOut, Store } from 'lucide-react'
 
-import { Link, useRouter  } from '@tanstack/react-router'
+import { Link, useRouter } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
@@ -45,8 +45,8 @@ export function NavUser() {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={session.user.image ?? ''}
-                    alt={session.user.name ?? ''}
+                    src={session.user.image || ''}
+                    alt={session.user.name || ''}
                   />
                   <AvatarFallback>
                     {session.user.name[0].toUpperCase()}
@@ -56,9 +56,7 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {session.user.name}
                   </span>
-                  <span className="truncate text-xs">
-                    {session.user.email}
-                  </span>
+                  <span className="truncate text-xs">{session.user.email}</span>
                 </div>
                 <ChevronsUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
@@ -73,8 +71,8 @@ export function NavUser() {
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={session.user.image ?? ''}
-                      alt={session.user.name ?? ''}
+                      src={session.user.image || ''}
+                      alt={session.user.name || ''}
                     />
                     <AvatarFallback>
                       {session.user.name[0].toUpperCase()}

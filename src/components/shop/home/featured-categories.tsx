@@ -7,7 +7,11 @@ interface Category {
   imageUrl: string | null
 }
 
-export function FeaturedCategories({ categories }: { categories: Array<Category> }) {
+export function FeaturedCategories({
+  categories,
+}: {
+  categories: Array<Category>
+}) {
   if (!categories.length) {
     return null
   }

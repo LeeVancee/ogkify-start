@@ -1,4 +1,4 @@
-import { Suspense, useTransition  } from 'react'
+import { Suspense, useTransition } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import type { Category } from '@/lib/types'
 import { Button } from '@/components/ui/button'
@@ -48,16 +48,16 @@ function ProductFiltersContent({
   const currentMaxPrice = Number(search.maxPrice || maxPrice.toString())
 
   // 获取已选择的颜色和尺寸名称
-  const currentColorNames = (
-    Array.isArray(search.color)
-      ? search.color
-      : search.color
-        ? [search.color]
-        : []
-  )
-  const currentSizeNames = (
-    Array.isArray(search.size) ? search.size : search.size ? [search.size] : []
-  )
+  const currentColorNames = Array.isArray(search.color)
+    ? search.color
+    : search.color
+      ? [search.color]
+      : []
+  const currentSizeNames = Array.isArray(search.size)
+    ? search.size
+    : search.size
+      ? [search.size]
+      : []
 
   const createQueryParams = (
     params: Record<string, string | Array<string> | boolean | null | undefined>,

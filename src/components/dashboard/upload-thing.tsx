@@ -24,14 +24,12 @@ export function UploadThingImage({
 
   const { startUpload, isUploading } = useUploadThing('imageUploader', {
     onClientUploadComplete: (res) => {
-      if (res) {
-        // 获取所有上传成功的图片 URL
-        const uploadedUrls = res.map((file) => file.url)
-        // 将新上传的 URL 添加到现有的 value 中
-        onChange([...value, ...uploadedUrls])
-        setFiles([])
-        toast.success('Image uploaded successfully')
-      }
+      // 获取所有上传成功的图片 URL
+      const uploadedUrls = res.map((file) => file.ufsUrl)
+      // 将新上传的 URL 添加到现有的 value 中
+      onChange([...value, ...uploadedUrls])
+      setFiles([])
+      toast.success('Image uploaded successfully')
     },
     onUploadError: (error) => {
       toast.error(`Upload failed: ${error.message}`)

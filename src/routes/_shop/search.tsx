@@ -1,12 +1,20 @@
+import { z } from 'zod'
 import ProductCard from '@/components/shop/product/product-card'
 import { searchProducts } from '@/server/search.server'
-import {} from '@tanstack/react-router'
+
+const searchParamsSchema = z.object({
+  q: z.string().optional(),
+})
 
 export const Route = createFileRoute({
+  validateSearch: searchParamsSchema,
+  loaderDeps: ({ search }) => ({
+    q: search.q,
+  }),
   component: RouteComponent,
-  loader: async ({ search }: any) => {
-    const query = search.q || ''
-    const products = await searchProducts(query)
+  loader: async ({ deps }) => {
+    const query = deps.q || ''
+    const products = await searchProducts({ data: query })
     return { products, query }
   },
 })
@@ -30,7 +38,7 @@ function RouteComponent() {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product: any) => (
+          {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>

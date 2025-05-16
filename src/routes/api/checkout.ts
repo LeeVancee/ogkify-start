@@ -58,10 +58,9 @@ export const ServerRoute = createServerFileRoute().methods({
             product_data: {
               name: productName,
               description: variantInfo ? `${variantInfo}` : undefined,
-              images:
-                item.product.images && item.product.images.length > 0
-                  ? [item.product.images[0]?.url]
-                  : undefined,
+              images: item.product.images[0]?.url
+                ? [item.product.images[0].url]
+                : undefined,
             },
             unit_amount: formatAmountForStripe(item.product.price),
           },

@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Loader2, User } from 'lucide-react'
 
+import { redirect } from '@tanstack/react-router'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -29,7 +30,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getSession } from '@/server/getSession.server'
-import { redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: ProfilePage,
@@ -120,12 +120,12 @@ function ProfilePage() {
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: session?.user?.name || '',
-      image: session?.user?.image || '',
+      name: session?.user.name || '',
+      image: session?.user.image || '',
     },
     values: {
-      name: session?.user?.name || '',
-      image: session?.user?.image || '',
+      name: session?.user.name || '',
+      image: session?.user.image || '',
     },
   })
 
@@ -187,11 +187,11 @@ function ProfilePage() {
                   <div className="flex flex-col items-center space-y-4 sm:flex-row sm:items-start sm:space-x-6 sm:space-y-0">
                     <Avatar className="h-24 w-24">
                       <AvatarImage
-                        src={session?.user?.image || ''}
-                        alt={session?.user?.name || 'User'}
+                        src={session?.user.image || ''}
+                        alt={session?.user.name || 'User'}
                       />
                       <AvatarFallback className="text-2xl">
-                        {session?.user?.name ? (
+                        {session?.user.name ? (
                           session.user.name.charAt(0).toUpperCase()
                         ) : (
                           <User />
@@ -244,7 +244,7 @@ function ProfilePage() {
                   <div className="space-y-2">
                     <FormLabel>Email</FormLabel>
                     <Input
-                      value={session?.user?.email || ''}
+                      value={session?.user.email || ''}
                       disabled
                       readOnly
                     />

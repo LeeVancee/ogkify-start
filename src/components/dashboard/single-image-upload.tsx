@@ -25,11 +25,9 @@ export function SingleImageUpload({
 
   const { startUpload, isUploading } = useUploadThing('categoryImage', {
     onClientUploadComplete: (res) => {
-      if (res) {
-        onChange(res[0].url)
-        setFile(null)
-        toast.success('Image uploaded successfully')
-      }
+      onChange(res[0].url)
+      setFile(null)
+      toast.success('Image uploaded successfully')
     },
     onUploadError: (error) => {
       toast.error(`Upload failed: ${error.message}`)

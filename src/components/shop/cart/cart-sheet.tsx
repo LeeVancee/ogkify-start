@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ShoppingBag } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type React from 'react'
 import { CartItem } from '@/components/shop/cart/cart-item'
 import { Button } from '@/components/ui/button'
@@ -98,9 +98,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
       <SheetContent className="flex w-full flex-col sm:max-w-lg">
         <SheetHeader className="px-1 pb-4">
           <SheetTitle className="text-xl">
-            {isLoading
-              ? 'Loading...'
-              : `Shopping Cart (${cartData.totalItems})`}
+            {isLoading ? '' : `Shopping Cart (${cartData.totalItems})`}
           </SheetTitle>
         </SheetHeader>
 

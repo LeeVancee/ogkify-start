@@ -1,5 +1,5 @@
-import {  UploadThingError, createUploadthing  } from 'uploadthing/server'
-import type {FileRouter} from 'uploadthing/server';
+import { UploadThingError, createUploadthing } from 'uploadthing/server'
+import type { FileRouter } from 'uploadthing/server'
 
 const f = createUploadthing()
 
@@ -24,12 +24,12 @@ export const ourFileRouter = {
       const user = await auth(req)
 
       // If you throw, the user will not be able to upload
-      if (!user) throw new UploadThingError('Unauthorized')
+      if (!user.id) throw new UploadThingError('Unauthorized')
 
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { userId: user.id }
     })
-    .onUploadComplete(async ({ metadata, file }) => {
+    .onUploadComplete(({ metadata, file }) => {
       // This code RUNS ON YOUR SERVER after upload
       console.log('Upload complete for userId:', metadata.userId)
 
@@ -40,11 +40,11 @@ export const ourFileRouter = {
     }),
 
   categoryImage: f({ image: { maxFileSize: '4MB', maxFileCount: 1 } })
-    .middleware(async () => {
+    .middleware(() => {
       return { uploadedBy: 'admin' }
     })
-    .onUploadComplete(async ({ metadata, file }) => {
-      console.log('上传文件:', file.url, metadata)
+    .onUploadComplete(({ metadata, file }) => {
+      console.log('上传文件:', file.ufsUrl, metadata)
       return { uploadedBy: metadata.uploadedBy }
     }),
 } satisfies FileRouter

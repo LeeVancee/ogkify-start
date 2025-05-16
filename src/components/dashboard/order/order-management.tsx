@@ -129,13 +129,13 @@ export function OrderManagement({
   }
 
   // 刷新订单列表
-  async function refreshOrders() {
+  function refreshOrders() {
     setIsLoading(true)
     try {
       // 使用浏览器重新加载页面以获取新数据
       window.location.reload()
-    } catch (error) {
-      console.error('刷新订单失败:', error)
+    } catch (err) {
+      console.error('刷新订单失败:', err)
       setError('刷新订单失败')
       setIsLoading(false)
     }
@@ -153,8 +153,8 @@ export function OrderManagement({
       if (response.success) {
         setSelectedOrder(response.order as any)
       }
-    } catch (error) {
-      console.error('获取订单详情失败:', error)
+    } catch (err) {
+      console.error('获取订单详情失败:', err)
     }
   }
 

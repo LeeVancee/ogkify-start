@@ -18,7 +18,8 @@ interface CategoryListProps {
 }
 
 export function CategoryList({ initialCategories }: CategoryListProps) {
-  const [categories, setCategories] = useState<Array<Category>>(initialCategories)
+  const [categories, setCategories] =
+    useState<Array<Category>>(initialCategories)
   const [searchQuery, setSearchQuery] = useState('')
 
   const filteredCategories = categories.filter(
