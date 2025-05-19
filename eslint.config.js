@@ -12,7 +12,10 @@ export default [
       '.vercel/**',
       'src/components/ui/**',
       'components/ui/**',
+      'generated/**',
       '.nitro',
+      '*.config.js',
+      '*.config.ts',
     ],
   },
 ]

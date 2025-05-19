@@ -97,13 +97,6 @@ export const handleAddToCartFormAction = createServerFn()
     const colorId = (formData.get('colorId') as string) || undefined
     const sizeId = (formData.get('sizeId') as string) || undefined
 
-    console.log('server received cart request:', {
-      productId,
-      quantity,
-      colorId,
-      sizeId,
-    })
-
     return {
       productId,
       quantity,

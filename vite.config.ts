@@ -15,6 +15,11 @@ export default defineConfig({
       tsr: {
         routeToken: 'layout',
       },
+      react: {
+        babel: {
+          plugins: [['babel-plugin-react-compiler']],
+        },
+      },
     }),
     tailwindcss(),
   ],
