@@ -24,7 +24,7 @@ export const Route = createRootRouteWithContext<{
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'OGKIFY',
       },
     ],
     links: [
@@ -33,6 +33,7 @@ export const Route = createRootRouteWithContext<{
         href: appCss,
         //  suppressHydrationWarning: true,
       },
+      { rel: 'icon', href: '/favicon.ico' },
     ],
   }),
 

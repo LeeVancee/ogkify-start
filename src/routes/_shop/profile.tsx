@@ -253,7 +253,7 @@ function ProfilePage() {
                     </p>
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="mt-6 flex justify-end pt-6 border-t">
                   <Button
                     type="submit"
                     disabled={
@@ -336,7 +336,7 @@ function ProfilePage() {
                     )}
                   />
                 </CardContent>
-                <CardFooter>
+                <CardFooter className="mt-6 flex justify-end pt-6 border-t">
                   <Button
                     type="submit"
                     disabled={

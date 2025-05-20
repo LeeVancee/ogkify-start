@@ -1,11 +1,12 @@
 import { Link, useLocation } from '@tanstack/react-router'
 import { Menu, Search, ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { DropDown } from '../DropDown'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CartSheet } from '@/components/shop/cart/cart-sheet'
 import { cn } from '@/lib/utils'
+import { getUserCart } from '@/server/cart.server'
 import {
   Sheet,
   SheetClose,
@@ -24,6 +25,12 @@ const navigation = [
 export default function Header() {
   const pathname = useLocation().pathname
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  // 获取购物车数据
+  const { data: cartData } = useQuery({
+    queryKey: ['cart'],
+    queryFn: () => getUserCart(),
+  })
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -101,13 +108,15 @@ export default function Header() {
 
           <DropDown />
 
-          <CartSheet>
-            <Button variant="ghost" size="icon" className="relative">
-              <ShoppingCart className="h-5 w-5" />
-
-              <span className="sr-only">Open Cart</span>
-            </Button>
-          </CartSheet>
+          <Link to="/cart" className="relative">
+            <ShoppingCart className="h-5 w-5" />
+            {cartData?.totalItems ? (
+              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                {cartData.totalItems}
+              </span>
+            ) : null}
+            <span className="sr-only">Open Cart</span>
+          </Link>
         </div>
       </div>
     </header>
