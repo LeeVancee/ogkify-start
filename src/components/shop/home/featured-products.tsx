@@ -16,8 +16,6 @@ export function FeaturedProducts({
   title = 'Featured Products',
   description = 'Explore our carefully selected products',
 }: FeaturedProductsProps) {
-  const [products] = useState(initialProducts)
-
   return (
     <section className="py-12">
       <div className="container px-4 mx-auto">
@@ -38,7 +36,7 @@ export function FeaturedProducts({
               </Link>
             </Button>
           </div>
-          <ProductGrid products={products} />
+          <ProductGrid products={initialProducts} />
           <div className="flex justify-center md:hidden mt-4">
             <Button asChild variant="outline">
               <Link to="/categories" search={{ featured: true }}>

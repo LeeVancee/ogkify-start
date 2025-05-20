@@ -5,8 +5,6 @@ import HeroSection from '@/components/shop/home/hero-section'
 import { getCategories } from '@/server/categories.server'
 import { getFeaturedProducts } from '@/server/get-featured-products.server'
 
-import {} from '@tanstack/react-router'
-
 export const Route = createFileRoute({
   component: RouteComponent,
   pendingComponent: () => <Loading />,
@@ -28,14 +26,8 @@ function RouteComponent() {
   return (
     <div className="">
       <HeroSection />
-      <div className=" mx-auto px-4 py-12">
-        <h2 className="text-3xl font-bold text-center mb-8">
-          Featured Products
-        </h2>
+      <div className="mx-auto px-4 py-12">
         <FeaturedProducts initialProducts={featuredProducts} />
-        <h2 className="text-3xl font-bold text-center mt-16 mb-8">
-          Shop by Category
-        </h2>
         <FeaturedCategories categories={categories} />
       </div>
     </div>
