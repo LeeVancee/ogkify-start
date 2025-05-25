@@ -1,28 +1,30 @@
 import { ChevronRight } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import type { Product } from '@/lib/types'
+import { useQuery } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { ProductGrid } from '@/components/shop/product/product-grid'
+import { getFeaturedProducts } from '@/server/get-featured-products.server'
+import { Skeleton } from '@/components/ui/skeleton'
 
-interface FeaturedProductsProps {
-  initialProducts: Array<Product>
-  title?: string
-  description?: string
-}
 
-export function FeaturedProducts({
-  initialProducts,
-  title = 'Featured Products',
-  description = 'Explore our carefully selected products',
-}: FeaturedProductsProps) {
+export function FeaturedProducts() {
+  const { data: products, isLoading } = useQuery({
+    queryKey: ['featured-products'],
+    queryFn: () => getFeaturedProducts({ data: 4 }),
+  })
+
+  if (isLoading) {
+    return <FeaturedProductsLoading />
+  }
+
   return (
     <section className="py-12">
       <div className="container px-4 mx-auto">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight">{title}</h2>
-              <p className="text-muted-foreground max-w-3xl">{description}</p>
+              <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
+              <p className="text-muted-foreground max-w-3xl">Explore our carefully selected products</p>
             </div>
             <Button
               variant="outline"
@@ -35,13 +37,55 @@ export function FeaturedProducts({
               </Link>
             </Button>
           </div>
-          <ProductGrid products={initialProducts} />
+          <ProductGrid products={products || []} />
           <div className="flex justify-center md:hidden mt-4">
             <Button asChild variant="outline">
               <Link to="/categories" search={{ featured: true }}>
                 View All Products
               </Link>
             </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export function FeaturedProductsLoading() {
+  return (
+    <section className="py-12">
+      <div className="container px-4 mx-auto">
+        <div className="flex flex-col gap-8">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div className="space-y-2">
+              <Skeleton className="h-9 w-48" />
+              <Skeleton className="h-5 w-80" />
+            </div>
+            <div className="hidden md:flex">
+              <Skeleton className="h-10 w-24" />
+            </div>
+          </div>
+
+          {/* skeleton */}
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-4">
+                <Skeleton className="aspect-square w-full rounded-lg" />
+                <div className="space-y-2">
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-4 w-3/5" />
+                  <Skeleton className="h-6 w-1/4" />
+                </div>
+                <div className="flex items-center justify-between">
+                  <Skeleton className="h-9 w-24" />
+                  <Skeleton className="h-9 w-9 rounded-full" />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center md:hidden mt-4">
+            <Skeleton className="h-10 w-32" />
           </div>
         </div>
       </div>
