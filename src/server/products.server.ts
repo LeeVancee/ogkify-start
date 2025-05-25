@@ -1,6 +1,14 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { prisma } from '@/lib/prisma'
+import { count, desc, eq, inArray } from 'drizzle-orm'
+import { db } from '@/db'
+import {
+  images,
+  orderItems,
+  products,
+  productsToColors,
+  productsToSizes,
+} from '@/db/schema'
 
 const productFormSchema = z.object({
   name: z.string().min(1, {
@@ -35,13 +43,21 @@ export const getProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const product = await prisma.product.findUnique({
-        where: { id },
-        include: {
+      const product = await db.query.products.findFirst({
+        where: (productsTable, { eq }) => eq(productsTable.id, id),
+        with: {
           category: true,
           images: true,
-          colors: true,
-          sizes: true,
+          colors: {
+            with: {
+              color: true,
+            },
+          },
+          sizes: {
+            with: {
+              size: true,
+            },
+          },
         },
       })
 
@@ -52,9 +68,11 @@ export const getProduct = createServerFn()
       return {
         ...product,
         price: product.price,
-        colorIds: product.colors.map((color) => color.id),
-        sizeIds: product.sizes.map((size) => size.id),
+        colorIds: product.colors.map((pc) => pc.color.id),
+        sizeIds: product.sizes.map((ps) => ps.size.id),
         images: product.images.map((image) => image.url),
+        colors: product.colors.map((pc) => pc.color),
+        sizes: product.sizes.map((ps) => ps.size),
       }
     } catch (error) {
       console.error('获取商品失败:', error)
@@ -80,55 +98,83 @@ export const updateProduct = createServerFn()
         categoryId,
         colorIds,
         sizeIds,
-        images,
+        images: imageUrls,
         isFeatured,
         isArchived,
       } = data
 
       // 查找现有的图片
-      const existingImages = await prisma.image.findMany({
-        where: { productId: id },
+      const existingImages = await db.query.images.findMany({
+        where: (imagesTable, { eq }) => eq(imagesTable.productId, id),
       })
 
       // 删除不再使用的图片
       const imagesToDelete = existingImages.filter(
-        (image) => !images.includes(image.url),
+        (image) => !imageUrls.includes(image.url),
       )
-      for (const image of imagesToDelete) {
-        await prisma.image.delete({
-          where: { id: image.id },
-        })
+
+      if (imagesToDelete.length > 0) {
+        await db.delete(images).where(
+          inArray(
+            images.id,
+            imagesToDelete.map((img) => img.id),
+          ),
+        )
       }
 
       // 添加新图片
       const existingUrls = existingImages.map((image) => image.url)
-      const newImages = images.filter((url) => !existingUrls.includes(url))
+      const newImages = imageUrls.filter((url) => !existingUrls.includes(url))
 
-      // 更新商品
-      const product = await prisma.product.update({
-        where: { id },
-        data: {
+      // 更新商品基本信息
+      const [updatedProduct] = await db
+        .update(products)
+        .set({
           name,
           description,
           price: parseFloat(price),
           categoryId,
           isFeatured,
           isArchived,
-          colors: {
-            set: [], // 先清空关联
-            connect: colorIds.map((colorId) => ({ id: colorId })),
-          },
-          sizes: {
-            set: [], // 先清空关联
-            connect: sizeIds.map((sizeId) => ({ id: sizeId })),
-          },
-          images: {
-            create: newImages.map((url) => ({ url })),
-          },
-        },
-      })
+        })
+        .where(eq(products.id, id))
+        .returning()
 
-      return { success: true, data: product }
+      // 更新颜色关联
+      await db
+        .delete(productsToColors)
+        .where(eq(productsToColors.productId, id))
+      if (colorIds.length > 0) {
+        await db.insert(productsToColors).values(
+          colorIds.map((colorId) => ({
+            productId: id,
+            colorId,
+          })),
+        )
+      }
+
+      // 更新尺寸关联
+      await db.delete(productsToSizes).where(eq(productsToSizes.productId, id))
+      if (sizeIds.length > 0) {
+        await db.insert(productsToSizes).values(
+          sizeIds.map((sizeId) => ({
+            productId: id,
+            sizeId,
+          })),
+        )
+      }
+
+      // 添加新图片
+      if (newImages.length > 0) {
+        await db.insert(images).values(
+          newImages.map((url) => ({
+            productId: id,
+            url,
+          })),
+        )
+      }
+
+      return { success: true, data: updatedProduct }
     } catch (error) {
       return {
         success: false,
@@ -140,27 +186,33 @@ export const updateProduct = createServerFn()
 // 获取所有商品
 export const getProducts = createServerFn().handler(async () => {
   try {
-    const products = await prisma.product.findMany({
-      include: {
+    const productsList = await db.query.products.findMany({
+      with: {
         category: true,
         images: true,
-        colors: true,
-        sizes: true,
+        colors: {
+          with: {
+            color: true,
+          },
+        },
+        sizes: {
+          with: {
+            size: true,
+          },
+        },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: (productsTable, { desc }) => [desc(productsTable.createdAt)],
     })
 
     // 格式化返回数据，只返回必要字段
-    return products.map((product) => ({
+    return productsList.map((product) => ({
       id: product.id,
       name: product.name,
       description: product.description,
       price: product.price,
       category: product.category,
-      colors: product.colors,
-      sizes: product.sizes,
+      colors: product.colors.map((pc) => pc.color),
+      sizes: product.sizes.map((ps) => ps.size),
       images: product.images,
       isFeatured: product.isFeatured,
       isArchived: product.isArchived,
@@ -191,30 +243,53 @@ export const createProduct = createServerFn()
         categoryId,
         colorIds,
         sizeIds,
-        images,
+        images: imageUrls,
         isFeatured,
         isArchived,
       } = data
 
-      const product = await prisma.product.create({
-        data: {
+      // 创建商品
+      const [product] = await db
+        .insert(products)
+        .values({
           name,
           description,
           price: parseFloat(price),
           categoryId,
           isFeatured,
           isArchived,
-          colors: {
-            connect: colorIds.map((colorId) => ({ id: colorId })),
-          },
-          sizes: {
-            connect: sizeIds.map((sizeId) => ({ id: sizeId })),
-          },
-          images: {
-            create: images.map((url) => ({ url })),
-          },
-        },
-      })
+        })
+        .returning()
+
+      // 创建颜色关联
+      if (colorIds.length > 0) {
+        await db.insert(productsToColors).values(
+          colorIds.map((colorId) => ({
+            productId: product.id,
+            colorId,
+          })),
+        )
+      }
+
+      // 创建尺寸关联
+      if (sizeIds.length > 0) {
+        await db.insert(productsToSizes).values(
+          sizeIds.map((sizeId) => ({
+            productId: product.id,
+            sizeId,
+          })),
+        )
+      }
+
+      // 创建图片
+      if (imageUrls.length > 0) {
+        await db.insert(images).values(
+          imageUrls.map((url) => ({
+            productId: product.id,
+            url,
+          })),
+        )
+      }
 
       return { success: true, data: product }
     } catch (error) {
@@ -227,15 +302,8 @@ export const deleteProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      // 先删除与商品相关的所有图片
-      await prisma.image.deleteMany({
-        where: { productId: id },
-      })
-
-      // 删除商品
-      await prisma.product.delete({
-        where: { id },
-      })
+      // 删除商品（关联的图片、颜色、尺寸会通过外键级联删除）
+      await db.delete(products).where(eq(products.id, id))
 
       return { success: true, message: '商品已成功删除' }
     } catch (error) {
@@ -247,8 +315,8 @@ export const deleteProduct = createServerFn()
 // 获取产品数量
 export const getProductsCount = createServerFn().handler(async () => {
   try {
-    const count = await prisma.product.count()
-    return count
+    const [result] = await db.select({ count: count() }).from(products)
+    return result.count
   } catch (error) {
     console.error('获取商品数量失败:', error)
     return 0
@@ -260,29 +328,30 @@ export const getPopularProducts = createServerFn()
   .validator((limit?: number) => limit || 5)
   .handler(async ({ data: limit }) => {
     try {
-      // 这里简化处理，实际应该基于订单量或其他指标计算热门程度
-      const products = await prisma.product.findMany({
-        include: {
+      // 使用关系查询获取热门产品
+      const productsList = await db.query.products.findMany({
+        with: {
           images: true,
           category: true,
           orderItems: true,
         },
-        orderBy: {
-          orderItems: {
-            _count: 'desc',
-          },
-        },
-        take: limit,
+        limit,
       })
 
-      return products.map((product) => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
-        imageUrl: product.images[0]?.url || null,
-        category: product.category.name || '',
-        orderCount: product.orderItems.length,
-      }))
+      // 按订单数量排序并格式化返回数据
+      const sortedProducts = productsList
+        .map((product) => ({
+          id: product.id,
+          name: product.name,
+          price: product.price,
+          imageUrl: product.images[0]?.url || null,
+          category: product.category.name || '',
+          orderCount: product.orderItems.length,
+        }))
+        .sort((a, b) => b.orderCount - a.orderCount)
+        .slice(0, limit)
+
+      return sortedProducts
     } catch (error) {
       console.error('获取热门产品失败:', error)
       return []

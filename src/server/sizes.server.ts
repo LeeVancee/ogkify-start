@@ -1,20 +1,21 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
+import { asc, eq } from 'drizzle-orm'
+import { db } from '@/db'
+import { sizes } from '@/db/schema'
 
 // 获取所有尺寸
 export const getSizes = createServerFn().handler(async () => {
   try {
-    const sizes = await prisma.size.findMany({
-      orderBy: {
-        name: 'asc',
+    const sizesList = await db.query.sizes.findMany({
+      orderBy: (sizes, { asc }) => [asc(sizes.name)],
+      columns: {
+        id: true,
+        name: true,
+        value: true,
       },
     })
 
-    return sizes.map((size) => ({
-      id: size.id,
-      name: size.name,
-      value: size.value,
-    }))
+    return sizesList
   } catch (error) {
     console.error('获取尺寸失败:', error)
     return []
@@ -26,8 +27,13 @@ export const getSize = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const size = await prisma.size.findUnique({
-        where: { id },
+      const size = await db.query.sizes.findFirst({
+        where: (sizes, { eq }) => eq(sizes.id, id),
+        columns: {
+          id: true,
+          name: true,
+          value: true,
+        },
       })
 
       if (!size) {
@@ -36,11 +42,7 @@ export const getSize = createServerFn()
 
       return {
         success: true,
-        size: {
-          id: size.id,
-          name: size.name,
-          value: size.value,
-        },
+        size,
       }
     } catch (error) {
       console.error('获取尺寸失败:', error)
@@ -53,12 +55,14 @@ export const createSize = createServerFn()
   .validator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
-      const size = await prisma.size.create({
-        data: {
+      const [size] = await db
+        .insert(sizes)
+        .values({
           name: data.name,
           value: data.value,
-        },
-      })
+        })
+        .returning()
+
       return { success: true, data: size }
     } catch (error) {
       return { success: false, error: '创建尺寸失败' }
@@ -72,13 +76,15 @@ export const updateSize = createServerFn()
   )
   .handler(async ({ data: { id, data } }) => {
     try {
-      const size = await prisma.size.update({
-        where: { id },
-        data: {
+      const [size] = await db
+        .update(sizes)
+        .set({
           name: data.name,
           value: data.value,
-        },
-      })
+        })
+        .where(eq(sizes.id, id))
+        .returning()
+
       return { success: true, data: size }
     } catch (error) {
       return { success: false, error: '更新尺寸失败' }
@@ -90,9 +96,8 @@ export const deleteSize = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await prisma.size.delete({
-        where: { id },
-      })
+      await db.delete(sizes).where(eq(sizes.id, id))
+
       return { success: true }
     } catch (error) {
       return { success: false, error: '删除尺寸失败' }

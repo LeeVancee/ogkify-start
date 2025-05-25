@@ -1,6 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
+import { and, count, desc, eq, gte, lt } from 'drizzle-orm'
 import { getSession } from './getSession.server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/db'
+import { orderItems, orders, user } from '@/db/schema'
 import { formatPrice } from '@/lib/utils'
 
 import { formatAmountForStripe, stripe } from '@/lib/stripe'
@@ -14,15 +16,13 @@ export const getUserOrders = createServerFn().handler(async () => {
       return { success: false, orders: [] }
     }
 
-    const orders = await prisma.order.findMany({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
+    const ordersList = await db.query.orders.findMany({
+      where: (ordersTable, { eq }) => eq(ordersTable.userId, session.user.id),
+      with: {
         items: {
-          include: {
+          with: {
             product: {
-              include: {
+              with: {
                 images: true,
               },
             },
@@ -32,13 +32,11 @@ export const getUserOrders = createServerFn().handler(async () => {
         },
         user: true,
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
     })
 
     // 转换为前端友好的格式
-    const formattedOrders = orders.map((order) => ({
+    const formattedOrders = ordersList.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
       customer: order.user.name,
@@ -90,16 +88,17 @@ export const getOrderDetails = createServerFn()
       }
 
       // 查询订单，确保订单属于当前登录用户
-      const order = await prisma.order.findUnique({
-        where: {
-          id: orderId,
-          userId: session.user.id,
-        },
-        include: {
+      const order = await db.query.orders.findFirst({
+        where: (ordersTable, { eq, and }) =>
+          and(
+            eq(ordersTable.id, orderId),
+            eq(ordersTable.userId, session.user.id),
+          ),
+        with: {
           items: {
-            include: {
+            with: {
               product: {
-                include: {
+                with: {
                   images: true,
                 },
               },
@@ -188,16 +187,17 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
       return { success: false, orders: [] }
     }
 
-    const orders = await prisma.order.findMany({
-      where: {
-        userId: session.user.id,
-        paymentStatus: 'UNPAID',
-      },
-      include: {
+    const ordersList = await db.query.orders.findMany({
+      where: (ordersTable, { eq, and }) =>
+        and(
+          eq(ordersTable.userId, session.user.id),
+          eq(ordersTable.paymentStatus, 'UNPAID'),
+        ),
+      with: {
         items: {
-          include: {
+          with: {
             product: {
-              include: {
+              with: {
                 images: true,
               },
             },
@@ -206,12 +206,10 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
     })
 
-    const formattedOrders = orders.map((order) => ({
+    const formattedOrders = ordersList.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
       createdAt: order.createdAt.toISOString(),
@@ -260,17 +258,18 @@ export const createPaymentSession = createServerFn()
       }
 
       // 获取订单信息
-      const order = await prisma.order.findUnique({
-        where: {
-          id: orderId,
-          userId: session.user.id,
-          paymentStatus: 'UNPAID', // 确保只能为未支付订单创建支付会话
-        },
-        include: {
+      const order = await db.query.orders.findFirst({
+        where: (ordersTable, { eq, and }) =>
+          and(
+            eq(ordersTable.id, orderId),
+            eq(ordersTable.userId, session.user.id),
+            eq(ordersTable.paymentStatus, 'UNPAID'),
+          ),
+        with: {
           items: {
-            include: {
+            with: {
               product: {
-                include: {
+                with: {
                   images: true,
                 },
               },
@@ -331,13 +330,13 @@ export const createPaymentSession = createServerFn()
       })
 
       // 更新订单的支付意向ID
-      await prisma.order.update({
-        where: { id: order.id },
-        data: {
+      await db
+        .update(orders)
+        .set({
           paymentMethod: 'Stripe',
           paymentIntent: checkoutSession.id,
-        },
-      })
+        })
+        .where(eq(orders.id, order.id))
 
       return {
         success: true,
@@ -382,10 +381,8 @@ export const updateOrderStatus = createServerFn()
       }
 
       // 查询订单，确保订单存在
-      const order = await prisma.order.findUnique({
-        where: {
-          id: orderId,
-        },
+      const order = await db.query.orders.findFirst({
+        where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
       })
 
       if (!order) {
@@ -393,10 +390,10 @@ export const updateOrderStatus = createServerFn()
       }
 
       // 更新订单状态 - 现在使用枚举类型
-      await prisma.order.update({
-        where: { id: orderId },
-        data: { status: orderStatus },
-      })
+      await db
+        .update(orders)
+        .set({ status: orderStatus })
+        .where(eq(orders.id, orderId))
 
       return {
         success: true,
@@ -412,37 +409,33 @@ export const updateOrderStatus = createServerFn()
 export const getOrdersStats = createServerFn().handler(async () => {
   try {
     // 获取待处理订单数量
-    const pendingOrders = await prisma.order.count({
-      where: {
-        status: 'PENDING',
-      },
-    })
+    const [pendingResult] = await db
+      .select({ count: count() })
+      .from(orders)
+      .where(eq(orders.status, 'PENDING'))
 
     // 获取已完成订单数量
-    const completedOrders = await prisma.order.count({
-      where: {
-        status: 'COMPLETED',
-      },
-    })
+    const [completedResult] = await db
+      .select({ count: count() })
+      .from(orders)
+      .where(eq(orders.status, 'COMPLETED'))
 
     // 获取总收入 (仅计算已支付订单)
-    const paidOrders = await prisma.order.findMany({
-      where: {
-        paymentStatus: 'PAID',
-      },
-      select: {
+    const paidOrdersList = await db.query.orders.findMany({
+      where: (ordersTable, { eq }) => eq(ordersTable.paymentStatus, 'PAID'),
+      columns: {
         totalAmount: true,
       },
     })
 
-    const totalRevenue = paidOrders.reduce(
+    const totalRevenue = paidOrdersList.reduce(
       (total, order) => total + order.totalAmount,
       0,
     )
 
     return {
-      pendingOrders,
-      completedOrders,
+      pendingOrders: pendingResult.count,
+      completedOrders: completedResult.count,
       totalRevenue,
     }
   } catch (error) {
@@ -460,22 +453,20 @@ export const getRecentOrders = createServerFn()
   .validator((limit: number = 5) => limit)
   .handler(async ({ data: limit }) => {
     try {
-      const recentOrders = await prisma.order.findMany({
-        take: limit,
-        orderBy: {
-          createdAt: 'desc',
-        },
-        include: {
+      const recentOrdersList = await db.query.orders.findMany({
+        limit,
+        orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
+        with: {
           user: {
-            select: {
+            columns: {
               name: true,
               email: true,
             },
           },
           items: {
-            include: {
+            with: {
               product: {
-                select: {
+                columns: {
                   name: true,
                 },
               },
@@ -484,7 +475,7 @@ export const getRecentOrders = createServerFn()
         },
       })
 
-      return recentOrders.map((order) => ({
+      return recentOrdersList.map((order) => ({
         id: order.id,
         orderNumber: order.orderNumber,
         date: order.createdAt,
@@ -518,21 +509,20 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
       }
 
       // 查询这个月的订单
-      const monthlyOrders = await prisma.order.findMany({
-        where: {
-          createdAt: {
-            gte: startDate,
-            lt: endDate,
-          },
-          paymentStatus: 'PAID',
-        },
-        select: {
+      const monthlyOrdersList = await db.query.orders.findMany({
+        where: (ordersTable, { gte, lt, and, eq }) =>
+          and(
+            gte(ordersTable.createdAt, startDate),
+            lt(ordersTable.createdAt, endDate),
+            eq(ordersTable.paymentStatus, 'PAID'),
+          ),
+        columns: {
           totalAmount: true,
         },
       })
 
       // 计算月度总收入
-      const total = monthlyOrders.reduce(
+      const total = monthlyOrdersList.reduce(
         (sum, order) => sum + order.totalAmount,
         0,
       )
@@ -579,12 +569,13 @@ export const deleteUnpaidOrder = createServerFn()
       }
 
       // 获取订单信息，确保它是用户自己的未支付订单
-      const order = await prisma.order.findUnique({
-        where: {
-          id: orderId,
-          userId: session.user.id,
-          paymentStatus: 'UNPAID',
-        },
+      const order = await db.query.orders.findFirst({
+        where: (ordersTable, { eq, and }) =>
+          and(
+            eq(ordersTable.id, orderId),
+            eq(ordersTable.userId, session.user.id),
+            eq(ordersTable.paymentStatus, 'UNPAID'),
+          ),
       })
 
       if (!order) {
@@ -595,18 +586,10 @@ export const deleteUnpaidOrder = createServerFn()
       }
 
       // 首先删除所有关联的订单项
-      await prisma.orderItem.deleteMany({
-        where: {
-          orderId,
-        },
-      })
+      await db.delete(orderItems).where(eq(orderItems.orderId, orderId))
 
       // 然后删除订单本身
-      await prisma.order.delete({
-        where: {
-          id: orderId,
-        },
-      })
+      await db.delete(orders).where(eq(orders.id, orderId))
 
       return { success: true, message: 'Order deleted successfully' }
     } catch (error) {

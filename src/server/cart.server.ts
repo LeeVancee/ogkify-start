@@ -1,6 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
+import { and, eq, isNull } from 'drizzle-orm'
 import { getSession } from './getSession.server'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/db'
+import { cartItems, carts, products } from '@/db/schema'
 
 export interface CartItemData {
   productId: string
@@ -23,8 +25,8 @@ export const addToCart = createServerFn()
       }
 
       // 检查商品是否存在
-      const product = await prisma.product.findUnique({
-        where: { id: data.productId },
+      const product = await db.query.products.findFirst({
+        where: (productsTable, { eq }) => eq(productsTable.id, data.productId),
       })
 
       if (!product) {
@@ -35,46 +37,53 @@ export const addToCart = createServerFn()
       console.log('try to add product to cart', session.user.id, data.productId)
 
       // 检查用户是否已有购物车
-      let cart = await prisma.cart.findFirst({
-        where: { userId: session.user.id },
+      let cart = await db.query.carts.findFirst({
+        where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
       })
 
       // 如果没有购物车，创建一个新的
       if (!cart) {
         console.log('user has no cart, create new cart')
-        cart = await prisma.cart.create({
-          data: { userId: session.user.id },
-        })
+        const [newCart] = await db
+          .insert(carts)
+          .values({
+            userId: session.user.id,
+          })
+          .returning()
+        cart = newCart
       }
 
       // 检查购物车中是否已有该商品
-      const existingItem = await prisma.cartItem.findFirst({
-        where: {
-          cartId: cart.id,
-          productId: data.productId,
-          colorId: data.colorId,
-          sizeId: data.sizeId,
-        },
+      const existingItem = await db.query.cartItems.findFirst({
+        where: (cartItemsTable, { eq, and, isNull }) =>
+          and(
+            eq(cartItemsTable.cartId, cart.id),
+            eq(cartItemsTable.productId, data.productId),
+            data.colorId
+              ? eq(cartItemsTable.colorId, data.colorId)
+              : isNull(cartItemsTable.colorId),
+            data.sizeId
+              ? eq(cartItemsTable.sizeId, data.sizeId)
+              : isNull(cartItemsTable.sizeId),
+          ),
       })
 
       if (existingItem) {
         console.log('cart already has this product, update quantity')
         // 更新现有商品数量
-        await prisma.cartItem.update({
-          where: { id: existingItem.id },
-          data: { quantity: existingItem.quantity + data.quantity },
-        })
+        await db
+          .update(cartItems)
+          .set({ quantity: existingItem.quantity + data.quantity })
+          .where(eq(cartItems.id, existingItem.id))
       } else {
         console.log('add new product to cart')
         // 添加新商品到购物车
-        await prisma.cartItem.create({
-          data: {
-            cartId: cart.id,
-            productId: data.productId,
-            quantity: data.quantity,
-            colorId: data.colorId,
-            sizeId: data.sizeId,
-          },
+        await db.insert(cartItems).values({
+          cartId: cart.id,
+          productId: data.productId,
+          quantity: data.quantity,
+          colorId: data.colorId || null,
+          sizeId: data.sizeId || null,
         })
       }
 
@@ -117,16 +126,14 @@ export const getUserCart = createServerFn().handler(async () => {
       return { items: [], totalItems: 0 }
     }
 
-    // 使用Prisma一次性查询购物车，包括所有关联数据
-    const cart = await prisma.cart.findFirst({
-      where: {
-        userId: session.user.id,
-      },
-      include: {
+    // 使用Drizzle关系查询一次性查询购物车，包括所有关联数据
+    const cart = await db.query.carts.findFirst({
+      where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
+      with: {
         items: {
-          include: {
+          with: {
             product: {
-              include: {
+              with: {
                 images: true,
               },
             },
@@ -181,9 +188,11 @@ export const removeFromCart = createServerFn()
       }
 
       // 验证这个购物车项属于当前用户
-      const cartItem = await prisma.cartItem.findUnique({
-        where: { id: cartItemId },
-        include: { cart: true },
+      const cartItem = await db.query.cartItems.findFirst({
+        where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
+        with: {
+          cart: true,
+        },
       })
 
       if (!cartItem || cartItem.cart.userId !== session.user.id) {
@@ -194,9 +203,7 @@ export const removeFromCart = createServerFn()
       }
 
       // 删除购物车项
-      await prisma.cartItem.delete({
-        where: { id: cartItemId },
-      })
+      await db.delete(cartItems).where(eq(cartItems.id, cartItemId))
 
       return { success: true, message: 'product removed from cart' }
     } catch (error) {
@@ -221,9 +228,11 @@ export const updateCartItemQuantity = createServerFn()
       }
 
       // 验证这个购物车项属于当前用户
-      const cartItem = await prisma.cartItem.findUnique({
-        where: { id: cartItemId },
-        include: { cart: true },
+      const cartItem = await db.query.cartItems.findFirst({
+        where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
+        with: {
+          cart: true,
+        },
       })
 
       if (!cartItem || cartItem.cart.userId !== session.user.id) {
@@ -234,10 +243,10 @@ export const updateCartItemQuantity = createServerFn()
       }
 
       // 更新数量
-      await prisma.cartItem.update({
-        where: { id: cartItemId },
-        data: { quantity },
-      })
+      await db
+        .update(cartItems)
+        .set({ quantity })
+        .where(eq(cartItems.id, cartItemId))
 
       return { success: true, message: 'cart updated' }
     } catch (error) {
@@ -256,8 +265,8 @@ export const clearCart = createServerFn().handler(async () => {
     }
 
     // 获取用户的购物车
-    const cart = await prisma.cart.findFirst({
-      where: { userId: session.user.id },
+    const cart = await db.query.carts.findFirst({
+      where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
     })
 
     if (!cart) {
@@ -265,9 +274,7 @@ export const clearCart = createServerFn().handler(async () => {
     }
 
     // 删除购物车中的所有商品
-    await prisma.cartItem.deleteMany({
-      where: { cartId: cart.id },
-    })
+    await db.delete(cartItems).where(eq(cartItems.cartId, cart.id))
 
     return { success: true, message: 'cart cleared' }
   } catch (error) {

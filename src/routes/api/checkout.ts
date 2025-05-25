@@ -1,7 +1,9 @@
 import { json } from '@tanstack/react-start'
 import { getWebRequest } from '@tanstack/react-start/server'
+import { eq } from 'drizzle-orm'
 import { formatAmountForStripe, stripe } from '@/lib/stripe'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/db'
+import { orderItems, orders } from '@/db/schema'
 import { auth } from '@/lib/auth'
 
 export const ServerRoute = createServerFileRoute().methods({
@@ -18,13 +20,13 @@ export const ServerRoute = createServerFileRoute().methods({
       }
 
       // 获取用户的购物车
-      const cart = await prisma.cart.findFirst({
-        where: { userId: session.user.id },
-        include: {
+      const cart = await db.query.carts.findFirst({
+        where: (carts, { eq }) => eq(carts.userId, session.user.id),
+        with: {
           items: {
-            include: {
+            with: {
               product: {
-                include: {
+                with: {
                   images: true,
                 },
               },
@@ -69,24 +71,28 @@ export const ServerRoute = createServerFileRoute().methods({
       })
 
       // 创建订单
-      const order = await prisma.order.create({
-        data: {
+      const [order] = await db
+        .insert(orders)
+        .values({
           userId: session.user.id,
           orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
           totalAmount: amount,
           status: 'PENDING',
           paymentStatus: 'UNPAID',
-          items: {
-            create: cart.items.map((item) => ({
-              productId: item.productId,
-              quantity: item.quantity,
-              price: item.product.price,
-              colorId: item.colorId,
-              sizeId: item.sizeId,
-            })),
-          },
-        },
-      })
+        })
+        .returning()
+
+      // 创建订单项
+      await db.insert(orderItems).values(
+        cart.items.map((item) => ({
+          orderId: order.id,
+          productId: item.productId,
+          quantity: item.quantity,
+          price: item.product.price,
+          colorId: item.colorId,
+          sizeId: item.sizeId,
+        })),
+      )
 
       const origin = new URL(request.url).origin
 
@@ -110,13 +116,13 @@ export const ServerRoute = createServerFileRoute().methods({
       })
 
       // 更新订单，添加 Stripe 会话 ID
-      await prisma.order.update({
-        where: { id: order.id },
-        data: {
+      await db
+        .update(orders)
+        .set({
           paymentMethod: 'Stripe',
           paymentIntent: checkoutSession.id,
-        },
-      })
+        })
+        .where(eq(orders.id, order.id))
 
       return json({
         sessionId: checkoutSession.id,

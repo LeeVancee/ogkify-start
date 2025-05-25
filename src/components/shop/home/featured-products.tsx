@@ -6,7 +6,6 @@ import { ProductGrid } from '@/components/shop/product/product-grid'
 import { getFeaturedProducts } from '@/server/get-featured-products.server'
 import { Skeleton } from '@/components/ui/skeleton'
 
-
 export function FeaturedProducts() {
   const { data: products, isLoading } = useQuery({
     queryKey: ['featured-products'],
@@ -23,8 +22,12 @@ export function FeaturedProducts() {
         <div className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
             <div className="space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight">Featured Products</h2>
-              <p className="text-muted-foreground max-w-3xl">Explore our carefully selected products</p>
+              <h2 className="text-3xl font-bold tracking-tight">
+                Featured Products
+              </h2>
+              <p className="text-muted-foreground max-w-3xl">
+                Explore our carefully selected products
+              </p>
             </div>
             <Button
               variant="outline"

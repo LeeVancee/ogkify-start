@@ -1,17 +1,26 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
+import { and, eq, ne } from 'drizzle-orm'
+import { db } from '@/db'
 
 // 获取产品详情
 export const getProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const product = await prisma.product.findUnique({
-        where: { id },
-        include: {
+      const product = await db.query.products.findFirst({
+        where: (products, { eq }) => eq(products.id, id),
+        with: {
           category: true,
-          colors: true,
-          sizes: true,
+          colors: {
+            with: {
+              color: true,
+            },
+          },
+          sizes: {
+            with: {
+              size: true,
+            },
+          },
           images: true,
         },
       })
@@ -27,15 +36,15 @@ export const getProduct = createServerFn()
         price: product.price,
         category: product.category.name,
         categoryId: product.categoryId,
-        colors: product.colors.map((color) => ({
-          id: color.id,
-          name: color.name,
-          value: color.value,
+        colors: product.colors.map((pc) => ({
+          id: pc.color.id,
+          name: pc.color.name,
+          value: pc.color.value,
         })),
-        sizes: product.sizes.map((size) => ({
-          id: size.id,
-          name: size.name,
-          value: size.value,
+        sizes: product.sizes.map((ps) => ({
+          id: ps.size.id,
+          name: ps.size.name,
+          value: ps.size.value,
         })),
         images: product.images.map((image) => image.url),
         inStock: true, // 这里可以根据实际情况设置
@@ -52,19 +61,20 @@ export const getRelatedProducts = createServerFn()
   .validator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
     try {
-      const products = await prisma.product.findMany({
-        where: {
-          categoryId: category,
-          id: { not: productId },
-          isArchived: false,
-        },
-        include: {
+      const productsList = await db.query.products.findMany({
+        where: (products, { eq, ne, and }) =>
+          and(
+            eq(products.categoryId, category),
+            ne(products.id, productId),
+            eq(products.isArchived, false),
+          ),
+        with: {
           images: true,
         },
-        take: 4,
+        limit: 4,
       })
 
-      return products.map((product) => ({
+      return productsList.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description,

@@ -1,5 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
+import { db } from '@/db'
 
 /**
  * 获取特色商品列表
@@ -9,25 +9,29 @@ export const getFeaturedProducts = createServerFn()
   .handler(async ({ data: limit }) => {
     try {
       // 从数据库获取特色商品
-      const products = await prisma.product.findMany({
-        where: {
-          isFeatured: true,
-          isArchived: false, // 不包括已归档商品
-        },
-        include: {
+      const productsList = await db.query.products.findMany({
+        where: (products, { eq, and }) =>
+          and(eq(products.isFeatured, true), eq(products.isArchived, false)),
+        with: {
           category: true,
           images: true,
-          colors: true,
-          sizes: true,
+          colors: {
+            with: {
+              color: true,
+            },
+          },
+          sizes: {
+            with: {
+              size: true,
+            },
+          },
         },
-        orderBy: {
-          createdAt: 'desc',
-        },
-        take: limit,
+        orderBy: (products, { desc }) => [desc(products.createdAt)],
+        limit,
       })
 
       // 格式化数据以符合SimpleProduct接口，只返回必要字段
-      return products.map((product) => ({
+      return productsList.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description,

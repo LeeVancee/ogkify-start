@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { prisma } from '@/lib/prisma'
+import { ilike, or } from 'drizzle-orm'
+import { db } from '@/db'
 
 /**
  * 根据查询字符串搜索产品
@@ -12,31 +13,20 @@ export const searchProducts = createServerFn()
     }
 
     try {
-      const products = await prisma.product.findMany({
-        where: {
-          OR: [
-            {
-              name: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-            {
-              description: {
-                contains: query,
-                mode: 'insensitive',
-              },
-            },
-          ],
-        },
-        include: {
+      const productsList = await db.query.products.findMany({
+        where: (products, { or, ilike }) =>
+          or(
+            ilike(products.name, `%${query}%`),
+            ilike(products.description, `%${query}%`),
+          ),
+        with: {
           images: true,
           category: true,
         },
       })
 
       // 格式化返回结果
-      return products.map((product) => ({
+      return productsList.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description,
