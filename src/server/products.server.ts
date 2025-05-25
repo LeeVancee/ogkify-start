@@ -152,7 +152,21 @@ export const getProducts = createServerFn().handler(async () => {
       },
     })
 
-    return products
+    // 格式化返回数据，只返回必要字段
+    return products.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      category: product.category,
+      colors: product.colors,
+      sizes: product.sizes,
+      images: product.images,
+      isFeatured: product.isFeatured,
+      isArchived: product.isArchived,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
+    }))
   } catch (error) {
     console.error('获取商品列表失败:', error)
     return []

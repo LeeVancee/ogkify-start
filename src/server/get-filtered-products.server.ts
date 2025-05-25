@@ -127,15 +127,13 @@ export const getFilteredProducts = createServerFn()
         include: {
           category: true,
           images: true,
-          colors: true,
-          sizes: true,
         },
         orderBy,
         skip,
         take: limit,
       })
 
-      // 格式化数据以符合Product接口
+      // 格式化数据以符合SimpleProduct接口，只返回必要字段
       const formattedProducts = products.map((product) => ({
         id: product.id,
         name: product.name,
@@ -143,11 +141,9 @@ export const getFilteredProducts = createServerFn()
         price: product.price,
         images: product.images.map((image) => image.url),
         category: product.category.name,
-        inStock: true, // 假设所有商品都有库存
-        rating: 5, // 默认评分
-        reviews: 0, // 默认评论数
-        discount: 0, // 默认无折扣
-        freeShipping: false, // 默认不提供免费配送
+        // 移除了不必要的硬编码字段：inStock, rating, reviews, discount, freeShipping
+        // 这些字段在ProductGrid中都没有被使用，减少数据传输量
+        // 如果将来需要这些字段，应该从数据库中获取真实数据而不是硬编码
       }))
 
       return {

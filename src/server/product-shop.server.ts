@@ -40,7 +40,6 @@ export const getProduct = createServerFn()
         images: product.images.map((image) => image.url),
         inStock: true, // 这里可以根据实际情况设置
         freeShipping: product.price > 200, // 假设价格高于200免运费
-        isFeatured: product.isFeatured,
       }
     } catch (error) {
       console.error('获取产品详情失败:', error)
