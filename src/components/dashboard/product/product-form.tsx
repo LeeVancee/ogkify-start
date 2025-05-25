@@ -171,8 +171,12 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
           name="categoryId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <FormLabel>Category *</FormLabel>
+              <Select 
+                onValueChange={field.onChange} 
+                value={field.value}
+                required
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Select category" />
