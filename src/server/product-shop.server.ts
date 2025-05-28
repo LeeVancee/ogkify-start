@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start'
 import { and, eq, ne } from 'drizzle-orm'
 import { db } from '@/db'
 
-// 获取产品详情
+// Get product details
 export const getProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -47,16 +47,16 @@ export const getProduct = createServerFn()
           value: ps.size.value,
         })),
         images: product.images.map((image) => image.url),
-        inStock: true, // 这里可以根据实际情况设置
-        freeShipping: product.price > 200, // 假设价格高于200免运费
+            inStock: true, // This can be set based on actual conditions
+    freeShipping: product.price > 200, // Assume free shipping for prices above 200
       }
     } catch (error) {
-      console.error('获取产品详情失败:', error)
+      console.error('Failed to get product details:', error)
       return null
     }
   })
 
-// 获取相关产品
+// Get related products
 export const getRelatedProducts = createServerFn()
   .validator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
@@ -82,7 +82,7 @@ export const getRelatedProducts = createServerFn()
         images: product.images.map((image) => image.url),
       }))
     } catch (error) {
-      console.error('获取相关产品失败:', error)
+      console.error('Failed to get related products:', error)
       return []
     }
   })

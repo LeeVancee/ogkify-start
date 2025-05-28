@@ -44,7 +44,7 @@ export const ourFileRouter = {
       return { uploadedBy: 'admin' }
     })
     .onUploadComplete(({ metadata, file }) => {
-      console.log('上传文件:', file.ufsUrl, metadata)
+      console.log('Uploaded file:', file.ufsUrl, metadata)
       return { uploadedBy: metadata.uploadedBy }
     }),
 } satisfies FileRouter

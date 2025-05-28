@@ -1,21 +1,14 @@
 import { Plus } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
-import { getProducts } from '@/server/products.server'
 import { ProductsView } from '@/components/dashboard/product/products-view'
-import Loading from '@/components/loading'
+import { } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
-  pendingComponent: Loading,
   component: RouteComponent,
-  loader: async () => {
-    const products = await getProducts()
-    return { products }
-  },
 })
 
 function RouteComponent() {
-  const { products } = Route.useLoaderData()
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
@@ -26,7 +19,7 @@ function RouteComponent() {
           </Link>
         </Button>
       </div>
-      <ProductsView products={products} />
+      <ProductsView />
     </div>
   )
 }

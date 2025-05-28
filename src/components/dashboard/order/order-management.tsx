@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   AlertCircle,
   AlertTriangle,
@@ -47,8 +48,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { getOrderDetails } from '@/server/orders.server'
+import { getOrderDetails, getUserOrders } from '@/server/orders.server'
 import { formatPrice } from '@/lib/utils'
+import Loading from '@/components/loading'
 
 // 定义订单项类型
 interface OrderItem {
@@ -96,20 +98,30 @@ interface FilterForm {
   }
 }
 
-interface OrderManagementProps {
-  initialOrders: Array<Order>
-}
-
-export function OrderManagement({
-  initialOrders: orders,
-}: OrderManagementProps) {
+export function OrderManagement() {
+  const queryClient = useQueryClient()
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [isStatusUpdateOpen, setIsStatusUpdateOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  console.log('orders', orders)
-  console.log('selectedOrder', selectedOrder)
+
+  // 使用 TanStack Query 获取订单数据
+  const { 
+    data: ordersResponse, 
+    isLoading, 
+    isError,
+    refetch
+  } = useQuery({
+    queryKey: ['orders'],
+    queryFn: async () => {
+      const response = await getUserOrders()
+      return response
+    },
+    staleTime: 1000 * 60 * 2, // 2分钟缓存
+  })
+
+  // 从响应中提取订单数组
+  const orders = ordersResponse?.success ? ordersResponse.orders : []
 
   // 使用react-hook-form管理过滤表单
   const { register, watch, setValue, handleSubmit } = useForm<FilterForm>({
@@ -130,15 +142,7 @@ export function OrderManagement({
 
   // 刷新订单列表
   function refreshOrders() {
-    setIsLoading(true)
-    try {
-      // 使用浏览器重新加载页面以获取新数据
-      window.location.reload()
-    } catch (err) {
-      console.error('刷新订单失败:', err)
-      setError('刷新订单失败')
-      setIsLoading(false)
-    }
+    refetch()
   }
 
   // 查看订单详情
@@ -154,7 +158,7 @@ export function OrderManagement({
         setSelectedOrder(response.order as any)
       }
     } catch (err) {
-      console.error('获取订单详情失败:', err)
+      console.error('Failed to get order details:', err)
     }
   }
 
@@ -168,9 +172,8 @@ export function OrderManagement({
   function handleStatusUpdated() {
     // 关闭状态更新对话框
     setIsStatusUpdateOpen(false)
-
-    // 不再需要手动刷新，因为更新组件现在会使用router.refresh()
-    // refreshOrders();
+    // 刷新订单数据
+    queryClient.invalidateQueries({ queryKey: ['orders'] })
   }
 
   // 过滤订单
@@ -182,22 +185,41 @@ export function OrderManagement({
       (order.customer?.toLowerCase() || '').includes(
         searchQuery.toLowerCase(),
       ) ||
-      (order.email?.toLowerCase() || '').includes(searchQuery.toLowerCase()) ||
-      (order.user?.name.toLowerCase() || '').includes(
-        searchQuery.toLowerCase(),
-      ) ||
-      (order.user?.email.toLowerCase() || '').includes(
-        searchQuery.toLowerCase(),
-      )
+      (order.email?.toLowerCase() || '').includes(searchQuery.toLowerCase())
 
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'paid' && order.paymentStatus === 'PAID') ||
       (statusFilter === 'unpaid' && order.paymentStatus === 'UNPAID') ||
-      (statusFilter === 'processing' && order.status === 'PROCESSING')
+      (statusFilter === 'processing' && order.status === 'PAID')
 
     return matchesSearch && matchesStatus
   })
+
+  // 处理加载状态
+  if (isLoading) {
+    return <Loading />
+  }
+
+  // 处理错误状态
+  if (isError) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load orders</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            There was an error loading the orders. Please try again.
+          </p>
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   // 获取订单状态图标
   function getOrderStatusIcon(status: string) {
@@ -443,7 +465,7 @@ export function OrderManagement({
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="font-medium min-w-[80px]">
-                        支付状态:
+                        Payment Status:
                       </span>
                       <div className="flex items-center gap-1">
                         {getPaymentStatusIcon(selectedOrder.paymentStatus)}
@@ -466,22 +488,18 @@ export function OrderManagement({
                       </span>
                       <span>{selectedOrder.totalItems}</span>
                     </div>
-                    {(selectedOrder.customer || selectedOrder.user?.name) && (
+                    {selectedOrder.customer && (
                       <div className="flex items-center gap-2">
                         <span className="font-medium min-w-[80px]">
                           Customer:
                         </span>
-                        <span>
-                          {selectedOrder.customer || selectedOrder.user?.name}
-                        </span>
+                        <span>{selectedOrder.customer}</span>
                       </div>
                     )}
-                    {(selectedOrder.email || selectedOrder.user?.email) && (
+                    {selectedOrder.email && (
                       <div className="flex items-center gap-2">
                         <span className="font-medium min-w-[80px]">Email:</span>
-                        <span>
-                          {selectedOrder.email || selectedOrder.user?.email}
-                        </span>
+                        <span>{selectedOrder.email}</span>
                       </div>
                     )}
                   </div>
@@ -678,10 +696,10 @@ function OrdersTable({
                   <TableCell>
                     <div>
                       <div className="font-medium">
-                        {order.customer || order.user?.name || '未知用户'}
+                        {order.customer || 'Unknown User'}
                       </div>
                       <div className="text-sm text-muted-foreground hidden md:block">
-                        {order.email || order.user?.email || '无邮箱信息'}
+                                                  {order.email || 'No email information'}
                       </div>
                     </div>
                   </TableCell>

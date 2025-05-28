@@ -1,22 +1,14 @@
-import { getUserOrders } from '@/server/orders.server'
 import { OrderManagement } from '@/components/dashboard/order/order-management'
-import Loading from '@/components/loading'
+import { } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
-  pendingComponent: Loading,
-  pendingMs: 0,
   component: RouteComponent,
-  loader: async () => {
-    const orders = await getUserOrders()
-    return { orders }
-  },
 })
 
 function RouteComponent() {
-  const { orders } = Route.useLoaderData()
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
-      <OrderManagement initialOrders={orders as any} />
+      <OrderManagement />
     </div>
   )
 }

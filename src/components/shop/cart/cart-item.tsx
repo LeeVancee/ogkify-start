@@ -112,7 +112,7 @@ export function CartItem({
             {/*   <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
               {item.colorName && (
                 <div className="flex items-center gap-1">
-                  <span>颜色:</span>
+                  <span>Color:</span>
                   <div className="flex items-center gap-1">
                     {item.colorValue && (
                       <div className="h-3 w-3 rounded-full border" style={{ backgroundColor: item.colorValue }} />

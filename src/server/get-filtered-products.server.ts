@@ -17,21 +17,21 @@ export interface FilterOptions {
 }
 
 /**
- * 获取并过滤商品列表的服务器函数
+ * Server function to get and filter product list
  */
 export const getFilteredProducts = createServerFn()
   .validator((options: FilterOptions = {}) => options)
   .handler(async ({ data: options }) => {
     try {
-      // 构建基础查询条件
+      // Build base query conditions
       const baseConditions = [eq(products.isArchived, false)]
 
-      // 特色商品筛选
+      // Featured products filter
       if (options.featured) {
         baseConditions.push(eq(products.isFeatured, true))
       }
 
-      // 价格范围筛选
+      // Price range filter
       if (options.minPrice !== undefined) {
         baseConditions.push(gte(products.price, options.minPrice))
       }
@@ -39,7 +39,7 @@ export const getFilteredProducts = createServerFn()
         baseConditions.push(lte(products.price, options.maxPrice))
       }
 
-      // 搜索查询
+      // Search query
       if (options.search) {
         baseConditions.push(
           or(
@@ -49,13 +49,13 @@ export const getFilteredProducts = createServerFn()
         )
       }
 
-      // 处理分页
+      // Handle pagination
       const page = options.page || 1
       const limit = options.limit || 12
       const offset = (page - 1) * limit
 
-      // 处理排序
-      let orderBy: any = [desc(products.createdAt)] // 默认按创建时间降序
+      // Handle sorting
+      let orderBy: any = [desc(products.createdAt)] // Default sort by creation time descending
 
       if (options.sort) {
         switch (options.sort) {
@@ -70,12 +70,12 @@ export const getFilteredProducts = createServerFn()
             break
           case 'featured':
           default:
-            // 特色商品优先，然后按创建时间降序
+            // Featured products first, then by creation time descending
             orderBy = [desc(products.isFeatured), desc(products.createdAt)]
         }
       }
 
-      // 使用关系查询获取商品列表
+      // Use relational query to get product list
       let productsList = await db.query.products.findMany({
         where: (productsTable, { and: andFn }) => andFn(...baseConditions),
         with: {
@@ -100,7 +100,7 @@ export const getFilteredProducts = createServerFn()
           } else if (options.sort === 'newest') {
             return [descFn(productsTable.createdAt)]
           } else {
-            // featured 或默认排序
+            // featured or default sorting
             return [
               descFn(productsTable.isFeatured),
               descFn(productsTable.createdAt),
@@ -109,7 +109,7 @@ export const getFilteredProducts = createServerFn()
         },
       })
 
-      // 在内存中进行额外的筛选（分类、颜色、尺寸）
+      // Additional filtering in memory (category, colors, sizes)
       if (options.category) {
         productsList = productsList.filter(
           (product) => product.category.name === options.category,
@@ -128,13 +128,13 @@ export const getFilteredProducts = createServerFn()
         )
       }
 
-      // 获取总数
+      // Get total count
       const total = productsList.length
 
-      // 应用分页
+      // Apply pagination
       const paginatedProducts = productsList.slice(offset, offset + limit)
 
-      // 格式化数据以符合SimpleProduct接口，只返回必要字段
+      // Format data to match SimpleProduct interface, return only necessary fields
       const formattedProducts = paginatedProducts.map((product) => ({
         id: product.id,
         name: product.name,
@@ -142,9 +142,9 @@ export const getFilteredProducts = createServerFn()
         price: product.price,
         images: product.images.map((image) => image.url),
         category: product.category.name,
-        // 移除了不必要的硬编码字段：inStock, rating, reviews, discount, freeShipping
-        // 这些字段在ProductGrid中都没有被使用，减少数据传输量
-        // 如果将来需要这些字段，应该从数据库中获取真实数据而不是硬编码
+        // Removed unnecessary hardcoded fields: inStock, rating, reviews, discount, freeShipping
+        // These fields are not used in ProductGrid, reducing data transfer
+        // If these fields are needed in the future, they should be fetched from database instead of hardcoded
       }))
 
       return {
@@ -152,7 +152,7 @@ export const getFilteredProducts = createServerFn()
         total,
       }
     } catch (error) {
-      console.error('获取筛选商品失败:', error)
+      console.error('Failed to get filtered products:', error)
       return { products: [], total: 0 }
     }
   })

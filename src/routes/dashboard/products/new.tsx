@@ -1,30 +1,37 @@
 import { ProductForm } from '@/components/dashboard/product/product-form'
+import { useQuery } from '@tanstack/react-query'
 import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'
 import { getSizes } from '@/server/sizes.server'
+import { } from '@tanstack/react-router'
+import Loading from '@/components/loading'
 
 export const Route = createFileRoute({
   component: RouteComponent,
-  loader: async () => {
-    const [categories, colors, sizes] = await Promise.all([
-      getCategories(),
-      getColors(),
-      getSizes(),
-    ])
-    return { categories, colors, sizes }
-  },
 })
 
 function RouteComponent() {
-  const { categories, colors, sizes } = Route.useLoaderData()
-  return (
-    <div className="flex flex-1 flex-col gap-4 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Add New Product</h1>
-      </div>
-      <div className="rounded-xl border p-6">
-        <ProductForm categories={categories} colors={colors} sizes={sizes} />
-      </div>
-    </div>
-  )
+  // parallel get required data
+  const { data: categories = [], isLoading: isLoadingCategories } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => getCategories(),
+  })
+
+  const { data: colors = [], isLoading: isLoadingColors } = useQuery({
+    queryKey: ['colors'],
+    queryFn: () => getColors(),
+  })
+
+  const { data: sizes = [], isLoading: isLoadingSizes } = useQuery({
+    queryKey: ['sizes'],
+    queryFn: () => getSizes(),
+  })
+
+  const isLoading = isLoadingCategories || isLoadingColors || isLoadingSizes
+
+  if (isLoading) {
+    return <Loading />
+  }
+
+  return <ProductForm categories={categories} colors={colors} sizes={sizes} />
 }

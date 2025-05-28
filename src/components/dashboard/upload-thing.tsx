@@ -63,7 +63,7 @@ export function UploadThingImage({
                 <X className="h-4 w-4" />
               </Button>
             </div>
-            <img className="object-cover" alt="商品图片" src={url} />
+            <img className="object-cover" alt="Product image" src={url} />
           </div>
         ))}
       </div>

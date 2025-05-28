@@ -6,9 +6,9 @@ import { orderItems, orders, user } from '@/db/schema'
 import { formatPrice } from '@/lib/utils'
 
 import { formatAmountForStripe, stripe } from '@/lib/stripe'
-// 定义订单状态类型
+// Define order status type
 type OrderStatus = 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCELLED'
-// 获取用户所有订单
+// Get all user orders
 export const getUserOrders = createServerFn().handler(async () => {
   try {
     const session = await getSession()
@@ -35,7 +35,7 @@ export const getUserOrders = createServerFn().handler(async () => {
       orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
     })
 
-    // 转换为前端友好的格式
+    // Convert to frontend-friendly format
     const formattedOrders = ordersList.map((order) => ({
       id: order.id,
       orderNumber: order.orderNumber,
@@ -71,12 +71,12 @@ export const getUserOrders = createServerFn().handler(async () => {
 
     return { success: true, orders: formattedOrders }
   } catch (error) {
-    console.error('获取订单失败:', error)
+    console.error('Failed to get orders:', error)
     return { success: false, orders: [] }
   }
 })
 
-// 获取订单详情
+// Get order details
 export const getOrderDetails = createServerFn()
   .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
@@ -84,10 +84,10 @@ export const getOrderDetails = createServerFn()
       const session = await getSession()
 
       if (!session?.user.id) {
-        return { error: '未授权', success: false }
+        return { error: 'Unauthorized', success: false }
       }
 
-      // 查询订单，确保订单属于当前登录用户
+      // Query order, ensure order belongs to current logged-in user
       const order = await db.query.orders.findFirst({
         where: (ordersTable, { eq, and }) =>
           and(
@@ -110,10 +110,10 @@ export const getOrderDetails = createServerFn()
       })
 
       if (!order) {
-        return { error: '找不到订单', success: false }
+        return { error: 'Order not found', success: false }
       }
 
-      // 格式化订单详情
+      // Format order details
       const totalItems = order.items.reduce(
         (sum, item) => sum + item.quantity,
         0,
@@ -174,12 +174,12 @@ export const getOrderDetails = createServerFn()
         order: formattedOrder,
       }
     } catch (error) {
-      console.error('获取订单详情失败:', error)
-      return { error: '获取订单详情失败', success: false }
+      console.error('Failed to get order details:', error)
+      return { error: 'Failed to get order details', success: false }
     }
   })
 
-// 获取用户未支付的订单
+// Get user unpaid orders
 export const getUnpaidOrders = createServerFn().handler(async () => {
   try {
     const session = await getSession()
@@ -241,12 +241,12 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
 
     return { success: true, orders: formattedOrders }
   } catch (error) {
-    console.error('获取未支付订单失败:', error)
+    console.error('Failed to get unpaid orders:', error)
     return { success: false, orders: [] }
   }
 })
 
-// 为未支付订单创建新的支付会话
+// Create new payment session for unpaid order
 export const createPaymentSession = createServerFn()
   .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
@@ -257,7 +257,7 @@ export const createPaymentSession = createServerFn()
         return { error: '未授权', success: false }
       }
 
-      // 获取订单信息
+      // Get order information
       const order = await db.query.orders.findFirst({
         where: (ordersTable, { eq, and }) =>
           and(
@@ -281,10 +281,10 @@ export const createPaymentSession = createServerFn()
       })
 
       if (!order) {
-        return { error: '找不到未支付的订单', success: false }
+        return { error: 'Order not found', success: false }
       }
 
-      // 构建行项目
+      // Build line items
       const lineItems = order.items.map((item) => {
         const productName = item.product.name
         const colorName = item.color?.name || ''
@@ -307,10 +307,10 @@ export const createPaymentSession = createServerFn()
         }
       })
 
-      // 使用绝对URL
+      // Use absolute URL
       const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-      // 创建Stripe结账会话
+      // Create Stripe checkout session
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: 'payment',
         line_items: lineItems,
@@ -329,7 +329,7 @@ export const createPaymentSession = createServerFn()
         },
       })
 
-      // 更新订单的支付意向ID
+      // Update order payment intent ID
       await db
         .update(orders)
         .set({
@@ -344,12 +344,12 @@ export const createPaymentSession = createServerFn()
         sessionUrl: checkoutSession.url,
       }
     } catch (error) {
-      console.error('创建支付会话失败:', error)
-      return { error: '创建支付会话失败', success: false }
+      console.error('Failed to create payment session:', error)
+      return { error: 'Failed to create payment session', success: false }
     }
   })
 
-// 更新订单状态
+// Update order status
 export const updateOrderStatus = createServerFn()
   .validator((input: { orderId: string; status: string }) => input)
   .handler(async ({ data: { orderId, status } }) => {
@@ -357,10 +357,10 @@ export const updateOrderStatus = createServerFn()
       const session = await getSession()
 
       if (!session?.user.id) {
-        return { error: '未授权', success: false }
+        return { error: 'Unauthorized', success: false }
       }
 
-      // 将字符串转换为OrderStatus类型
+      // Convert string to OrderStatus type
       let orderStatus: OrderStatus
 
       switch (status) {
@@ -368,7 +368,7 @@ export const updateOrderStatus = createServerFn()
           orderStatus = 'PENDING'
           break
         case 'PROCESSING':
-          orderStatus = 'PAID' // 在模型中，PAID对应处理中状态
+          orderStatus = 'PAID' // In the model, PAID corresponds to processing status
           break
         case 'COMPLETED':
           orderStatus = 'COMPLETED'
@@ -377,7 +377,7 @@ export const updateOrderStatus = createServerFn()
           orderStatus = 'CANCELLED'
           break
         default:
-          return { error: '无效的订单状态', success: false }
+          return { error: 'Invalid order status', success: false }
       }
 
       // 查询订单，确保订单存在
@@ -386,10 +386,10 @@ export const updateOrderStatus = createServerFn()
       })
 
       if (!order) {
-        return { error: '找不到订单', success: false }
+        return { error: 'Order not found', success: false }
       }
 
-      // 更新订单状态 - 现在使用枚举类型
+      // Update order status - now using enum type
       await db
         .update(orders)
         .set({ status: orderStatus })
@@ -397,30 +397,30 @@ export const updateOrderStatus = createServerFn()
 
       return {
         success: true,
-        message: '订单状态已更新',
+        message: 'Order status updated',
       }
     } catch (error) {
-      console.error('更新订单状态失败:', error)
-      return { error: '更新订单状态失败', success: false }
+      console.error('Failed to update order status:', error)
+      return { error: 'Failed to update order status', success: false }
     }
   })
 
-// 获取订单统计
+// Get order statistics
 export const getOrdersStats = createServerFn().handler(async () => {
   try {
-    // 获取待处理订单数量
+    // Get pending order count
     const [pendingResult] = await db
       .select({ count: count() })
       .from(orders)
       .where(eq(orders.status, 'PENDING'))
 
-    // 获取已完成订单数量
+    // Get completed order count
     const [completedResult] = await db
       .select({ count: count() })
       .from(orders)
       .where(eq(orders.status, 'COMPLETED'))
 
-    // 获取总收入 (仅计算已支付订单)
+    // Get total revenue (only for paid orders)
     const paidOrdersList = await db.query.orders.findMany({
       where: (ordersTable, { eq }) => eq(ordersTable.paymentStatus, 'PAID'),
       columns: {
@@ -439,7 +439,7 @@ export const getOrdersStats = createServerFn().handler(async () => {
       totalRevenue,
     }
   } catch (error) {
-    console.error('获取订单统计失败:', error)
+      console.error('Failed to get orders statistics:', error)
     return {
       pendingOrders: 0,
       completedOrders: 0,
@@ -448,7 +448,7 @@ export const getOrdersStats = createServerFn().handler(async () => {
   }
 })
 
-// 获取最近订单
+// Get recent orders
 export const getRecentOrders = createServerFn()
   .validator((limit: number = 5) => limit)
   .handler(async ({ data: limit }) => {
@@ -486,18 +486,18 @@ export const getRecentOrders = createServerFn()
         itemsCount: order.items.length,
       }))
     } catch (error) {
-      console.error('获取最近订单失败:', error)
+      console.error('Failed to get recent orders:', error)
       return []
     }
   })
 
-// 获取月度销售数据
+// Get monthly sales data
 export const getMonthlySalesData = createServerFn().handler(async () => {
   try {
     const currentYear = new Date().getFullYear()
     const monthlyData = []
 
-    // 为每个月份获取销售数据
+    // Get sales data for each month
     for (let month = 0; month < 12; month++) {
       const startDate = new Date(currentYear, month, 1)
       let endDate
@@ -508,7 +508,7 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
         endDate = new Date(currentYear, month + 1, 1)
       }
 
-      // 查询这个月的订单
+      // Query orders for this month
       const monthlyOrdersList = await db.query.orders.findMany({
         where: (ordersTable, { gte, lt, and, eq }) =>
           and(
@@ -521,14 +521,14 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
         },
       })
 
-      // 计算月度总收入
+      // Calculate monthly total revenue
       const total = monthlyOrdersList.reduce(
         (sum, order) => sum + order.totalAmount,
         0,
       )
 
-      // 获取月份名称
-      const monthName = `${month + 1}月`
+      // Get month name
+          const monthName = `${month + 1}`
 
       monthlyData.push({
         name: monthName,
@@ -538,26 +538,26 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
 
     return monthlyData
   } catch (error) {
-    console.error('获取月度销售数据失败:', error)
-    // 返回默认数据
+    console.error('Failed to get monthly sales data:', error)
+    // Return default data
     return [
-      { name: '1月', total: 0 },
-      { name: '2月', total: 0 },
-      { name: '3月', total: 0 },
-      { name: '4月', total: 0 },
-      { name: '5月', total: 0 },
-      { name: '6月', total: 0 },
-      { name: '7月', total: 0 },
-      { name: '8月', total: 0 },
-      { name: '9月', total: 0 },
-      { name: '10月', total: 0 },
-      { name: '11月', total: 0 },
-      { name: '12月', total: 0 },
+      { name: 'Jan', total: 0 },
+      { name: 'Feb', total: 0 },
+      { name: 'Mar', total: 0 },
+      { name: 'Apr', total: 0 },
+      { name: 'May', total: 0 },
+      { name: 'Jun', total: 0 },
+      { name: 'Jul', total: 0 },
+      { name: 'Aug', total: 0 },
+      { name: 'Sep', total: 0 },
+      { name: 'Oct', total: 0 },
+      { name: 'Nov', total: 0 },
+      { name: 'Dec', total: 0 },
     ]
   }
 })
 
-// 删除未支付订单
+// Delete unpaid order
 export const deleteUnpaidOrder = createServerFn()
   .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
@@ -568,7 +568,7 @@ export const deleteUnpaidOrder = createServerFn()
         return { success: false, error: 'Unauthorized' }
       }
 
-      // 获取订单信息，确保它是用户自己的未支付订单
+      // Get order information, ensure it is the user's unpaid order
       const order = await db.query.orders.findFirst({
         where: (ordersTable, { eq, and }) =>
           and(
@@ -585,39 +585,39 @@ export const deleteUnpaidOrder = createServerFn()
         }
       }
 
-      // 首先删除所有关联的订单项
+        // First delete all associated order items
       await db.delete(orderItems).where(eq(orderItems.orderId, orderId))
 
-      // 然后删除订单本身
+      // Then delete the order itself
       await db.delete(orders).where(eq(orders.id, orderId))
 
       return { success: true, message: 'Order deleted successfully' }
     } catch (error) {
-      console.error('删除订单失败:', error)
+      console.error('Failed to delete order:', error)
       return { success: false, error: 'Failed to delete order' }
     }
   })
 
-// 辅助函数
+// Helper functions
 
-// 获取订单状态的中文描述
+// Get order status description
 function getOrderStatusText(status: string): string {
   const statusMap: Record<string, string> = {
-    PENDING: '待处理',
-    PAID: '已支付',
-    COMPLETED: '已完成',
-    CANCELLED: '已取消',
+    PENDING: 'Pending',
+    PAID: 'Paid',
+    COMPLETED: 'Completed',
+    CANCELLED: 'Cancelled',
   }
   return statusMap[status] || status
 }
 
-// 获取支付状态的中文描述
+// Get payment status description
 function getPaymentStatusText(status: string): string {
   const statusMap: Record<string, string> = {
-    UNPAID: '未支付',
-    PAID: '已支付',
-    REFUNDED: '已退款',
-    FAILED: '支付失败',
+    UNPAID: 'Unpaid',
+    PAID: 'Paid',
+    REFUNDED: 'Refunded',
+    FAILED: 'Failed',
   }
   return statusMap[status] || status
 }

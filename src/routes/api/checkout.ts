@@ -16,7 +16,7 @@ export const ServerRoute = createServerFileRoute().methods({
       })
       // 检查用户是否已登录
       if (!session?.user.id) {
-        return json({ error: '必须登录才能结账' }, { status: 401 })
+        return json({ error: 'Must be logged in to checkout' }, { status: 401 })
       }
 
       // 获取用户的购物车
@@ -38,7 +38,7 @@ export const ServerRoute = createServerFileRoute().methods({
       })
 
       if (!cart || cart.items.length === 0) {
-        return json({ error: '购物车为空' }, { status: 400 })
+        return json({ error: 'Cart is empty' }, { status: 400 })
       }
 
       // 计算总金额
@@ -129,11 +129,11 @@ export const ServerRoute = createServerFileRoute().methods({
         sessionUrl: checkoutSession.url,
       })
     } catch (error) {
-      console.error('结账错误:', error)
-      return json({ error: '创建结账会话失败' }, { status: 500 })
+      console.error('Checkout error:', error)
+      return json({ error: 'Failed to create checkout session' }, { status: 500 })
     }
   },
   GET: () => {
-    return json({ message: '请使用 POST 方法访问此接口' })
+    return json({ message: 'Please use POST method to access this endpoint' })
   },
 })

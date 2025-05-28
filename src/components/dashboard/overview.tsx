@@ -10,20 +10,20 @@ interface OverviewProps {
 }
 
 export function Overview({ data }: OverviewProps) {
-  // 如果没有提供数据，使用默认的示例数据
+  // If no data is provided, use default sample data
   const chartData = data || [
-    { name: '1月', total: 1250 },
-    { name: '2月', total: 3200 },
-    { name: '3月', total: 2900 },
-    { name: '4月', total: 4100 },
-    { name: '5月', total: 4800 },
-    { name: '6月', total: 3800 },
-    { name: '7月', total: 5200 },
-    { name: '8月', total: 6100 },
-    { name: '9月', total: 4800 },
-    { name: '10月', total: 5600 },
-    { name: '11月', total: 6800 },
-    { name: '12月', total: 7900 },
+    { name: 'Jan', total: 1250 },
+    { name: 'Feb', total: 3200 },
+    { name: 'Mar', total: 2900 },
+    { name: 'Apr', total: 4100 },
+    { name: 'May', total: 4800 },
+    { name: 'Jun', total: 3800 },
+    { name: 'Jul', total: 5200 },
+    { name: 'Aug', total: 6100 },
+    { name: 'Sep', total: 4800 },
+    { name: 'Oct', total: 5600 },
+    { name: 'Nov', total: 6800 },
+    { name: 'Dec', total: 7900 },
   ]
 
   return (

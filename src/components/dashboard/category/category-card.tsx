@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Edit, Trash2 } from 'lucide-react'
+import { Edit, Trash2, Loader2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { DeleteDialog } from '../delete-dialog'
 import { Button } from '@/components/ui/button'
@@ -11,9 +11,10 @@ interface CategoryCardProps {
     imageUrl?: string | null
   }
   onDelete: (id: string) => void
+  isDeleting?: boolean
 }
 
-export function CategoryCard({ category, onDelete }: CategoryCardProps) {
+export function CategoryCard({ category, onDelete, isDeleting = false }: CategoryCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   return (
@@ -42,8 +43,13 @@ export function CategoryCard({ category, onDelete }: CategoryCardProps) {
               size="icon"
               className="h-8 w-8"
               onClick={() => setShowDeleteDialog(true)}
+              disabled={isDeleting}
             >
-              <Trash2 className="h-4 w-4" />
+              {isDeleting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
               <span className="sr-only">Delete</span>
             </Button>
           </div>

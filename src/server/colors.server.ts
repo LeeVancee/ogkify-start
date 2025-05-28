@@ -3,7 +3,7 @@ import { asc, eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { colors } from '@/db/schema'
 
-// 获取所有颜色
+// Get all colors
 export const getColors = createServerFn().handler(async () => {
   try {
     const colorsList = await db.query.colors.findMany({
@@ -17,12 +17,12 @@ export const getColors = createServerFn().handler(async () => {
 
     return colorsList
   } catch (error) {
-    console.error('获取颜色失败:', error)
+    console.error('Failed to get colors:', error)
     return []
   }
 })
 
-// 获取单个颜色
+// Get single color
 export const getColor = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -37,7 +37,7 @@ export const getColor = createServerFn()
       })
 
       if (!color) {
-        return { success: false, error: '颜色不存在' }
+        return { success: false, error: 'Color not found' }
       }
 
       return {
@@ -45,12 +45,12 @@ export const getColor = createServerFn()
         color,
       }
     } catch (error) {
-      console.error('获取颜色失败:', error)
-      return { success: false, error: '获取颜色失败' }
+      console.error('Failed to get color:', error)
+      return { success: false, error: 'Failed to get color' }
     }
   })
 
-// 创建颜色
+// Create color
 export const createColor = createServerFn()
   .validator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
@@ -65,11 +65,11 @@ export const createColor = createServerFn()
 
       return { success: true, data: color }
     } catch (error) {
-      return { success: false, error: '创建颜色失败' }
+      return { success: false, error: 'Failed to create color' }
     }
   })
 
-// 更新颜色
+// Update color
 export const updateColor = createServerFn()
   .validator(
     (params: { id: string; data: { name: string; value: string } }) => params,
@@ -87,11 +87,11 @@ export const updateColor = createServerFn()
 
       return { success: true, data: color }
     } catch (error) {
-      return { success: false, error: '更新颜色失败' }
+      return { success: false, error: 'Failed to update color' }
     }
   })
 
-// 删除颜色
+// Delete color
 export const deleteColor = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -100,6 +100,6 @@ export const deleteColor = createServerFn()
 
       return { success: true }
     } catch (error) {
-      return { success: false, error: '删除颜色失败' }
+      return { success: false, error: 'Failed to delete color' }
     }
   })

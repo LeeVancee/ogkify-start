@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 
-// 订单类型定义
+// order type definition
 interface OrderData {
   id: string
   orderNumber: string
@@ -15,7 +15,7 @@ interface OrderData {
   phone: string | null
 }
 
-// 定义查询参数schema
+// define search params schema
 const searchParamsSchema = z.object({
   session_id: z.string().optional(),
   order_id: z.string().optional(),
@@ -29,7 +29,7 @@ export const Route = createFileRoute({
 function CheckoutSuccessContent() {
   const { session_id, order_id } = Route.useSearch()
 
-  // 使用TanStack Query获取订单数据
+  // use TanStack Query to get order data
   const {
     data: orderData,
     isLoading,
@@ -42,10 +42,10 @@ function CheckoutSuccessContent() {
         return null
       }
 
-      // 等待一小段时间，以确保 webhook 处理完成
+      // wait for a short time to ensure webhook is processed
       await new Promise((resolve) => setTimeout(resolve, 1500))
 
-      // 从服务器获取订单信息
+      // get order information from server
       const response = await fetch(`/api/orders/${order_id}`)
 
       if (!response.ok) {
@@ -56,7 +56,7 @@ function CheckoutSuccessContent() {
       return data.order as OrderData
     },
     retry: 1,
-    staleTime: 1000 * 60 * 10, // 10分钟缓存，结账成功页面一般只访问一次
+    staleTime: 1000 * 60 * 10, // 10 minutes cache, checkout success page is usually only visited once
     enabled: Boolean(session_id && order_id),
   })
 

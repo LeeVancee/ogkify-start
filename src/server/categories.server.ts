@@ -3,7 +3,7 @@ import { count, desc, eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { categories } from '@/db/schema'
 
-// 获取所有分类
+// Get all categories
 export const getCategories = createServerFn().handler(async () => {
   try {
     const categoriesList = await db.query.categories.findMany({
@@ -20,7 +20,7 @@ export const getCategories = createServerFn().handler(async () => {
   }
 })
 
-// 获取单个分类
+// Get single category
 export const getCategory = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -35,13 +35,13 @@ export const getCategory = createServerFn()
       })
 
       if (!category) {
-        return { success: false, error: '分类不存在' }
+        return { success: false, error: 'Category not found' }
       }
 
       return { success: true, category }
     } catch (error) {
-      console.error('获取分类失败:', error)
-      return { success: false, error: '获取分类失败' }
+          console.error('Failed to get category:', error)
+    return { success: false, error: 'Failed to get category' }
     }
   })
 
@@ -50,7 +50,7 @@ interface CreateCategoryInput {
   imageUrl: string
 }
 
-// 创建分类
+// Create category
 export const createCategory = createServerFn()
   .validator((input: CreateCategoryInput) => input)
   .handler(async ({ data: input }) => {
@@ -65,12 +65,12 @@ export const createCategory = createServerFn()
 
       return { success: true, data: category }
     } catch (error) {
-      console.error('创建分类失败:', error)
-      return { success: false, error: '创建分类失败' }
+          console.error('Failed to create category:', error)
+    return { success: false, error: 'Failed to create category' }
     }
   })
 
-// 更新分类
+// Update category
 export const updateCategory = createServerFn()
   .validator((params: { id: string; name: string }) => params)
   .handler(async ({ data: { id, name } }) => {
@@ -83,11 +83,11 @@ export const updateCategory = createServerFn()
 
       return { success: true, data: category }
     } catch (error) {
-      return { success: false, error: '更新分类失败' }
+      return { success: false, error: 'Failed to update category' }
     }
   })
 
-// 删除分类
+// Delete category
 export const deleteCategory = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -96,17 +96,17 @@ export const deleteCategory = createServerFn()
 
       return { success: true }
     } catch (error) {
-      return { success: false, error: '删除分类失败' }
+      return { success: false, error: 'Failed to delete category' }
     }
   })
 
-// 获取分类数量
+// Get category count
 export const getCategoriesCount = createServerFn().handler(async () => {
   try {
     const [result] = await db.select({ count: count() }).from(categories)
     return result.count
   } catch (error) {
-    console.error('获取分类数量失败:', error)
+    console.error('Failed to get category count:', error)
     return 0
   }
 })

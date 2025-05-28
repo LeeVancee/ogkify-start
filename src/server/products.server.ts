@@ -12,25 +12,25 @@ import {
 
 const productFormSchema = z.object({
   name: z.string().min(1, {
-    message: '商品名称至少需要1个字符。',
+    message: 'Product name must be at least 1 character.',
   }),
   description: z.string().min(1, {
-    message: '商品描述至少需要1个字符。',
+    message: 'Product description must be at least 1 character.',
   }),
   price: z.string().refine((val) => !isNaN(Number(val)), {
-    message: '价格必须是有效的数字。',
+    message: 'Price must be a valid number.',
   }),
   categoryId: z.string({
-    required_error: '请选择一个分类。',
+    required_error: 'Please select a category.',
   }),
   colorIds: z.array(z.string()).min(1, {
-    message: '请至少选择一种颜色。',
+    message: 'Please select at least one color.',
   }),
   sizeIds: z.array(z.string()).min(1, {
-    message: '请至少选择一种尺寸。',
+    message: 'Please select at least one size.',
   }),
   images: z.array(z.string()).min(1, {
-    message: '请至少上传一张商品图片。',
+    message: 'Please upload at least one product image.',
   }),
   isFeatured: z.boolean().default(false),
   isArchived: z.boolean().default(false),
@@ -38,7 +38,7 @@ const productFormSchema = z.object({
 
 export type ProductFormType = z.infer<typeof productFormSchema>
 
-// 获取单个商品
+// Get single product
 export const getProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -75,17 +75,17 @@ export const getProduct = createServerFn()
         sizes: product.sizes.map((ps) => ps.size),
       }
     } catch (error) {
-      console.error('获取商品失败:', error)
+      console.error('Failed to get product:', error)
       return null
     }
   })
 
-// 更新商品
+// Update product
 export const updateProduct = createServerFn()
   .validator((params: { id: string; data: ProductFormType }) => {
     const validatedFields = productFormSchema.safeParse(params.data)
     if (!validatedFields.success) {
-      throw new Error('表单验证失败')
+      throw new Error('Form validation failed')
     }
     return params
   })
@@ -103,12 +103,12 @@ export const updateProduct = createServerFn()
         isArchived,
       } = data
 
-      // 查找现有的图片
+      // Find existing images
       const existingImages = await db.query.images.findMany({
         where: (imagesTable, { eq }) => eq(imagesTable.productId, id),
       })
 
-      // 删除不再使用的图片
+      // Delete unused images
       const imagesToDelete = existingImages.filter(
         (image) => !imageUrls.includes(image.url),
       )
@@ -122,11 +122,11 @@ export const updateProduct = createServerFn()
         )
       }
 
-      // 添加新图片
+      // Add new images
       const existingUrls = existingImages.map((image) => image.url)
       const newImages = imageUrls.filter((url) => !existingUrls.includes(url))
 
-      // 更新商品基本信息
+      // Update product basic information
       const [updatedProduct] = await db
         .update(products)
         .set({
@@ -140,7 +140,7 @@ export const updateProduct = createServerFn()
         .where(eq(products.id, id))
         .returning()
 
-      // 更新颜色关联
+      // Update color associations
       await db
         .delete(productsToColors)
         .where(eq(productsToColors.productId, id))
@@ -153,7 +153,7 @@ export const updateProduct = createServerFn()
         )
       }
 
-      // 更新尺寸关联
+      // Update size associations
       await db.delete(productsToSizes).where(eq(productsToSizes.productId, id))
       if (sizeIds.length > 0) {
         await db.insert(productsToSizes).values(
@@ -164,7 +164,7 @@ export const updateProduct = createServerFn()
         )
       }
 
-      // 添加新图片
+      // Add new images
       if (newImages.length > 0) {
         await db.insert(images).values(
           newImages.map((url) => ({
@@ -178,12 +178,12 @@ export const updateProduct = createServerFn()
     } catch (error) {
       return {
         success: false,
-        error: '更新商品失败。请稍后重试。',
+        error: 'Failed to update product. Please try again later.',
       }
     }
   })
 
-// 获取所有商品
+// Get all products
 export const getProducts = createServerFn().handler(async () => {
   try {
     const productsList = await db.query.products.findMany({
@@ -204,7 +204,7 @@ export const getProducts = createServerFn().handler(async () => {
       orderBy: (productsTable, { desc }) => [desc(productsTable.createdAt)],
     })
 
-    // 格式化返回数据，只返回必要字段
+    // Format return data, only return necessary fields
     return productsList.map((product) => ({
       id: product.id,
       name: product.name,
@@ -220,17 +220,17 @@ export const getProducts = createServerFn().handler(async () => {
       updatedAt: product.updatedAt,
     }))
   } catch (error) {
-    console.error('获取商品列表失败:', error)
+    console.error('Failed to get products list:', error)
     return []
   }
 })
 
-// 创建商品
+// Create product
 export const createProduct = createServerFn()
   .validator((data: ProductFormType) => {
     const validatedFields = productFormSchema.safeParse(data)
     if (!validatedFields.success) {
-      throw new Error('表单验证失败')
+      throw new Error('Form validation failed')
     }
     return data
   })
@@ -248,7 +248,7 @@ export const createProduct = createServerFn()
         isArchived,
       } = data
 
-      // 创建商品
+      // Create product
       const [product] = await db
         .insert(products)
         .values({
@@ -261,7 +261,7 @@ export const createProduct = createServerFn()
         })
         .returning()
 
-      // 创建颜色关联
+      // Create color associations
       if (colorIds.length > 0) {
         await db.insert(productsToColors).values(
           colorIds.map((colorId) => ({
@@ -271,7 +271,7 @@ export const createProduct = createServerFn()
         )
       }
 
-      // 创建尺寸关联
+      // Create size associations
       if (sizeIds.length > 0) {
         await db.insert(productsToSizes).values(
           sizeIds.map((sizeId) => ({
@@ -281,7 +281,7 @@ export const createProduct = createServerFn()
         )
       }
 
-      // 创建图片
+      // Create images
       if (imageUrls.length > 0) {
         await db.insert(images).values(
           imageUrls.map((url) => ({
@@ -293,42 +293,42 @@ export const createProduct = createServerFn()
 
       return { success: true, data: product }
     } catch (error) {
-      return { success: false, error: '创建商品失败' }
+      return { success: false, error: 'Failed to create product' }
     }
   })
 
-// 删除商品
+// Delete product
 export const deleteProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      // 删除商品（关联的图片、颜色、尺寸会通过外键级联删除）
+      // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
       await db.delete(products).where(eq(products.id, id))
 
-      return { success: true, message: '商品已成功删除' }
+      return { success: true, message: 'Product deleted successfully' }
     } catch (error) {
-      console.error('删除商品失败:', error)
-      return { success: false, message: '删除商品失败，请稍后重试' }
+          console.error('Failed to delete product:', error)
+    return { success: false, message: 'Failed to delete product, please try again later' }
     }
   })
 
-// 获取产品数量
+// Get product count
 export const getProductsCount = createServerFn().handler(async () => {
   try {
     const [result] = await db.select({ count: count() }).from(products)
     return result.count
   } catch (error) {
-    console.error('获取商品数量失败:', error)
+    console.error('Failed to get product count:', error)
     return 0
   }
 })
 
-// 获取热门产品
+// Get popular products
 export const getPopularProducts = createServerFn()
   .validator((limit?: number) => limit || 5)
   .handler(async ({ data: limit }) => {
     try {
-      // 使用关系查询获取热门产品
+      // Use relational query to get popular products
       const productsList = await db.query.products.findMany({
         with: {
           images: true,
@@ -338,7 +338,7 @@ export const getPopularProducts = createServerFn()
         limit,
       })
 
-      // 按订单数量排序并格式化返回数据
+      // Sort by order count and format return data
       const sortedProducts = productsList
         .map((product) => ({
           id: product.id,
@@ -353,7 +353,7 @@ export const getPopularProducts = createServerFn()
 
       return sortedProducts
     } catch (error) {
-      console.error('获取热门产品失败:', error)
+      console.error('Failed to get popular products:', error)
       return []
     }
   })

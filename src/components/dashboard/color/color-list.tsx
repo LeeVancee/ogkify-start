@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Search, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ColorCard } from './color-card'
-import { deleteColor } from '@/server/colors.server'
+import { deleteColor, getColors } from '@/server/colors.server'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import Loading from '@/components/loading'
 
 type Color = {
   id: string
@@ -13,13 +15,33 @@ type Color = {
   value: string
 }
 
-interface ColorListProps {
-  initialColors: Array<Color>
-}
-
-export function ColorList({ initialColors }: ColorListProps) {
-  const [colors, setColors] = useState<Array<Color>>(initialColors)
+export function ColorList() {
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Use TanStack Query to get color data
+  const { 
+    data: colors = [], 
+    isLoading, 
+    isError 
+  } = useQuery({
+    queryKey: ['colors'],
+    queryFn: () => getColors(),
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+  })
+
+  // Delete color mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteColor({ data: id }),
+    onSuccess: () => {
+      toast.success('Color deleted successfully')
+      // Auto refresh data
+      queryClient.invalidateQueries({ queryKey: ['colors'] })
+    },
+    onError: (error) => {
+      toast.error('Failed to delete color')
+    },
+  })
 
   const filteredColors = colors.filter(
     (color) =>
@@ -27,18 +49,33 @@ export function ColorList({ initialColors }: ColorListProps) {
       color.value.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  async function handleDelete(id: string) {
-    try {
-      const result = await deleteColor({ data: id })
-      if (result.success) {
-        toast.success('Color deleted successfully')
-        setColors(colors.filter((c) => c.id !== id))
-      } else {
-        toast.error(result.error)
-      }
-    } catch (error) {
-      toast.error('Failed to delete color')
-    }
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id)
+  }
+
+  // Handle loading state
+  if (isLoading) {
+    return <Loading />
+  }
+
+  // Handle error state
+  if (isError) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load colors</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            There was an error loading the colors. Please try again.
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['colors'] })}
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -86,7 +123,12 @@ export function ColorList({ initialColors }: ColorListProps) {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredColors.map((color) => (
-            <ColorCard key={color.id} color={color} onDelete={handleDelete} />
+            <ColorCard 
+              key={color.id} 
+              color={color} 
+              onDelete={handleDelete}
+              isDeleting={deleteMutation.isPending}
+            />
           ))}
         </div>
       )}

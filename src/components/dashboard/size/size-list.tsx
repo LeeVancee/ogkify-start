@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Search, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { SizeCard } from './size-card'
-import { deleteSize } from '@/server/sizes.server'
+import { deleteSize, getSizes } from '@/server/sizes.server'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import Loading from '@/components/loading'
 
 type Size = {
   id: string
@@ -13,13 +15,33 @@ type Size = {
   value: string
 }
 
-interface SizeListProps {
-  initialSizes: Array<Size>
-}
-
-export function SizeList({ initialSizes }: SizeListProps) {
-  const [sizes, setSizes] = useState<Array<Size>>(initialSizes)
+export function SizeList() {
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Use TanStack Query to get size data
+  const { 
+    data: sizes = [], 
+    isLoading, 
+    isError 
+  } = useQuery({
+    queryKey: ['sizes'],
+    queryFn: () => getSizes(),
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+  })
+
+  // Delete size mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteSize({ data: id }),
+    onSuccess: () => {
+      toast.success('Size deleted successfully')
+      // Auto refresh data
+      queryClient.invalidateQueries({ queryKey: ['sizes'] })
+    },
+    onError: (error) => {
+      toast.error('Failed to delete size')
+    },
+  })
 
   const filteredSizes = sizes.filter(
     (size) =>
@@ -27,18 +49,33 @@ export function SizeList({ initialSizes }: SizeListProps) {
       size.value.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  async function handleDelete(id: string) {
-    try {
-      const result = await deleteSize({ data: id })
-      if (result.success) {
-        toast.success('Size deleted successfully')
-        setSizes(sizes.filter((s) => s.id !== id))
-      } else {
-        toast.error(result.error)
-      }
-    } catch (error) {
-      toast.error('Failed to delete size')
-    }
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id)
+  }
+
+  // Handle loading state
+  if (isLoading) {
+    return <Loading />
+  }
+
+  // Handle error state
+  if (isError) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load sizes</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            There was an error loading the sizes. Please try again.
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['sizes'] })}
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -86,7 +123,12 @@ export function SizeList({ initialSizes }: SizeListProps) {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredSizes.map((size) => (
-            <SizeCard key={size.id} size={size} onDelete={handleDelete} />
+            <SizeCard 
+              key={size.id} 
+              size={size} 
+              onDelete={handleDelete}
+              isDeleting={deleteMutation.isPending}
+            />
           ))}
         </div>
       )}

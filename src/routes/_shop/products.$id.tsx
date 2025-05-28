@@ -27,9 +27,8 @@ export const Route = createFileRoute({
 function RouteComponent() {
   const { product, relatedProducts } = Route.useLoaderData()
 
-  // 转换product以符合ProductInfo组件的要求
-
-  // 适配器函数处理类型不匹配问题
+ 
+  // adapter function to handle type mismatch
   const addToCartAdapter = async (formData: FormData) => {
     try {
       const result = await handleAddToCartFormAction({ data: formData })

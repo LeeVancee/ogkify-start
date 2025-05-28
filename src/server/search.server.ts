@@ -36,7 +36,7 @@ export const searchProducts = createServerFn()
         category: product.category.name || '',
       }))
     } catch (error) {
-      console.error('搜索产品时出错:', error)
+      console.error('Error searching products:', error)
       return []
     }
   })

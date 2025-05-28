@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Edit, Grid, List, Plus, Search, Trash2, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { toast } from 'sonner'
 import { DeleteDialog } from '../delete-dialog'
@@ -17,9 +18,10 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { deleteProduct } from '@/server/products.server'
+import { deleteProduct, getProducts } from '@/server/products.server'
+import Loading from '@/components/loading'
 
-// 定义产品类型
+// Define product type
 interface Product {
   id: string
   name: string
@@ -33,16 +35,36 @@ interface Product {
   isArchived: boolean
 }
 
-interface ProductsViewProps {
-  products: Array<Product>
-}
-
-export function ProductsView({ products: initialProducts }: ProductsViewProps) {
-  const [products, setProducts] = useState(initialProducts)
+export function ProductsView() {
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [productToDelete, setProductToDelete] = useState<string | null>(null)
   const [viewType, setViewType] = useState<'table' | 'grid'>('table')
+
+  // Use TanStack Query to get product data
+  const { 
+    data: products = [], 
+    isLoading, 
+    isError 
+  } = useQuery({
+    queryKey: ['products'],
+    queryFn: () => getProducts(),
+    staleTime: 1000 * 60 * 3, // 3 minutes cache
+  })
+
+  // Delete product mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteProduct({ data: id }),
+    onSuccess: () => {
+      toast.success('Product deleted successfully')
+      // Auto refresh data
+      queryClient.invalidateQueries({ queryKey: ['products'] })
+    },
+    onError: (error) => {
+              toast.error('Delete failed')
+    },
+  })
 
   const filteredProducts = products.filter(
     (product) =>
@@ -56,23 +78,11 @@ export function ProductsView({ products: initialProducts }: ProductsViewProps) {
     setDeleteDialogOpen(true)
   }
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!productToDelete) return
-
-    try {
-      const result = await deleteProduct({ data: productToDelete })
-      if (result.success) {
-        setProducts(products.filter((p) => p.id !== productToDelete))
-        toast.success('商品删除成功')
-      } else {
-        toast.error(result.message)
-      }
-    } catch (error) {
-      toast.error('删除失败')
-    } finally {
-      setDeleteDialogOpen(false)
-      setProductToDelete(null)
-    }
+    deleteMutation.mutate(productToDelete)
+    setDeleteDialogOpen(false)
+    setProductToDelete(null)
   }
 
   const truncateText = (text: string, maxLength: number) => {
@@ -82,6 +92,31 @@ export function ProductsView({ products: initialProducts }: ProductsViewProps) {
   const productToDeleteData = productToDelete
     ? products.find((p) => p.id === productToDelete)
     : null
+
+  // Handle loading state
+  if (isLoading) {
+    return <Loading />
+  }
+
+  // Handle error state
+  if (isError) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load products</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            There was an error loading the products. Please try again.
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['products'] })}
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">
@@ -228,6 +263,7 @@ export function ProductsView({ products: initialProducts }: ProductsViewProps) {
                         size="icon"
                         className="h-8 w-8 text-destructive"
                         onClick={() => handleDeleteClick(product.id)}
+                        disabled={deleteMutation.isPending}
                       >
                         <Trash2 className="h-4 w-4" />
                         <span className="sr-only">Delete</span>
@@ -240,7 +276,7 @@ export function ProductsView({ products: initialProducts }: ProductsViewProps) {
           </Table>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
           {filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
@@ -264,7 +300,11 @@ export function ProductsView({ products: initialProducts }: ProductsViewProps) {
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
         onConfirm={handleDelete}
-        title={`Are you sure you want to delete the product "${productToDeleteData?.name}"?`}
+        title={
+          productToDeleteData
+            ? `Are you sure you want to delete "${productToDeleteData.name}"?`
+            : 'Are you sure you want to delete this product?'
+        }
       />
     </div>
   )

@@ -2,10 +2,12 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Search, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { CategoryCard } from './category-card'
-import { deleteCategory } from '@/server/categories.server'
+import { deleteCategory, getCategories } from '@/server/categories.server'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import Loading from '@/components/loading'
 
 type Category = {
   id: string
@@ -13,14 +15,33 @@ type Category = {
   imageUrl?: string | null
 }
 
-interface CategoryListProps {
-  initialCategories: Array<Category>
-}
-
-export function CategoryList({ initialCategories }: CategoryListProps) {
-  const [categories, setCategories] =
-    useState<Array<Category>>(initialCategories)
+export function CategoryList() {
+  const queryClient = useQueryClient()
   const [searchQuery, setSearchQuery] = useState('')
+
+  // Use TanStack Query to get category data
+  const { 
+    data: categories = [], 
+    isLoading, 
+    isError 
+  } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => getCategories(),
+    staleTime: 1000 * 60 * 5, // 5 minutes cache
+  })
+
+  // Delete category mutation
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteCategory({ data: id }),
+    onSuccess: () => {
+      toast.success('Category deleted successfully')
+      // Auto refresh data
+      queryClient.invalidateQueries({ queryKey: ['categories'] })
+    },
+    onError: (error) => {
+      toast.error('Failed to delete category')
+    },
+  })
 
   const filteredCategories = categories.filter(
     (category) =>
@@ -28,18 +49,33 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
       category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase()),
   )
 
-  async function handleDelete(id: string) {
-    try {
-      const result = await deleteCategory({ data: id })
-      if (result.success) {
-        toast.success('Category deleted successfully')
-        setCategories(categories.filter((c) => c.id !== id))
-      } else {
-        toast.error(result.error)
-      }
-    } catch (error) {
-      toast.error('Failed to delete category')
-    }
+  const handleDelete = (id: string) => {
+    deleteMutation.mutate(id)
+  }
+
+  // Handle loading state
+  if (isLoading) {
+    return <Loading />
+  }
+
+  // Handle error state
+  if (isError) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load categories</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            There was an error loading the categories. Please try again.
+          </p>
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey: ['categories'] })}
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -91,6 +127,7 @@ export function CategoryList({ initialCategories }: CategoryListProps) {
               key={category.id}
               category={category}
               onDelete={handleDelete}
+              isDeleting={deleteMutation.isPending}
             />
           ))}
         </div>

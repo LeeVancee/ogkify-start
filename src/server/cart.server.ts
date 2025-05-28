@@ -11,20 +11,20 @@ export interface CartItemData {
   sizeId?: string
 }
 
-// 将商品添加到购物车
+// Add product to cart
 export const addToCart = createServerFn()
   .validator((data: CartItemData) => data)
   .handler(async ({ data }) => {
     try {
       const session = await getSession()
 
-      // 检查用户是否登录
+      // Check if user is logged in
       if (!session?.user.id) {
         console.error('add to cart failed: user not logged in')
         return { error: 'user not logged in, please login', success: false }
       }
 
-      // 检查商品是否存在
+      // Check if product exists
       const product = await db.query.products.findFirst({
         where: (productsTable, { eq }) => eq(productsTable.id, data.productId),
       })
@@ -36,12 +36,12 @@ export const addToCart = createServerFn()
 
       console.log('try to add product to cart', session.user.id, data.productId)
 
-      // 检查用户是否已有购物车
+      // Check if user already has a cart
       let cart = await db.query.carts.findFirst({
         where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
       })
 
-      // 如果没有购物车，创建一个新的
+      // If no cart exists, create a new one
       if (!cart) {
         console.log('user has no cart, create new cart')
         const [newCart] = await db
@@ -53,7 +53,7 @@ export const addToCart = createServerFn()
         cart = newCart
       }
 
-      // 检查购物车中是否已有该商品
+      // Check if the product already exists in the cart
       const existingItem = await db.query.cartItems.findFirst({
         where: (cartItemsTable, { eq, and, isNull }) =>
           and(
@@ -70,14 +70,14 @@ export const addToCart = createServerFn()
 
       if (existingItem) {
         console.log('cart already has this product, update quantity')
-        // 更新现有商品数量
+        // Update existing product quantity
         await db
           .update(cartItems)
           .set({ quantity: existingItem.quantity + data.quantity })
           .where(eq(cartItems.id, existingItem.id))
       } else {
         console.log('add new product to cart')
-        // 添加新商品到购物车
+        // Add new product to cart
         await db.insert(cartItems).values({
           cartId: cart.id,
           productId: data.productId,
@@ -94,7 +94,7 @@ export const addToCart = createServerFn()
     }
   })
 
-// 处理表单提交的服务器操作
+// Handle form submission server action
 export const handleAddToCartFormAction = createServerFn()
   .validator((formData: FormData) => {
     if (!(formData instanceof FormData)) {
@@ -117,7 +117,7 @@ export const handleAddToCartFormAction = createServerFn()
     return addToCart({ data: data })
   })
 
-// 获取用户购物车
+// Get user cart
 export const getUserCart = createServerFn().handler(async () => {
   try {
     const session = await getSession()
@@ -126,7 +126,7 @@ export const getUserCart = createServerFn().handler(async () => {
       return { items: [], totalItems: 0 }
     }
 
-    // 使用Drizzle关系查询一次性查询购物车，包括所有关联数据
+    // Use Drizzle relational query to fetch cart with all associated data in one query
     const cart = await db.query.carts.findFirst({
       where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
       with: {
@@ -148,7 +148,7 @@ export const getUserCart = createServerFn().handler(async () => {
       return { items: [], totalItems: 0 }
     }
 
-    // 格式化购物车数据
+    // Format cart data
     const formattedItems = cart.items.map((item) => {
       return {
         id: item.id,
@@ -176,7 +176,7 @@ export const getUserCart = createServerFn().handler(async () => {
   }
 })
 
-// 从购物车移除商品
+// Remove product from cart
 export const removeFromCart = createServerFn()
   .validator((cartItemId: string) => cartItemId)
   .handler(async ({ data: cartItemId }) => {
@@ -187,7 +187,7 @@ export const removeFromCart = createServerFn()
         return { error: 'user not logged in', success: false }
       }
 
-      // 验证这个购物车项属于当前用户
+      // Verify this cart item belongs to current user
       const cartItem = await db.query.cartItems.findFirst({
         where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
         with: {
@@ -202,7 +202,7 @@ export const removeFromCart = createServerFn()
         }
       }
 
-      // 删除购物车项
+      // Delete cart item
       await db.delete(cartItems).where(eq(cartItems.id, cartItemId))
 
       return { success: true, message: 'product removed from cart' }
@@ -212,7 +212,7 @@ export const removeFromCart = createServerFn()
     }
   })
 
-// 更新购物车商品数量
+// Update cart item quantity
 export const updateCartItemQuantity = createServerFn()
   .validator((params: { cartItemId: string; quantity: number }) => params)
   .handler(async ({ data: { cartItemId, quantity } }) => {
@@ -227,7 +227,7 @@ export const updateCartItemQuantity = createServerFn()
         return removeFromCart({ data: cartItemId })
       }
 
-      // 验证这个购物车项属于当前用户
+      // Verify this cart item belongs to current user
       const cartItem = await db.query.cartItems.findFirst({
         where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
         with: {
@@ -242,7 +242,7 @@ export const updateCartItemQuantity = createServerFn()
         }
       }
 
-      // 更新数量
+      // Update quantity
       await db
         .update(cartItems)
         .set({ quantity })
@@ -255,7 +255,7 @@ export const updateCartItemQuantity = createServerFn()
     }
   })
 
-// 清空购物车
+// Clear cart
 export const clearCart = createServerFn().handler(async () => {
   try {
     const session = await getSession()
@@ -264,7 +264,7 @@ export const clearCart = createServerFn().handler(async () => {
       return { error: 'user not logged in', success: false }
     }
 
-    // 获取用户的购物车
+    // Get user's cart
     const cart = await db.query.carts.findFirst({
       where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
     })
@@ -273,7 +273,7 @@ export const clearCart = createServerFn().handler(async () => {
       return { success: true, message: 'cart is already empty' }
     }
 
-    // 删除购物车中的所有商品
+    // Delete all items in the cart
     await db.delete(cartItems).where(eq(cartItems.cartId, cart.id))
 
     return { success: true, message: 'cart cleared' }

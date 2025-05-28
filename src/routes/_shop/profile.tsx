@@ -42,13 +42,13 @@ export const Route = createFileRoute({
   },
 })
 
-// 用户信息表单验证
+// profile form validation
 const profileFormSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
   image: z.string().nullable().optional(),
 })
 
-// 密码修改表单验证
+// password change form validation
 const passwordFormSchema = z
   .object({
     currentPassword: z
@@ -73,14 +73,14 @@ function ProfilePage() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState('profile')
 
-  // 获取用户会话数据
+  // get session
   const { data: session, isLoading: isLoadingSession } = useQuery({
     queryKey: ['session'],
     queryFn: getSession,
-    staleTime: 1000 * 60 * 5, // 5分钟
+    staleTime: 1000 * 60 * 5, // 5 minutes
   })
 
-  // 更新用户信息的mutation
+  // update user profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (values: ProfileFormValues) => {
       return await authClient.updateUser(values)
@@ -96,13 +96,13 @@ function ProfilePage() {
     },
   })
 
-  // 修改密码的mutation
+  // change password mutation
   const changePasswordMutation = useMutation({
     mutationFn: async (values: PasswordFormValues) => {
       return await authClient.changePassword({
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
-        revokeOtherSessions: true, // 吊销其他会话
+        revokeOtherSessions: true, // revoke other sessions
       })
     },
     onSuccess: () => {
@@ -116,7 +116,7 @@ function ProfilePage() {
     },
   })
 
-  // 用户信息表单
+  // user profile form
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
@@ -129,7 +129,7 @@ function ProfilePage() {
     },
   })
 
-  // 密码修改表单
+  // password change form
   const passwordForm = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: {
@@ -139,12 +139,12 @@ function ProfilePage() {
     },
   })
 
-  // 更新个人资料
+  // update user profile
   const onProfileSubmit = (values: ProfileFormValues) => {
     updateProfileMutation.mutate(values)
   }
 
-  // 更改密码
+  // change password
   const onPasswordSubmit = (values: PasswordFormValues) => {
     changePasswordMutation.mutate(values)
   }
@@ -171,7 +171,7 @@ function ProfilePage() {
           <TabsTrigger value="security">Security</TabsTrigger>
         </TabsList>
 
-        {/* 个人资料 */}
+        {/* user profile */}
         <TabsContent value="profile">
           <Card>
             <CardHeader>
@@ -183,7 +183,7 @@ function ProfilePage() {
             <Form {...profileForm}>
               <form onSubmit={profileForm.handleSubmit(onProfileSubmit)}>
                 <CardContent className="space-y-6">
-                  {/* 用户头像 */}
+                  {/* user avatar */}
                   <div className="flex flex-col items-center space-y-4 sm:flex-row sm:items-start sm:space-x-6 sm:space-y-0">
                     <Avatar className="h-24 w-24">
                       <AvatarImage
@@ -222,7 +222,7 @@ function ProfilePage() {
                     </div>
                   </div>
 
-                  {/* 用户名称 */}
+                    {/* user name */}
                   <FormField
                     control={profileForm.control}
                     name="name"
@@ -240,7 +240,7 @@ function ProfilePage() {
                     )}
                   />
 
-                  {/* 邮箱(只读) */}
+                  {/* email (read only) */}
                   <div className="space-y-2">
                     <FormLabel>Email</FormLabel>
                     <Input
@@ -276,7 +276,7 @@ function ProfilePage() {
           </Card>
         </TabsContent>
 
-        {/* 安全设置 */}
+        {/* security settings */}
         <TabsContent value="security">
           <Card>
             <CardHeader>
@@ -288,7 +288,7 @@ function ProfilePage() {
             <Form {...passwordForm}>
               <form onSubmit={passwordForm.handleSubmit(onPasswordSubmit)}>
                 <CardContent className="space-y-4">
-                  {/* 当前密码 */}
+                  {/* current password */}
                   <FormField
                     control={passwordForm.control}
                     name="currentPassword"
@@ -303,7 +303,7 @@ function ProfilePage() {
                     )}
                   />
 
-                  {/* 新密码 */}
+                  {/* new password */}
                   <FormField
                     control={passwordForm.control}
                     name="newPassword"
@@ -321,7 +321,7 @@ function ProfilePage() {
                     )}
                   />
 
-                  {/* 确认新密码 */}
+                  {/* confirm new password */}
                   <FormField
                     control={passwordForm.control}
                     name="confirmPassword"

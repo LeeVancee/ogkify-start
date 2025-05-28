@@ -1,19 +1,11 @@
-import { getColors } from '@/server/colors.server'
 import { ColorList } from '@/components/dashboard/color/color-list'
-import Loading from '@/components/loading'
+import { } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
-  pendingComponent: Loading,
-  pendingMs: 0,
   component: RouteComponent,
-  loader: async () => {
-    const colors = await getColors()
-    return { colors }
-  },
 })
 
 function RouteComponent() {
-  const { colors } = Route.useLoaderData()
   return (
     <div className="flex flex-1 flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
@@ -22,7 +14,7 @@ function RouteComponent() {
       <div className="grid gap-6">
         <div className="rounded-xl border p-6">
           <h2 className="mb-4 text-lg font-semibold">Colors List</h2>
-          <ColorList initialColors={colors} />
+          <ColorList />
         </div>
       </div>
     </div>

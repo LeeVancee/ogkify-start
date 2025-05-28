@@ -35,9 +35,9 @@ export function NoOrders({
 export function EmptyCart() {
   return (
     <NoOrders
-      title="您的购物车是空的"
-      description="浏览我们的商品，将您喜欢的商品添加到购物车"
-      buttonText="继续购物"
+      title="Your cart is empty"
+      description="Browse our products and add your favorite items to cart"
+      buttonText="Continue Shopping"
     />
   )
 }

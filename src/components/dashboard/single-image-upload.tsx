@@ -56,7 +56,7 @@ export function SingleImageUpload({
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <img className="object-cover" alt="分类图片" src={value} />
+          <img className="object-cover" alt="Category image" src={value} />
         </div>
       ) : (
         <Dropzone

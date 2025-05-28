@@ -27,10 +27,10 @@ type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
 
 // 定义订单状态选项 - 与实际UI显示对应
 const orderStatusOptions = [
-  { value: 'PENDING', label: '待处理' },
-  { value: 'PROCESSING', label: '处理中' }, // 前端显示为"处理中"，但会映射到PAID
-  { value: 'COMPLETED', label: '已完成' },
-  { value: 'CANCELLED', label: '已取消' },
+  { value: 'PENDING', label: 'Pending' },
+  { value: 'PROCESSING', label: 'Processing' }, // Frontend displays as "Processing", but maps to PAID
+  { value: 'COMPLETED', label: 'Completed' },
+  { value: 'CANCELLED', label: 'Cancelled' },
 ]
 
 // 定义组件props

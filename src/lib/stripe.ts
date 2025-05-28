@@ -2,7 +2,7 @@ import Stripe from 'stripe'
 
 // 确保环境变量已设置
 if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY 环境变量未设置')
+  throw new Error('STRIPE_SECRET_KEY environment variable is not set')
 }
 
 // 创建 Stripe 实例

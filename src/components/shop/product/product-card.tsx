@@ -20,7 +20,7 @@ export default function ProductCard({ product }: { product: any }) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-muted">
-            <span className="text-muted-foreground">无图片</span>
+            <span className="text-muted-foreground">No Image</span>
           </div>
         )}
       </Link>

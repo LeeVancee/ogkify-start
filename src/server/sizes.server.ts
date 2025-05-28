@@ -3,7 +3,7 @@ import { asc, eq } from 'drizzle-orm'
 import { db } from '@/db'
 import { sizes } from '@/db/schema'
 
-// 获取所有尺寸
+// Get all sizes
 export const getSizes = createServerFn().handler(async () => {
   try {
     const sizesList = await db.query.sizes.findMany({
@@ -17,12 +17,12 @@ export const getSizes = createServerFn().handler(async () => {
 
     return sizesList
   } catch (error) {
-    console.error('获取尺寸失败:', error)
+    console.error('Failed to get sizes:', error)
     return []
   }
 })
 
-// 获取单个尺寸
+// Get single size
 export const getSize = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -37,7 +37,7 @@ export const getSize = createServerFn()
       })
 
       if (!size) {
-        return { success: false, error: '尺寸不存在' }
+        return { success: false, error: 'Size not found' }
       }
 
       return {
@@ -45,12 +45,12 @@ export const getSize = createServerFn()
         size,
       }
     } catch (error) {
-      console.error('获取尺寸失败:', error)
-      return { success: false, error: '获取尺寸失败' }
+      console.error('Failed to get size:', error)
+      return { success: false, error: 'Failed to get size' }
     }
   })
 
-// 创建尺寸
+// Create size
 export const createSize = createServerFn()
   .validator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
@@ -65,11 +65,11 @@ export const createSize = createServerFn()
 
       return { success: true, data: size }
     } catch (error) {
-      return { success: false, error: '创建尺寸失败' }
+      return { success: false, error: 'Failed to create size' }
     }
   })
 
-// 更新尺寸
+// Update size
 export const updateSize = createServerFn()
   .validator(
     (params: { id: string; data: { name: string; value: string } }) => params,
@@ -87,11 +87,11 @@ export const updateSize = createServerFn()
 
       return { success: true, data: size }
     } catch (error) {
-      return { success: false, error: '更新尺寸失败' }
+      return { success: false, error: 'Failed to update size' }
     }
   })
 
-// 删除尺寸
+// Delete size
 export const deleteSize = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
@@ -100,6 +100,6 @@ export const deleteSize = createServerFn()
 
       return { success: true }
     } catch (error) {
-      return { success: false, error: '删除尺寸失败' }
+      return { success: false, error: 'Failed to delete size' }
     }
   })
