@@ -1,10 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
 import { z } from 'zod'
-import { count, desc, eq, inArray } from 'drizzle-orm'
+import { count, eq, inArray } from 'drizzle-orm'
 import { db } from '@/db'
 import {
   images,
-  orderItems,
   products,
   productsToColors,
   productsToSizes,

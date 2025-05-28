@@ -7,7 +7,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 
 // 创建 Stripe 实例
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: '2025-03-31.basil', // 使用您的 Stripe 库支持的 API 版本
+  apiVersion: '2025-05-28.basil', // 使用您的 Stripe 库支持的 API 版本
   typescript: true,
 })
 

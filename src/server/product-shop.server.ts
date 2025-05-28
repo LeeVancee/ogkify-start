@@ -1,5 +1,4 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, eq, ne } from 'drizzle-orm'
 import { db } from '@/db'
 
 // Get product details

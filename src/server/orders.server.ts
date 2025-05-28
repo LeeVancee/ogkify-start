@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, count, desc, eq, gte, lt } from 'drizzle-orm'
+import { count, eq } from 'drizzle-orm'
 import { getSession } from './getSession.server'
 import { db } from '@/db'
-import { orderItems, orders, user } from '@/db/schema'
+import { orderItems, orders } from '@/db/schema'
 import { formatPrice } from '@/lib/utils'
 
 import { formatAmountForStripe, stripe } from '@/lib/stripe'

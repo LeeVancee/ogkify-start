@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Slot } from '@radix-ui/react-slot'
+
 import {
   Controller,
   FormProvider,
@@ -7,7 +7,7 @@ import {
   useFormState,
 } from 'react-hook-form'
 import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
-import type * as LabelPrimitive from '@radix-ui/react-label'
+import { Label as LabelPrimitive, Slot as SlotPrimitive } from 'radix-ui'
 
 import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
@@ -100,11 +100,13 @@ function FormLabel({
   )
 }
 
-function FormControl({ ...props }: React.ComponentProps<typeof Slot>) {
+function FormControl({
+  ...props
+}: React.ComponentProps<typeof SlotPrimitive.Root>) {
   const { error, formItemId, formDescriptionId, formMessageId } = useFormField()
 
   return (
-    <Slot
+    <SlotPrimitive.Root
       data-slot="form-control"
       id={formItemId}
       aria-describedby={

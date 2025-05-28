@@ -1,13 +1,11 @@
 import {
   boolean,
   doublePrecision,
-  foreignKey,
   integer,
   pgEnum,
   pgTable,
   text,
   timestamp,
-  uniqueIndex,
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core'

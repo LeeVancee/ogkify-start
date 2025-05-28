@@ -10,7 +10,7 @@ import { getProductsCount } from '@/server/products.server'
 import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute({
-  // component: RouteComponent,
+  component: RouteComponent,
   pendingComponent: Loading,
   pendingMs: 0,
   loader: async () => {

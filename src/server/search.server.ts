@@ -1,5 +1,4 @@
 import { createServerFn } from '@tanstack/react-start'
-import { ilike, or } from 'drizzle-orm'
 import { db } from '@/db'
 
 /**

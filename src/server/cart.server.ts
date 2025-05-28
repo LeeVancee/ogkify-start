@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
-import { and, eq, isNull } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { getSession } from './getSession.server'
 import { db } from '@/db'
-import { cartItems, carts, products } from '@/db/schema'
+import { cartItems, carts } from '@/db/schema'
 
 export interface CartItemData {
   productId: string
