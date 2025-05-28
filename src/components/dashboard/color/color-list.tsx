@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Search, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ColorCard } from './color-card'
 import { deleteColor, getColors } from '@/server/colors.server'
 import { Input } from '@/components/ui/input'
@@ -20,10 +20,10 @@ export function ColorList() {
   const [searchQuery, setSearchQuery] = useState('')
 
   // Use TanStack Query to get color data
-  const { 
-    data: colors = [], 
-    isLoading, 
-    isError 
+  const {
+    data: colors = [],
+    isLoading,
+    isError,
   } = useQuery({
     queryKey: ['colors'],
     queryFn: () => getColors(),
@@ -63,12 +63,16 @@ export function ColorList() {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load colors</h3>
+          <h3 className="mt-4 text-lg font-semibold text-red-500">
+            Failed to load colors
+          </h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
             There was an error loading the colors. Please try again.
           </p>
           <Button
-            onClick={() => queryClient.invalidateQueries({ queryKey: ['colors'] })}
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: ['colors'] })
+            }
             variant="outline"
           >
             Try Again
@@ -123,9 +127,9 @@ export function ColorList() {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredColors.map((color) => (
-            <ColorCard 
-              key={color.id} 
-              color={color} 
+            <ColorCard
+              key={color.id}
+              color={color}
               onDelete={handleDelete}
               isDeleting={deleteMutation.isPending}
             />

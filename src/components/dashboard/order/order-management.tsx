@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AlertCircle,
   AlertTriangle,
@@ -49,7 +49,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { getOrderDetails, getUserOrders } from '@/server/orders.server'
-import { formatPrice } from '@/lib/utils'
+import { cn, formatPrice } from '@/lib/utils'
 import Loading from '@/components/loading'
 
 // 定义订单项类型
@@ -106,11 +106,11 @@ export function OrderManagement() {
   const [error, setError] = useState<string | null>(null)
 
   // 使用 TanStack Query 获取订单数据
-  const { 
-    data: ordersResponse, 
-    isLoading, 
+  const {
+    data: ordersResponse,
+    isLoading,
     isError,
-    refetch
+    refetch,
   } = useQuery({
     queryKey: ['orders'],
     queryFn: async () => {
@@ -179,13 +179,11 @@ export function OrderManagement() {
   // 过滤订单
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
-      (order.orderNumber.toLowerCase() || '').includes(
+      order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (order.customer.toLowerCase() || '').includes(
         searchQuery.toLowerCase(),
       ) ||
-      (order.customer?.toLowerCase() || '').includes(
-        searchQuery.toLowerCase(),
-      ) ||
-      (order.email?.toLowerCase() || '').includes(searchQuery.toLowerCase())
+      (order.email.toLowerCase() || '').includes(searchQuery.toLowerCase())
 
     const matchesStatus =
       statusFilter === 'all' ||
@@ -206,14 +204,13 @@ export function OrderManagement() {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load orders</h3>
+          <h3 className="mt-4 text-lg font-semibold text-red-500">
+            Failed to load orders
+          </h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
             There was an error loading the orders. Please try again.
           </p>
-          <Button
-            onClick={() => refetch()}
-            variant="outline"
-          >
+          <Button onClick={() => refetch()} variant="outline">
             Try Again
           </Button>
         </div>
@@ -308,7 +305,9 @@ export function OrderManagement() {
             disabled={isLoading}
           >
             <RefreshCw
-              className={`mr-2 h-4 w-4 ${isLoading ? 'animate-spin' : ''}`}
+              className={cn('mr-2 h-4 w-4', {
+                'animate-spin': isLoading,
+              })}
             />
             Refresh
           </Button>
@@ -699,7 +698,7 @@ function OrdersTable({
                         {order.customer || 'Unknown User'}
                       </div>
                       <div className="text-sm text-muted-foreground hidden md:block">
-                                                  {order.email || 'No email information'}
+                        {order.email || 'No email information'}
                       </div>
                     </div>
                   </TableCell>

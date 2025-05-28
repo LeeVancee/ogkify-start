@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Edit, Trash2, Loader2 } from 'lucide-react'
+import { Edit, Loader2, Trash2 } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { DeleteDialog } from '../delete-dialog'
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,11 @@ interface SizeCardProps {
   isDeleting?: boolean
 }
 
-export function SizeCard({ size, onDelete, isDeleting = false }: SizeCardProps) {
+export function SizeCard({
+  size,
+  onDelete,
+  isDeleting = false,
+}: SizeCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   return (

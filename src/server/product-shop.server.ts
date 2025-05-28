@@ -47,8 +47,8 @@ export const getProduct = createServerFn()
           value: ps.size.value,
         })),
         images: product.images.map((image) => image.url),
-            inStock: true, // This can be set based on actual conditions
-    freeShipping: product.price > 200, // Assume free shipping for prices above 200
+        inStock: true, // This can be set based on actual conditions
+        freeShipping: product.price > 200, // Assume free shipping for prices above 200
       }
     } catch (error) {
       console.error('Failed to get product details:', error)

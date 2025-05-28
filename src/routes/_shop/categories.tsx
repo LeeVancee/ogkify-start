@@ -1,7 +1,7 @@
 // src/routes/categories.tsx
 
 import { z } from 'zod'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { ProductGrid } from '@/components/shop/product/product-grid'
 import { ProductPagination } from '@/components/shop/product/product-pagination'

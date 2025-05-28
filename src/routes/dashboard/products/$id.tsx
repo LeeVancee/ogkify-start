@@ -3,7 +3,7 @@ import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'
 import { getProduct } from '@/server/products.server'
 import { getSizes } from '@/server/sizes.server'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import { EditProductForm } from '@/components/dashboard/product/edit-product-form'
 import Loading from '@/components/loading'
 
@@ -35,7 +35,8 @@ function RouteComponent() {
     queryFn: () => getSizes(),
   })
 
-  const isLoading = isLoadingProduct || isLoadingCategories || isLoadingColors || isLoadingSizes
+  const isLoading =
+    isLoadingProduct || isLoadingCategories || isLoadingColors || isLoadingSizes
 
   if (isLoading) {
     return <Loading />
@@ -45,7 +46,9 @@ function RouteComponent() {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center">
         <h3 className="text-lg font-semibold">Product not found</h3>
-        <p className="text-muted-foreground">The product you're looking for doesn't exist.</p>
+        <p className="text-muted-foreground">
+          The product you're looking for doesn't exist.
+        </p>
       </div>
     )
   }
@@ -60,8 +63,8 @@ function RouteComponent() {
           product={{
             ...product,
             price: product.price.toString(),
-            colorIds: product.colors.map(c => c.id),
-            sizeIds: product.sizes.map(s => s.id),
+            colorIds: product.colors.map((c) => c.id),
+            sizeIds: product.sizes.map((s) => s.id),
             images: product.images,
           }}
           categories={categories}

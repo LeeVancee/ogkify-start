@@ -10,10 +10,13 @@ import { getProductsCount } from '@/server/products.server'
 import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute({
-  component: RouteComponent,
+  // component: RouteComponent,
   pendingComponent: Loading,
   pendingMs: 0,
   loader: async () => {
+    setTimeout(() => {
+      throw new Error('test')
+    }, 999999)
     const productsCount = await getProductsCount()
     const categoriesCount = await getCategoriesCount()
     const { pendingOrders, completedOrders, totalRevenue } =

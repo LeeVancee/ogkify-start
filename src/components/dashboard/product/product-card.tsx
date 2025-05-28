@@ -39,7 +39,11 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="h-7 w-7 shadow-sm">
+              <Button
+                variant="secondary"
+                size="icon"
+                className="h-7 w-7 shadow-sm"
+              >
                 <MoreHorizontal className="h-3 w-3" />
                 <span className="sr-only">More options</span>
               </Button>
@@ -60,7 +64,7 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
                 onClick={() => onDelete(product.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -78,17 +82,22 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
             </p>
           </div>
           <div className="text-right ml-2">
-            <div className="font-semibold text-sm text-primary">￥{product.price}</div>
+            <div className="font-semibold text-sm text-primary">
+              ￥{product.price}
+            </div>
           </div>
         </div>
 
-        <p className="text-xs text-muted-foreground line-clamp-1 mb-3" title={product.description}>
+        <p
+          className="text-xs text-muted-foreground line-clamp-1 mb-3"
+          title={product.description}
+        >
           {product.description}
         </p>
 
         <div className="flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1">
-                          <span className="text-muted-foreground">Color:</span>
+            <span className="text-muted-foreground">Color:</span>
             <div className="flex gap-1">
               {product.colors.slice(0, 3).map((color) => (
                 <div
@@ -99,21 +108,29 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
                 />
               ))}
               {product.colors.length > 3 && (
-                <span className="text-muted-foreground">+{product.colors.length - 3}</span>
+                <span className="text-muted-foreground">
+                  +{product.colors.length - 3}
+                </span>
               )}
             </div>
           </div>
 
           <div className="flex items-center gap-1">
-                          <span className="text-muted-foreground">Size:</span>
+            <span className="text-muted-foreground">Size:</span>
             <div className="flex gap-1">
               {product.sizes.slice(0, 2).map((size) => (
-                <Badge key={size.id} variant="outline" className="text-xs px-1 py-0 h-4">
+                <Badge
+                  key={size.id}
+                  variant="outline"
+                  className="text-xs px-1 py-0 h-4"
+                >
                   {size.value}
                 </Badge>
               ))}
               {product.sizes.length > 2 && (
-                <span className="text-muted-foreground">+{product.sizes.length - 2}</span>
+                <span className="text-muted-foreground">
+                  +{product.sizes.length - 2}
+                </span>
               )}
             </div>
           </div>
@@ -121,7 +138,12 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
       </CardContent>
 
       <CardFooter className="p-3 pt-0">
-        <Button variant="outline" size="sm" className="w-full h-7 text-xs" asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full h-7 text-xs"
+          asChild
+        >
           <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
             <Edit className="mr-1 h-3 w-3" />
             Edit Product

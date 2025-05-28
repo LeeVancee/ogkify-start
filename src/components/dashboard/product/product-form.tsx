@@ -172,8 +172,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Category *</FormLabel>
-              <Select 
-                onValueChange={field.onChange} 
+              <Select
+                onValueChange={field.onChange}
                 value={field.value}
                 required
               >

@@ -1,5 +1,5 @@
 import { OrderManagement } from '@/components/dashboard/order/order-management'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,

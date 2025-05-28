@@ -1,16 +1,16 @@
-import {  Link } from '@tanstack/react-router'
+import { Link } from '@tanstack/react-router'
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { 
-  getUserCart, 
-  removeFromCart, 
-  updateCartItemQuantity 
+import {
+  getUserCart,
+  removeFromCart,
+  updateCartItemQuantity,
 } from '@/server/cart.server'
 import Loading from '@/components/loading'
 
@@ -38,10 +38,10 @@ function CartPage() {
   const [isCheckingOut, setIsCheckingOut] = useState(false)
 
   // Get cart data
-  const { 
-    data: cartData, 
-    isLoading, 
-    isError 
+  const {
+    data: cartData,
+    isLoading,
+    isError,
   } = useQuery({
     queryKey: ['cart'],
     queryFn: () => getUserCart(),
@@ -63,8 +63,13 @@ function CartPage() {
 
   // Update quantity mutation
   const updateQuantityMutation = useMutation({
-    mutationFn: ({ cartItemId, quantity }: { cartItemId: string; quantity: number }) =>
-      updateCartItemQuantity({ data: { cartItemId, quantity } }),
+    mutationFn: ({
+      cartItemId,
+      quantity,
+    }: {
+      cartItemId: string
+      quantity: number
+    }) => updateCartItemQuantity({ data: { cartItemId, quantity } }),
     onSuccess: () => {
       // Refresh cart data
       queryClient.invalidateQueries({ queryKey: ['cart'] })
@@ -91,7 +96,7 @@ function CartPage() {
     try {
       // Here you would implement checkout logic
       // For now, just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
       toast.success('Redirecting to checkout...')
       // Navigate to checkout page
       // navigate({ to: '/checkout' })
@@ -104,7 +109,10 @@ function CartPage() {
 
   // Calculate totals
   const items = cartData?.items || []
-  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  )
   const shipping = subtotal > 200 ? 0 : 10 // Free shipping over $200
   const tax = subtotal * 0.08 // 8% tax
   const total = subtotal + shipping + tax
@@ -120,12 +128,16 @@ function CartPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
           <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-            <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load cart</h3>
+            <h3 className="mt-4 text-lg font-semibold text-red-500">
+              Failed to load cart
+            </h3>
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               There was an error loading your cart. Please try again.
             </p>
             <Button
-              onClick={() => queryClient.invalidateQueries({ queryKey: ['cart'] })}
+              onClick={() =>
+                queryClient.invalidateQueries({ queryKey: ['cart'] })
+              }
               variant="outline"
             >
               Try Again
@@ -148,7 +160,7 @@ function CartPage() {
             </Link>
           </Button>
         </div>
-        
+
         <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
           <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
             <ShoppingBag className="h-16 w-16 text-muted-foreground" />
@@ -156,11 +168,9 @@ function CartPage() {
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               Looks like you haven't added any items to your cart yet.
             </p>
-                         <Button asChild>
-               <Link to="/categories">
-                 Start Shopping
-               </Link>
-             </Button>
+            <Button asChild>
+              <Link to="/categories">Start Shopping</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -171,12 +181,12 @@ function CartPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6">
-                 <Button variant="ghost" asChild className="mb-4">
-           <Link to="/categories">
-             <ArrowLeft className="mr-2 h-4 w-4" />
-             Continue Shopping
-           </Link>
-         </Button>
+        <Button variant="ghost" asChild className="mb-4">
+          <Link to="/categories">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Continue Shopping
+          </Link>
+        </Button>
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
         <p className="text-muted-foreground">
           {items.length} {items.length === 1 ? 'item' : 'items'} in your cart
@@ -224,7 +234,9 @@ function CartPage() {
                           <Badge variant="outline" className="text-xs">
                             <div
                               className="mr-1 h-2 w-2 rounded-full"
-                              style={{ backgroundColor: item.colorValue || '#000' }}
+                              style={{
+                                backgroundColor: item.colorValue || '#000',
+                              }}
                             />
                             {item.colorName}
                           </Badge>
@@ -243,24 +255,35 @@ function CartPage() {
                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
-                            disabled={updateQuantityMutation.isPending || item.quantity <= 1}
+                            onClick={() =>
+                              handleUpdateQuantity(item.id, item.quantity - 1)
+                            }
+                            disabled={
+                              updateQuantityMutation.isPending ||
+                              item.quantity <= 1
+                            }
                           >
                             <Minus className="h-3 w-3" />
                           </Button>
-                          <span className="w-8 text-center">{item.quantity}</span>
+                          <span className="w-8 text-center">
+                            {item.quantity}
+                          </span>
                           <Button
                             variant="outline"
                             size="icon"
                             className="h-8 w-8"
-                            onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                            onClick={() =>
+                              handleUpdateQuantity(item.id, item.quantity + 1)
+                            }
                             disabled={updateQuantityMutation.isPending}
                           >
                             <Plus className="h-3 w-3" />
                           </Button>
                         </div>
                         <div className="text-right">
-                          <div className="font-medium">${(item.price * item.quantity).toFixed(2)}</div>
+                          <div className="font-medium">
+                            ${(item.price * item.quantity).toFixed(2)}
+                          </div>
                           <div className="text-sm text-muted-foreground">
                             ${item.price.toFixed(2)} each
                           </div>
@@ -314,8 +337,8 @@ function CartPage() {
                 </div>
               )}
 
-              <Button 
-                className="w-full" 
+              <Button
+                className="w-full"
                 size="lg"
                 onClick={handleCheckout}
                 disabled={isCheckingOut || items.length === 0}

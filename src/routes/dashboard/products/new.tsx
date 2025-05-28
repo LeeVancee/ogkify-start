@@ -1,9 +1,9 @@
-import { ProductForm } from '@/components/dashboard/product/product-form'
 import { useQuery } from '@tanstack/react-query'
+import { ProductForm } from '@/components/dashboard/product/product-form'
 import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'
 import { getSizes } from '@/server/sizes.server'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import Loading from '@/components/loading'
 
 export const Route = createFileRoute({

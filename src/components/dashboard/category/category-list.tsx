@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Search, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { CategoryCard } from './category-card'
 import { deleteCategory, getCategories } from '@/server/categories.server'
 import { Input } from '@/components/ui/input'
@@ -20,10 +20,10 @@ export function CategoryList() {
   const [searchQuery, setSearchQuery] = useState('')
 
   // Use TanStack Query to get category data
-  const { 
-    data: categories = [], 
-    isLoading, 
-    isError 
+  const {
+    data: categories = [],
+    isLoading,
+    isError,
   } = useQuery({
     queryKey: ['categories'],
     queryFn: () => getCategories(),
@@ -63,12 +63,16 @@ export function CategoryList() {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load categories</h3>
+          <h3 className="mt-4 text-lg font-semibold text-red-500">
+            Failed to load categories
+          </h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
             There was an error loading the categories. Please try again.
           </p>
           <Button
-            onClick={() => queryClient.invalidateQueries({ queryKey: ['categories'] })}
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: ['categories'] })
+            }
             variant="outline"
           >
             Try Again

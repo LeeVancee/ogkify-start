@@ -439,7 +439,7 @@ export const getOrdersStats = createServerFn().handler(async () => {
       totalRevenue,
     }
   } catch (error) {
-      console.error('Failed to get orders statistics:', error)
+    console.error('Failed to get orders statistics:', error)
     return {
       pendingOrders: 0,
       completedOrders: 0,
@@ -528,7 +528,7 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
       )
 
       // Get month name
-          const monthName = `${month + 1}`
+      const monthName = `${month + 1}`
 
       monthlyData.push({
         name: monthName,
@@ -585,7 +585,7 @@ export const deleteUnpaidOrder = createServerFn()
         }
       }
 
-        // First delete all associated order items
+      // First delete all associated order items
       await db.delete(orderItems).where(eq(orderItems.orderId, orderId))
 
       // Then delete the order itself

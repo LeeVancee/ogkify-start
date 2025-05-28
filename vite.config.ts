@@ -12,9 +12,7 @@ export default defineConfig({
       projects: ['./tsconfig.json'],
     }),
     tanstackStart({
-      tsr: {
-        routeToken: 'layout',
-      },
+      tsr: {},
       react: {
         babel: {
           plugins: [['babel-plugin-react-compiler']],

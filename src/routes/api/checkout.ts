@@ -130,7 +130,10 @@ export const ServerRoute = createServerFileRoute().methods({
       })
     } catch (error) {
       console.error('Checkout error:', error)
-      return json({ error: 'Failed to create checkout session' }, { status: 500 })
+      return json(
+        { error: 'Failed to create checkout session' },
+        { status: 500 },
+      )
     }
   },
   GET: () => {

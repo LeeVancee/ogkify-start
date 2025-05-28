@@ -307,8 +307,11 @@ export const deleteProduct = createServerFn()
 
       return { success: true, message: 'Product deleted successfully' }
     } catch (error) {
-          console.error('Failed to delete product:', error)
-    return { success: false, message: 'Failed to delete product, please try again later' }
+      console.error('Failed to delete product:', error)
+      return {
+        success: false,
+        message: 'Failed to delete product, please try again later',
+      }
     }
   })
 

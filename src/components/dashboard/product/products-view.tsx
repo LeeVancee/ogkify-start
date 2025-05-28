@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Edit, Grid, List, Plus, Search, Trash2, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { toast } from 'sonner'
 import { DeleteDialog } from '../delete-dialog'
@@ -43,10 +43,10 @@ export function ProductsView() {
   const [viewType, setViewType] = useState<'table' | 'grid'>('table')
 
   // Use TanStack Query to get product data
-  const { 
-    data: products = [], 
-    isLoading, 
-    isError 
+  const {
+    data: products = [],
+    isLoading,
+    isError,
   } = useQuery({
     queryKey: ['products'],
     queryFn: () => getProducts(),
@@ -62,7 +62,7 @@ export function ProductsView() {
       queryClient.invalidateQueries({ queryKey: ['products'] })
     },
     onError: (error) => {
-              toast.error('Delete failed')
+      toast.error('Delete failed')
     },
   })
 
@@ -103,12 +103,16 @@ export function ProductsView() {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load products</h3>
+          <h3 className="mt-4 text-lg font-semibold text-red-500">
+            Failed to load products
+          </h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
             There was an error loading the products. Please try again.
           </p>
           <Button
-            onClick={() => queryClient.invalidateQueries({ queryKey: ['products'] })}
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: ['products'] })
+            }
             variant="outline"
           >
             Try Again

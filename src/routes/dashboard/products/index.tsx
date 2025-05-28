@@ -2,7 +2,6 @@ import { Plus } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import { ProductsView } from '@/components/dashboard/product/products-view'
-import { } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,

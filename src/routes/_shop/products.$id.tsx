@@ -27,7 +27,6 @@ export const Route = createFileRoute({
 function RouteComponent() {
   const { product, relatedProducts } = Route.useLoaderData()
 
- 
   // adapter function to handle type mismatch
   const addToCartAdapter = async (formData: FormData) => {
     try {

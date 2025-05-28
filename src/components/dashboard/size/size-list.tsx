@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import { Plus, Search, X } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { SizeCard } from './size-card'
 import { deleteSize, getSizes } from '@/server/sizes.server'
 import { Input } from '@/components/ui/input'
@@ -20,10 +20,10 @@ export function SizeList() {
   const [searchQuery, setSearchQuery] = useState('')
 
   // Use TanStack Query to get size data
-  const { 
-    data: sizes = [], 
-    isLoading, 
-    isError 
+  const {
+    data: sizes = [],
+    isLoading,
+    isError,
   } = useQuery({
     queryKey: ['sizes'],
     queryFn: () => getSizes(),
@@ -63,12 +63,16 @@ export function SizeList() {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">Failed to load sizes</h3>
+          <h3 className="mt-4 text-lg font-semibold text-red-500">
+            Failed to load sizes
+          </h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
             There was an error loading the sizes. Please try again.
           </p>
           <Button
-            onClick={() => queryClient.invalidateQueries({ queryKey: ['sizes'] })}
+            onClick={() =>
+              queryClient.invalidateQueries({ queryKey: ['sizes'] })
+            }
             variant="outline"
           >
             Try Again
@@ -123,9 +127,9 @@ export function SizeList() {
       ) : (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredSizes.map((size) => (
-            <SizeCard 
-              key={size.id} 
-              size={size} 
+            <SizeCard
+              key={size.id}
+              size={size}
               onDelete={handleDelete}
               isDeleting={deleteMutation.isPending}
             />

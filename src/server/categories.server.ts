@@ -40,8 +40,8 @@ export const getCategory = createServerFn()
 
       return { success: true, category }
     } catch (error) {
-          console.error('Failed to get category:', error)
-    return { success: false, error: 'Failed to get category' }
+      console.error('Failed to get category:', error)
+      return { success: false, error: 'Failed to get category' }
     }
   })
 
@@ -65,8 +65,8 @@ export const createCategory = createServerFn()
 
       return { success: true, data: category }
     } catch (error) {
-          console.error('Failed to create category:', error)
-    return { success: false, error: 'Failed to create category' }
+      console.error('Failed to create category:', error)
+      return { success: false, error: 'Failed to create category' }
     }
   })
 
