@@ -10,6 +10,9 @@ export function FeaturedProducts() {
   const { data: products, isLoading } = useQuery({
     queryKey: ['featured-products'],
     queryFn: () => getFeaturedProducts({ data: 4 }),
+    // Cache featured products for 30 minutes since they don't change frequently
+    staleTime: 1000 * 60 * 30, // 30 minutes
+    gcTime: 1000 * 60 * 60 * 2, // 2 hours (keep in memory)
   })
 
   if (isLoading) {
@@ -34,7 +37,7 @@ export function FeaturedProducts() {
               asChild
               className="hidden md:flex items-center gap-1 self-start"
             >
-              <Link to="/categories" search={{ featured: true }}>
+              <Link to="/products" search={{ featured: true }}>
                 View All
                 <ChevronRight className="h-4 w-4" />
               </Link>
@@ -43,7 +46,7 @@ export function FeaturedProducts() {
           <ProductGrid products={products || []} />
           <div className="flex justify-center md:hidden mt-4">
             <Button asChild variant="outline">
-              <Link to="/categories" search={{ featured: true }}>
+              <Link to="/products" search={{ featured: true }}>
                 View All Products
               </Link>
             </Button>

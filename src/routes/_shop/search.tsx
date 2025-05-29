@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { } from '@tanstack/react-router'
 import ProductCard from '@/components/shop/product/product-card'
 import { searchProducts } from '@/server/search.server'
 
@@ -17,6 +18,9 @@ export const Route = createFileRoute({
     const products = await searchProducts({ data: query })
     return { products, query }
   },
+  // Cache search results for 5 minutes since search results can change more frequently
+  staleTime: 1000 * 60 * 5, // 5 minutes
+  gcTime: 1000 * 60 * 15, // 15 minutes (keep in memory)
 })
 
 function RouteComponent() {

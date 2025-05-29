@@ -29,7 +29,7 @@ export function FeaturedCategories() {
           {categories?.map((category) => (
             <Link
               key={category.id}
-              to="/categories"
+              to="/products"
               search={{ category: category.name }}
               className="group relative overflow-hidden rounded-xl bg-base-200"
             >

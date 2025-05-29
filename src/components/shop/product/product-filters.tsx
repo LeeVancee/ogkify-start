@@ -1,4 +1,4 @@
-import { Suspense, useTransition } from 'react'
+import { useTransition } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import type { Category } from '@/lib/types'
 import { Button } from '@/components/ui/button'
@@ -82,7 +82,7 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/categories' as any,
+        to: '/products' as any,
         search: createQueryParams({
           category: currentCategory === categoryName ? undefined : categoryName,
         }) as any,
@@ -94,7 +94,7 @@ function ProductFiltersContent({
   const handleFeaturedChange = (value: boolean) => {
     startTransition(() => {
       navigate({
-        to: '/categories' as any,
+        to: '/products' as any,
         search: createQueryParams({
           featured: value || undefined,
         }) as any,
@@ -116,7 +116,7 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/categories' as any,
+        to: '/products' as any,
         search: createQueryParams({
           color: newColors.length ? newColors : undefined,
         }) as any,
@@ -138,7 +138,7 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/categories' as any,
+        to: '/products' as any,
         search: createQueryParams({
           size: newSizes.length ? newSizes : undefined,
         }) as any,
@@ -152,11 +152,11 @@ function ProductFiltersContent({
       const [min, max] = values
       startTransition(() => {
         navigate({
-          to: '/categories' as any,
+          to: '/products',
           search: createQueryParams({
             minPrice: min > 0 ? min.toString() : undefined,
             maxPrice: max < maxPrice ? max.toString() : undefined,
-          }) as any,
+          }),
           replace: true,
         })
       })
@@ -166,8 +166,8 @@ function ProductFiltersContent({
   const handleResetFilters = () => {
     startTransition(() => {
       navigate({
-        to: '/categories' as any,
-        search: {} as any,
+        to: '/products',
+        search: {},
         replace: true,
       })
     })
@@ -319,35 +319,5 @@ function ProductFiltersContent({
 }
 
 export function ProductFilters(props: ProductFiltersProps) {
-  return (
-    <Suspense
-      fallback={
-        <div className="grid gap-6">
-          <Accordion
-            type="multiple"
-            defaultValue={['categories', 'featured', 'price']}
-          >
-            <AccordionItem value="categories">
-              <AccordionTrigger>Category</AccordionTrigger>
-              <AccordionContent>
-                <div className="grid gap-2">
-                  <div className="h-4 w-full rounded-md bg-muted animate-pulse" />
-                  <div className="h-4 w-full rounded-md bg-muted animate-pulse" />
-                  <div className="h-4 w-full rounded-md bg-muted animate-pulse" />
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="price">
-              <AccordionTrigger>Price Range</AccordionTrigger>
-              <AccordionContent>
-                <div className="h-4 w-full rounded-md bg-muted animate-pulse mt-4" />
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
-      }
-    >
-      <ProductFiltersContent {...props} />
-    </Suspense>
-  )
+  return <ProductFiltersContent {...props} />
 }

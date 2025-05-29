@@ -21,13 +21,14 @@ import { Route as ShopIndexRouteImport } from './routes/_shop/index'
 import { Route as ShopSearchRouteImport } from './routes/_shop/search'
 import { Route as ShopProfileRouteImport } from './routes/_shop/profile'
 import { Route as ShopMyordersRouteImport } from './routes/_shop/myorders'
-import { Route as ShopCategoriesRouteImport } from './routes/_shop/categories'
 import { Route as ShopCartRouteImport } from './routes/_shop/cart'
+import { Route as ShopProductsRouteRouteImport } from './routes/_shop/products/route'
 import { Route as DashboardSizesIndexRouteImport } from './routes/dashboard/sizes/index'
 import { Route as DashboardProductsIndexRouteImport } from './routes/dashboard/products/index'
 import { Route as DashboardOrdersIndexRouteImport } from './routes/dashboard/orders/index'
 import { Route as DashboardColorsIndexRouteImport } from './routes/dashboard/colors/index'
 import { Route as DashboardCategoriesIndexRouteImport } from './routes/dashboard/categories/index'
+import { Route as ShopProductsIndexRouteImport } from './routes/_shop/products/index'
 import { Route as DashboardSizesNewRouteImport } from './routes/dashboard/sizes/new'
 import { Route as DashboardSizesIdRouteImport } from './routes/dashboard/sizes/$id'
 import { Route as DashboardProductsNewRouteImport } from './routes/dashboard/products/new'
@@ -36,7 +37,7 @@ import { Route as DashboardColorsNewRouteImport } from './routes/dashboard/color
 import { Route as DashboardColorsIdRouteImport } from './routes/dashboard/colors/$id'
 import { Route as DashboardCategoriesNewRouteImport } from './routes/dashboard/categories/new'
 import { Route as DashboardCategoriesIdRouteImport } from './routes/dashboard/categories/$id'
-import { Route as ShopProductsIdRouteImport } from './routes/_shop/products.$id'
+import { Route as ShopProductIdRouteImport } from './routes/_shop/product.$id'
 import { Route as ShopCheckoutSuccessRouteImport } from './routes/_shop/checkout/success'
 
 // Create/Update Routes
@@ -88,15 +89,15 @@ const ShopMyordersRoute = ShopMyordersRouteImport.update({
   getParentRoute: () => ShopRouteRoute,
 } as any)
 
-const ShopCategoriesRoute = ShopCategoriesRouteImport.update({
-  id: '/categories',
-  path: '/categories',
-  getParentRoute: () => ShopRouteRoute,
-} as any)
-
 const ShopCartRoute = ShopCartRouteImport.update({
   id: '/cart',
   path: '/cart',
+  getParentRoute: () => ShopRouteRoute,
+} as any)
+
+const ShopProductsRouteRoute = ShopProductsRouteRouteImport.update({
+  id: '/products',
+  path: '/products',
   getParentRoute: () => ShopRouteRoute,
 } as any)
 
@@ -130,6 +131,12 @@ const DashboardCategoriesIndexRoute =
     path: '/categories/',
     getParentRoute: () => DashboardRouteRoute,
   } as any)
+
+const ShopProductsIndexRoute = ShopProductsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ShopProductsRouteRoute,
+} as any)
 
 const DashboardSizesNewRoute = DashboardSizesNewRouteImport.update({
   id: '/sizes/new',
@@ -179,9 +186,9 @@ const DashboardCategoriesIdRoute = DashboardCategoriesIdRouteImport.update({
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 
-const ShopProductsIdRoute = ShopProductsIdRouteImport.update({
-  id: '/products/$id',
-  path: '/products/$id',
+const ShopProductIdRoute = ShopProductIdRouteImport.update({
+  id: '/product/$id',
+  path: '/product/$id',
   getParentRoute: () => ShopRouteRoute,
 } as any)
 
@@ -216,18 +223,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRoute
     }
+    '/_shop/products': {
+      id: '/_shop/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ShopProductsRouteRouteImport
+      parentRoute: typeof ShopRouteRouteImport
+    }
     '/_shop/cart': {
       id: '/_shop/cart'
       path: '/cart'
       fullPath: '/cart'
       preLoaderRoute: typeof ShopCartRouteImport
-      parentRoute: typeof ShopRouteRouteImport
-    }
-    '/_shop/categories': {
-      id: '/_shop/categories'
-      path: '/categories'
-      fullPath: '/categories'
-      preLoaderRoute: typeof ShopCategoriesRouteImport
       parentRoute: typeof ShopRouteRouteImport
     }
     '/_shop/myorders': {
@@ -272,11 +279,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopCheckoutSuccessRouteImport
       parentRoute: typeof ShopRouteRouteImport
     }
-    '/_shop/products/$id': {
-      id: '/_shop/products/$id'
-      path: '/products/$id'
-      fullPath: '/products/$id'
-      preLoaderRoute: typeof ShopProductsIdRouteImport
+    '/_shop/product/$id': {
+      id: '/_shop/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ShopProductIdRouteImport
       parentRoute: typeof ShopRouteRouteImport
     }
     '/dashboard/categories/$id': {
@@ -334,6 +341,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dashboard/sizes/new'
       preLoaderRoute: typeof DashboardSizesNewRouteImport
       parentRoute: typeof DashboardRouteRouteImport
+    }
+    '/_shop/products/': {
+      id: '/_shop/products/'
+      path: '/'
+      fullPath: '/products/'
+      preLoaderRoute: typeof ShopProductsIndexRouteImport
+      parentRoute: typeof ShopProductsRouteRouteImport
     }
     '/dashboard/categories/': {
       id: '/dashboard/categories/'
@@ -402,6 +416,15 @@ declare module './routes/auth' {
     FileRoutesByPath['/auth']['fullPath']
   >
 }
+declare module './routes/_shop/products/route' {
+  const createFileRoute: CreateFileRoute<
+    '/_shop/products',
+    FileRoutesByPath['/_shop/products']['parentRoute'],
+    FileRoutesByPath['/_shop/products']['id'],
+    FileRoutesByPath['/_shop/products']['path'],
+    FileRoutesByPath['/_shop/products']['fullPath']
+  >
+}
 declare module './routes/_shop/cart' {
   const createFileRoute: CreateFileRoute<
     '/_shop/cart',
@@ -409,15 +432,6 @@ declare module './routes/_shop/cart' {
     FileRoutesByPath['/_shop/cart']['id'],
     FileRoutesByPath['/_shop/cart']['path'],
     FileRoutesByPath['/_shop/cart']['fullPath']
-  >
-}
-declare module './routes/_shop/categories' {
-  const createFileRoute: CreateFileRoute<
-    '/_shop/categories',
-    FileRoutesByPath['/_shop/categories']['parentRoute'],
-    FileRoutesByPath['/_shop/categories']['id'],
-    FileRoutesByPath['/_shop/categories']['path'],
-    FileRoutesByPath['/_shop/categories']['fullPath']
   >
 }
 declare module './routes/_shop/myorders' {
@@ -474,13 +488,13 @@ declare module './routes/_shop/checkout/success' {
     FileRoutesByPath['/_shop/checkout/success']['fullPath']
   >
 }
-declare module './routes/_shop/products.$id' {
+declare module './routes/_shop/product.$id' {
   const createFileRoute: CreateFileRoute<
-    '/_shop/products/$id',
-    FileRoutesByPath['/_shop/products/$id']['parentRoute'],
-    FileRoutesByPath['/_shop/products/$id']['id'],
-    FileRoutesByPath['/_shop/products/$id']['path'],
-    FileRoutesByPath['/_shop/products/$id']['fullPath']
+    '/_shop/product/$id',
+    FileRoutesByPath['/_shop/product/$id']['parentRoute'],
+    FileRoutesByPath['/_shop/product/$id']['id'],
+    FileRoutesByPath['/_shop/product/$id']['path'],
+    FileRoutesByPath['/_shop/product/$id']['fullPath']
   >
 }
 declare module './routes/dashboard/categories/$id' {
@@ -555,6 +569,15 @@ declare module './routes/dashboard/sizes/new' {
     FileRoutesByPath['/dashboard/sizes/new']['fullPath']
   >
 }
+declare module './routes/_shop/products/index' {
+  const createFileRoute: CreateFileRoute<
+    '/_shop/products/',
+    FileRoutesByPath['/_shop/products/']['parentRoute'],
+    FileRoutesByPath['/_shop/products/']['id'],
+    FileRoutesByPath['/_shop/products/']['path'],
+    FileRoutesByPath['/_shop/products/']['fullPath']
+  >
+}
 declare module './routes/dashboard/categories/index' {
   const createFileRoute: CreateFileRoute<
     '/dashboard/categories/',
@@ -603,26 +626,37 @@ declare module './routes/dashboard/sizes/index' {
 
 // Create and export the route tree
 
+interface ShopProductsRouteRouteChildren {
+  ShopProductsIndexRoute: typeof ShopProductsIndexRoute
+}
+
+const ShopProductsRouteRouteChildren: ShopProductsRouteRouteChildren = {
+  ShopProductsIndexRoute: ShopProductsIndexRoute,
+}
+
+const ShopProductsRouteRouteWithChildren =
+  ShopProductsRouteRoute._addFileChildren(ShopProductsRouteRouteChildren)
+
 interface ShopRouteRouteChildren {
+  ShopProductsRouteRoute: typeof ShopProductsRouteRouteWithChildren
   ShopCartRoute: typeof ShopCartRoute
-  ShopCategoriesRoute: typeof ShopCategoriesRoute
   ShopMyordersRoute: typeof ShopMyordersRoute
   ShopProfileRoute: typeof ShopProfileRoute
   ShopSearchRoute: typeof ShopSearchRoute
   ShopIndexRoute: typeof ShopIndexRoute
   ShopCheckoutSuccessRoute: typeof ShopCheckoutSuccessRoute
-  ShopProductsIdRoute: typeof ShopProductsIdRoute
+  ShopProductIdRoute: typeof ShopProductIdRoute
 }
 
 const ShopRouteRouteChildren: ShopRouteRouteChildren = {
+  ShopProductsRouteRoute: ShopProductsRouteRouteWithChildren,
   ShopCartRoute: ShopCartRoute,
-  ShopCategoriesRoute: ShopCategoriesRoute,
   ShopMyordersRoute: ShopMyordersRoute,
   ShopProfileRoute: ShopProfileRoute,
   ShopSearchRoute: ShopSearchRoute,
   ShopIndexRoute: ShopIndexRoute,
   ShopCheckoutSuccessRoute: ShopCheckoutSuccessRoute,
-  ShopProductsIdRoute: ShopProductsIdRoute,
+  ShopProductIdRoute: ShopProductIdRoute,
 }
 
 const ShopRouteRouteWithChildren = ShopRouteRoute._addFileChildren(
@@ -671,15 +705,15 @@ export interface FileRoutesByFullPath {
   '': typeof ShopRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/products': typeof ShopProductsRouteRouteWithChildren
   '/cart': typeof ShopCartRoute
-  '/categories': typeof ShopCategoriesRoute
   '/myorders': typeof ShopMyordersRoute
   '/profile': typeof ShopProfileRoute
   '/search': typeof ShopSearchRoute
   '/': typeof ShopIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/checkout/success': typeof ShopCheckoutSuccessRoute
-  '/products/$id': typeof ShopProductsIdRoute
+  '/product/$id': typeof ShopProductIdRoute
   '/dashboard/categories/$id': typeof DashboardCategoriesIdRoute
   '/dashboard/categories/new': typeof DashboardCategoriesNewRoute
   '/dashboard/colors/$id': typeof DashboardColorsIdRoute
@@ -688,6 +722,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
+  '/products/': typeof ShopProductsIndexRoute
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors': typeof DashboardColorsIndexRoute
   '/dashboard/orders': typeof DashboardOrdersIndexRoute
@@ -698,14 +733,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/cart': typeof ShopCartRoute
-  '/categories': typeof ShopCategoriesRoute
   '/myorders': typeof ShopMyordersRoute
   '/profile': typeof ShopProfileRoute
   '/search': typeof ShopSearchRoute
   '/': typeof ShopIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/checkout/success': typeof ShopCheckoutSuccessRoute
-  '/products/$id': typeof ShopProductsIdRoute
+  '/product/$id': typeof ShopProductIdRoute
   '/dashboard/categories/$id': typeof DashboardCategoriesIdRoute
   '/dashboard/categories/new': typeof DashboardCategoriesNewRoute
   '/dashboard/colors/$id': typeof DashboardColorsIdRoute
@@ -714,6 +748,7 @@ export interface FileRoutesByTo {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
+  '/products': typeof ShopProductsIndexRoute
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors': typeof DashboardColorsIndexRoute
   '/dashboard/orders': typeof DashboardOrdersIndexRoute
@@ -726,15 +761,15 @@ export interface FileRoutesById {
   '/_shop': typeof ShopRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_shop/products': typeof ShopProductsRouteRouteWithChildren
   '/_shop/cart': typeof ShopCartRoute
-  '/_shop/categories': typeof ShopCategoriesRoute
   '/_shop/myorders': typeof ShopMyordersRoute
   '/_shop/profile': typeof ShopProfileRoute
   '/_shop/search': typeof ShopSearchRoute
   '/_shop/': typeof ShopIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/_shop/checkout/success': typeof ShopCheckoutSuccessRoute
-  '/_shop/products/$id': typeof ShopProductsIdRoute
+  '/_shop/product/$id': typeof ShopProductIdRoute
   '/dashboard/categories/$id': typeof DashboardCategoriesIdRoute
   '/dashboard/categories/new': typeof DashboardCategoriesNewRoute
   '/dashboard/colors/$id': typeof DashboardColorsIdRoute
@@ -743,6 +778,7 @@ export interface FileRoutesById {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
+  '/_shop/products/': typeof ShopProductsIndexRoute
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors/': typeof DashboardColorsIndexRoute
   '/dashboard/orders/': typeof DashboardOrdersIndexRoute
@@ -756,15 +792,15 @@ export interface FileRouteTypes {
     | ''
     | '/dashboard'
     | '/auth'
+    | '/products'
     | '/cart'
-    | '/categories'
     | '/myorders'
     | '/profile'
     | '/search'
     | '/'
     | '/dashboard/'
     | '/checkout/success'
-    | '/products/$id'
+    | '/product/$id'
     | '/dashboard/categories/$id'
     | '/dashboard/categories/new'
     | '/dashboard/colors/$id'
@@ -773,6 +809,7 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
+    | '/products/'
     | '/dashboard/categories'
     | '/dashboard/colors'
     | '/dashboard/orders'
@@ -782,14 +819,13 @@ export interface FileRouteTypes {
   to:
     | '/auth'
     | '/cart'
-    | '/categories'
     | '/myorders'
     | '/profile'
     | '/search'
     | '/'
     | '/dashboard'
     | '/checkout/success'
-    | '/products/$id'
+    | '/product/$id'
     | '/dashboard/categories/$id'
     | '/dashboard/categories/new'
     | '/dashboard/colors/$id'
@@ -798,6 +834,7 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
+    | '/products'
     | '/dashboard/categories'
     | '/dashboard/colors'
     | '/dashboard/orders'
@@ -808,15 +845,15 @@ export interface FileRouteTypes {
     | '/_shop'
     | '/dashboard'
     | '/auth'
+    | '/_shop/products'
     | '/_shop/cart'
-    | '/_shop/categories'
     | '/_shop/myorders'
     | '/_shop/profile'
     | '/_shop/search'
     | '/_shop/'
     | '/dashboard/'
     | '/_shop/checkout/success'
-    | '/_shop/products/$id'
+    | '/_shop/product/$id'
     | '/dashboard/categories/$id'
     | '/dashboard/categories/new'
     | '/dashboard/colors/$id'
@@ -825,6 +862,7 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
+    | '/_shop/products/'
     | '/dashboard/categories/'
     | '/dashboard/colors/'
     | '/dashboard/orders/'
@@ -863,14 +901,14 @@ export const routeTree = rootRoute
     "/_shop": {
       "filePath": "_shop/route.tsx",
       "children": [
+        "/_shop/products",
         "/_shop/cart",
-        "/_shop/categories",
         "/_shop/myorders",
         "/_shop/profile",
         "/_shop/search",
         "/_shop/",
         "/_shop/checkout/success",
-        "/_shop/products/$id"
+        "/_shop/product/$id"
       ]
     },
     "/dashboard": {
@@ -895,12 +933,15 @@ export const routeTree = rootRoute
     "/auth": {
       "filePath": "auth.tsx"
     },
+    "/_shop/products": {
+      "filePath": "_shop/products/route.tsx",
+      "parent": "/_shop",
+      "children": [
+        "/_shop/products/"
+      ]
+    },
     "/_shop/cart": {
       "filePath": "_shop/cart.tsx",
-      "parent": "/_shop"
-    },
-    "/_shop/categories": {
-      "filePath": "_shop/categories.tsx",
       "parent": "/_shop"
     },
     "/_shop/myorders": {
@@ -927,8 +968,8 @@ export const routeTree = rootRoute
       "filePath": "_shop/checkout/success.tsx",
       "parent": "/_shop"
     },
-    "/_shop/products/$id": {
-      "filePath": "_shop/products.$id.tsx",
+    "/_shop/product/$id": {
+      "filePath": "_shop/product.$id.tsx",
       "parent": "/_shop"
     },
     "/dashboard/categories/$id": {
@@ -962,6 +1003,10 @@ export const routeTree = rootRoute
     "/dashboard/sizes/new": {
       "filePath": "dashboard/sizes/new.tsx",
       "parent": "/dashboard"
+    },
+    "/_shop/products/": {
+      "filePath": "_shop/products/index.tsx",
+      "parent": "/_shop/products"
     },
     "/dashboard/categories/": {
       "filePath": "dashboard/categories/index.tsx",

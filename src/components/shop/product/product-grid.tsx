@@ -29,7 +29,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           className="group border rounded-lg overflow-hidden bg-muted hover:shadow-md transition-shadow"
         >
           <Link
-            to="/products/$id"
+            to="/product/$id"
             params={{ id: product.id }}
             className="block relative aspect-square overflow-hidden bg-muted"
           >
@@ -41,7 +41,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           </Link>
           <div className="p-4 space-y-2">
             <Link
-              to="/products/$id"
+              to="/product/$id"
               params={{ id: product.id }}
               className="block"
             >
@@ -53,7 +53,7 @@ export function ProductGrid({ products }: ProductGridProps) {
             {/* 分类标签 */}
             {product.category && (
               <Link
-                to="/categories"
+                to="/products"
                 search={{ category: product.category }}
                 className="inline-block  py-1 text-xs font-medium rounded-full bg-base-200 hover:bg-base-300 transition-colors text-left"
               >

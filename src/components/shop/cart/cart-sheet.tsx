@@ -133,7 +133,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                 asChild
                 className="mt-4 px-6 transition-all hover:scale-105"
               >
-                <Link to="/categories">Browse Products</Link>
+                <Link to="/products">Browse Products</Link>
               </Button>
             </SheetTrigger>
           </div>

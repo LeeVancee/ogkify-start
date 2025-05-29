@@ -1,5 +1,4 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Suspense } from 'react'
 import {
   Select,
   SelectContent,
@@ -13,33 +12,26 @@ const sortOptions = [
   { value: 'newest', label: 'Newest' },
   { value: 'price-asc', label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'featured', label: 'Featured' },
 ]
 
-function ProductSortContent() {
+export function ProductSort() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
   const currentSort = (search as any).sort || 'newest'
 
-  // 创建查询参数字符串，保留现有参数
-  const createQueryString = (params: Record<string, string | null>) => {
-    const newSearchParams = new URLSearchParams(search.toString())
-
-    for (const [key, value] of Object.entries(params)) {
-      if (value === null) {
-        newSearchParams.delete(key)
-      } else {
-        newSearchParams.set(key, value)
-      }
-    }
-
-    return newSearchParams.toString()
+  // Create query params object, preserving existing parameters
+  const createQueryParams = (newSort: string) => {
+    const newParams = { ...search } as any
+    newParams.sort = newSort
+    return newParams
   }
 
   const handleSortChange = (value: string) => {
-    // 更新URL，不重新加载页面
     navigate({
-      to: '/categories' as any,
-      search: createQueryString({ sort: value }) as any,
+      to: '/products',
+      search: createQueryParams(value),
+      replace: true,
     })
   }
 
@@ -61,24 +53,5 @@ function ProductSortContent() {
         </SelectContent>
       </Select>
     </div>
-  )
-}
-
-export function ProductSort() {
-  return (
-    <Suspense
-      fallback={
-        <div className="flex items-center gap-2">
-          <Label htmlFor="sort-select" className="text-sm font-medium">
-            Sort by:
-          </Label>
-          <div className="w-[180px] h-9 rounded-md border bg-background px-3 py-2 animate-pulse">
-            <span className="text-sm text-muted-foreground">Loading...</span>
-          </div>
-        </div>
-      }
-    >
-      <ProductSortContent />
-    </Suspense>
   )
 }

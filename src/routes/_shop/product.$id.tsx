@@ -22,6 +22,9 @@ export const Route = createFileRoute({
     })
     return { product, relatedProducts }
   },
+  // Cache product details for 15 minutes since product info changes occasionally
+  staleTime: 1000 * 60 * 15, // 15 minutes
+  gcTime: 1000 * 60 * 60, // 1 hour (keep in memory)
 })
 
 function RouteComponent() {
