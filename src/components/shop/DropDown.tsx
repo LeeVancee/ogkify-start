@@ -22,7 +22,7 @@ export function DropDown() {
     authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          navigate({ to: '/' as any })
+          navigate({ to: '/'  })
         },
       },
     })
@@ -40,7 +40,7 @@ export function DropDown() {
 
   if (!session) {
     return (
-      <Button variant="ghost" onClick={() => navigate({ to: '/auth' as any })}>
+      <Button variant="ghost" onClick={() => navigate({ to: '/auth' })}>
         login
       </Button>
     )
@@ -76,7 +76,7 @@ export function DropDown() {
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => navigate({ to: '/dashboard' as any })}
+                onClick={() => navigate({ to: '/dashboard' })}
             >
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Dashboard

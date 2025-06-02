@@ -26,7 +26,7 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="rounded-lg border p-4">
             <h2 className="mb-4 text-lg font-semibold">Size Details</h2>
-            <SizeEditForm size={response.size as any} />
+            <SizeEditForm size={response.size!} />
           </div>
         </div>
       </div>

@@ -32,8 +32,8 @@ function ProductPaginationContent({
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return
     navigate({
-      to: '/categories' as any,
-      search: createQueryString({ page: page.toString() }) as any,
+      to: '/products',
+      search: (prev) => ({ ...prev, page: page.toString() }),
     })
   }
 

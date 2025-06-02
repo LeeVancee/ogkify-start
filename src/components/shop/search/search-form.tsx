@@ -17,8 +17,8 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
     e.preventDefault()
     if (query.trim()) {
       navigate({
-        to: '/search' as any,
-        search: { q: encodeURIComponent(query) } as any,
+        to: '/search' ,
+        search: { q: encodeURIComponent(query) },
       })
     }
   }

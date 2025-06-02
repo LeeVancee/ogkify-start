@@ -82,10 +82,10 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/products' as any,
+        to: '/products' ,
         search: createQueryParams({
           category: currentCategory === categoryName ? undefined : categoryName,
-        }) as any,
+        }),
         replace: true,
       })
     })
@@ -94,10 +94,10 @@ function ProductFiltersContent({
   const handleFeaturedChange = (value: boolean) => {
     startTransition(() => {
       navigate({
-        to: '/products' as any,
+        to: '/products',
         search: createQueryParams({
           featured: value || undefined,
-        }) as any,
+        }),
         replace: true,
       })
     })
@@ -116,10 +116,10 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/products' as any,
+        to: '/products',
         search: createQueryParams({
           color: newColors.length ? newColors : undefined,
-        }) as any,
+        }),
         replace: true,
       })
     })
@@ -138,10 +138,10 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/products' as any,
+        to: '/products',
         search: createQueryParams({
           size: newSizes.length ? newSizes : undefined,
-        }) as any,
+        }),
         replace: true,
       })
     })

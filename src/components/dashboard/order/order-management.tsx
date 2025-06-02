@@ -77,8 +77,8 @@ interface Order {
   totalAmount: number
   totalAmountFormatted?: string
   totalItems: number
-  shippingAddress?: string
-  phone?: string
+  shippingAddress?: string | null
+  phone?: string | null
   items: Array<OrderItem>
   firstItemImage?: string | null
   user?: {
@@ -154,8 +154,8 @@ export function OrderManagement() {
 
       // 然后异步加载详细信息
       const response = await getOrderDetails({ data: order.id })
-      if (response.success) {
-        setSelectedOrder(response.order as any)
+      if (response.success && response.order) {
+        setSelectedOrder(response.order)
       }
     } catch (err) {
       console.error('Failed to get order details:', err)
