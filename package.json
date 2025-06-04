@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
+    "dev:clean": "pnpm clean && vite dev --port 3000 --force",
     "build": "vite build",
     "start": "node --env-file=.env .output/server/index.mjs",
     "serve": "vite preview",
@@ -11,6 +12,7 @@
     "lint": "eslint",
     "format": "prettier",
     "check": "prettier --write . && eslint --fix",
+    "clean": "rm -rf node_modules/.vite .tanstack-start/build",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
