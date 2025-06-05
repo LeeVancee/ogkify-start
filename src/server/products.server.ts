@@ -359,3 +359,50 @@ export const getPopularProducts = createServerFn()
       return []
     }
   })
+
+
+  // Get all product form data in a single request for better performance
+export const getProductFormData = createServerFn().handler(async () => {
+  try {
+    // Use Promise.all to fetch all data in parallel
+    const [categories, colors, sizes] = await Promise.all([
+      db.query.categories.findMany({
+        orderBy: (categories, { desc }) => [desc(categories.createdAt)],
+        columns: {
+          id: true,
+          name: true,
+          imageUrl: true,
+        },
+      }),
+      db.query.colors.findMany({
+        orderBy: (colors, { asc }) => [asc(colors.name)],
+        columns: {
+          id: true,
+          name: true,
+          value: true,
+        },
+      }),
+      db.query.sizes.findMany({
+        orderBy: (sizes, { asc }) => [asc(sizes.name)],
+        columns: {
+          id: true,
+          name: true,
+          value: true,
+        },
+      }),
+    ])
+
+    return {
+      categories,
+      colors,
+      sizes,
+    }
+  } catch (error) {
+    console.error('Failed to get product form data:', error)
+    return {
+      categories: [],
+      colors: [],
+      sizes: [],
+    }
+  }
+}) 

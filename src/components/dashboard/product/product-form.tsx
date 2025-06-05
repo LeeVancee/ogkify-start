@@ -28,6 +28,8 @@ import {
 import { UploadThingImage } from '@/components/dashboard/upload-thing'
 import { Switch } from '@/components/ui/switch'
 import { createProduct } from '@/server/products.server'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 
 interface Category {
   id: string
@@ -118,250 +120,343 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
   }
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Name</FormLabel>
-              <FormControl>
-                <Input placeholder="Input product name" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+    <div className="w-full space-y-8 p-6">
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold tracking-tight">Create Product</h1>
+        <p className="text-muted-foreground">
+          Add a new product to your store with all the necessary details.
+        </p>
+      </div>
 
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe product..."
-                  className="resize-none"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price</FormLabel>
-              <FormControl>
-                <Input placeholder="99.99" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category *</FormLabel>
-              <Select
-                onValueChange={field.onChange}
-                value={field.value}
-                required
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-          <FormField
-            control={form.control}
-            name="isFeatured"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Featured Product</FormLabel>
-                  <FormDescription>
-                    Featured products will be displayed on the homepage.
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="isArchived"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                <div className="space-y-0.5">
-                  <FormLabel className="text-base">Archived Product</FormLabel>
-                  <FormDescription>
-                    Archived products will not be displayed in the store.
-                  </FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="colorIds"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel>Color</FormLabel>
-              </div>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {colors.map((color) => (
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* Top Row - Basic Info and Category */}
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <CardTitle>Basic Information</CardTitle>
+                <CardDescription>
+                  Enter the basic details about your product.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <FormField
-                    key={color.id}
                     control={form.control}
-                    name="colorIds"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={color.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(color.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([...field.value, color.id])
-                                  : field.onChange(
-                                      field.value?.filter(
-                                        (value: string) => value !== color.id,
-                                      ),
-                                    )
-                              }}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Product Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            placeholder="Enter product name" 
+                            className="h-11"
+                            {...field} 
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                              $
+                            </span>
+                            <Input 
+                              placeholder="99.99" 
+                              className="h-11 pl-8"
+                              {...field} 
                             />
-                          </FormControl>
-                          <div className="flex items-center gap-2">
-                            <div
-                              className="h-5 w-5 rounded-full border"
-                              style={{ backgroundColor: color.value }}
-                            />
-                            <FormLabel className="font-normal">
-                              {color.name}
-                            </FormLabel>
                           </div>
-                        </FormItem>
-                      )
-                    }}
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                ))}
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                </div>
 
-        <FormField
-          control={form.control}
-          name="sizeIds"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel>Size</FormLabel>
-              </div>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-                {sizes.map((size) => (
-                  <FormField
-                    key={size.id}
-                    control={form.control}
-                    name="sizeIds"
-                    render={({ field }) => {
-                      return (
-                        <FormItem
-                          key={size.id}
-                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4"
-                        >
-                          <FormControl>
-                            <Checkbox
-                              checked={field.value?.includes(size.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([...field.value, size.id])
-                                  : field.onChange(
-                                      field.value?.filter(
-                                        (value: string) => value !== size.id,
-                                      ),
-                                    )
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal">
-                            {size.name} ({size.value})
-                          </FormLabel>
-                        </FormItem>
-                      )
-                    }}
-                  />
-                ))}
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Product Images</FormLabel>
-              <FormControl>
-                <UploadThingImage
-                  value={field.value}
-                  onChange={field.onChange}
-                  disabled={isLoading}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Describe your product in detail..."
+                          className="min-h-[100px] resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+              </CardContent>
+            </Card>
 
-        <Button type="submit" disabled={isLoading} className="w-full md:w-auto">
-          {isLoading ? 'Creating...' : 'Create Product'}
-        </Button>
-      </form>
-    </Form>
+            <Card>
+              <CardHeader>
+                <CardTitle>Category & Settings</CardTitle>
+                <CardDescription>
+                  Product classification and visibility settings.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="categoryId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        required
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="isFeatured"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-sm font-medium">Featured</FormLabel>
+                          <FormDescription className="text-xs">
+                            Display on homepage
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="isArchived"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-sm font-medium">Archived</FormLabel>
+                          <FormDescription className="text-xs">
+                            Hide from store
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Middle Row - Images and Variants */}
+          <div className="grid gap-6 lg:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Images</CardTitle>
+                <CardDescription>
+                  Upload high-quality images. First image will be the main display.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <FormField
+                  control={form.control}
+                  name="images"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <UploadThingImage
+                          value={field.value}
+                          onChange={field.onChange}
+                          disabled={isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Product Variants</CardTitle>
+                <CardDescription>
+                  Select available colors and sizes for this product.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="colorIds"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-3">
+                        <FormLabel className="text-sm font-semibold">Colors</FormLabel>
+                        <FormDescription className="text-xs">
+                          Choose at least one color option.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {colors.map((color) => (
+                          <FormField
+                            key={color.id}
+                            control={form.control}
+                            name="colorIds"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={color.id}
+                                  className="flex flex-row items-center space-x-2 space-y-0 rounded-lg border p-3 transition-colors hover:bg-muted/50"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(color.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, color.id])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value: string) => value !== color.id,
+                                              ),
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <div className="flex items-center gap-2">
+                                    <div
+                                      className="h-4 w-4 rounded-full border-2 border-border shadow-sm"
+                                      style={{ backgroundColor: color.value }}
+                                    />
+                                    <FormLabel className="cursor-pointer text-xs font-normal">
+                                      {color.name}
+                                    </FormLabel>
+                                  </div>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <Separator />
+
+                <FormField
+                  control={form.control}
+                  name="sizeIds"
+                  render={() => (
+                    <FormItem>
+                      <div className="mb-3">
+                        <FormLabel className="text-sm font-semibold">Sizes</FormLabel>
+                        <FormDescription className="text-xs">
+                          Choose at least one size option.
+                        </FormDescription>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {sizes.map((size) => (
+                          <FormField
+                            key={size.id}
+                            control={form.control}
+                            name="sizeIds"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={size.id}
+                                  className="flex flex-row items-center space-x-2 space-y-0 rounded-lg border p-3 transition-colors hover:bg-muted/50"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={field.value?.includes(size.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange([...field.value, size.id])
+                                          : field.onChange(
+                                              field.value?.filter(
+                                                (value: string) => value !== size.id,
+                                              ),
+                                            )
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="cursor-pointer text-xs font-normal">
+                                    {size.name} ({size.value})
+                                  </FormLabel>
+                                </FormItem>
+                              )
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-end space-x-4 pt-6">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.navigate({ to: '/dashboard/products' })}
+              disabled={isLoading}
+              className="min-w-[120px]"
+            >
+              Cancel
+            </Button>
+            <Button 
+              type="submit" 
+              disabled={isLoading} 
+              className="min-w-[120px]"
+            >
+              {isLoading ? 'Creating...' : 'Create Product'}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
   )
 }

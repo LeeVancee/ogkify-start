@@ -1,51 +1,34 @@
+import { useQuery } from '@tanstack/react-query'
 import { DashboardClient } from '@/components/dashboard/dashboard-client'
 import Loading from '@/components/loading'
-import { getCategoriesCount } from '@/server/categories.server'
-import {
-  getMonthlySalesData,
-  getOrdersStats,
-  getRecentOrders,
-} from '@/server/orders.server'
-import { getProductsCount } from '@/server/products.server'
-import {} from '@tanstack/react-router'
+import { getDashboardData } from '@/server/dashboard.server'
+import { } from '@tanstack/react-router'
 
 export const Route = createFileRoute({
   component: RouteComponent,
-  pendingComponent: Loading,
-  pendingMs: 0,
-  loader: async () => {
-    setTimeout(() => {
-      throw new Error('test')
-    }, 999999)
-    const productsCount = await getProductsCount()
-    const categoriesCount = await getCategoriesCount()
-    const { pendingOrders, completedOrders, totalRevenue } =
-      await getOrdersStats()
-    const recentOrders = await getRecentOrders()
-    const monthlySalesData = await getMonthlySalesData()
-
-    return {
-      productsCount,
-      categoriesCount,
-      pendingOrders,
-      completedOrders,
-      totalRevenue,
-      recentOrders,
-      monthlySalesData,
-    }
-  },
 })
 
 function RouteComponent() {
+  // Use single query to fetch all dashboard data for optimal performance
+  const { data, isLoading } = useQuery({
+    queryKey: ['dashboard-data'],
+    queryFn: () => getDashboardData(),
+  })
+
+  if (isLoading) {
+    return <Loading />
+  }
+
   const {
-    productsCount,
-    categoriesCount,
-    pendingOrders,
-    completedOrders,
-    totalRevenue,
-    recentOrders,
-    monthlySalesData,
-  } = Route.useLoaderData()
+    productsCount = 0,
+    categoriesCount = 0,
+    pendingOrders = 0,
+    completedOrders = 0,
+    totalRevenue = 0,
+    recentOrders = [],
+    monthlySalesData = [],
+  } = data || {}
+
   return (
     <DashboardClient
       productsCount={productsCount}
