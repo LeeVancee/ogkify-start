@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { CheckCircle, Loader2 } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -21,7 +21,7 @@ const searchParamsSchema = z.object({
   order_id: z.string().optional(),
 })
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/_shop/checkout/success')({
   validateSearch: searchParamsSchema,
   component: CheckoutSuccessPage,
 })

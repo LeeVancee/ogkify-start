@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { Loader2, User } from 'lucide-react'
 
-import { redirect } from '@tanstack/react-router'
+import { redirect, createFileRoute } from '@tanstack/react-router'
 import { authClient } from '@/lib/auth-client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -31,7 +31,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getSession } from '@/server/getSession.server'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/_shop/profile')({
   component: ProfilePage,
   beforeLoad: async () => {
     const session = await getSession()

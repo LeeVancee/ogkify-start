@@ -1,6 +1,7 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { SizeForm } from '@/components/dashboard/size/size-form'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/sizes/new')({
   component: RouteComponent,
 })
 

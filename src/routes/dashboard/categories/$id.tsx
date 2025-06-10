@@ -1,8 +1,8 @@
-import { notFound } from '@tanstack/react-router'
+import { notFound, createFileRoute } from '@tanstack/react-router'
 import { getCategory } from '@/server/categories.server'
 import { CategoryEditForm } from '@/components/dashboard/category/category-edit-form'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/categories/$id')({
   component: RouteComponent,
   loader: async ({ params }: { params: { id: string } }) => {
     const response = await getCategory({ data: params.id })

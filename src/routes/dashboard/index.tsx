@@ -1,10 +1,11 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { DashboardClient } from '@/components/dashboard/dashboard-client'
 import Loading from '@/components/loading'
 import { getDashboardData } from '@/server/dashboard.server'
 import { } from '@tanstack/react-router'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/')({
   component: RouteComponent,
 })
 

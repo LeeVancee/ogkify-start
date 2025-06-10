@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 // src/routes/categories.tsx
 import { z } from 'zod'
 import {} from '@tanstack/react-router'
@@ -18,7 +19,7 @@ const searchParamsSchema = z.object({
   page: z.string().optional(),
 })
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/_shop/products/')({
   validateSearch: searchParamsSchema,
   loaderDeps: ({ search }) => ({
     category: search.category,

@@ -1,3 +1,4 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'
@@ -7,7 +8,7 @@ import {} from '@tanstack/react-router'
 import { EditProductForm } from '@/components/dashboard/product/edit-product-form'
 import Loading from '@/components/loading'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/products/$id')({
   component: RouteComponent,
 })
 

@@ -1,7 +1,8 @@
+import { createFileRoute } from '@tanstack/react-router'
 import { ColorList } from '@/components/dashboard/color/color-list'
 import {} from '@tanstack/react-router'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/dashboard/colors/')({
   component: RouteComponent,
 })
 

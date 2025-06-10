@@ -1,4 +1,4 @@
-import { Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
@@ -14,7 +14,7 @@ import {
 } from '@/server/cart.server'
 import Loading from '@/components/loading'
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/_shop/cart')({
   component: CartPage,
 })
 

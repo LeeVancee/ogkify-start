@@ -1,12 +1,12 @@
 import { json } from '@tanstack/react-start'
-import { getWebRequest } from '@tanstack/react-start/server'
+import { getWebRequest, createServerFileRoute } from '@tanstack/react-start/server'
 import { eq } from 'drizzle-orm'
 import { formatAmountForStripe, stripe } from '@/lib/stripe'
 import { db } from '@/db'
 import { orderItems, orders } from '@/db/schema'
 import { auth } from '@/lib/auth'
 
-export const ServerRoute = createServerFileRoute().methods({
+export const ServerRoute = createServerFileRoute('/api/checkout').methods({
   POST: async ({ request }: { request: any }) => {
     try {
       const { headers } = getWebRequest()

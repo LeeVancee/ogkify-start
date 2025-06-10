@@ -1,4 +1,4 @@
-import { Outlet } from '@tanstack/react-router'
+import { Outlet, createFileRoute } from '@tanstack/react-router'
 import { ProductFilters } from '@/components/shop/product/product-filters'
 import { getCategories } from '@/server/categories.server'
 import { getColors } from '@/server/colors.server'
@@ -6,7 +6,7 @@ import { getSizes } from '@/server/sizes.server'
 import { ProductSort } from '@/components/shop/product/product-sort'
 // Loading component for the entire products page
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/_shop/products')({
   component: RouteComponent,
   loader: async () => {
     const categories = await getCategories()

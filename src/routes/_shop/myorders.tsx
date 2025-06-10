@@ -6,7 +6,7 @@ import {
   Package,
   ShoppingBag,
 } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { NoOrders } from '@/components/shop/cart/empty-cart'
@@ -55,7 +55,7 @@ interface Order {
   firstItemImage: string | null
 }
 
-export const Route = createFileRoute({
+export const Route = createFileRoute('/_shop/myorders')({
   component: MyOrdersPage,
 })
 
