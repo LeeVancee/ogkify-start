@@ -190,7 +190,6 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '': typeof ShopRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/products': typeof ShopProductsRouteRouteWithChildren
@@ -274,7 +273,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | ''
     | '/dashboard'
     | '/auth'
     | '/products'
@@ -392,11 +390,11 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/_shop': {
-      id: '/_shop'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof ShopRouteRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -406,39 +404,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/_shop': {
+      id: '/_shop'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ShopRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_shop/products': {
-      id: '/_shop/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: typeof ShopProductsRouteRouteImport
-      parentRoute: typeof ShopRouteRoute
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
     }
-    '/_shop/cart': {
-      id: '/_shop/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: typeof ShopCartRouteImport
-      parentRoute: typeof ShopRouteRoute
-    }
-    '/_shop/myorders': {
-      id: '/_shop/myorders'
-      path: '/myorders'
-      fullPath: '/myorders'
-      preLoaderRoute: typeof ShopMyordersRouteImport
-      parentRoute: typeof ShopRouteRoute
-    }
-    '/_shop/profile': {
-      id: '/_shop/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ShopProfileRouteImport
+    '/_shop/': {
+      id: '/_shop/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof ShopIndexRouteImport
       parentRoute: typeof ShopRouteRoute
     }
     '/_shop/search': {
@@ -448,137 +432,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ShopSearchRouteImport
       parentRoute: typeof ShopRouteRoute
     }
-    '/api/checkout': {
-      id: '/api/checkout'
-      path: ''
-      fullPath: '/api/checkout'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/uploadthing': {
-      id: '/api/uploadthing'
-      path: ''
-      fullPath: '/api/uploadthing'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootRouteImport
-    }
-    '/_shop/': {
-      id: '/_shop/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof ShopIndexRouteImport
+    '/_shop/profile': {
+      id: '/_shop/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ShopProfileRouteImport
       parentRoute: typeof ShopRouteRoute
     }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/_shop/checkout/success': {
-      id: '/_shop/checkout/success'
-      path: '/checkout/success'
-      fullPath: '/checkout/success'
-      preLoaderRoute: typeof ShopCheckoutSuccessRouteImport
+    '/_shop/myorders': {
+      id: '/_shop/myorders'
+      path: '/myorders'
+      fullPath: '/myorders'
+      preLoaderRoute: typeof ShopMyordersRouteImport
       parentRoute: typeof ShopRouteRoute
     }
-    '/_shop/product/$id': {
-      id: '/_shop/product/$id'
-      path: '/product/$id'
-      fullPath: '/product/$id'
-      preLoaderRoute: typeof ShopProductIdRouteImport
+    '/_shop/cart': {
+      id: '/_shop/cart'
+      path: '/cart'
+      fullPath: '/cart'
+      preLoaderRoute: typeof ShopCartRouteImport
       parentRoute: typeof ShopRouteRoute
     }
-    '/api/auth/$': {
-      id: '/api/auth/$'
-      path: ''
-      fullPath: '/api/auth/$'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootRouteImport
+    '/_shop/products': {
+      id: '/_shop/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof ShopProductsRouteRouteImport
+      parentRoute: typeof ShopRouteRoute
     }
-    '/dashboard/categories/$id': {
-      id: '/dashboard/categories/$id'
-      path: '/categories/$id'
-      fullPath: '/dashboard/categories/$id'
-      preLoaderRoute: typeof DashboardCategoriesIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/categories/new': {
-      id: '/dashboard/categories/new'
-      path: '/categories/new'
-      fullPath: '/dashboard/categories/new'
-      preLoaderRoute: typeof DashboardCategoriesNewRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/colors/$id': {
-      id: '/dashboard/colors/$id'
-      path: '/colors/$id'
-      fullPath: '/dashboard/colors/$id'
-      preLoaderRoute: typeof DashboardColorsIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/colors/new': {
-      id: '/dashboard/colors/new'
-      path: '/colors/new'
-      fullPath: '/dashboard/colors/new'
-      preLoaderRoute: typeof DashboardColorsNewRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/products/$id': {
-      id: '/dashboard/products/$id'
-      path: '/products/$id'
-      fullPath: '/dashboard/products/$id'
-      preLoaderRoute: typeof DashboardProductsIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/products/new': {
-      id: '/dashboard/products/new'
-      path: '/products/new'
-      fullPath: '/dashboard/products/new'
-      preLoaderRoute: typeof DashboardProductsNewRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/sizes/$id': {
-      id: '/dashboard/sizes/$id'
-      path: '/sizes/$id'
-      fullPath: '/dashboard/sizes/$id'
-      preLoaderRoute: typeof DashboardSizesIdRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/sizes/new': {
-      id: '/dashboard/sizes/new'
-      path: '/sizes/new'
-      fullPath: '/dashboard/sizes/new'
-      preLoaderRoute: typeof DashboardSizesNewRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/_shop/products/': {
-      id: '/_shop/products/'
-      path: '/'
-      fullPath: '/products/'
-      preLoaderRoute: typeof ShopProductsIndexRouteImport
-      parentRoute: typeof ShopProductsRouteRoute
-    }
-    '/dashboard/categories/': {
-      id: '/dashboard/categories/'
-      path: '/categories'
-      fullPath: '/dashboard/categories'
-      preLoaderRoute: typeof DashboardCategoriesIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/colors/': {
-      id: '/dashboard/colors/'
-      path: '/colors'
-      fullPath: '/dashboard/colors'
-      preLoaderRoute: typeof DashboardColorsIndexRouteImport
-      parentRoute: typeof DashboardRouteRoute
-    }
-    '/dashboard/orders/': {
-      id: '/dashboard/orders/'
-      path: '/orders'
-      fullPath: '/dashboard/orders'
-      preLoaderRoute: typeof DashboardOrdersIndexRouteImport
+    '/dashboard/sizes/': {
+      id: '/dashboard/sizes/'
+      path: '/sizes'
+      fullPath: '/dashboard/sizes'
+      preLoaderRoute: typeof DashboardSizesIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/products/': {
@@ -588,71 +474,113 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardProductsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
-    '/dashboard/sizes/': {
-      id: '/dashboard/sizes/'
-      path: '/sizes'
-      fullPath: '/dashboard/sizes'
-      preLoaderRoute: typeof DashboardSizesIndexRouteImport
+    '/dashboard/orders/': {
+      id: '/dashboard/orders/'
+      path: '/orders'
+      fullPath: '/dashboard/orders'
+      preLoaderRoute: typeof DashboardOrdersIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/colors/': {
+      id: '/dashboard/colors/'
+      path: '/colors'
+      fullPath: '/dashboard/colors'
+      preLoaderRoute: typeof DashboardColorsIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/categories/': {
+      id: '/dashboard/categories/'
+      path: '/categories'
+      fullPath: '/dashboard/categories'
+      preLoaderRoute: typeof DashboardCategoriesIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_shop/products/': {
+      id: '/_shop/products/'
+      path: '/'
+      fullPath: '/products/'
+      preLoaderRoute: typeof ShopProductsIndexRouteImport
+      parentRoute: typeof ShopProductsRouteRoute
+    }
+    '/dashboard/sizes/new': {
+      id: '/dashboard/sizes/new'
+      path: '/sizes/new'
+      fullPath: '/dashboard/sizes/new'
+      preLoaderRoute: typeof DashboardSizesNewRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/sizes/$id': {
+      id: '/dashboard/sizes/$id'
+      path: '/sizes/$id'
+      fullPath: '/dashboard/sizes/$id'
+      preLoaderRoute: typeof DashboardSizesIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/products/new': {
+      id: '/dashboard/products/new'
+      path: '/products/new'
+      fullPath: '/dashboard/products/new'
+      preLoaderRoute: typeof DashboardProductsNewRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/products/$id': {
+      id: '/dashboard/products/$id'
+      path: '/products/$id'
+      fullPath: '/dashboard/products/$id'
+      preLoaderRoute: typeof DashboardProductsIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/colors/new': {
+      id: '/dashboard/colors/new'
+      path: '/colors/new'
+      fullPath: '/dashboard/colors/new'
+      preLoaderRoute: typeof DashboardColorsNewRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/colors/$id': {
+      id: '/dashboard/colors/$id'
+      path: '/colors/$id'
+      fullPath: '/dashboard/colors/$id'
+      preLoaderRoute: typeof DashboardColorsIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/categories/new': {
+      id: '/dashboard/categories/new'
+      path: '/categories/new'
+      fullPath: '/dashboard/categories/new'
+      preLoaderRoute: typeof DashboardCategoriesNewRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/categories/$id': {
+      id: '/dashboard/categories/$id'
+      path: '/categories/$id'
+      fullPath: '/dashboard/categories/$id'
+      preLoaderRoute: typeof DashboardCategoriesIdRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/_shop/product/$id': {
+      id: '/_shop/product/$id'
+      path: '/product/$id'
+      fullPath: '/product/$id'
+      preLoaderRoute: typeof ShopProductIdRouteImport
+      parentRoute: typeof ShopRouteRoute
+    }
+    '/_shop/checkout/success': {
+      id: '/_shop/checkout/success'
+      path: '/checkout/success'
+      fullPath: '/checkout/success'
+      preLoaderRoute: typeof ShopCheckoutSuccessRouteImport
+      parentRoute: typeof ShopRouteRoute
     }
   }
 }
 declare module '@tanstack/react-start/server' {
   interface ServerFileRoutesByPath {
-    '/_shop': {
-      id: '/_shop'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/products': {
-      id: '/_shop/products'
-      path: '/products'
-      fullPath: '/products'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/cart': {
-      id: '/_shop/cart'
-      path: '/cart'
-      fullPath: '/cart'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/myorders': {
-      id: '/_shop/myorders'
-      path: '/myorders'
-      fullPath: '/myorders'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/profile': {
-      id: '/_shop/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/search': {
-      id: '/_shop/search'
-      path: '/search'
-      fullPath: '/search'
-      preLoaderRoute: unknown
+    '/api/uploadthing': {
+      id: '/api/uploadthing'
+      path: '/api/uploadthing'
+      fullPath: '/api/uploadthing'
+      preLoaderRoute: typeof ApiUploadthingServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
     '/api/checkout': {
@@ -662,144 +590,11 @@ declare module '@tanstack/react-start/server' {
       preLoaderRoute: typeof ApiCheckoutServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
-    '/api/uploadthing': {
-      id: '/api/uploadthing'
-      path: '/api/uploadthing'
-      fullPath: '/api/uploadthing'
-      preLoaderRoute: typeof ApiUploadthingServerRouteImport
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/': {
-      id: '/_shop/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/': {
-      id: '/dashboard/'
-      path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/checkout/success': {
-      id: '/_shop/checkout/success'
-      path: '/checkout/success'
-      fullPath: '/checkout/success'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/product/$id': {
-      id: '/_shop/product/$id'
-      path: '/product/$id'
-      fullPath: '/product/$id'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
       fullPath: '/api/auth/$'
       preLoaderRoute: typeof ApiAuthSplatServerRouteImport
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/categories/$id': {
-      id: '/dashboard/categories/$id'
-      path: '/categories/$id'
-      fullPath: '/dashboard/categories/$id'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/categories/new': {
-      id: '/dashboard/categories/new'
-      path: '/categories/new'
-      fullPath: '/dashboard/categories/new'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/colors/$id': {
-      id: '/dashboard/colors/$id'
-      path: '/colors/$id'
-      fullPath: '/dashboard/colors/$id'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/colors/new': {
-      id: '/dashboard/colors/new'
-      path: '/colors/new'
-      fullPath: '/dashboard/colors/new'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/products/$id': {
-      id: '/dashboard/products/$id'
-      path: '/products/$id'
-      fullPath: '/dashboard/products/$id'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/products/new': {
-      id: '/dashboard/products/new'
-      path: '/products/new'
-      fullPath: '/dashboard/products/new'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/sizes/$id': {
-      id: '/dashboard/sizes/$id'
-      path: '/sizes/$id'
-      fullPath: '/dashboard/sizes/$id'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/sizes/new': {
-      id: '/dashboard/sizes/new'
-      path: '/sizes/new'
-      fullPath: '/dashboard/sizes/new'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/_shop/products/': {
-      id: '/_shop/products/'
-      path: '/'
-      fullPath: '/products/'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/categories/': {
-      id: '/dashboard/categories/'
-      path: '/categories'
-      fullPath: '/dashboard/categories'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/colors/': {
-      id: '/dashboard/colors/'
-      path: '/colors'
-      fullPath: '/dashboard/colors'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/orders/': {
-      id: '/dashboard/orders/'
-      path: '/orders'
-      fullPath: '/dashboard/orders'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/products/': {
-      id: '/dashboard/products/'
-      path: '/products'
-      fullPath: '/dashboard/products'
-      preLoaderRoute: unknown
-      parentRoute: typeof rootServerRouteImport
-    }
-    '/dashboard/sizes/': {
-      id: '/dashboard/sizes/'
-      path: '/sizes'
-      fullPath: '/dashboard/sizes'
-      preLoaderRoute: unknown
       parentRoute: typeof rootServerRouteImport
     }
   }
