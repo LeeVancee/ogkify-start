@@ -128,7 +128,7 @@ function CartPage() {
   // Calculate totals
   const items = cartData?.items || []
   const subtotal = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
+    (sum: number, item: CartItem) => sum + item.price * item.quantity,
     0,
   )
   const shipping = subtotal > 200 ? 0 : 10 // Free shipping over $200
@@ -219,7 +219,7 @@ function CartPage() {
               <CardTitle>Cart Items</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {items.map((item, index) => (
+              {items.map((item: CartItem, index: number) => (
                 <div key={item.id}>
                   <div className="flex gap-4">
                     {/* Product Image */}
@@ -309,7 +309,7 @@ function CartPage() {
                       </div>
                     </div>
                   </div>
-                  {index < items.length - 1 && <Separator className="mt-4" />}
+                    {index < items.length - 1 && <Separator  />}
                 </div>
               ))}
             </CardContent>
