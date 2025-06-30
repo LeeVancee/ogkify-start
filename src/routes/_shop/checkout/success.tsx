@@ -4,6 +4,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
+import { getOrderById } from '@/server/orders.server'
 
 // order type definition
 interface OrderData {
@@ -31,7 +32,7 @@ function CheckoutSuccessContent() {
 
   // use TanStack Query to get order data
   const {
-    data: orderData,
+    data: orderResult,
     isLoading,
     isError,
     error,
@@ -43,22 +44,23 @@ function CheckoutSuccessContent() {
       }
 
       // wait for a short time to ensure webhook is processed
-      await new Promise((resolve) => setTimeout(resolve, 1500))
+      await new Promise((resolve) => setTimeout(resolve, 2000))
 
       // get order information from server
-      const response = await fetch(`/api/orders/${order_id}`)
-
-      if (!response.ok) {
-        throw new Error('Failed to get order information')
+      const result = await getOrderById({ data: order_id })
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to get order information')
       }
 
-      const data = await response.json()
-      return data.order as OrderData
+      return result
     },
-    retry: 1,
+    retry: 2,
     staleTime: 1000 * 60 * 10, // 10 minutes cache, checkout success page is usually only visited once
     enabled: Boolean(session_id && order_id),
   })
+
+  const orderData = orderResult?.order
 
   if (isLoading) {
     return (

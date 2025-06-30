@@ -94,14 +94,32 @@ function CartPage() {
   const handleCheckout = async () => {
     setIsCheckingOut(true)
     try {
-      // Here you would implement checkout logic
-      // For now, just simulate a delay
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-      toast.success('Redirecting to checkout...')
-      // Navigate to checkout page
-      // navigate({ to: '/checkout' })
+      // Call checkout API to create Stripe session
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session')
+      }
+
+      // Redirect to Stripe checkout page
+      if (data.sessionUrl) {
+        window.location.href = data.sessionUrl
+        return
+      }
+
+      toast.error('Failed to create checkout session')
     } catch (error) {
-      toast.error('Checkout failed')
+      console.error('Checkout error:', error)
+      toast.error(
+        error instanceof Error ? error.message : 'Checkout process failed',
+      )
     } finally {
       setIsCheckingOut(false)
     }
@@ -154,7 +172,7 @@ function CartPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <Button variant="ghost" asChild>
-            <Link to="/categories">
+            <Link to="/products">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Continue Shopping
             </Link>
@@ -169,7 +187,7 @@ function CartPage() {
               Looks like you haven't added any items to your cart yet.
             </p>
             <Button asChild>
-              <Link to="/categories">Start Shopping</Link>
+              <Link to="/products">Start Shopping</Link>
             </Button>
           </div>
         </div>
@@ -182,7 +200,7 @@ function CartPage() {
       {/* Header */}
       <div className="mb-6">
         <Button variant="ghost" asChild className="mb-4">
-          <Link to="/categories">
+          <Link to="/products">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Continue Shopping
           </Link>

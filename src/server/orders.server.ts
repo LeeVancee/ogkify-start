@@ -557,6 +557,50 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
   }
 })
 
+// Get single order by ID
+export const getOrderById = createServerFn()
+  .validator((orderId: string) => orderId)
+  .handler(async ({ data: orderId }) => {
+    try {
+      const session = await getSession()
+
+      if (!session?.user.id) {
+        return { success: false, error: 'Unauthorized' }
+      }
+
+      // Get order with all related data
+      const order = await db.query.orders.findFirst({
+        where: (ordersTable, { eq, and }) =>
+          and(
+            eq(ordersTable.id, orderId),
+            eq(ordersTable.userId, session.user.id)
+          ),
+        with: {
+          items: {
+            with: {
+              product: {
+                with: {
+                  images: true,
+                },
+              },
+              color: true,
+              size: true,
+            },
+          },
+        },
+      })
+
+      if (!order) {
+        return { success: false, error: 'Order not found' }
+      }
+
+      return { success: true, order }
+    } catch (error) {
+      console.error('Failed to get order:', error)
+      return { success: false, error: 'Failed to get order' }
+    }
+  })
+
 // Delete unpaid order
 export const deleteUnpaidOrder = createServerFn()
   .validator((orderId: string) => orderId)

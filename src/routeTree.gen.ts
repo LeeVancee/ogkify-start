@@ -39,6 +39,7 @@ import { Route as ShopProductIdRouteImport } from './routes/_shop/product.$id'
 import { Route as ShopCheckoutSuccessRouteImport } from './routes/_shop/checkout/success'
 import { ServerRoute as ApiUploadthingServerRouteImport } from './routes/api/uploadthing'
 import { ServerRoute as ApiCheckoutServerRouteImport } from './routes/api/checkout'
+import { ServerRoute as ApiWebhooksStripeServerRouteImport } from './routes/api/webhooks/stripe'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
 
 const rootServerRouteImport = createServerRootRoute()
@@ -181,6 +182,11 @@ const ApiUploadthingServerRoute = ApiUploadthingServerRouteImport.update({
 const ApiCheckoutServerRoute = ApiCheckoutServerRouteImport.update({
   id: '/api/checkout',
   path: '/api/checkout',
+  getParentRoute: () => rootServerRouteImport,
+} as any)
+const ApiWebhooksStripeServerRoute = ApiWebhooksStripeServerRouteImport.update({
+  id: '/api/webhooks/stripe',
+  path: '/api/webhooks/stripe',
   getParentRoute: () => rootServerRouteImport,
 } as any)
 const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
@@ -362,30 +368,47 @@ export interface FileServerRoutesByFullPath {
   '/api/checkout': typeof ApiCheckoutServerRoute
   '/api/uploadthing': typeof ApiUploadthingServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/webhooks/stripe': typeof ApiWebhooksStripeServerRoute
 }
 export interface FileServerRoutesByTo {
   '/api/checkout': typeof ApiCheckoutServerRoute
   '/api/uploadthing': typeof ApiUploadthingServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/webhooks/stripe': typeof ApiWebhooksStripeServerRoute
 }
 export interface FileServerRoutesById {
   __root__: typeof rootServerRouteImport
   '/api/checkout': typeof ApiCheckoutServerRoute
   '/api/uploadthing': typeof ApiUploadthingServerRoute
   '/api/auth/$': typeof ApiAuthSplatServerRoute
+  '/api/webhooks/stripe': typeof ApiWebhooksStripeServerRoute
 }
 export interface FileServerRouteTypes {
   fileServerRoutesByFullPath: FileServerRoutesByFullPath
-  fullPaths: '/api/checkout' | '/api/uploadthing' | '/api/auth/$'
+  fullPaths:
+    | '/api/checkout'
+    | '/api/uploadthing'
+    | '/api/auth/$'
+    | '/api/webhooks/stripe'
   fileServerRoutesByTo: FileServerRoutesByTo
-  to: '/api/checkout' | '/api/uploadthing' | '/api/auth/$'
-  id: '__root__' | '/api/checkout' | '/api/uploadthing' | '/api/auth/$'
+  to:
+    | '/api/checkout'
+    | '/api/uploadthing'
+    | '/api/auth/$'
+    | '/api/webhooks/stripe'
+  id:
+    | '__root__'
+    | '/api/checkout'
+    | '/api/uploadthing'
+    | '/api/auth/$'
+    | '/api/webhooks/stripe'
   fileServerRoutesById: FileServerRoutesById
 }
 export interface RootServerRouteChildren {
   ApiCheckoutServerRoute: typeof ApiCheckoutServerRoute
   ApiUploadthingServerRoute: typeof ApiUploadthingServerRoute
   ApiAuthSplatServerRoute: typeof ApiAuthSplatServerRoute
+  ApiWebhooksStripeServerRoute: typeof ApiWebhooksStripeServerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -590,6 +613,13 @@ declare module '@tanstack/react-start/server' {
       preLoaderRoute: typeof ApiCheckoutServerRouteImport
       parentRoute: typeof rootServerRouteImport
     }
+    '/api/webhooks/stripe': {
+      id: '/api/webhooks/stripe'
+      path: '/api/webhooks/stripe'
+      fullPath: '/api/webhooks/stripe'
+      preLoaderRoute: typeof ApiWebhooksStripeServerRouteImport
+      parentRoute: typeof rootServerRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -687,6 +717,7 @@ const rootServerRouteChildren: RootServerRouteChildren = {
   ApiCheckoutServerRoute: ApiCheckoutServerRoute,
   ApiUploadthingServerRoute: ApiUploadthingServerRoute,
   ApiAuthSplatServerRoute: ApiAuthSplatServerRoute,
+  ApiWebhooksStripeServerRoute: ApiWebhooksStripeServerRoute,
 }
 export const serverRouteTree = rootServerRouteImport
   ._addFileChildren(rootServerRouteChildren)
