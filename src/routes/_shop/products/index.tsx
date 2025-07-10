@@ -30,7 +30,7 @@ export const Route = createFileRoute('/_shop/products/')({
     maxPrice: search.maxPrice,
     color: search.color,
     size: search.size,
-    page: search.page || '1',
+    page: search.page,
   }),
   loader: async ({ deps }) => {
     // Parse search parameters
@@ -93,7 +93,6 @@ function CategoriesPage() {
 
   return (
     <div>
-      
       {products.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center rounded-lg border border-dashed py-12">
           <h3 className="text-lg font-semibold">No Products Found</h3>
@@ -118,8 +117,8 @@ function CategoriesPage() {
 // Loading component for products content
 function ProductsContentLoading() {
   return (
-    <div> 
-     {/* Products grid skeleton */}
+    <div>
+      {/* Products grid skeleton */}
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {Array.from({ length: 12 }).map((_, i) => (
           <div
