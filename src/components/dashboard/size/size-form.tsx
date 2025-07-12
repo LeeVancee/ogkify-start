@@ -1,57 +1,41 @@
-import { useState } from 'react'
-import { toast } from 'sonner'
 import { createSize } from '@/server/sizes.server'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { useCrudForm } from '@/hooks/use-crud-form'
+import { SimpleForm } from '@/components/forms/simple-form'
+
+interface SizeFormData {
+  name: string
+  value: string
+}
 
 export function SizeForm() {
-  const [name, setName] = useState('')
-  const [value, setValue] = useState('')
-  const [loading, setLoading] = useState(false)
+  const { formData, loading, updateField, handleSubmit } = useCrudForm<SizeFormData>({
+    createFn: createSize,
+    initialValues: { name: '', value: '' },
+  })
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!name || !value) {
-      toast.error('Please fill in all information')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const result = await createSize({ data: { name, value } })
-      if (result.success) {
-        toast.success('Size created successfully')
-        setName('')
-        setValue('')
-      } else {
-        toast.error(result.error)
-      }
-    } catch (error) {
-      toast.error('Operation failed')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const fields = [
+    {
+      key: 'name',
+      label: 'Size Name',
+      placeholder: 'Input size name',
+      required: true,
+    },
+    {
+      key: 'value',
+      label: 'Size Value',
+      placeholder: 'Input size value (e.g., S, M, L)',
+      required: true,
+    },
+  ]
 
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Input
-          placeholder="Input size name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-      <div className="space-y-2">
-        <Input
-          placeholder="Input size value (e.g., S, M, L)"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-      </div>
-      <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Creating...' : 'Create Size'}
-      </Button>
-    </form>
+    <SimpleForm
+      fields={fields}
+      formData={formData}
+      onFieldChange={updateField}
+      onSubmit={() => handleSubmit(['name', 'value'])}
+      loading={loading}
+      submitText={loading ? 'Creating...' : 'Create Size'}
+    />
   )
 }
