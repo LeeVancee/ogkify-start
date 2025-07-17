@@ -22,4 +22,7 @@ export default defineConfig({
     }),
     tailwindcss(),
   ],
+  optimizeDeps: {
+    include: ["better-auth/react", "react-hook-form"],
+  },
 })
