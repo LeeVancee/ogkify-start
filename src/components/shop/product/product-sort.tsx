@@ -18,11 +18,11 @@ const sortOptions = [
 export function ProductSort() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
-  const currentSort = search .sort || 'newest'
+  const currentSort = search.sort || 'newest'
 
   // Create query params object, preserving existing parameters
   const createQueryParams = (newSort: string) => {
-    const newParams = { ...search } 
+    const newParams = { ...search }
     newParams.sort = newSort
     return newParams
   }

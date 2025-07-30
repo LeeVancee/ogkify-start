@@ -1,5 +1,8 @@
 import { json } from '@tanstack/react-start'
-import { getWebRequest, createServerFileRoute } from '@tanstack/react-start/server'
+import {
+  getWebRequest,
+  createServerFileRoute,
+} from '@tanstack/react-start/server'
 import { eq } from 'drizzle-orm'
 import { formatAmountForStripe, stripe } from '@/lib/stripe'
 import { db } from '@/db'

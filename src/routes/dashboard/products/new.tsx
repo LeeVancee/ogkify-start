@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { ProductForm } from '@/components/dashboard/product/product-form'
 import { getProductFormData } from '@/server/products.server'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import Loading from '@/components/loading'
 
 export const Route = createFileRoute('/dashboard/products/new')({
@@ -22,11 +22,5 @@ function RouteComponent() {
 
   const { categories = [], colors = [], sizes = [] } = data || {}
 
-  return (
-    <ProductForm 
-      categories={categories} 
-      colors={colors} 
-      sizes={sizes} 
-    />
-  )
+  return <ProductForm categories={categories} colors={colors} sizes={sizes} />
 }

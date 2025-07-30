@@ -47,8 +47,8 @@ export function SimpleForm<T extends Record<string, any>>({
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
           )}
-          {field.component || (
-            field.type === 'color' ? (
+          {field.component ||
+            (field.type === 'color' ? (
               <div className="flex gap-2">
                 <Input
                   type="color"
@@ -72,8 +72,7 @@ export function SimpleForm<T extends Record<string, any>>({
                 onChange={(e) => onFieldChange(field.key, e.target.value)}
                 disabled={loading}
               />
-            )
-          )}
+            ))}
         </div>
       ))}
       {children}

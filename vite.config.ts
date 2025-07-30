@@ -15,14 +15,12 @@ export default defineConfig({
     tanstackStart({ customViteReactPlugin: true }),
     viteReact({
       babel: {
-        plugins: [
-          'babel-plugin-react-compiler',
-        ],
+        plugins: ['babel-plugin-react-compiler'],
       },
     }),
     tailwindcss(),
   ],
   optimizeDeps: {
-    include: ["better-auth/react", "react-hook-form"],
+    include: ['better-auth/react', 'react-hook-form'],
   },
 })

@@ -28,7 +28,13 @@ import {
 import { UploadThingImage } from '@/components/dashboard/upload-thing'
 import { Switch } from '@/components/ui/switch'
 import { createProduct } from '@/server/products.server'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 
 interface Category {
@@ -148,10 +154,10 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                       <FormItem>
                         <FormLabel>Product Name</FormLabel>
                         <FormControl>
-                          <Input 
-                            placeholder="Enter product name" 
+                          <Input
+                            placeholder="Enter product name"
                             className="h-11"
-                            {...field} 
+                            {...field}
                           />
                         </FormControl>
                         <FormMessage />
@@ -170,10 +176,10 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
                               $
                             </span>
-                            <Input 
-                              placeholder="99.99" 
+                            <Input
+                              placeholder="99.99"
                               className="h-11 pl-8"
-                              {...field} 
+                              {...field}
                             />
                           </div>
                         </FormControl>
@@ -247,7 +253,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-sm font-medium">Featured</FormLabel>
+                          <FormLabel className="text-sm font-medium">
+                            Featured
+                          </FormLabel>
                           <FormDescription className="text-xs">
                             Display on homepage
                           </FormDescription>
@@ -267,7 +275,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
-                          <FormLabel className="text-sm font-medium">Archived</FormLabel>
+                          <FormLabel className="text-sm font-medium">
+                            Archived
+                          </FormLabel>
                           <FormDescription className="text-xs">
                             Hide from store
                           </FormDescription>
@@ -292,7 +302,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
               <CardHeader>
                 <CardTitle>Product Images</CardTitle>
                 <CardDescription>
-                  Upload high-quality images. First image will be the main display.
+                  Upload high-quality images. First image will be the main
+                  display.
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -329,7 +340,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                   render={() => (
                     <FormItem>
                       <div className="mb-3">
-                        <FormLabel className="text-sm font-semibold">Colors</FormLabel>
+                        <FormLabel className="text-sm font-semibold">
+                          Colors
+                        </FormLabel>
                         <FormDescription className="text-xs">
                           Choose at least one color option.
                         </FormDescription>
@@ -351,10 +364,14 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                       checked={field.value?.includes(color.id)}
                                       onCheckedChange={(checked) => {
                                         return checked
-                                          ? field.onChange([...field.value, color.id])
+                                          ? field.onChange([
+                                              ...field.value,
+                                              color.id,
+                                            ])
                                           : field.onChange(
                                               field.value?.filter(
-                                                (value: string) => value !== color.id,
+                                                (value: string) =>
+                                                  value !== color.id,
                                               ),
                                             )
                                       }}
@@ -388,7 +405,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                   render={() => (
                     <FormItem>
                       <div className="mb-3">
-                        <FormLabel className="text-sm font-semibold">Sizes</FormLabel>
+                        <FormLabel className="text-sm font-semibold">
+                          Sizes
+                        </FormLabel>
                         <FormDescription className="text-xs">
                           Choose at least one size option.
                         </FormDescription>
@@ -410,10 +429,14 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                       checked={field.value?.includes(size.id)}
                                       onCheckedChange={(checked) => {
                                         return checked
-                                          ? field.onChange([...field.value, size.id])
+                                          ? field.onChange([
+                                              ...field.value,
+                                              size.id,
+                                            ])
                                           : field.onChange(
                                               field.value?.filter(
-                                                (value: string) => value !== size.id,
+                                                (value: string) =>
+                                                  value !== size.id,
                                               ),
                                             )
                                       }}
@@ -447,9 +470,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
             >
               Cancel
             </Button>
-            <Button 
-              type="submit" 
-              disabled={isLoading} 
+            <Button
+              type="submit"
+              disabled={isLoading}
               className="min-w-[120px]"
             >
               {isLoading ? 'Creating...' : 'Create Product'}

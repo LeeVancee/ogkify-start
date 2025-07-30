@@ -573,7 +573,7 @@ export const getOrderById = createServerFn()
         where: (ordersTable, { eq, and }) =>
           and(
             eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id)
+            eq(ordersTable.userId, session.user.id),
           ),
         with: {
           items: {

@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
-import { } from '@tanstack/react-router'
+import {} from '@tanstack/react-router'
 import ProductCard from '@/components/shop/product/product-card'
 import { searchProducts } from '@/server/search.server'
 

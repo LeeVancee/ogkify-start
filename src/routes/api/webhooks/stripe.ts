@@ -6,7 +6,9 @@ import { db } from '@/db'
 import { orders, cartItems, carts } from '@/db/schema'
 import type Stripe from 'stripe'
 
-export const ServerRoute = createServerFileRoute('/api/webhooks/stripe').methods({
+export const ServerRoute = createServerFileRoute(
+  '/api/webhooks/stripe',
+).methods({
   POST: async ({ request }: { request: any }) => {
     try {
       const body = await request.text()
@@ -26,20 +28,31 @@ export const ServerRoute = createServerFileRoute('/api/webhooks/stripe').methods
       // 验证 Webhook 签名
       let event: Stripe.Event
       try {
-        event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET)
+        event = stripe.webhooks.constructEvent(
+          body,
+          signature,
+          process.env.STRIPE_WEBHOOK_SECRET,
+        )
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '未知错误'
         console.error(`Webhook 签名验证失败: ${errorMessage}`)
-        return json({ error: `Webhook 签名验证失败: ${errorMessage}` }, { status: 400 })
+        return json(
+          { error: `Webhook 签名验证失败: ${errorMessage}` },
+          { status: 400 },
+        )
       }
 
       // 根据事件类型处理
       switch (event.type) {
         case 'checkout.session.completed':
-          await handleCheckoutSessionCompleted(event.data.object as Stripe.Checkout.Session)
+          await handleCheckoutSessionCompleted(
+            event.data.object as Stripe.Checkout.Session,
+          )
           break
         case 'payment_intent.payment_failed':
-          await handlePaymentIntentFailed(event.data.object as Stripe.PaymentIntent)
+          await handlePaymentIntentFailed(
+            event.data.object as Stripe.PaymentIntent,
+          )
           break
         case 'charge.refunded':
           await handleChargeRefunded(event.data.object as Stripe.Charge)
@@ -56,10 +69,12 @@ export const ServerRoute = createServerFileRoute('/api/webhooks/stripe').methods
   },
 })
 
-async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
+async function handleCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session,
+) {
   try {
     console.log('处理结账会话完成:', session.id)
-    
+
     // 从元数据中获取订单 ID
     const orderId = session.metadata?.orderId
     const userId = session.metadata?.userId
@@ -108,7 +123,6 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
     }
 
     console.log(`订单 ${orderId} 已标记为已付款`)
-
   } catch (error) {
     console.error('处理结账会话完成时发生错误:', error)
   }
@@ -117,7 +131,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
   try {
     console.log('处理支付意图失败:', paymentIntent.id)
-    
+
     // 尝试通过 metadata 获取订单 ID
     const orderId = paymentIntent.metadata?.orderId
 
@@ -136,7 +150,6 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
     } else {
       console.log('无法通过 metadata 获取订单 ID')
     }
-
   } catch (error) {
     console.error('处理支付意图失败时发生错误:', error)
   }
@@ -145,12 +158,13 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
 async function handleChargeRefunded(charge: Stripe.Charge) {
   try {
     console.log('处理退款事件:', charge.id)
-    
+
     // 尝试获取关联的付款意图
     const paymentIntentId = charge.payment_intent as string
 
     if (paymentIntentId) {
-      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId)
+      const paymentIntent =
+        await stripe.paymentIntents.retrieve(paymentIntentId)
       const orderId = paymentIntent.metadata?.orderId
 
       if (orderId) {
@@ -165,8 +179,7 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
         console.log(`订单 ${orderId} 已退款`)
       }
     }
-
   } catch (error) {
     console.error('处理退款事件时发生错误:', error)
   }
-} 
+}

@@ -7,21 +7,25 @@ interface SpinnerLoadingProps {
   text?: string
 }
 
-export function SpinnerLoading({ 
-  size = 'md', 
+export function SpinnerLoading({
+  size = 'md',
   className = '',
-  text 
+  text,
 }: SpinnerLoadingProps) {
   const sizeClasses = {
     sm: 'h-4 w-4',
-    md: 'h-8 w-8', 
-    lg: 'h-12 w-12'
+    md: 'h-8 w-8',
+    lg: 'h-12 w-12',
   }
 
   return (
-    <div className={`flex min-h-[400px] flex-1 items-center justify-center ${className}`}>
+    <div
+      className={`flex min-h-[400px] flex-1 items-center justify-center ${className}`}
+    >
       <div className="flex flex-col items-center gap-2">
-        <Loader2 className={`${sizeClasses[size]} animate-spin text-muted-foreground`} />
+        <Loader2
+          className={`${sizeClasses[size]} animate-spin text-muted-foreground`}
+        />
         {text && <p className="text-sm text-muted-foreground">{text}</p>}
       </div>
     </div>
@@ -35,17 +39,17 @@ interface CardGridLoadingProps {
   className?: string
 }
 
-export function CardGridLoading({ 
-  count = 8, 
+export function CardGridLoading({
+  count = 8,
   cols = 4,
   showButtons = true,
-  className = '' 
+  className = '',
 }: CardGridLoadingProps) {
   const gridClasses = {
     1: 'grid-cols-1',
     2: 'grid-cols-1 sm:grid-cols-2',
     3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'
+    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
   }
 
   return (
@@ -76,10 +80,10 @@ interface FormLoadingProps {
   className?: string
 }
 
-export function FormLoading({ 
-  fields = 3, 
+export function FormLoading({
+  fields = 3,
   hasSubmitButton = true,
-  className = 'space-y-4' 
+  className = 'space-y-4',
 }: FormLoadingProps) {
   return (
     <div className={className}>
@@ -89,9 +93,7 @@ export function FormLoading({
           <Skeleton className="h-10 w-full" />
         </div>
       ))}
-      {hasSubmitButton && (
-        <Skeleton className="h-10 w-full" />
-      )}
+      {hasSubmitButton && <Skeleton className="h-10 w-full" />}
     </div>
   )
 }
@@ -103,16 +105,19 @@ interface ListLoadingProps {
   className?: string
 }
 
-export function ListLoading({ 
-  count = 5, 
+export function ListLoading({
+  count = 5,
   showAvatar = false,
   showActions = false,
-  className = '' 
+  className = '',
 }: ListLoadingProps) {
   return (
     <div className={`space-y-3 ${className}`}>
       {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="flex items-center justify-between p-4 border rounded-lg">
+        <div
+          key={i}
+          className="flex items-center justify-between p-4 border rounded-lg"
+        >
           <div className="flex items-center gap-3">
             {showAvatar && <Skeleton className="h-10 w-10 rounded-full" />}
             <div className="space-y-2">

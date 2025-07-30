@@ -8,10 +8,11 @@ interface ColorFormData {
 }
 
 export function ColorForm() {
-  const { formData, loading, updateField, handleSubmit } = useCrudForm<ColorFormData>({
-    createFn: createColor,
-    initialValues: { name: '', value: '' },
-  })
+  const { formData, loading, updateField, handleSubmit } =
+    useCrudForm<ColorFormData>({
+      createFn: createColor,
+      initialValues: { name: '', value: '' },
+    })
 
   const fields = [
     {

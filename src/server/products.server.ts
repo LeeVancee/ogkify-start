@@ -360,8 +360,7 @@ export const getPopularProducts = createServerFn()
     }
   })
 
-
-  // Get all product form data in a single request for better performance
+// Get all product form data in a single request for better performance
 export const getProductFormData = createServerFn().handler(async () => {
   try {
     // Use Promise.all to fetch all data in parallel
@@ -405,4 +404,4 @@ export const getProductFormData = createServerFn().handler(async () => {
       sizes: [],
     }
   }
-}) 
+})

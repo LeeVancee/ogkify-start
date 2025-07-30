@@ -309,7 +309,7 @@ function CartPage() {
                       </div>
                     </div>
                   </div>
-                    {index < items.length - 1 && <Separator  />}
+                  {index < items.length - 1 && <Separator />}
                 </div>
               ))}
             </CardContent>

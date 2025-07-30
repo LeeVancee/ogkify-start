@@ -48,7 +48,7 @@ function CheckoutSuccessContent() {
 
       // get order information from server
       const result = await getOrderById({ data: order_id })
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Failed to get order information')
       }

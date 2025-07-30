@@ -22,7 +22,7 @@ export function DropDown() {
     authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          navigate({ to: '/'  })
+          navigate({ to: '/' })
         },
       },
     })
@@ -75,9 +75,7 @@ export function DropDown() {
         {session.user.role === 'admin' && (
           <>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-                onClick={() => navigate({ to: '/dashboard' })}
-            >
+            <DropdownMenuItem onClick={() => navigate({ to: '/dashboard' })}>
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Dashboard
             </DropdownMenuItem>

@@ -82,7 +82,7 @@ function ProductFiltersContent({
 
     startTransition(() => {
       navigate({
-        to: '/products' ,
+        to: '/products',
         search: createQueryParams({
           category: currentCategory === categoryName ? undefined : categoryName,
         }),

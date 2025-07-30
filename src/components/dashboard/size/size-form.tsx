@@ -8,10 +8,11 @@ interface SizeFormData {
 }
 
 export function SizeForm() {
-  const { formData, loading, updateField, handleSubmit } = useCrudForm<SizeFormData>({
-    createFn: createSize,
-    initialValues: { name: '', value: '' },
-  })
+  const { formData, loading, updateField, handleSubmit } =
+    useCrudForm<SizeFormData>({
+      createFn: createSize,
+      initialValues: { name: '', value: '' },
+    })
 
   const fields = [
     {

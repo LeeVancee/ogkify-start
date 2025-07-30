@@ -22,7 +22,9 @@ export function EmptyState({
   className = '',
 }: EmptyStateProps) {
   const content = (
-    <div className={`flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-card p-10 text-center animate-in fade-in-50 ${className}`}>
+    <div
+      className={`flex min-h-[300px] flex-col items-center justify-center rounded-lg border bg-card p-10 text-center animate-in fade-in-50 ${className}`}
+    >
       <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
         {icon}
       </div>

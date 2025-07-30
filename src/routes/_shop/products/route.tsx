@@ -34,12 +34,12 @@ function RouteComponent() {
           />
         </aside>
         <main className="flex h-full flex-col gap-6">
-        <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">All Products</h1>
-        <div className="flex items-center gap-4">
-          <ProductSort />
-        </div>
-      </div>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold tracking-tight">All Products</h1>
+            <div className="flex items-center gap-4">
+              <ProductSort />
+            </div>
+          </div>
           <Outlet />
         </main>
       </div>

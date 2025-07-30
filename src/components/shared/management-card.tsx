@@ -24,7 +24,8 @@ export function ManagementCard<T = any>({
 }: ManagementCardProps<T>) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
-  const finalDeleteTitle = deleteConfirmTitle || `Are you sure you want to delete "${item.name}"?`
+  const finalDeleteTitle =
+    deleteConfirmTitle || `Are you sure you want to delete "${item.name}"?`
 
   return (
     <>

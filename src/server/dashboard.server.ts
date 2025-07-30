@@ -48,4 +48,4 @@ export const getDashboardData = createServerFn().handler(async () => {
       monthlySalesData: [],
     }
   }
-}) 
+})
