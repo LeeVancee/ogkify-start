@@ -8,7 +8,7 @@ export default function ProductCard({ product }: { product: any }) {
       className="group border rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow"
     >
       <Link
-        to="/products/$id"
+        to="/product/$id"
         params={{ id: product.id }}
         className="block relative aspect-square overflow-hidden bg-muted"
       >
@@ -25,7 +25,7 @@ export default function ProductCard({ product }: { product: any }) {
         )}
       </Link>
       <div className="p-4 bg-muted">
-        <Link to="/products/$id" params={{ id: product.id }} className="block">
+        <Link to="/product/$id" params={{ id: product.id }} className="block">
           <h3 className="font-medium text-lg mb-1 group-hover:text-primary transition-colors">
             {product.name}
           </h3>
