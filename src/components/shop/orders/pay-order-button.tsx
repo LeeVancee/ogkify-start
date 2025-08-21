@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { createPaymentSession } from '@/server/orders.server'
@@ -31,7 +31,7 @@ export function PayOrderButton({ orderId }: PayOrderButtonProps) {
     } catch (error) {
       console.error('Payment error:', error)
       toast.error(
-        error instanceof Error ? error.message : 'Payment process failed',
+        error instanceof Error ? error.message : 'Payment process failed'
       )
     } finally {
       setIsLoading(false)

@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { SizeList } from '@/components/dashboard/size/size-list'
-import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/sizes/')({
   component: RouteComponent,

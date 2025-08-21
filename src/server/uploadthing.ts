@@ -1,5 +1,5 @@
-import { UploadThingError, createUploadthing } from 'uploadthing/server'
 import type { FileRouter } from 'uploadthing/server'
+import { createUploadthing, UploadThingError } from 'uploadthing/server'
 
 const f = createUploadthing()
 

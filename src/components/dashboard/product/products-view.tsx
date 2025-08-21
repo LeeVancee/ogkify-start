@@ -1,11 +1,11 @@
-import { useState } from 'react'
-import { Edit, Grid, List, Plus, Search, Trash2, X } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { Edit, Grid, List, Plus, Search, Trash2, X } from 'lucide-react'
+import { useState } from 'react'
 
 import { toast } from 'sonner'
-import { DeleteDialog } from '../delete-dialog'
-import { ProductCard } from './product-card'
+import Loading from '@/components/loading'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -16,10 +16,10 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { deleteProduct, getProducts } from '@/server/products.server'
-import Loading from '@/components/loading'
+import { DeleteDialog } from '../delete-dialog'
+import { ProductCard } from './product-card'
 
 // Define product type
 interface Product {
@@ -70,7 +70,7 @@ export function ProductsView() {
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const handleDeleteClick = (productId: string) => {

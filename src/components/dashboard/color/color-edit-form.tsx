@@ -1,9 +1,9 @@
+import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useRouter } from '@tanstack/react-router'
-import { updateColor } from '@/server/colors.server'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { updateColor } from '@/server/colors.server'
 
 interface ColorEditFormProps {
   color: {

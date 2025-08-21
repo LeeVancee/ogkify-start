@@ -1,15 +1,13 @@
-import { useState } from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Loader2, User } from 'lucide-react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
-import { Loader2, User } from 'lucide-react'
-
-import { redirect, createFileRoute } from '@tanstack/react-router'
-import { authClient } from '@/lib/auth-client'
+import { z } from 'zod'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
   Card,
   CardContent,
@@ -27,8 +25,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { authClient } from '@/lib/auth-client'
 import { getSession } from '@/server/getSession.server'
 
 export const Route = createFileRoute('/_shop/profile')({
@@ -91,7 +90,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to update profile',
+        error instanceof Error ? error.message : 'Failed to update profile'
       )
     },
   })
@@ -111,7 +110,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to change password',
+        error instanceof Error ? error.message : 'Failed to change password'
       )
     },
   })

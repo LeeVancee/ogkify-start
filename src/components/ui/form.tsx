@@ -1,16 +1,14 @@
+import { type Label as LabelPrimitive, Slot as SlotPrimitive } from 'radix-ui'
 import * as React from 'react'
-
+import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
 import {
   Controller,
   FormProvider,
   useFormContext,
   useFormState,
 } from 'react-hook-form'
-import type { ControllerProps, FieldPath, FieldValues } from 'react-hook-form'
-import { Label as LabelPrimitive, Slot as SlotPrimitive } from 'radix-ui'
-
-import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
+import { cn } from '@/lib/utils'
 
 const Form = FormProvider
 
@@ -22,7 +20,7 @@ type FormFieldContextValue<
 }
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue,
+  {} as FormFieldContextValue
 )
 
 const FormField = <
@@ -66,7 +64,7 @@ type FormItemContextValue = {
 }
 
 const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue,
+  {} as FormItemContextValue
 )
 
 function FormItem({ className, ...props }: React.ComponentProps<'div'>) {

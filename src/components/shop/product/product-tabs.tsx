@@ -31,7 +31,7 @@ export function ProductTabs({ product }: ProductTabsProps) {
                 'px-4 py-2 text-sm font-medium whitespace-nowrap',
                 activeTab === tab.id
                   ? 'border-b-2 border-primary text-primary'
-                  : 'text-muted-foreground hover:text-foreground',
+                  : 'text-muted-foreground hover:text-foreground'
               )}
             >
               {tab.label}

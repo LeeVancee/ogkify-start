@@ -1,6 +1,6 @@
-import { notFound, createFileRoute } from '@tanstack/react-router'
-import { getSize } from '@/server/sizes.server'
+import { createFileRoute, notFound } from '@tanstack/react-router'
 import { SizeEditForm } from '@/components/dashboard/size/size-edit-form'
+import { getSize } from '@/server/sizes.server'
 
 export const Route = createFileRoute('/dashboard/sizes/$id')({
   component: RouteComponent,

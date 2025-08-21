@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import { Loader2, Trash2 } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { deleteUnpaidOrder } from '@/server/orders.server'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,6 +12,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
+import { deleteUnpaidOrder } from '@/server/orders.server'
 
 interface DeleteOrderButtonProps {
   orderId: string
@@ -51,7 +51,7 @@ export function DeleteOrderButton({
     } catch (error) {
       console.error('Delete error:', error)
       toast.error(
-        error instanceof Error ? error.message : 'Failed to delete order',
+        error instanceof Error ? error.message : 'Failed to delete order'
       )
     } finally {
       setIsLoading(false)

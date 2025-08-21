@@ -3,11 +3,8 @@ import { ProductGrid } from '@/components/shop/product/product-grid'
 import { ProductInfo } from '@/components/shop/product/product-info'
 import { ProductInfoLoading } from '@/components/shop/product/product-info-loading'
 import { ProductTabs } from '@/components/shop/product/product-tabs'
-
 import { handleAddToCartFormAction } from '@/server/cart.server'
 import { getProduct, getRelatedProducts } from '@/server/product-shop.server'
-
-import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_shop/product/$id')({
   pendingComponent: () => <ProductInfoLoading />,

@@ -1,10 +1,10 @@
+import { ImagePlus, Upload, X } from 'lucide-react'
 import { useState } from 'react'
 import Dropzone from 'react-dropzone'
-import { ImagePlus, Upload, X } from 'lucide-react'
 
 import { toast } from 'sonner'
-import { useUploadThing } from '@/lib/uploadthing'
 import { Button } from '@/components/ui/button'
+import { useUploadThing } from '@/lib/uploadthing'
 
 interface SingleImageUploadProps {
   value: string

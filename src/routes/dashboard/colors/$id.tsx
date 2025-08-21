@@ -1,4 +1,4 @@
-import { notFound, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, notFound } from '@tanstack/react-router'
 import { ColorEditForm } from '@/components/dashboard/color/color-edit-form'
 import { getColor } from '@/server/colors.server'
 

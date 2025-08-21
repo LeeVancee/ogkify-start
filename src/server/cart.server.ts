@@ -1,8 +1,8 @@
 import { createServerFn } from '@tanstack/react-start'
 import { eq } from 'drizzle-orm'
-import { getSession } from './getSession.server'
 import { db } from '@/db'
 import { cartItems, carts } from '@/db/schema'
+import { getSession } from './getSession.server'
 
 export interface CartItemData {
   productId: string
@@ -64,7 +64,7 @@ export const addToCart = createServerFn()
               : isNull(cartItemsTable.colorId),
             data.sizeId
               ? eq(cartItemsTable.sizeId, data.sizeId)
-              : isNull(cartItemsTable.sizeId),
+              : isNull(cartItemsTable.sizeId)
           ),
       })
 

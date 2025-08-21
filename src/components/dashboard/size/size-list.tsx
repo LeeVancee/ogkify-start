@@ -1,13 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { Plus, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Plus, Search, X } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { SizeCard } from './size-card'
-import { deleteSize, getSizes } from '@/server/sizes.server'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import Loading from '@/components/loading'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { deleteSize, getSizes } from '@/server/sizes.server'
+import { SizeCard } from './size-card'
 
 type Size = {
   id: string
@@ -46,7 +46,7 @@ export function SizeList() {
   const filteredSizes = sizes.filter(
     (size) =>
       size.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      size.value.toLowerCase().includes(searchQuery.toLowerCase()),
+      size.value.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const handleDelete = (id: string) => {

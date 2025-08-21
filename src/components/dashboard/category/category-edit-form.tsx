@@ -1,9 +1,9 @@
-import { toast } from 'sonner'
-import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import * as z from 'zod'
 import { useRouter } from '@tanstack/react-router'
-import { SingleImageUpload } from '../single-image-upload'
+import { useForm } from 'react-hook-form'
+import { toast } from 'sonner'
+import * as z from 'zod'
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -13,8 +13,8 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { updateCategory } from '@/server/categories.server'
+import { SingleImageUpload } from '../single-image-upload'
 
 const formSchema = z.object({
   name: z.string().min(1, 'Input category name'),

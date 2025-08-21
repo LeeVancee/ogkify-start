@@ -5,7 +5,7 @@ interface UseCrudFormOptions<T> {
   createFn: (data: { data: T }) => Promise<{ success: boolean; error?: string }>
   updateFn?: (
     id: string,
-    data: { data: T },
+    data: { data: T }
   ) => Promise<{ success: boolean; error?: string }>
   deleteFn?: (id: string) => Promise<{ success: boolean; error?: string }>
   onSuccess?: () => void

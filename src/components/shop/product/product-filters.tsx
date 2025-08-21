@@ -1,16 +1,16 @@
-import { useTransition } from 'react'
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import type { Category } from '@/lib/types'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
+import { useTransition } from 'react'
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
+import type { Category } from '@/lib/types'
 
 interface ProductFiltersProps {
   categories: Array<Category>
@@ -60,7 +60,7 @@ function ProductFiltersContent({
       : []
 
   const createQueryParams = (
-    params: Record<string, string | Array<string> | boolean | null | undefined>,
+    params: Record<string, string | Array<string> | boolean | null | undefined>
   ): SearchParams => {
     const newParams = { ...search } as SearchParams
 

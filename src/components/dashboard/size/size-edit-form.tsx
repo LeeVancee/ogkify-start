@@ -1,9 +1,9 @@
+import { useRouter } from '@tanstack/react-router'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useRouter } from '@tanstack/react-router'
-import { updateSize } from '@/server/sizes.server'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { updateSize } from '@/server/sizes.server'
 
 interface SizeEditFormProps {
   size: {

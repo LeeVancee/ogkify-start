@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
+import { useState } from 'react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 
@@ -34,7 +34,7 @@ export function CheckoutButton() {
     } catch (error) {
       console.error('Checkout error:', error)
       toast.error(
-        error instanceof Error ? error.message : 'Checkout process failed',
+        error instanceof Error ? error.message : 'Checkout process failed'
       )
     } finally {
       setIsLoading(false)

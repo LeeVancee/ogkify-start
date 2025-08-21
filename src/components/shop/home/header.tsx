@@ -1,18 +1,18 @@
+import { useQuery } from '@tanstack/react-query'
 import { Link, useLocation } from '@tanstack/react-router'
 import { Menu, Search, ShoppingCart } from 'lucide-react'
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
-import { DropDown } from '../DropDown'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
-import { getUserCart } from '@/server/cart.server'
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetTrigger,
 } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
+import { getUserCart } from '@/server/cart.server'
+import { DropDown } from '../DropDown'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -59,7 +59,7 @@ export default function Header() {
                         to={item.href}
                         className={cn(
                           'text-lg font-medium',
-                          pathname === item.href ? 'text-primary' : '',
+                          pathname === item.href ? 'text-primary' : ''
                         )}
                       >
                         {item.name}
@@ -84,7 +84,7 @@ export default function Header() {
                   'font-medium hover:text-primary transition-colors',
                   pathname === item.href
                     ? 'text-primary'
-                    : 'text-muted-foreground',
+                    : 'text-muted-foreground'
                 )}
               >
                 {item.name}

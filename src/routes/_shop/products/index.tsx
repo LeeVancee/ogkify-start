@@ -1,7 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 // src/routes/categories.tsx
 import { z } from 'zod'
-import {} from '@tanstack/react-router'
 import { ProductGrid } from '@/components/shop/product/product-grid'
 import { ProductPagination } from '@/components/shop/product/product-pagination'
 import { getFilteredProducts } from '@/server/get-filtered-products.server'

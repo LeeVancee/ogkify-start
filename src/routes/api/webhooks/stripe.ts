@@ -1,13 +1,13 @@
 import { json } from '@tanstack/react-start'
 import { createServerFileRoute } from '@tanstack/react-start/server'
 import { eq } from 'drizzle-orm'
-import { stripe } from '@/lib/stripe'
-import { db } from '@/db'
-import { orders, cartItems, carts } from '@/db/schema'
 import type Stripe from 'stripe'
+import { db } from '@/db'
+import { cartItems, carts, orders } from '@/db/schema'
+import { stripe } from '@/lib/stripe'
 
 export const ServerRoute = createServerFileRoute(
-  '/api/webhooks/stripe',
+  '/api/webhooks/stripe'
 ).methods({
   POST: async ({ request }: { request: any }) => {
     try {
@@ -31,14 +31,14 @@ export const ServerRoute = createServerFileRoute(
         event = stripe.webhooks.constructEvent(
           body,
           signature,
-          process.env.STRIPE_WEBHOOK_SECRET,
+          process.env.STRIPE_WEBHOOK_SECRET
         )
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : '未知错误'
         console.error(`Webhook 签名验证失败: ${errorMessage}`)
         return json(
           { error: `Webhook 签名验证失败: ${errorMessage}` },
-          { status: 400 },
+          { status: 400 }
         )
       }
 
@@ -46,12 +46,12 @@ export const ServerRoute = createServerFileRoute(
       switch (event.type) {
         case 'checkout.session.completed':
           await handleCheckoutSessionCompleted(
-            event.data.object as Stripe.Checkout.Session,
+            event.data.object as Stripe.Checkout.Session
           )
           break
         case 'payment_intent.payment_failed':
           await handlePaymentIntentFailed(
-            event.data.object as Stripe.PaymentIntent,
+            event.data.object as Stripe.PaymentIntent
           )
           break
         case 'charge.refunded':
@@ -70,7 +70,7 @@ export const ServerRoute = createServerFileRoute(
 })
 
 async function handleCheckoutSessionCompleted(
-  session: Stripe.Checkout.Session,
+  session: Stripe.Checkout.Session
 ) {
   try {
     console.log('处理结账会话完成:', session.id)

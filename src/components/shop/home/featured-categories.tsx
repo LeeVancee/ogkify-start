@@ -1,7 +1,7 @@
-import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { getCategories } from '@/server/categories.server'
+import { Link } from '@tanstack/react-router'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getCategories } from '@/server/categories.server'
 
 export function FeaturedCategories() {
   const { data: categories, isLoading } = useQuery({

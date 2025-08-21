@@ -44,8 +44,8 @@ export const getFilteredProducts = createServerFn()
         baseConditions.push(
           or(
             ilike(products.name, `%${options.search}%`),
-            ilike(products.description, `%${options.search}%`),
-          )!,
+            ilike(products.description, `%${options.search}%`)
+          )!
         )
       }
 
@@ -112,19 +112,19 @@ export const getFilteredProducts = createServerFn()
       // Additional filtering in memory (category, colors, sizes)
       if (options.category) {
         productsList = productsList.filter(
-          (product) => product.category.name === options.category,
+          (product) => product.category.name === options.category
         )
       }
 
       if (options.colors && options.colors.length > 0) {
         productsList = productsList.filter((product) =>
-          product.colors.some((pc) => options.colors!.includes(pc.color.name)),
+          product.colors.some((pc) => options.colors!.includes(pc.color.name))
         )
       }
 
       if (options.sizes && options.sizes.length > 0) {
         productsList = productsList.filter((product) =>
-          product.sizes.some((ps) => options.sizes!.includes(ps.size.value)),
+          product.sizes.some((ps) => options.sizes!.includes(ps.size.value))
         )
       }
 

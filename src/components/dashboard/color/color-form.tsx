@@ -1,6 +1,6 @@
-import { createColor } from '@/server/colors.server'
-import { useCrudForm } from '@/hooks/use-crud-form'
 import { SimpleForm } from '@/components/forms/simple-form'
+import { useCrudForm } from '@/hooks/use-crud-form'
+import { createColor } from '@/server/colors.server'
 
 interface ColorFormData {
   name: string

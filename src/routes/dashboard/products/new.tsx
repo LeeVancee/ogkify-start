@@ -1,9 +1,8 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
+import { createFileRoute } from '@tanstack/react-router'
 import { ProductForm } from '@/components/dashboard/product/product-form'
-import { getProductFormData } from '@/server/products.server'
-import {} from '@tanstack/react-router'
 import Loading from '@/components/loading'
+import { getProductFormData } from '@/server/products.server'
 
 export const Route = createFileRoute('/dashboard/products/new')({
   component: RouteComponent,

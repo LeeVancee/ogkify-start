@@ -1,13 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { Plus, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Plus, Search, X } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CategoryCard } from './category-card'
-import { deleteCategory, getCategories } from '@/server/categories.server'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import Loading from '@/components/loading'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { deleteCategory, getCategories } from '@/server/categories.server'
+import { CategoryCard } from './category-card'
 
 type Category = {
   id: string
@@ -46,7 +46,7 @@ export function CategoryList() {
   const filteredCategories = categories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase()),
+      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const handleDelete = (id: string) => {

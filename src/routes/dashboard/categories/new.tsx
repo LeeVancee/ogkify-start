@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { CategoryForm } from '@/components/dashboard/category/category-form'
-import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/categories/new')({
   component: RouteComponent,

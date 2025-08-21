@@ -1,10 +1,10 @@
-import { ChevronRight } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { Button } from '@/components/ui/button'
+import { Link } from '@tanstack/react-router'
+import { ChevronRight } from 'lucide-react'
 import { ProductGrid } from '@/components/shop/product/product-grid'
-import { getFeaturedProducts } from '@/server/get-featured-products.server'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getFeaturedProducts } from '@/server/get-featured-products.server'
 
 export function FeaturedProducts() {
   const { data: products, isLoading } = useQuery({

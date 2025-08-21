@@ -1,8 +1,8 @@
-import { useState } from 'react'
-import { ShoppingBag } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { ShoppingBag } from 'lucide-react'
 import type React from 'react'
+import { useState } from 'react'
 import { CartItem } from '@/components/shop/cart/cart-item'
 import { Button } from '@/components/ui/button'
 import {
@@ -87,7 +87,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   // 计算总价
   const subtotal = cartData.items.reduce(
     (total: number, item: CartItemType) => total + item.price * item.quantity,
-    0,
+    0
   )
 
   const isEmpty = cartData.items.length === 0

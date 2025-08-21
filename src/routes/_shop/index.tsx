@@ -3,8 +3,6 @@ import { FeaturedCategories } from '@/components/shop/home/featured-categories'
 import { FeaturedProducts } from '@/components/shop/home/featured-products'
 import HeroSection from '@/components/shop/home/hero-section'
 
-import {} from '@tanstack/react-router'
-
 export const Route = createFileRoute('/_shop/')({
   component: RouteComponent,
 })

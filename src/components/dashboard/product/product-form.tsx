@@ -1,11 +1,19 @@
-import { useState } from 'react'
-import { useRouter } from '@tanstack/react-router'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useRouter } from '@tanstack/react-router'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-
 import { toast } from 'sonner'
+import { z } from 'zod'
+import { UploadThingImage } from '@/components/dashboard/upload-thing'
 import { Button } from '@/components/ui/button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -16,8 +24,6 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
-import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
   SelectContent,
@@ -25,17 +31,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { UploadThingImage } from '@/components/dashboard/upload-thing'
-import { Switch } from '@/components/ui/switch'
-import { createProduct } from '@/server/products.server'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
+import { createProduct } from '@/server/products.server'
 
 interface Category {
   id: string
@@ -371,8 +370,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id,
-                                              ),
+                                                  value !== color.id
+                                              )
                                             )
                                       }}
                                     />
@@ -436,8 +435,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id,
-                                              ),
+                                                  value !== size.id
+                                              )
                                             )
                                       }}
                                     />

@@ -1,4 +1,3 @@
-import type { CartItem } from '@/lib/types'
 import {
   Card,
   CardContent,
@@ -7,6 +6,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import type { CartItem } from '@/lib/types'
 import { formatPrice } from '@/lib/utils'
 
 interface CheckoutSummaryProps {
@@ -16,7 +16,7 @@ interface CheckoutSummaryProps {
 export function CheckoutSummary({ items }: CheckoutSummaryProps) {
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
-    0,
+    0
   )
 
   // Calculate shipping and tax (simplified for demo)

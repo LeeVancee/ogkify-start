@@ -1,15 +1,15 @@
 import { useState } from 'react'
+import type { FieldValues, SubmitHandler } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
 import { FaGithub } from 'react-icons/fa'
 import { FcGoogle } from 'react-icons/fc'
-import type { SignInFlow } from '../types'
-import type { FieldValues, SubmitHandler } from 'react-hook-form'
-import { cn } from '@/lib/utils'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { authClient } from '@/lib/auth-client'
+import { cn } from '@/lib/utils'
+import type { SignInFlow } from '../types'
 
 interface SignupFormProps extends React.ComponentProps<'form'> {
   setState: (state: SignInFlow) => void
@@ -52,7 +52,7 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
           setError(ctx.error.message || 'Failed to sign up')
           toast.error(ctx.error.message || 'Failed to sign up')
         },
-      },
+      }
     )
   }
 

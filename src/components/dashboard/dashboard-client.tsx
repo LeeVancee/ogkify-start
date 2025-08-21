@@ -1,4 +1,6 @@
 import { CreditCard, DollarSign, Package, Tag } from 'lucide-react'
+import { Overview } from '@/components/dashboard/overview'
+import { RecentSales } from '@/components/dashboard/recent-sales'
 import {
   Card,
   CardContent,
@@ -6,8 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Overview } from '@/components/dashboard/overview'
-import { RecentSales } from '@/components/dashboard/recent-sales'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 interface SalesData {

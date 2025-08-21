@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm'
 import {
   boolean,
   doublePrecision,
@@ -9,7 +10,6 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core'
-import { relations } from 'drizzle-orm'
 
 // 枚举定义
 export const orderStatusEnum = pgEnum('order_status', [
@@ -332,7 +332,7 @@ export const productsToColorsRelations = relations(
       references: [colors.id],
       relationName: 'colors_to_products',
     }),
-  }),
+  })
 )
 
 export const productsToSizesRelations = relations(
@@ -348,5 +348,5 @@ export const productsToSizesRelations = relations(
       references: [sizes.id],
       relationName: 'sizes_to_products',
     }),
-  }),
+  })
 )

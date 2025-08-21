@@ -1,8 +1,6 @@
-import { ChevronRight } from 'lucide-react'
 import { Link, useLocation } from '@tanstack/react-router'
-
-import { ActiveLink } from './active-link'
 import type { LucideIcon } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import {
   Collapsible,
   CollapsibleContent,
@@ -18,6 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from '@/components/ui/sidebar'
+import { ActiveLink } from './active-link'
 
 interface NavItem {
   title: string

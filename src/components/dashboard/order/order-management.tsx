@@ -1,5 +1,3 @@
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   AlertCircle,
@@ -18,10 +16,19 @@ import {
   Search,
   X,
 } from 'lucide-react'
-
-import { UpdateOrderStatusDialog } from './update-order-status-dialog'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import Loading from '@/components/loading'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,17 +47,9 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { getOrderDetails, getUserOrders } from '@/server/orders.server'
 import { cn, formatPrice } from '@/lib/utils'
-import Loading from '@/components/loading'
+import { getOrderDetails, getUserOrders } from '@/server/orders.server'
+import { UpdateOrderStatusDialog } from './update-order-status-dialog'
 
 // 定义订单项类型
 interface OrderItem {
@@ -181,7 +180,7 @@ export function OrderManagement() {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (order.customer.toLowerCase() || '').includes(
-        searchQuery.toLowerCase(),
+        searchQuery.toLowerCase()
       ) ||
       (order.email.toLowerCase() || '').includes(searchQuery.toLowerCase())
 

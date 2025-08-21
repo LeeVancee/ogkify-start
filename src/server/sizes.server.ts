@@ -72,7 +72,7 @@ export const createSize = createServerFn()
 // Update size
 export const updateSize = createServerFn()
   .validator(
-    (params: { id: string; data: { name: string; value: string } }) => params,
+    (params: { id: string; data: { name: string; value: string } }) => params
   )
   .handler(async ({ data: { id, data } }) => {
     try {

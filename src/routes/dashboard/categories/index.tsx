@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { CategoryList } from '@/components/dashboard/category/category-list'
-import {} from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/categories/')({
   component: RouteComponent,

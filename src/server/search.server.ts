@@ -16,7 +16,7 @@ export const searchProducts = createServerFn()
         where: (products, { or, ilike }) =>
           or(
             ilike(products.name, `%${query}%`),
-            ilike(products.description, `%${query}%`),
+            ilike(products.description, `%${query}%`)
           ),
         with: {
           images: true,

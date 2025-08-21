@@ -1,13 +1,13 @@
 import { json } from '@tanstack/react-start'
 import {
-  getWebRequest,
   createServerFileRoute,
+  getWebRequest,
 } from '@tanstack/react-start/server'
 import { eq } from 'drizzle-orm'
-import { formatAmountForStripe, stripe } from '@/lib/stripe'
 import { db } from '@/db'
 import { orderItems, orders } from '@/db/schema'
 import { auth } from '@/lib/auth'
+import { formatAmountForStripe, stripe } from '@/lib/stripe'
 
 export const ServerRoute = createServerFileRoute('/api/checkout').methods({
   POST: async ({ request }: { request: any }) => {
@@ -47,7 +47,7 @@ export const ServerRoute = createServerFileRoute('/api/checkout').methods({
       // 计算总金额
       const amount = cart.items.reduce(
         (total, item) => total + item.product.price * item.quantity,
-        0,
+        0
       )
 
       // 构建行项目
@@ -94,7 +94,7 @@ export const ServerRoute = createServerFileRoute('/api/checkout').methods({
           price: item.product.price,
           colorId: item.colorId,
           sizeId: item.sizeId,
-        })),
+        }))
       )
 
       const origin = new URL(request.url).origin
@@ -135,7 +135,7 @@ export const ServerRoute = createServerFileRoute('/api/checkout').methods({
       console.error('Checkout error:', error)
       return json(
         { error: 'Failed to create checkout session' },
-        { status: 500 },
+        { status: 500 }
       )
     }
   },

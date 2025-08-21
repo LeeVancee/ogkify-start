@@ -65,7 +65,7 @@ export const getRelatedProducts = createServerFn()
           and(
             eq(products.categoryId, category),
             ne(products.id, productId),
-            eq(products.isArchived, false),
+            eq(products.isArchived, false)
           ),
         with: {
           images: true,

@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start'
-import { z } from 'zod'
 import { count, eq, inArray } from 'drizzle-orm'
+import { z } from 'zod'
 import { db } from '@/db'
 import {
   images,
@@ -109,15 +109,15 @@ export const updateProduct = createServerFn()
 
       // Delete unused images
       const imagesToDelete = existingImages.filter(
-        (image) => !imageUrls.includes(image.url),
+        (image) => !imageUrls.includes(image.url)
       )
 
       if (imagesToDelete.length > 0) {
         await db.delete(images).where(
           inArray(
             images.id,
-            imagesToDelete.map((img) => img.id),
-          ),
+            imagesToDelete.map((img) => img.id)
+          )
         )
       }
 
@@ -148,7 +148,7 @@ export const updateProduct = createServerFn()
           colorIds.map((colorId) => ({
             productId: id,
             colorId,
-          })),
+          }))
         )
       }
 
@@ -159,7 +159,7 @@ export const updateProduct = createServerFn()
           sizeIds.map((sizeId) => ({
             productId: id,
             sizeId,
-          })),
+          }))
         )
       }
 
@@ -169,7 +169,7 @@ export const updateProduct = createServerFn()
           newImages.map((url) => ({
             productId: id,
             url,
-          })),
+          }))
         )
       }
 
@@ -266,7 +266,7 @@ export const createProduct = createServerFn()
           colorIds.map((colorId) => ({
             productId: product.id,
             colorId,
-          })),
+          }))
         )
       }
 
@@ -276,7 +276,7 @@ export const createProduct = createServerFn()
           sizeIds.map((sizeId) => ({
             productId: product.id,
             sizeId,
-          })),
+          }))
         )
       }
 
@@ -286,7 +286,7 @@ export const createProduct = createServerFn()
           imageUrls.map((url) => ({
             productId: product.id,
             url,
-          })),
+          }))
         )
       }
 

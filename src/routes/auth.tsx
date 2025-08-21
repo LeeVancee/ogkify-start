@@ -1,4 +1,4 @@
-import { redirect, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import AuthScreen from '@/components/auth/components/auth-screen'
 import { getSession } from '@/server/getSession.server'
 

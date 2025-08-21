@@ -1,18 +1,18 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { toast } from 'sonner'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import Loading from '@/components/loading'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import { Badge } from '@/components/ui/badge'
 import {
   getUserCart,
   removeFromCart,
   updateCartItemQuantity,
 } from '@/server/cart.server'
-import Loading from '@/components/loading'
 
 export const Route = createFileRoute('/_shop/cart')({
   component: CartPage,
@@ -118,7 +118,7 @@ function CartPage() {
     } catch (error) {
       console.error('Checkout error:', error)
       toast.error(
-        error instanceof Error ? error.message : 'Checkout process failed',
+        error instanceof Error ? error.message : 'Checkout process failed'
       )
     } finally {
       setIsCheckingOut(false)
@@ -129,7 +129,7 @@ function CartPage() {
   const items = cartData?.items || []
   const subtotal = items.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity,
-    0,
+    0
   )
   const shipping = subtotal > 200 ? 0 : 10 // Free shipping over $200
   const tax = subtotal * 0.08 // 8% tax

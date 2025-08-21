@@ -1,13 +1,13 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link } from '@tanstack/react-router'
+import { Plus, Search, X } from 'lucide-react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { Plus, Search, X } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ColorCard } from './color-card'
-import { deleteColor, getColors } from '@/server/colors.server'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import Loading from '@/components/loading'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { deleteColor, getColors } from '@/server/colors.server'
+import { ColorCard } from './color-card'
 
 type Color = {
   id: string
@@ -46,7 +46,7 @@ export function ColorList() {
   const filteredColors = colors.filter(
     (color) =>
       color.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      color.value.toLowerCase().includes(searchQuery.toLowerCase()),
+      color.value.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const handleDelete = (id: string) => {

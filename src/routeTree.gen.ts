@@ -11,36 +11,36 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
-import { Route as ShopRouteRouteImport } from './routes/_shop/route'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
-import { Route as ShopIndexRouteImport } from './routes/_shop/index'
-import { Route as ShopSearchRouteImport } from './routes/_shop/search'
-import { Route as ShopProfileRouteImport } from './routes/_shop/profile'
-import { Route as ShopMyordersRouteImport } from './routes/_shop/myorders'
 import { Route as ShopCartRouteImport } from './routes/_shop/cart'
-import { Route as ShopProductsRouteRouteImport } from './routes/_shop/products/route'
-import { Route as DashboardSizesIndexRouteImport } from './routes/dashboard/sizes/index'
-import { Route as DashboardProductsIndexRouteImport } from './routes/dashboard/products/index'
-import { Route as DashboardOrdersIndexRouteImport } from './routes/dashboard/orders/index'
-import { Route as DashboardColorsIndexRouteImport } from './routes/dashboard/colors/index'
-import { Route as DashboardCategoriesIndexRouteImport } from './routes/dashboard/categories/index'
-import { Route as ShopProductsIndexRouteImport } from './routes/_shop/products/index'
-import { Route as DashboardSizesNewRouteImport } from './routes/dashboard/sizes/new'
-import { Route as DashboardSizesIdRouteImport } from './routes/dashboard/sizes/$id'
-import { Route as DashboardProductsNewRouteImport } from './routes/dashboard/products/new'
-import { Route as DashboardProductsIdRouteImport } from './routes/dashboard/products/$id'
-import { Route as DashboardColorsNewRouteImport } from './routes/dashboard/colors/new'
-import { Route as DashboardColorsIdRouteImport } from './routes/dashboard/colors/$id'
-import { Route as DashboardCategoriesNewRouteImport } from './routes/dashboard/categories/new'
-import { Route as DashboardCategoriesIdRouteImport } from './routes/dashboard/categories/$id'
-import { Route as ShopProductIdRouteImport } from './routes/_shop/product.$id'
 import { Route as ShopCheckoutSuccessRouteImport } from './routes/_shop/checkout/success'
-import { ServerRoute as ApiUploadthingServerRouteImport } from './routes/api/uploadthing'
-import { ServerRoute as ApiCheckoutServerRouteImport } from './routes/api/checkout'
-import { ServerRoute as ApiWebhooksStripeServerRouteImport } from './routes/api/webhooks/stripe'
+import { Route as ShopIndexRouteImport } from './routes/_shop/index'
+import { Route as ShopMyordersRouteImport } from './routes/_shop/myorders'
+import { Route as ShopProductIdRouteImport } from './routes/_shop/product.$id'
+import { Route as ShopProductsIndexRouteImport } from './routes/_shop/products/index'
+import { Route as ShopProductsRouteRouteImport } from './routes/_shop/products/route'
+import { Route as ShopProfileRouteImport } from './routes/_shop/profile'
+import { Route as ShopRouteRouteImport } from './routes/_shop/route'
+import { Route as ShopSearchRouteImport } from './routes/_shop/search'
 import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.$'
+import { ServerRoute as ApiCheckoutServerRouteImport } from './routes/api/checkout'
+import { ServerRoute as ApiUploadthingServerRouteImport } from './routes/api/uploadthing'
+import { ServerRoute as ApiWebhooksStripeServerRouteImport } from './routes/api/webhooks/stripe'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as DashboardCategoriesIdRouteImport } from './routes/dashboard/categories/$id'
+import { Route as DashboardCategoriesIndexRouteImport } from './routes/dashboard/categories/index'
+import { Route as DashboardCategoriesNewRouteImport } from './routes/dashboard/categories/new'
+import { Route as DashboardColorsIdRouteImport } from './routes/dashboard/colors/$id'
+import { Route as DashboardColorsIndexRouteImport } from './routes/dashboard/colors/index'
+import { Route as DashboardColorsNewRouteImport } from './routes/dashboard/colors/new'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardOrdersIndexRouteImport } from './routes/dashboard/orders/index'
+import { Route as DashboardProductsIdRouteImport } from './routes/dashboard/products/$id'
+import { Route as DashboardProductsIndexRouteImport } from './routes/dashboard/products/index'
+import { Route as DashboardProductsNewRouteImport } from './routes/dashboard/products/new'
+import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
+import { Route as DashboardSizesIdRouteImport } from './routes/dashboard/sizes/$id'
+import { Route as DashboardSizesIndexRouteImport } from './routes/dashboard/sizes/index'
+import { Route as DashboardSizesNewRouteImport } from './routes/dashboard/sizes/new'
 
 const rootServerRouteImport = createServerRootRoute()
 
@@ -664,7 +664,7 @@ const ShopRouteRouteChildren: ShopRouteRouteChildren = {
 }
 
 const ShopRouteRouteWithChildren = ShopRouteRoute._addFileChildren(
-  ShopRouteRouteChildren,
+  ShopRouteRouteChildren
 )
 
 interface DashboardRouteRouteChildren {
@@ -702,7 +702,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
 }
 
 const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
-  DashboardRouteRouteChildren,
+  DashboardRouteRouteChildren
 )
 
 const rootRouteChildren: RootRouteChildren = {

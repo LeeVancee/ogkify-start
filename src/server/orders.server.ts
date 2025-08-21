@@ -1,11 +1,11 @@
 import { createServerFn } from '@tanstack/react-start'
 import { count, eq } from 'drizzle-orm'
-import { getSession } from './getSession.server'
 import { db } from '@/db'
 import { orderItems, orders } from '@/db/schema'
-import { formatPrice } from '@/lib/utils'
-
 import { formatAmountForStripe, stripe } from '@/lib/stripe'
+import { formatPrice } from '@/lib/utils'
+import { getSession } from './getSession.server'
+
 // Define order status type
 type OrderStatus = 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCELLED'
 // Get all user orders
@@ -92,7 +92,7 @@ export const getOrderDetails = createServerFn()
         where: (ordersTable, { eq, and }) =>
           and(
             eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id),
+            eq(ordersTable.userId, session.user.id)
           ),
         with: {
           items: {
@@ -116,7 +116,7 @@ export const getOrderDetails = createServerFn()
       // Format order details
       const totalItems = order.items.reduce(
         (sum, item) => sum + item.quantity,
-        0,
+        0
       )
 
       const formattedOrder = {
@@ -131,7 +131,7 @@ export const getOrderDetails = createServerFn()
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit',
-          },
+          }
         ),
         status: order.status,
         statusText: getOrderStatusText(order.status),
@@ -191,7 +191,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
       where: (ordersTable, { eq, and }) =>
         and(
           eq(ordersTable.userId, session.user.id),
-          eq(ordersTable.paymentStatus, 'UNPAID'),
+          eq(ordersTable.paymentStatus, 'UNPAID')
         ),
       with: {
         items: {
@@ -263,7 +263,7 @@ export const createPaymentSession = createServerFn()
           and(
             eq(ordersTable.id, orderId),
             eq(ordersTable.userId, session.user.id),
-            eq(ordersTable.paymentStatus, 'UNPAID'),
+            eq(ordersTable.paymentStatus, 'UNPAID')
           ),
         with: {
           items: {
@@ -430,7 +430,7 @@ export const getOrdersStats = createServerFn().handler(async () => {
 
     const totalRevenue = paidOrdersList.reduce(
       (total, order) => total + order.totalAmount,
-      0,
+      0
     )
 
     return {
@@ -514,7 +514,7 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
           and(
             gte(ordersTable.createdAt, startDate),
             lt(ordersTable.createdAt, endDate),
-            eq(ordersTable.paymentStatus, 'PAID'),
+            eq(ordersTable.paymentStatus, 'PAID')
           ),
         columns: {
           totalAmount: true,
@@ -524,7 +524,7 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
       // Calculate monthly total revenue
       const total = monthlyOrdersList.reduce(
         (sum, order) => sum + order.totalAmount,
-        0,
+        0
       )
 
       // Get month name
@@ -573,7 +573,7 @@ export const getOrderById = createServerFn()
         where: (ordersTable, { eq, and }) =>
           and(
             eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id),
+            eq(ordersTable.userId, session.user.id)
           ),
         with: {
           items: {
@@ -618,7 +618,7 @@ export const deleteUnpaidOrder = createServerFn()
           and(
             eq(ordersTable.id, orderId),
             eq(ordersTable.userId, session.user.id),
-            eq(ordersTable.paymentStatus, 'UNPAID'),
+            eq(ordersTable.paymentStatus, 'UNPAID')
           ),
       })
 
