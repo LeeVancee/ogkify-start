@@ -1,19 +1,19 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { UploadThingImage } from '@/components/dashboard/upload-thing'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { UploadThingImage } from "@/components/dashboard/upload-thing";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
+} from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -22,105 +22,105 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Switch } from '@/components/ui/switch'
-import { Textarea } from '@/components/ui/textarea'
-import { createProduct } from '@/server/products.server'
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { createProduct } from "@/server/products.server";
 
 interface Category {
-  id: string
-  name: string
+  id: string;
+  name: string;
 }
 
 interface Color {
-  id: string
-  name: string
-  value: string
+  id: string;
+  name: string;
+  value: string;
 }
 
 interface Size {
-  id: string
-  name: string
-  value: string
+  id: string;
+  name: string;
+  value: string;
 }
 
 interface ProductFormProps {
-  categories: Array<Category>
-  colors: Array<Color>
-  sizes: Array<Size>
+  categories: Array<Category>;
+  colors: Array<Color>;
+  sizes: Array<Size>;
 }
 
 const productFormSchema = z.object({
   name: z.string().min(1, {
-    message: 'Product name must be at least 1 character.',
+    message: "Product name must be at least 1 character.",
   }),
   description: z.string().min(1, {
-    message: 'Product description must be at least 1 character.',
+    message: "Product description must be at least 1 character.",
   }),
   price: z.string().refine((val) => !isNaN(Number(val)), {
-    message: 'Price must be a valid number.',
+    message: "Price must be a valid number.",
   }),
   categoryId: z.string({
-    required_error: 'Please select a category.',
+    required_error: "Please select a category.",
   }),
   colorIds: z.array(z.string()).min(1, {
-    message: 'Please select at least one color.',
+    message: "Please select at least one color.",
   }),
   sizeIds: z.array(z.string()).min(1, {
-    message: 'Please select at least one size.',
+    message: "Please select at least one size.",
   }),
   images: z.array(z.string()).min(1, {
-    message: 'Please upload at least one product image.',
+    message: "Please upload at least one product image.",
   }),
   isFeatured: z.boolean().default(false),
   isArchived: z.boolean().default(false),
-})
+});
 
-type FormValues = z.infer<typeof productFormSchema>
+type FormValues = z.infer<typeof productFormSchema>;
 
 export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<any>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
-      name: '',
-      description: '',
-      price: '',
-      categoryId: '',
+      name: "",
+      description: "",
+      price: "",
+      categoryId: "",
       colorIds: [],
       sizeIds: [],
       images: [],
       isFeatured: false,
       isArchived: false,
     },
-  })
+  });
 
   async function onSubmit(values: FormValues) {
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const result = await createProduct({ data: values })
+      const result = await createProduct({ data: values });
 
       if (result.error) {
-        toast.error(result.error)
+        toast.error(result.error);
       }
-      toast.success('Product created successfully!')
-      router.navigate({ to: '/dashboard/products' })
+      toast.success("Product created successfully!");
+      router.navigate({ to: "/dashboard/products" });
     } catch (error) {
-      toast.error('Create product failed. Please try again later.')
+      toast.error("Create product failed. Please try again later.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -370,9 +370,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id
-                                              )
-                                            )
+                                                  value !== color.id,
+                                              ),
+                                            );
                                       }}
                                     />
                                   </FormControl>
@@ -386,7 +386,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                     </FormLabel>
                                   </div>
                                 </FormItem>
-                              )
+                              );
                             }}
                           />
                         ))}
@@ -435,9 +435,9 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id
-                                              )
-                                            )
+                                                  value !== size.id,
+                                              ),
+                                            );
                                       }}
                                     />
                                   </FormControl>
@@ -445,7 +445,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                     {size.name} ({size.value})
                                   </FormLabel>
                                 </FormItem>
-                              )
+                              );
                             }}
                           />
                         ))}
@@ -463,7 +463,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.navigate({ to: '/dashboard/products' })}
+              onClick={() => router.navigate({ to: "/dashboard/products" })}
               disabled={isLoading}
               className="min-w-[120px]"
             >
@@ -474,11 +474,11 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
               disabled={isLoading}
               className="min-w-[120px]"
             >
-              {isLoading ? 'Creating...' : 'Create Product'}
+              {isLoading ? "Creating..." : "Create Product"}
             </Button>
           </div>
         </form>
       </Form>
     </div>
-  )
+  );
 }

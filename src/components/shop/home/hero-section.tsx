@@ -1,6 +1,6 @@
-import { Link } from '@tanstack/react-router'
-import { ShoppingBag, Star, TrendingUp, Truck } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Link } from "@tanstack/react-router";
+import { ShoppingBag, Star, TrendingUp, Truck } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
@@ -92,5 +92,5 @@ export default function HeroSection() {
         </div>
       </section>
     </>
-  )
+  );
 }

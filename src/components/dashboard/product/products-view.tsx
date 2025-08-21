@@ -1,13 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
-import { Edit, Grid, List, Plus, Search, Trash2, X } from 'lucide-react'
-import { useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Edit, Grid, List, Plus, Search, Trash2, X } from "lucide-react";
+import { useState } from "react";
 
-import { toast } from 'sonner'
-import Loading from '@/components/loading'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { toast } from "sonner";
+import Loading from "@/components/loading";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -15,32 +15,32 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { deleteProduct, getProducts } from '@/server/products.server'
-import { DeleteDialog } from '../delete-dialog'
-import { ProductCard } from './product-card'
+} from "@/components/ui/table";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { deleteProduct, getProducts } from "@/server/products.server";
+import { DeleteDialog } from "../delete-dialog";
+import { ProductCard } from "./product-card";
 
 // Define product type
 interface Product {
-  id: string
-  name: string
-  description: string
-  price: number
-  category: { id: string; name: string }
-  colors: Array<{ id: string; name: string; value: string }>
-  sizes: Array<{ id: string; name: string; value: string }>
-  images: Array<{ id: string; url: string }>
-  isFeatured: boolean
-  isArchived: boolean
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: { id: string; name: string };
+  colors: Array<{ id: string; name: string; value: string }>;
+  sizes: Array<{ id: string; name: string; value: string }>;
+  images: Array<{ id: string; url: string }>;
+  isFeatured: boolean;
+  isArchived: boolean;
 }
 
 export function ProductsView() {
-  const queryClient = useQueryClient()
-  const [searchQuery, setSearchQuery] = useState('')
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [productToDelete, setProductToDelete] = useState<string | null>(null)
-  const [viewType, setViewType] = useState<'table' | 'grid'>('table')
+  const queryClient = useQueryClient();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<string | null>(null);
+  const [viewType, setViewType] = useState<"table" | "grid">("table");
 
   // Use TanStack Query to get product data
   const {
@@ -48,54 +48,56 @@ export function ProductsView() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['products'],
+    queryKey: ["products"],
     queryFn: () => getProducts(),
     staleTime: 1000 * 60 * 3, // 3 minutes cache
-  })
+  });
 
   // Delete product mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteProduct({ data: id }),
     onSuccess: () => {
-      toast.success('Product deleted successfully')
+      toast.success("Product deleted successfully");
       // Auto refresh data
-      queryClient.invalidateQueries({ queryKey: ['products'] })
+      queryClient.invalidateQueries({ queryKey: ["products"] });
     },
     onError: (error) => {
-      toast.error('Delete failed')
+      toast.error("Delete failed");
     },
-  })
+  });
 
   const filteredProducts = products.filter(
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+      product.category.name.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleDeleteClick = (productId: string) => {
-    setProductToDelete(productId)
-    setDeleteDialogOpen(true)
-  }
+    setProductToDelete(productId);
+    setDeleteDialogOpen(true);
+  };
 
   const handleDelete = () => {
-    if (!productToDelete) return
-    deleteMutation.mutate(productToDelete)
-    setDeleteDialogOpen(false)
-    setProductToDelete(null)
-  }
+    if (!productToDelete) return;
+    deleteMutation.mutate(productToDelete);
+    setDeleteDialogOpen(false);
+    setProductToDelete(null);
+  };
 
   const truncateText = (text: string, maxLength: number) => {
-    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text
-  }
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
+  };
 
   const productToDeleteData = productToDelete
     ? products.find((p) => p.id === productToDelete)
-    : null
+    : null;
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   // Handle error state
@@ -111,7 +113,7 @@ export function ProductsView() {
           </p>
           <Button
             onClick={() =>
-              queryClient.invalidateQueries({ queryKey: ['products'] })
+              queryClient.invalidateQueries({ queryKey: ["products"] })
             }
             variant="outline"
           >
@@ -119,7 +121,7 @@ export function ProductsView() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -138,7 +140,7 @@ export function ProductsView() {
               variant="ghost"
               size="icon"
               className="absolute right-0 top-0 h-9 w-9"
-              onClick={() => setSearchQuery('')}
+              onClick={() => setSearchQuery("")}
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Clear search</span>
@@ -148,7 +150,7 @@ export function ProductsView() {
         <div className="flex items-center gap-2">
           <Tabs
             defaultValue={viewType}
-            onValueChange={(value) => setViewType(value as 'table' | 'grid')}
+            onValueChange={(value) => setViewType(value as "table" | "grid")}
           >
             <TabsList>
               <TabsTrigger value="table">
@@ -170,8 +172,8 @@ export function ProductsView() {
             <h3 className="mt-4 text-lg font-semibold">No products found</h3>
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               {searchQuery
-                ? 'No products match your search criteria. Please try using different search terms.'
-                : 'You have not added any products yet. Click the button below to add a product.'}
+                ? "No products match your search criteria. Please try using different search terms."
+                : "You have not added any products yet. Click the button below to add a product."}
             </p>
             {!searchQuery && (
               <Button asChild>
@@ -183,7 +185,7 @@ export function ProductsView() {
             )}
           </div>
         </div>
-      ) : viewType === 'table' ? (
+      ) : viewType === "table" ? (
         <div className="rounded-md border">
           <Table>
             <TableHeader>
@@ -203,7 +205,7 @@ export function ProductsView() {
                   <TableCell>
                     <div className="h-12 w-12 overflow-hidden rounded-md border">
                       <img
-                        src={product.images[0]?.url || '/placeholder.svg'}
+                        src={product.images[0]?.url || "/placeholder.svg"}
                         alt={product.name}
                         className="h-full w-full object-cover"
                       />
@@ -307,9 +309,9 @@ export function ProductsView() {
         title={
           productToDeleteData
             ? `Are you sure you want to delete "${productToDeleteData.name}"?`
-            : 'Are you sure you want to delete this product?'
+            : "Are you sure you want to delete this product?"
         }
       />
     </div>
-  )
+  );
 }

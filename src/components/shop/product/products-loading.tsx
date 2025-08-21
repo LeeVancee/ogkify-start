@@ -1,5 +1,5 @@
-import { CardGridLoading } from '@/components/shared/flexible-loading'
+import { CardGridLoading } from "@/components/shared/flexible-loading";
 
 export function ProductsLoading() {
-  return <CardGridLoading count={8} cols={4} />
+  return <CardGridLoading count={8} cols={4} />;
 }

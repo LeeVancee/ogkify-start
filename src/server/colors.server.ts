@@ -1,7 +1,7 @@
-import { createServerFn } from '@tanstack/react-start'
-import { eq } from 'drizzle-orm'
-import { db } from '@/db'
-import { colors } from '@/db/schema'
+import { createServerFn } from "@tanstack/react-start";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { colors } from "@/db/schema";
 
 // Get all colors
 export const getColors = createServerFn().handler(async () => {
@@ -13,14 +13,14 @@ export const getColors = createServerFn().handler(async () => {
         name: true,
         value: true,
       },
-    })
+    });
 
-    return colorsList
+    return colorsList;
   } catch (error) {
-    console.error('Failed to get colors:', error)
-    return []
+    console.error("Failed to get colors:", error);
+    return [];
   }
-})
+});
 
 // Get single color
 export const getColor = createServerFn()
@@ -34,21 +34,21 @@ export const getColor = createServerFn()
           name: true,
           value: true,
         },
-      })
+      });
 
       if (!color) {
-        return { success: false, error: 'Color not found' }
+        return { success: false, error: "Color not found" };
       }
 
       return {
         success: true,
         color,
-      }
+      };
     } catch (error) {
-      console.error('Failed to get color:', error)
-      return { success: false, error: 'Failed to get color' }
+      console.error("Failed to get color:", error);
+      return { success: false, error: "Failed to get color" };
     }
-  })
+  });
 
 // Create color
 export const createColor = createServerFn()
@@ -61,18 +61,18 @@ export const createColor = createServerFn()
           name: data.name,
           value: data.value,
         })
-        .returning()
+        .returning();
 
-      return { success: true, data: color }
+      return { success: true, data: color };
     } catch (error) {
-      return { success: false, error: 'Failed to create color' }
+      return { success: false, error: "Failed to create color" };
     }
-  })
+  });
 
 // Update color
 export const updateColor = createServerFn()
   .validator(
-    (params: { id: string; data: { name: string; value: string } }) => params
+    (params: { id: string; data: { name: string; value: string } }) => params,
   )
   .handler(async ({ data: { id, data } }) => {
     try {
@@ -83,23 +83,23 @@ export const updateColor = createServerFn()
           value: data.value,
         })
         .where(eq(colors.id, id))
-        .returning()
+        .returning();
 
-      return { success: true, data: color }
+      return { success: true, data: color };
     } catch (error) {
-      return { success: false, error: 'Failed to update color' }
+      return { success: false, error: "Failed to update color" };
     }
-  })
+  });
 
 // Delete color
 export const deleteColor = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await db.delete(colors).where(eq(colors.id, id))
+      await db.delete(colors).where(eq(colors.id, id));
 
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      return { success: false, error: 'Failed to delete color' }
+      return { success: false, error: "Failed to delete color" };
     }
-  })
+  });

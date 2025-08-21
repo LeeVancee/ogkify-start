@@ -1,5 +1,5 @@
-import { Link } from '@tanstack/react-router'
-import { formatPrice } from '@/lib/utils'
+import { Link } from "@tanstack/react-router";
+import { formatPrice } from "@/lib/utils";
 
 export default function ProductCard({ product }: { product: any }) {
   return (
@@ -40,5 +40,5 @@ export default function ProductCard({ product }: { product: any }) {
         </Link>
       </div>
     </div>
-  )
+  );
 }

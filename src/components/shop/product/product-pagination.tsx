@@ -1,58 +1,58 @@
-import { useNavigate, useSearch } from '@tanstack/react-router'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Suspense } from 'react'
-import { Button } from '@/components/ui/button'
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Suspense } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ProductPaginationProps {
-  currentPage: number
-  totalPages: number
+  currentPage: number;
+  totalPages: number;
 }
 
 function ProductPaginationContent({
   currentPage,
   totalPages,
 }: ProductPaginationProps) {
-  const navigate = useNavigate()
-  const search = useSearch({ strict: false })
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const createQueryString = (params: Record<string, string | null>) => {
-    const newSearchParams = new URLSearchParams(search.toString())
+    const newSearchParams = new URLSearchParams(search.toString());
 
     for (const [key, value] of Object.entries(params)) {
       if (value === null) {
-        newSearchParams.delete(key)
+        newSearchParams.delete(key);
       } else {
-        newSearchParams.set(key, value)
+        newSearchParams.set(key, value);
       }
     }
 
-    return newSearchParams.toString()
-  }
+    return newSearchParams.toString();
+  };
 
   const handlePageChange = (page: number) => {
-    if (page < 1 || page > totalPages) return
+    if (page < 1 || page > totalPages) return;
     navigate({
-      to: '/products',
+      to: "/products",
       search: (prev) => ({ ...prev, page: page.toString() }),
-    })
-  }
+    });
+  };
 
   // 显示最多5个页码按钮
   const getPageNumbers = () => {
-    const pages = []
-    const leftOffset = Math.min(2, currentPage - 1)
-    const rightOffset = Math.min(2, totalPages - currentPage)
-    const startPage = Math.max(1, currentPage - leftOffset)
-    const endPage = Math.min(totalPages, currentPage + rightOffset)
+    const pages = [];
+    const leftOffset = Math.min(2, currentPage - 1);
+    const rightOffset = Math.min(2, totalPages - currentPage);
+    const startPage = Math.max(1, currentPage - leftOffset);
+    const endPage = Math.min(totalPages, currentPage + rightOffset);
 
     for (let i = startPage; i <= endPage; i++) {
-      pages.push(i)
+      pages.push(i);
     }
 
-    return pages
-  }
+    return pages;
+  };
 
-  if (totalPages <= 1) return null
+  if (totalPages <= 1) return null;
 
   return (
     <div className="flex items-center justify-center gap-1 mt-8">
@@ -68,7 +68,7 @@ function ProductPaginationContent({
       {getPageNumbers().map((page) => (
         <Button
           key={page}
-          variant={currentPage === page ? 'default' : 'outline'}
+          variant={currentPage === page ? "default" : "outline"}
           size="sm"
           onClick={() => handlePageChange(page)}
         >
@@ -85,7 +85,7 @@ function ProductPaginationContent({
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
-  )
+  );
 }
 
 export function ProductPagination(props: ProductPaginationProps) {
@@ -107,5 +107,5 @@ export function ProductPagination(props: ProductPaginationProps) {
     >
       <ProductPaginationContent {...props} />
     </Suspense>
-  )
+  );
 }

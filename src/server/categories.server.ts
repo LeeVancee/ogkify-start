@@ -1,7 +1,7 @@
-import { createServerFn } from '@tanstack/react-start'
-import { count, eq } from 'drizzle-orm'
-import { db } from '@/db'
-import { categories } from '@/db/schema'
+import { createServerFn } from "@tanstack/react-start";
+import { count, eq } from "drizzle-orm";
+import { db } from "@/db";
+import { categories } from "@/db/schema";
 
 // Get all categories
 export const getCategories = createServerFn().handler(async () => {
@@ -13,12 +13,12 @@ export const getCategories = createServerFn().handler(async () => {
         name: true,
         imageUrl: true,
       },
-    })
-    return categoriesList
+    });
+    return categoriesList;
   } catch (error) {
-    return []
+    return [];
   }
-})
+});
 
 // Get single category
 export const getCategory = createServerFn()
@@ -32,22 +32,22 @@ export const getCategory = createServerFn()
           name: true,
           imageUrl: true,
         },
-      })
+      });
 
       if (!category) {
-        return { success: false, error: 'Category not found' }
+        return { success: false, error: "Category not found" };
       }
 
-      return { success: true, category }
+      return { success: true, category };
     } catch (error) {
-      console.error('Failed to get category:', error)
-      return { success: false, error: 'Failed to get category' }
+      console.error("Failed to get category:", error);
+      return { success: false, error: "Failed to get category" };
     }
-  })
+  });
 
 interface CreateCategoryInput {
-  name: string
-  imageUrl: string
+  name: string;
+  imageUrl: string;
 }
 
 // Create category
@@ -61,14 +61,14 @@ export const createCategory = createServerFn()
           name: input.name,
           imageUrl: input.imageUrl,
         })
-        .returning()
+        .returning();
 
-      return { success: true, data: category }
+      return { success: true, data: category };
     } catch (error) {
-      console.error('Failed to create category:', error)
-      return { success: false, error: 'Failed to create category' }
+      console.error("Failed to create category:", error);
+      return { success: false, error: "Failed to create category" };
     }
-  })
+  });
 
 // Update category
 export const updateCategory = createServerFn()
@@ -79,34 +79,34 @@ export const updateCategory = createServerFn()
         .update(categories)
         .set({ name })
         .where(eq(categories.id, id))
-        .returning()
+        .returning();
 
-      return { success: true, data: category }
+      return { success: true, data: category };
     } catch (error) {
-      return { success: false, error: 'Failed to update category' }
+      return { success: false, error: "Failed to update category" };
     }
-  })
+  });
 
 // Delete category
 export const deleteCategory = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await db.delete(categories).where(eq(categories.id, id))
+      await db.delete(categories).where(eq(categories.id, id));
 
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      return { success: false, error: 'Failed to delete category' }
+      return { success: false, error: "Failed to delete category" };
     }
-  })
+  });
 
 // Get category count
 export const getCategoriesCount = createServerFn().handler(async () => {
   try {
-    const [result] = await db.select({ count: count() }).from(categories)
-    return result.count
+    const [result] = await db.select({ count: count() }).from(categories);
+    return result.count;
   } catch (error) {
-    console.error('Failed to get category count:', error)
-    return 0
+    console.error("Failed to get category count:", error);
+    return 0;
   }
-})
+});

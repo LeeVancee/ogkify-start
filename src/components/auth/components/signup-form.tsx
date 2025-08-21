@@ -1,23 +1,23 @@
-import { useState } from 'react'
-import type { FieldValues, SubmitHandler } from 'react-hook-form'
-import { useForm } from 'react-hook-form'
-import { FaGithub } from 'react-icons/fa'
-import { FcGoogle } from 'react-icons/fc'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { authClient } from '@/lib/auth-client'
-import { cn } from '@/lib/utils'
-import type { SignInFlow } from '../types'
+import { useState } from "react";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import type { SignInFlow } from "../types";
 
-interface SignupFormProps extends React.ComponentProps<'form'> {
-  setState: (state: SignInFlow) => void
+interface SignupFormProps extends React.ComponentProps<"form"> {
+  setState: (state: SignInFlow) => void;
 }
 
 export function SignupForm({ className, setState, ...props }: SignupFormProps) {
-  const [pending, setPending] = useState(false)
-  const [error, setError] = useState('')
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
 
   const {
     register,
@@ -25,11 +25,11 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
+      name: "",
+      email: "",
+      password: "",
     },
-  })
+  });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     await authClient.signUp.email(
@@ -40,25 +40,25 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
       },
       {
         onRequest: () => {
-          setPending(true)
+          setPending(true);
         },
         onSuccess: () => {
-          setPending(false)
-          toast.success('Successfully signed up!')
-          setState('signIn') // 注册成功后跳转到登录页面
+          setPending(false);
+          toast.success("Successfully signed up!");
+          setState("signIn"); // 注册成功后跳转到登录页面
         },
         onError: (ctx) => {
-          setPending(false)
-          setError(ctx.error.message || 'Failed to sign up')
-          toast.error(ctx.error.message || 'Failed to sign up')
+          setPending(false);
+          setError(ctx.error.message || "Failed to sign up");
+          toast.error(ctx.error.message || "Failed to sign up");
         },
-      }
-    )
-  }
+      },
+    );
+  };
 
   return (
     <form
-      className={cn('flex flex-col gap-6', className)}
+      className={cn("flex flex-col gap-6", className)}
       onSubmit={handleSubmit(onSubmit)}
       {...props}
     >
@@ -76,7 +76,7 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
             type="text"
             placeholder="Zhang San"
             disabled={pending}
-            {...register('name', { required: true })}
+            {...register("name", { required: true })}
           />
           {errors.name && (
             <p className="text-sm text-red-500">Full name is required</p>
@@ -89,7 +89,7 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
             type="email"
             placeholder="example@example.com"
             disabled={pending}
-            {...register('email', { required: true, pattern: /^\S+@\S+$/i })}
+            {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
           />
           {errors.email && (
             <p className="text-sm text-red-500">Valid email is required</p>
@@ -101,12 +101,12 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
             id="password"
             type="password"
             disabled={pending}
-            {...register('password', { required: true, minLength: 6 })}
+            {...register("password", { required: true, minLength: 6 })}
           />
-          {errors.password && errors.password.type === 'required' && (
+          {errors.password && errors.password.type === "required" && (
             <p className="text-sm text-red-500">Password is required</p>
           )}
-          {errors.password && errors.password.type === 'minLength' && (
+          {errors.password && errors.password.type === "minLength" && (
             <p className="text-sm text-red-500">
               Password must be at least 6 characters
             </p>
@@ -141,14 +141,14 @@ export function SignupForm({ className, setState, ...props }: SignupFormProps) {
         </div>
       </div>
       <div className="text-center text-sm">
-        Already have an account?{' '}
+        Already have an account?{" "}
         <span
           className="underline underline-offset-4 cursor-pointer"
-          onClick={() => setState('signIn')}
+          onClick={() => setState("signIn")}
         >
           Login
         </span>
       </div>
     </form>
-  )
+  );
 }

@@ -1,39 +1,39 @@
-import { useNavigate, useSearch } from '@tanstack/react-router'
-import { Label } from '@/components/ui/label'
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 
 const sortOptions = [
-  { value: 'newest', label: 'Newest' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'featured', label: 'Featured' },
-]
+  { value: "newest", label: "Newest" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "featured", label: "Featured" },
+];
 
 export function ProductSort() {
-  const navigate = useNavigate()
-  const search = useSearch({ strict: false })
-  const currentSort = search.sort || 'newest'
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
+  const currentSort = search.sort || "newest";
 
   // Create query params object, preserving existing parameters
   const createQueryParams = (newSort: string) => {
-    const newParams = { ...search }
-    newParams.sort = newSort
-    return newParams
-  }
+    const newParams = { ...search };
+    newParams.sort = newSort;
+    return newParams;
+  };
 
   const handleSortChange = (value: string) => {
     navigate({
-      to: '/products',
+      to: "/products",
       search: createQueryParams(value),
       replace: true,
-    })
-  }
+    });
+  };
 
   return (
     <div className="flex items-center gap-2">
@@ -53,5 +53,5 @@ export function ProductSort() {
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 }

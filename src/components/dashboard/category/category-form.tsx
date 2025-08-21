@@ -1,8 +1,8 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import * as z from 'zod'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -10,40 +10,40 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { createCategory } from '@/server/categories.server'
-import { SingleImageUpload } from '../single-image-upload'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { createCategory } from "@/server/categories.server";
+import { SingleImageUpload } from "../single-image-upload";
 
 const formSchema = z.object({
-  name: z.string().min(1, 'input category name'),
-  imageUrl: z.string().min(1, 'upload category image'),
-})
+  name: z.string().min(1, "input category name"),
+  imageUrl: z.string().min(1, "upload category image"),
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 export function CategoryForm() {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
-      imageUrl: '',
+      name: "",
+      imageUrl: "",
     },
-  })
+  });
 
-  const isSubmitting = form.formState.isSubmitting
+  const isSubmitting = form.formState.isSubmitting;
 
   async function onSubmit(values: FormValues) {
     try {
-      const result = await createCategory({ data: values })
+      const result = await createCategory({ data: values });
       if (result.success) {
-        toast.success('Category created successfully')
-        form.reset()
+        toast.success("Category created successfully");
+        form.reset();
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
     } catch (error) {
-      toast.error('Operation failed')
+      toast.error("Operation failed");
     }
   }
 
@@ -83,9 +83,9 @@ export function CategoryForm() {
         />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Creating...' : 'Create Category'}
+          {isSubmitting ? "Creating..." : "Create Category"}
         </Button>
       </form>
     </Form>
-  )
+  );
 }

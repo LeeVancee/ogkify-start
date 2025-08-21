@@ -1,13 +1,13 @@
-import { ManagementCard } from '@/components/shared/management-card'
+import { ManagementCard } from "@/components/shared/management-card";
 
 interface CategoryCardProps {
   category: {
-    id: string
-    name: string
-    imageUrl?: string | null
-  }
-  onDelete: (id: string) => void
-  isDeleting?: boolean
+    id: string;
+    name: string;
+    imageUrl?: string | null;
+  };
+  onDelete: (id: string) => void;
+  isDeleting?: boolean;
 }
 
 export function CategoryCard({
@@ -25,7 +25,7 @@ export function CategoryCard({
     >
       <div className="aspect-square overflow-hidden rounded-t-lg">
         <img
-          src={category.imageUrl || '/placeholder.svg'}
+          src={category.imageUrl || "/placeholder.svg"}
           alt={category.name}
           width={400}
           height={400}
@@ -36,5 +36,5 @@ export function CategoryCard({
         <h3 className="font-medium">{category.name}</h3>
       </div>
     </ManagementCard>
-  )
+  );
 }

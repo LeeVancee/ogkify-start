@@ -1,11 +1,11 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
-import { ProductsView } from '@/components/dashboard/product/products-view'
-import { Button } from '@/components/ui/button'
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
+import { ProductsView } from "@/components/dashboard/product/products-view";
+import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute('/dashboard/products/')({
+export const Route = createFileRoute("/dashboard/products/")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -20,5 +20,5 @@ function RouteComponent() {
       </div>
       <ProductsView />
     </div>
-  )
+  );
 }

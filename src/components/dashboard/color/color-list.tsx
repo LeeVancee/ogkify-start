@@ -1,23 +1,23 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
-import { Plus, Search, X } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import Loading from '@/components/loading'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { deleteColor, getColors } from '@/server/colors.server'
-import { ColorCard } from './color-card'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Plus, Search, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import Loading from "@/components/loading";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { deleteColor, getColors } from "@/server/colors.server";
+import { ColorCard } from "./color-card";
 
 type Color = {
-  id: string
-  name: string
-  value: string
-}
+  id: string;
+  name: string;
+  value: string;
+};
 
 export function ColorList() {
-  const queryClient = useQueryClient()
-  const [searchQuery, setSearchQuery] = useState('')
+  const queryClient = useQueryClient();
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Use TanStack Query to get color data
   const {
@@ -25,37 +25,37 @@ export function ColorList() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['colors'],
+    queryKey: ["colors"],
     queryFn: () => getColors(),
     staleTime: 1000 * 60 * 5, // 5 minutes cache
-  })
+  });
 
   // Delete color mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteColor({ data: id }),
     onSuccess: () => {
-      toast.success('Color deleted successfully')
+      toast.success("Color deleted successfully");
       // Auto refresh data
-      queryClient.invalidateQueries({ queryKey: ['colors'] })
+      queryClient.invalidateQueries({ queryKey: ["colors"] });
     },
     onError: (error) => {
-      toast.error('Failed to delete color')
+      toast.error("Failed to delete color");
     },
-  })
+  });
 
   const filteredColors = colors.filter(
     (color) =>
       color.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      color.value.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+      color.value.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleDelete = (id: string) => {
-    deleteMutation.mutate(id)
-  }
+    deleteMutation.mutate(id);
+  };
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   // Handle error state
@@ -71,7 +71,7 @@ export function ColorList() {
           </p>
           <Button
             onClick={() =>
-              queryClient.invalidateQueries({ queryKey: ['colors'] })
+              queryClient.invalidateQueries({ queryKey: ["colors"] })
             }
             variant="outline"
           >
@@ -79,7 +79,7 @@ export function ColorList() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -98,7 +98,7 @@ export function ColorList() {
               variant="ghost"
               size="icon"
               className="absolute right-0 top-0 h-9 w-9"
-              onClick={() => setSearchQuery('')}
+              onClick={() => setSearchQuery("")}
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Clear search</span>
@@ -119,8 +119,8 @@ export function ColorList() {
             <h3 className="mt-4 text-lg font-semibold">No colors found</h3>
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               {searchQuery
-                ? 'No colors match your search criteria. Please try using different search terms.'
-                : 'You have not added any colors yet. Click the button above to add a color.'}
+                ? "No colors match your search criteria. Please try using different search terms."
+                : "You have not added any colors yet. Click the button above to add a color."}
             </p>
           </div>
         </div>
@@ -137,5 +137,5 @@ export function ColorList() {
         </div>
       )}
     </div>
-  )
+  );
 }

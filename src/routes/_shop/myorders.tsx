@@ -1,5 +1,5 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   AlertCircle,
   AlertTriangle,
@@ -7,19 +7,19 @@ import {
   Clock,
   Package,
   ShoppingBag,
-} from 'lucide-react'
-import { useState } from 'react'
-import { NoOrders } from '@/components/shop/cart/empty-cart'
-import { DeleteOrderButton } from '@/components/shop/orders/delete-order-button'
-import { PayOrderButton } from '@/components/shop/orders/pay-order-button'
-import { Button } from '@/components/ui/button'
+} from "lucide-react";
+import { useState } from "react";
+import { NoOrders } from "@/components/shop/cart/empty-cart";
+import { DeleteOrderButton } from "@/components/shop/orders/delete-order-button";
+import { PayOrderButton } from "@/components/shop/orders/pay-order-button";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -27,102 +27,102 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { formatPrice } from '@/lib/utils'
-import { getUnpaidOrders, getUserOrders } from '@/server/orders.server'
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatPrice } from "@/lib/utils";
+import { getUnpaidOrders, getUserOrders } from "@/server/orders.server";
 
 // 定义类型
 interface OrderItem {
-  id: string
-  productId: string
-  productName: string
-  quantity: number
-  price: number
-  imageUrl: string | null
-  color?: { name: string; value: string } | null
-  size?: { name: string; value: string } | null
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  imageUrl: string | null;
+  color?: { name: string; value: string } | null;
+  size?: { name: string; value: string } | null;
 }
 
 interface Order {
-  id: string
-  orderNumber: string
-  createdAt: string
-  status: string
-  paymentStatus: string
-  totalAmount: number
-  items: Array<OrderItem>
-  firstItemImage: string | null
+  id: string;
+  orderNumber: string;
+  createdAt: string;
+  status: string;
+  paymentStatus: string;
+  totalAmount: number;
+  items: Array<OrderItem>;
+  firstItemImage: string | null;
 }
 
-export const Route = createFileRoute('/_shop/myorders')({
+export const Route = createFileRoute("/_shop/myorders")({
   component: MyOrdersPage,
-})
+});
 
 function MyOrdersPage() {
-  const [activeTab, setActiveTab] = useState('all')
-  const queryClient = useQueryClient()
+  const [activeTab, setActiveTab] = useState("all");
+  const queryClient = useQueryClient();
 
   // 使用TanStack Query获取所有订单
   const { data: allOrders = [], isLoading: isLoadingAll } = useQuery({
-    queryKey: ['orders', 'all'],
+    queryKey: ["orders", "all"],
     queryFn: async () => {
-      const response = await getUserOrders({})
-      return response.success ? response.orders : []
+      const response = await getUserOrders({});
+      return response.success ? response.orders : [];
     },
     staleTime: 1000 * 60 * 3, // 3分钟缓存
-  })
+  });
 
   // 使用TanStack Query获取未支付订单
   const { data: unpaidOrders = [], isLoading: isLoadingUnpaid } = useQuery({
-    queryKey: ['orders', 'unpaid'],
+    queryKey: ["orders", "unpaid"],
     queryFn: async () => {
-      const response = await getUnpaidOrders({})
-      return response.success ? response.orders : []
+      const response = await getUnpaidOrders({});
+      return response.success ? response.orders : [];
     },
     staleTime: 1000 * 60 * 3, // 3分钟缓存
-  })
+  });
 
-  const isLoading = isLoadingAll || isLoadingUnpaid
+  const isLoading = isLoadingAll || isLoadingUnpaid;
 
   // 处理订单删除后的刷新
   const handleOrderDeleted = () => {
     // 使用TanStack Query重新获取数据
-    queryClient.invalidateQueries({ queryKey: ['orders'] })
-  }
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
+  };
 
   // 获取订单状态图标
   function getOrderStatusIcon(status: string) {
     switch (status) {
-      case 'COMPLETED':
-        return <CheckCircle className="h-5 w-5 text-green-500" />
-      case 'PROCESSING':
-      case 'PENDING':
-        return <Clock className="h-5 w-5 text-blue-500" />
-      case 'CANCELLED':
-        return <AlertCircle className="h-5 w-5 text-red-500" />
-      case 'UNPAID':
-        return <AlertTriangle className="h-5 w-5 text-amber-500" />
+      case "COMPLETED":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "PROCESSING":
+      case "PENDING":
+        return <Clock className="h-5 w-5 text-blue-500" />;
+      case "CANCELLED":
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
+      case "UNPAID":
+        return <AlertTriangle className="h-5 w-5 text-amber-500" />;
       default:
-        return <Package className="h-5 w-5 text-gray-500" />
+        return <Package className="h-5 w-5 text-gray-500" />;
     }
   }
 
   // 获取订单状态名称
   function getOrderStatusName(status: string) {
     switch (status) {
-      case 'COMPLETED':
-        return 'Completed'
-      case 'PROCESSING':
-        return 'Processing'
-      case 'PENDING':
-        return 'Pending'
-      case 'CANCELLED':
-        return 'Cancelled'
-      case 'UNPAID':
-        return 'Unpaid'
+      case "COMPLETED":
+        return "Completed";
+      case "PROCESSING":
+        return "Processing";
+      case "PENDING":
+        return "Pending";
+      case "CANCELLED":
+        return "Cancelled";
+      case "UNPAID":
+        return "Unpaid";
       default:
-        return 'Unknown Status'
+        return "Unknown Status";
     }
   }
 
@@ -134,7 +134,7 @@ function MyOrdersPage() {
           <Clock className="h-8 w-8 animate-spin text-primary" />
         </div>
       </div>
-    )
+    );
   }
 
   if (allOrders.length === 0 && unpaidOrders.length === 0) {
@@ -149,7 +149,7 @@ function MyOrdersPage() {
           buttonHref="/"
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -216,17 +216,17 @@ function MyOrdersPage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }
 
 // 订单列表组件
 interface OrdersListProps {
-  orders: Array<Order>
-  showPayButton: boolean
-  showDeleteButton: boolean
-  getOrderStatusIcon: (status: string) => React.ReactNode
-  getOrderStatusName: (status: string) => string
-  onOrderDeleted: () => void
+  orders: Array<Order>;
+  showPayButton: boolean;
+  showDeleteButton: boolean;
+  getOrderStatusIcon: (status: string) => React.ReactNode;
+  getOrderStatusName: (status: string) => string;
+  onOrderDeleted: () => void;
 }
 
 function OrdersList({
@@ -248,7 +248,7 @@ function OrdersList({
               </CardTitle>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 text-sm">
                 <div className="flex items-center gap-1">
-                  {order.paymentStatus === 'UNPAID' ? (
+                  {order.paymentStatus === "UNPAID" ? (
                     <>
                       <AlertTriangle className="h-5 w-5 text-amber-500" />
                       <span className="text-amber-700 dark:text-amber-400">
@@ -263,10 +263,10 @@ function OrdersList({
                   )}
                 </div>
                 <span className="text-muted-foreground">
-                  {new Date(order.createdAt).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
+                  {new Date(order.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
                   })}
                 </span>
               </div>
@@ -327,10 +327,10 @@ function OrdersList({
           </CardContent>
           <CardFooter className="flex flex-col items-end space-y-2 sm:flex-row sm:justify-between sm:space-y-0">
             <div className="flex gap-2">
-              {showPayButton && order.paymentStatus === 'UNPAID' && (
+              {showPayButton && order.paymentStatus === "UNPAID" && (
                 <PayOrderButton orderId={order.id} />
               )}
-              {showDeleteButton && order.paymentStatus === 'UNPAID' && (
+              {showDeleteButton && order.paymentStatus === "UNPAID" && (
                 <DeleteOrderButton
                   orderId={order.id}
                   orderNumber={order.orderNumber}
@@ -351,5 +351,5 @@ function OrdersList({
         </Card>
       ))}
     </div>
-  )
+  );
 }

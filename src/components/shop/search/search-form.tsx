@@ -1,27 +1,27 @@
-import { useNavigate } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
-import type { FormEvent } from 'react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { useNavigate } from "@tanstack/react-router";
+import { Search } from "lucide-react";
+import type { FormEvent } from "react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface SearchFormProps {
-  defaultValue?: string
+  defaultValue?: string;
 }
 
-export function SearchForm({ defaultValue = '' }: SearchFormProps) {
-  const navigate = useNavigate()
-  const [query, setQuery] = useState(defaultValue)
+export function SearchForm({ defaultValue = "" }: SearchFormProps) {
+  const navigate = useNavigate();
+  const [query, setQuery] = useState(defaultValue);
 
   const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (query.trim()) {
       navigate({
-        to: '/search',
+        to: "/search",
         search: { q: encodeURIComponent(query) },
-      })
+      });
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex w-full items-center gap-2">
@@ -37,5 +37,5 @@ export function SearchForm({ defaultValue = '' }: SearchFormProps) {
       </div>
       <Button type="submit">Search</Button>
     </form>
-  )
+  );
 }

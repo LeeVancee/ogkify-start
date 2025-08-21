@@ -1,40 +1,40 @@
-import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { createPaymentSession } from '@/server/orders.server'
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { createPaymentSession } from "@/server/orders.server";
 
 interface PayOrderButtonProps {
-  orderId: string
+  orderId: string;
 }
 
 export function PayOrderButton({ orderId }: PayOrderButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handlePayment() {
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
-      const result = await createPaymentSession({ data: orderId })
+      const result = await createPaymentSession({ data: orderId });
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to create payment session')
+        throw new Error(result.error || "Failed to create payment session");
       }
 
       // 如果成功，重定向到 Stripe 支付页面
       if (result.sessionUrl) {
-        window.location.href = result.sessionUrl
-        return
+        window.location.href = result.sessionUrl;
+        return;
       }
 
-      toast.error('Failed to create payment session')
+      toast.error("Failed to create payment session");
     } catch (error) {
-      console.error('Payment error:', error)
+      console.error("Payment error:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Payment process failed'
-      )
+        error instanceof Error ? error.message : "Payment process failed",
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -46,8 +46,8 @@ export function PayOrderButton({ orderId }: PayOrderButtonProps) {
           Processing...
         </>
       ) : (
-        'Pay Now'
+        "Pay Now"
       )}
     </Button>
-  )
+  );
 }

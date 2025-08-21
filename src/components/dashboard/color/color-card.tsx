@@ -1,13 +1,13 @@
-import { ManagementCard } from '@/components/shared/management-card'
+import { ManagementCard } from "@/components/shared/management-card";
 
 interface ColorCardProps {
   color: {
-    id: string
-    name: string
-    value: string
-  }
-  onDelete: (id: string) => void
-  isDeleting?: boolean
+    id: string;
+    name: string;
+    value: string;
+  };
+  onDelete: (id: string) => void;
+  isDeleting?: boolean;
 }
 
 export function ColorCard({
@@ -36,5 +36,5 @@ export function ColorCard({
         </div>
       </div>
     </ManagementCard>
-  )
+  );
 }

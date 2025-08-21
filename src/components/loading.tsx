@@ -1,7 +1,7 @@
-import { SpinnerLoading } from '@/components/shared/flexible-loading'
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 
 const Loading = () => {
-  return <SpinnerLoading />
-}
+  return <SpinnerLoading />;
+};
 
-export default Loading
+export default Loading;

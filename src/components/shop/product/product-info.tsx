@@ -1,98 +1,98 @@
-import { Heart, ShoppingCart } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { Heart, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface ProductColor {
-  id: string
-  name: string
-  value: string
+  id: string;
+  name: string;
+  value: string;
 }
 
 interface ProductSize {
-  id: string
-  name: string
-  value: string
+  id: string;
+  name: string;
+  value: string;
 }
 
 interface Product {
-  id: string
-  name: string
-  description: string
-  price: number
-  colors: Array<ProductColor>
-  sizes: Array<ProductSize>
-  images: Array<string>
-  inStock?: boolean
-  freeShipping?: boolean
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  colors: Array<ProductColor>;
+  sizes: Array<ProductSize>;
+  images: Array<string>;
+  inStock?: boolean;
+  freeShipping?: boolean;
 }
 
 interface ProductInfoProps {
-  product: Product
+  product: Product;
   addToCartAction: (
-    formData: FormData
-  ) => Promise<{ success: boolean; error?: string; message?: string }>
+    formData: FormData,
+  ) => Promise<{ success: boolean; error?: string; message?: string }>;
 }
 
 export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
-  const [quantity, setQuantity] = useState('1')
+  const [quantity, setQuantity] = useState("1");
   const [mainImage, setMainImage] = useState(
-    product.images[0] || '/placeholder.svg'
-  )
+    product.images[0] || "/placeholder.svg",
+  );
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    product.colors.length > 0 ? product.colors[0].id : undefined
-  )
+    product.colors.length > 0 ? product.colors[0].id : undefined,
+  );
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    product.sizes.length > 0 ? product.sizes[0].id : undefined
-  )
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    product.sizes.length > 0 ? product.sizes[0].id : undefined,
+  );
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddToCart = async () => {
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
-    const formData = new FormData()
-    formData.append('productId', product.id)
-    formData.append('quantity', quantity)
+    const formData = new FormData();
+    formData.append("productId", product.id);
+    formData.append("quantity", quantity);
 
     if (selectedColor) {
-      formData.append('colorId', selectedColor)
+      formData.append("colorId", selectedColor);
     }
 
     if (selectedSize) {
-      formData.append('sizeId', selectedSize)
+      formData.append("sizeId", selectedSize);
     }
 
     try {
-      const result = await addToCartAction(formData)
+      const result = await addToCartAction(formData);
 
       if (result.success) {
-        toast.success(result.message || `${product.name} added to cart`)
+        toast.success(result.message || `${product.name} added to cart`);
       } else {
-        toast.error(result.error || 'Failed to add to cart')
+        toast.error(result.error || "Failed to add to cart");
       }
     } catch (error) {
-      toast.error('Failed to add to cart')
-      console.error(error)
+      toast.error("Failed to add to cart");
+      console.error(error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleAddToWishlist = () => {
-    toast.success(`${product.name} added to wishlist`)
-  }
+    toast.success(`${product.name} added to wishlist`);
+  };
 
   const formatPrice = (price: number) => {
-    return `$ ${price.toFixed(2)}`
-  }
+    return `$ ${price.toFixed(2)}`;
+  };
 
   return (
     <>
@@ -142,10 +142,10 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                     key={color.id}
                     variant="outline"
                     className={cn(
-                      'flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all',
+                      "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
                       selectedColor === color.id
-                        ? 'border-blue-600 bg-muted text-blue-600'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? "border-blue-600 bg-muted text-blue-600"
+                        : "border-gray-200 hover:border-gray-300",
                     )}
                     title={color.name}
                     onClick={() => setSelectedColor(color.id)}
@@ -166,10 +166,10 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                     key={size.id}
                     variant="outline"
                     className={cn(
-                      'flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all',
+                      "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
                       selectedSize === size.id
-                        ? 'border-blue-600 bg-muted text-blue-600'
-                        : 'border-gray-200 hover:border-gray-300'
+                        ? "border-blue-600 bg-muted text-blue-600"
+                        : "border-gray-200 hover:border-gray-300",
                     )}
                     onClick={() => setSelectedSize(size.id)}
                   >
@@ -205,7 +205,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
             disabled={isSubmitting}
           >
             {isSubmitting ? (
-              'Adding...'
+              "Adding..."
             ) : (
               <>
                 <ShoppingCart className="mr-2 h-5 w-5" />
@@ -229,5 +229,5 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         </div>
       </div>
     </>
-  )
+  );
 }

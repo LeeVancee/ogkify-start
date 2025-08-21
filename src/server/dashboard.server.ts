@@ -1,11 +1,11 @@
-import { createServerFn } from '@tanstack/react-start'
-import { getCategoriesCount } from '@/server/categories.server'
+import { createServerFn } from "@tanstack/react-start";
+import { getCategoriesCount } from "@/server/categories.server";
 import {
   getMonthlySalesData,
   getOrdersStats,
   getRecentOrders,
-} from '@/server/orders.server'
-import { getProductsCount } from '@/server/products.server'
+} from "@/server/orders.server";
+import { getProductsCount } from "@/server/products.server";
 
 // Get all dashboard data in a single request for optimal performance
 export const getDashboardData = createServerFn().handler(async () => {
@@ -23,9 +23,9 @@ export const getDashboardData = createServerFn().handler(async () => {
       getOrdersStats(),
       getRecentOrders(),
       getMonthlySalesData(),
-    ])
+    ]);
 
-    const { pendingOrders, completedOrders, totalRevenue } = ordersStats
+    const { pendingOrders, completedOrders, totalRevenue } = ordersStats;
 
     return {
       productsCount,
@@ -35,9 +35,9 @@ export const getDashboardData = createServerFn().handler(async () => {
       totalRevenue,
       recentOrders,
       monthlySalesData,
-    }
+    };
   } catch (error) {
-    console.error('Failed to get dashboard data:', error)
+    console.error("Failed to get dashboard data:", error);
     return {
       productsCount: 0,
       categoriesCount: 0,
@@ -46,6 +46,6 @@ export const getDashboardData = createServerFn().handler(async () => {
       totalRevenue: 0,
       recentOrders: [],
       monthlySalesData: [],
-    }
+    };
   }
-})
+});

@@ -1,14 +1,14 @@
-import { Upload, X } from 'lucide-react'
-import { useState } from 'react'
-import Dropzone from 'react-dropzone'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { useUploadThing } from '@/lib/uploadthing'
+import { Upload, X } from "lucide-react";
+import { useState } from "react";
+import Dropzone from "react-dropzone";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface UploadThingImageProps {
-  value: Array<string>
-  onChange: (value: Array<string>) => void
-  disabled?: boolean
+  value: Array<string>;
+  onChange: (value: Array<string>) => void;
+  disabled?: boolean;
 }
 
 export function UploadThingImage({
@@ -16,31 +16,31 @@ export function UploadThingImage({
   onChange,
   disabled,
 }: UploadThingImageProps) {
-  const [files, setFiles] = useState<Array<File>>([])
+  const [files, setFiles] = useState<Array<File>>([]);
 
   const onRemove = (url: string) => {
-    onChange(value.filter((current) => current !== url))
-  }
+    onChange(value.filter((current) => current !== url));
+  };
 
-  const { startUpload, isUploading } = useUploadThing('imageUploader', {
+  const { startUpload, isUploading } = useUploadThing("imageUploader", {
     onClientUploadComplete: (res) => {
       // 获取所有上传成功的图片 URL
-      const uploadedUrls = res.map((file) => file.ufsUrl)
+      const uploadedUrls = res.map((file) => file.ufsUrl);
       // 将新上传的 URL 添加到现有的 value 中
-      onChange([...value, ...uploadedUrls])
-      setFiles([])
-      toast.success('Image uploaded successfully')
+      onChange([...value, ...uploadedUrls]);
+      setFiles([]);
+      toast.success("Image uploaded successfully");
     },
     onUploadError: (error) => {
-      toast.error(`Upload failed: ${error.message}`)
+      toast.error(`Upload failed: ${error.message}`);
     },
-  })
+  });
 
   const handleUpload = () => {
     if (files.length > 0) {
-      startUpload(files)
+      startUpload(files);
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -74,7 +74,7 @@ export function UploadThingImage({
         maxFiles={4}
         maxSize={5 * 1024 * 1024}
         accept={{
-          'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp'],
+          "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
         }}
         onDrop={(acceptedFiles) => setFiles(acceptedFiles)}
       >
@@ -91,9 +91,9 @@ export function UploadThingImage({
                 cursor-pointer
                 flex flex-col items-center justify-center
                 relative
-                ${isDragActive ? 'border-primary bg-primary/10' : 'border-muted hover:border-muted-foreground'}
-                ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
-                ${fileRejections.length > 0 ? 'border-destructive' : ''}
+                ${isDragActive ? "border-primary bg-primary/10" : "border-muted hover:border-muted-foreground"}
+                ${isUploading ? "opacity-50 cursor-not-allowed" : ""}
+                ${fileRejections.length > 0 ? "border-destructive" : ""}
               `}
             >
               <input {...getInputProps()} />
@@ -108,8 +108,8 @@ export function UploadThingImage({
                     <Button
                       type="button"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        setFiles([])
+                        e.stopPropagation();
+                        setFiles([]);
                       }}
                       disabled={isUploading}
                       variant="ghost"
@@ -122,14 +122,14 @@ export function UploadThingImage({
                   <Button
                     type="button"
                     onClick={(e) => {
-                      e.stopPropagation()
-                      handleUpload()
+                      e.stopPropagation();
+                      handleUpload();
                     }}
                     disabled={isUploading}
                     size="sm"
                   >
                     {isUploading ? (
-                      'Uploading...'
+                      "Uploading..."
                     ) : (
                       <>
                         <Upload className="h-4 w-4 mr-2" />
@@ -142,8 +142,8 @@ export function UploadThingImage({
                 <div className="text-center space-y-2">
                   <p className="text-sm text-muted-foreground">
                     {isDragActive
-                      ? 'Drop to upload'
-                      : 'Drop images here or click to select'}
+                      ? "Drop to upload"
+                      : "Drop images here or click to select"}
                   </p>
                   {fileRejections.length > 0 && (
                     <p className="text-sm text-destructive">
@@ -160,5 +160,5 @@ export function UploadThingImage({
         )}
       </Dropzone>
     </div>
-  )
+  );
 }

@@ -1,55 +1,55 @@
-import { Loader2 } from 'lucide-react'
-import type React from 'react'
-import { useState } from 'react'
+import { Loader2 } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
 
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface CheckoutFormProps {
-  onSubmit: (formData: any) => void
-  isSubmitting: boolean
+  onSubmit: (formData: any) => void;
+  isSubmitting: boolean;
 }
 
 export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
   const [formData, setFormData] = useState({
-    email: '',
-    firstName: '',
-    lastName: '',
-    address: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'US',
-    phone: '',
+    email: "",
+    firstName: "",
+    lastName: "",
+    address: "",
+    city: "",
+    state: "",
+    postalCode: "",
+    country: "US",
+    phone: "",
     sameShippingAddress: true,
-    paymentMethod: 'card',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvc: '',
-  })
+    paymentMethod: "card",
+    cardNumber: "",
+    cardExpiry: "",
+    cardCvc: "",
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, sameShippingAddress: checked }))
-  }
+    setFormData((prev) => ({ ...prev, sameShippingAddress: checked }));
+  };
 
   const handleRadioChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, paymentMethod: value }))
-  }
+    setFormData((prev) => ({ ...prev, paymentMethod: value }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit(formData)
-  }
+    e.preventDefault();
+    onSubmit(formData);
+  };
 
   return (
     <form onSubmit={handleSubmit}>
@@ -202,7 +202,7 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
               </div>
             </RadioGroup>
 
-            {formData.paymentMethod === 'card' && (
+            {formData.paymentMethod === "card" && (
               <Tabs defaultValue="card" className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="card">Card Details</TabsTrigger>
@@ -286,10 +286,10 @@ export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
               Processing...
             </>
           ) : (
-            'Complete Order'
+            "Complete Order"
           )}
         </Button>
       </div>
     </form>
-  )
+  );
 }

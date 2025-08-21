@@ -1,34 +1,34 @@
-import { useNavigate, useSearch } from '@tanstack/react-router'
-import { useTransition } from 'react'
+import { useNavigate, useSearch } from "@tanstack/react-router";
+import { useTransition } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
-import { Button } from '@/components/ui/button'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
-import type { Category } from '@/lib/types'
+} from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import type { Category } from "@/lib/types";
 
 interface ProductFiltersProps {
-  categories: Array<Category>
-  colors?: Array<{ id: string; name: string; value: string }>
-  sizes?: Array<{ id: string; name: string; value: string }>
-  maxPrice?: number
+  categories: Array<Category>;
+  colors?: Array<{ id: string; name: string; value: string }>;
+  sizes?: Array<{ id: string; name: string; value: string }>;
+  maxPrice?: number;
 }
 
 // 定义搜索参数类型
 interface SearchParams {
-  category?: string
-  sort?: string
-  featured?: boolean
-  minPrice?: string
-  maxPrice?: string
-  color?: string | Array<string>
-  size?: string | Array<string>
-  [key: string]: any
+  category?: string;
+  sort?: string;
+  featured?: boolean;
+  minPrice?: string;
+  maxPrice?: string;
+  color?: string | Array<string>;
+  size?: string | Array<string>;
+  [key: string]: any;
 }
 
 function ProductFiltersContent({
@@ -37,156 +37,156 @@ function ProductFiltersContent({
   sizes = [],
   maxPrice = 5000,
 }: ProductFiltersProps) {
-  const navigate = useNavigate()
-  const search = useSearch({ strict: false })
-  const [isPending, startTransition] = useTransition()
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
+  const [isPending, startTransition] = useTransition();
 
-  const currentCategory = search.category
-  const currentSort = search.sort || 'featured'
-  const isFeatured = search.featured === true
-  const currentMinPrice = Number(search.minPrice || '0')
-  const currentMaxPrice = Number(search.maxPrice || maxPrice.toString())
+  const currentCategory = search.category;
+  const currentSort = search.sort || "featured";
+  const isFeatured = search.featured === true;
+  const currentMinPrice = Number(search.minPrice || "0");
+  const currentMaxPrice = Number(search.maxPrice || maxPrice.toString());
 
   // 获取已选择的颜色和尺寸名称
   const currentColorNames = Array.isArray(search.color)
     ? search.color
     : search.color
       ? [search.color]
-      : []
+      : [];
   const currentSizeNames = Array.isArray(search.size)
     ? search.size
     : search.size
       ? [search.size]
-      : []
+      : [];
 
   const createQueryParams = (
-    params: Record<string, string | Array<string> | boolean | null | undefined>
+    params: Record<string, string | Array<string> | boolean | null | undefined>,
   ): SearchParams => {
-    const newParams = { ...search } as SearchParams
+    const newParams = { ...search } as SearchParams;
 
     for (const [key, value] of Object.entries(params)) {
       if (value === null || value === undefined) {
-        delete newParams[key]
+        delete newParams[key];
       } else {
-        newParams[key] = value
+        newParams[key] = value;
       }
     }
 
-    return newParams
-  }
+    return newParams;
+  };
 
   const handleCategoryChange = (categoryId: string) => {
     // 找到对应的分类名称
     const categoryName =
-      categories.find((cat) => cat.id === categoryId)?.name || categoryId
+      categories.find((cat) => cat.id === categoryId)?.name || categoryId;
 
     startTransition(() => {
       navigate({
-        to: '/products',
+        to: "/products",
         search: createQueryParams({
           category: currentCategory === categoryName ? undefined : categoryName,
         }),
         replace: true,
-      })
-    })
-  }
+      });
+    });
+  };
 
   const handleFeaturedChange = (value: boolean) => {
     startTransition(() => {
       navigate({
-        to: '/products',
+        to: "/products",
         search: createQueryParams({
           featured: value || undefined,
         }),
         replace: true,
-      })
-    })
-  }
+      });
+    });
+  };
 
   const handleColorChange = (color: {
-    id: string
-    name: string
-    value: string
+    id: string;
+    name: string;
+    value: string;
   }) => {
-    const colorName = color.name // 使用颜色名称而不是ID
+    const colorName = color.name; // 使用颜色名称而不是ID
 
     const newColors = currentColorNames.includes(colorName)
       ? currentColorNames.filter((name: string) => name !== colorName)
-      : [...currentColorNames, colorName]
+      : [...currentColorNames, colorName];
 
     startTransition(() => {
       navigate({
-        to: '/products',
+        to: "/products",
         search: createQueryParams({
           color: newColors.length ? newColors : undefined,
         }),
         replace: true,
-      })
-    })
-  }
+      });
+    });
+  };
 
   const handleSizeChange = (size: {
-    id: string
-    name: string
-    value: string
+    id: string;
+    name: string;
+    value: string;
   }) => {
-    const sizeName = size.value // 使用尺寸值而不是ID
+    const sizeName = size.value; // 使用尺寸值而不是ID
 
     const newSizes = currentSizeNames.includes(sizeName)
       ? currentSizeNames.filter((name: string) => name !== sizeName)
-      : [...currentSizeNames, sizeName]
+      : [...currentSizeNames, sizeName];
 
     startTransition(() => {
       navigate({
-        to: '/products',
+        to: "/products",
         search: createQueryParams({
           size: newSizes.length ? newSizes : undefined,
         }),
         replace: true,
-      })
-    })
-  }
+      });
+    });
+  };
 
   const handlePriceChange = (values: Array<number>) => {
     if (values.length === 2) {
-      const [min, max] = values
+      const [min, max] = values;
       startTransition(() => {
         navigate({
-          to: '/products',
+          to: "/products",
           search: createQueryParams({
             minPrice: min > 0 ? min.toString() : undefined,
             maxPrice: max < maxPrice ? max.toString() : undefined,
           }),
           replace: true,
-        })
-      })
+        });
+      });
     }
-  }
+  };
 
   const handleResetFilters = () => {
     startTransition(() => {
       navigate({
-        to: '/products',
+        to: "/products",
         search: {},
         replace: true,
-      })
-    })
-  }
+      });
+    });
+  };
 
   const hasActiveFilters =
     currentCategory ||
-    currentSort !== 'featured' ||
+    currentSort !== "featured" ||
     isFeatured ||
     currentMinPrice > 0 ||
     currentMaxPrice < maxPrice ||
     currentColorNames.length > 0 ||
-    currentSizeNames.length > 0
+    currentSizeNames.length > 0;
 
   return (
     <div className="grid gap-6">
       <Accordion
         type="multiple"
-        defaultValue={['categories', 'featured', 'price']}
+        defaultValue={["categories", "featured", "price"]}
       >
         <AccordionItem value="categories">
           <AccordionTrigger>Categories</AccordionTrigger>
@@ -315,9 +315,9 @@ function ProductFiltersContent({
         Reset Filters
       </Button>
     </div>
-  )
+  );
 }
 
 export function ProductFilters(props: ProductFiltersProps) {
-  return <ProductFiltersContent {...props} />
+  return <ProductFiltersContent {...props} />;
 }

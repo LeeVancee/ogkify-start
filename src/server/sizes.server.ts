@@ -1,7 +1,7 @@
-import { createServerFn } from '@tanstack/react-start'
-import { eq } from 'drizzle-orm'
-import { db } from '@/db'
-import { sizes } from '@/db/schema'
+import { createServerFn } from "@tanstack/react-start";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { sizes } from "@/db/schema";
 
 // Get all sizes
 export const getSizes = createServerFn().handler(async () => {
@@ -13,14 +13,14 @@ export const getSizes = createServerFn().handler(async () => {
         name: true,
         value: true,
       },
-    })
+    });
 
-    return sizesList
+    return sizesList;
   } catch (error) {
-    console.error('Failed to get sizes:', error)
-    return []
+    console.error("Failed to get sizes:", error);
+    return [];
   }
-})
+});
 
 // Get single size
 export const getSize = createServerFn()
@@ -34,21 +34,21 @@ export const getSize = createServerFn()
           name: true,
           value: true,
         },
-      })
+      });
 
       if (!size) {
-        return { success: false, error: 'Size not found' }
+        return { success: false, error: "Size not found" };
       }
 
       return {
         success: true,
         size,
-      }
+      };
     } catch (error) {
-      console.error('Failed to get size:', error)
-      return { success: false, error: 'Failed to get size' }
+      console.error("Failed to get size:", error);
+      return { success: false, error: "Failed to get size" };
     }
-  })
+  });
 
 // Create size
 export const createSize = createServerFn()
@@ -61,18 +61,18 @@ export const createSize = createServerFn()
           name: data.name,
           value: data.value,
         })
-        .returning()
+        .returning();
 
-      return { success: true, data: size }
+      return { success: true, data: size };
     } catch (error) {
-      return { success: false, error: 'Failed to create size' }
+      return { success: false, error: "Failed to create size" };
     }
-  })
+  });
 
 // Update size
 export const updateSize = createServerFn()
   .validator(
-    (params: { id: string; data: { name: string; value: string } }) => params
+    (params: { id: string; data: { name: string; value: string } }) => params,
   )
   .handler(async ({ data: { id, data } }) => {
     try {
@@ -83,23 +83,23 @@ export const updateSize = createServerFn()
           value: data.value,
         })
         .where(eq(sizes.id, id))
-        .returning()
+        .returning();
 
-      return { success: true, data: size }
+      return { success: true, data: size };
     } catch (error) {
-      return { success: false, error: 'Failed to update size' }
+      return { success: false, error: "Failed to update size" };
     }
-  })
+  });
 
 // Delete size
 export const deleteSize = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await db.delete(sizes).where(eq(sizes.id, id))
+      await db.delete(sizes).where(eq(sizes.id, id));
 
-      return { success: true }
+      return { success: true };
     } catch (error) {
-      return { success: false, error: 'Failed to delete size' }
+      return { success: false, error: "Failed to delete size" };
     }
-  })
+  });

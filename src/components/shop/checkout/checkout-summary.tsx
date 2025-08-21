@@ -4,25 +4,25 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import type { CartItem } from '@/lib/types'
-import { formatPrice } from '@/lib/utils'
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import type { CartItem } from "@/lib/types";
+import { formatPrice } from "@/lib/utils";
 
 interface CheckoutSummaryProps {
-  items: Array<CartItem>
+  items: Array<CartItem>;
 }
 
 export function CheckoutSummary({ items }: CheckoutSummaryProps) {
   const subtotal = items.reduce(
     (total, item) => total + item.price * item.quantity,
-    0
-  )
+    0,
+  );
 
   // Calculate shipping and tax (simplified for demo)
-  const shipping = 0 // Free shipping
-  const tax = subtotal * 0.1 // 10% tax
-  const total = subtotal + shipping + tax
+  const shipping = 0; // Free shipping
+  const tax = subtotal * 0.1; // 10% tax
+  const total = subtotal + shipping + tax;
 
   return (
     <Card>
@@ -35,7 +35,7 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
             <div key={item.id} className="flex items-center gap-4">
               <div className="h-16 w-16 overflow-hidden rounded-md border">
                 <img
-                  src={item.image || '/placeholder.svg?height=64&width=64'}
+                  src={item.image || "/placeholder.svg?height=64&width=64"}
                   alt={item.name}
                   width={64}
                   height={64}
@@ -82,5 +82,5 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
         checkout.
       </CardFooter>
     </Card>
-  )
+  );
 }

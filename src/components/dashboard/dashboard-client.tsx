@@ -1,29 +1,29 @@
-import { CreditCard, DollarSign, Package, Tag } from 'lucide-react'
-import { Overview } from '@/components/dashboard/overview'
-import { RecentSales } from '@/components/dashboard/recent-sales'
+import { CreditCard, DollarSign, Package, Tag } from "lucide-react";
+import { Overview } from "@/components/dashboard/overview";
+import { RecentSales } from "@/components/dashboard/recent-sales";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface SalesData {
-  name: string
-  total: number
+  name: string;
+  total: number;
 }
 
 interface DashboardClientProps {
-  productsCount: number
-  categoriesCount: number
-  pendingOrders: number
-  completedOrders: number
-  totalRevenue: number
-  recentOrders: Array<any>
-  popularProducts: Array<any>
-  monthlySalesData?: Array<SalesData>
+  productsCount: number;
+  categoriesCount: number;
+  pendingOrders: number;
+  completedOrders: number;
+  totalRevenue: number;
+  recentOrders: Array<any>;
+  popularProducts: Array<any>;
+  monthlySalesData?: Array<SalesData>;
 }
 
 export function DashboardClient({
@@ -130,5 +130,5 @@ export function DashboardClient({
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

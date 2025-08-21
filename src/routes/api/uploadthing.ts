@@ -1,10 +1,10 @@
-import { createServerFileRoute } from '@tanstack/react-start/server'
-import { createRouteHandler } from 'uploadthing/server'
+import { createServerFileRoute } from "@tanstack/react-start/server";
+import { createRouteHandler } from "uploadthing/server";
 
-import { ourFileRouter } from '@/server/uploadthing'
+import { ourFileRouter } from "@/server/uploadthing";
 
-const handlers = createRouteHandler({ router: ourFileRouter })
-export const ServerRoute = createServerFileRoute('/api/uploadthing').methods({
+const handlers = createRouteHandler({ router: ourFileRouter });
+export const ServerRoute = createServerFileRoute("/api/uploadthing").methods({
   GET: handlers,
   POST: handlers,
-})
+});

@@ -1,46 +1,46 @@
-import { useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { updateSize } from '@/server/sizes.server'
+import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { updateSize } from "@/server/sizes.server";
 
 interface SizeEditFormProps {
   size: {
-    id: string
-    name: string
-    value: string
-  }
+    id: string;
+    name: string;
+    value: string;
+  };
 }
 
 export function SizeEditForm({ size }: SizeEditFormProps) {
-  const router = useRouter()
-  const [name, setName] = useState(size.name)
-  const [value, setValue] = useState(size.value)
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [name, setName] = useState(size.name);
+  const [value, setValue] = useState(size.value);
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     if (!name || !value) {
-      toast.error('Please fill in all information')
-      return
+      toast.error("Please fill in all information");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
       const result = await updateSize({
         data: { id: size.id, data: { name, value } },
-      })
+      });
       if (result.success) {
-        toast.success('Size updated successfully')
-        router.navigate({ to: '/dashboard/sizes' })
+        toast.success("Size updated successfully");
+        router.navigate({ to: "/dashboard/sizes" });
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
     } catch (error) {
-      toast.error('Operation failed')
+      toast.error("Operation failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -61,8 +61,8 @@ export function SizeEditForm({ size }: SizeEditFormProps) {
         />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Updating...' : 'Update Size'}
+        {loading ? "Updating..." : "Update Size"}
       </Button>
     </form>
-  )
+  );
 }

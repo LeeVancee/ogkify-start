@@ -1,32 +1,32 @@
-import { useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { updateColor } from '@/server/colors.server'
+import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { updateColor } from "@/server/colors.server";
 
 interface ColorEditFormProps {
   color: {
-    id: string
-    name: string
-    value: string
-  }
+    id: string;
+    name: string;
+    value: string;
+  };
 }
 
 export function ColorEditForm({ color }: ColorEditFormProps) {
-  const router = useRouter()
-  const [name, setName] = useState(color.name)
-  const [value, setValue] = useState(color.value)
-  const [loading, setLoading] = useState(false)
+  const router = useRouter();
+  const [name, setName] = useState(color.name);
+  const [value, setValue] = useState(color.value);
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
-    e.preventDefault()
+    e.preventDefault();
     if (!name || !value) {
-      toast.error('Please fill in all information')
-      return
+      toast.error("Please fill in all information");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
       const result = await updateColor({
         data: {
@@ -36,17 +36,17 @@ export function ColorEditForm({ color }: ColorEditFormProps) {
             value,
           },
         },
-      })
+      });
       if (result.success) {
-        toast.success('Color updated successfully')
-        router.navigate({ to: '/dashboard/colors' })
+        toast.success("Color updated successfully");
+        router.navigate({ to: "/dashboard/colors" });
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
     } catch (error) {
-      toast.error('Operation failed')
+      toast.error("Operation failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -75,8 +75,8 @@ export function ColorEditForm({ color }: ColorEditFormProps) {
         </div>
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Updating...' : 'Update Color'}
+        {loading ? "Updating..." : "Update Color"}
       </Button>
     </form>
-  )
+  );
 }

@@ -1,25 +1,25 @@
-import type { ReactNode } from 'react'
-import { Button } from '../ui/button'
-import { Input } from '../ui/input'
+import type { ReactNode } from "react";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 interface FormFieldConfig {
-  key: string
-  label: string
-  placeholder: string
-  type?: 'text' | 'color' | 'email' | 'password'
-  required?: boolean
-  component?: ReactNode
+  key: string;
+  label: string;
+  placeholder: string;
+  type?: "text" | "color" | "email" | "password";
+  required?: boolean;
+  component?: ReactNode;
 }
 
 interface SimpleFormProps<T> {
-  fields: FormFieldConfig[]
-  formData: T
-  onFieldChange: (field: keyof T, value: any) => void
-  onSubmit: () => void
-  loading?: boolean
-  submitText?: string
-  className?: string
-  children?: ReactNode
+  fields: FormFieldConfig[];
+  formData: T;
+  onFieldChange: (field: keyof T, value: any) => void;
+  onSubmit: () => void;
+  loading?: boolean;
+  submitText?: string;
+  className?: string;
+  children?: ReactNode;
 }
 
 export function SimpleForm<T extends Record<string, any>>({
@@ -28,14 +28,14 @@ export function SimpleForm<T extends Record<string, any>>({
   onFieldChange,
   onSubmit,
   loading = false,
-  submitText = 'Submit',
-  className = 'space-y-4',
+  submitText = "Submit",
+  className = "space-y-4",
   children,
 }: SimpleFormProps<T>) {
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit()
-  }
+    e.preventDefault();
+    onSubmit();
+  };
 
   return (
     <form onSubmit={handleSubmit} className={className}>
@@ -48,27 +48,27 @@ export function SimpleForm<T extends Record<string, any>>({
             </label>
           )}
           {field.component ||
-            (field.type === 'color' ? (
+            (field.type === "color" ? (
               <div className="flex gap-2">
                 <Input
                   type="color"
-                  value={formData[field.key] || ''}
+                  value={formData[field.key] || ""}
                   onChange={(e) => onFieldChange(field.key, e.target.value)}
                   className="w-[60px]"
                   disabled={loading}
                 />
                 <Input
                   placeholder={field.placeholder}
-                  value={formData[field.key] || ''}
+                  value={formData[field.key] || ""}
                   onChange={(e) => onFieldChange(field.key, e.target.value)}
                   disabled={loading}
                 />
               </div>
             ) : (
               <Input
-                type={field.type || 'text'}
+                type={field.type || "text"}
                 placeholder={field.placeholder}
-                value={formData[field.key] || ''}
+                value={formData[field.key] || ""}
                 onChange={(e) => onFieldChange(field.key, e.target.value)}
                 disabled={loading}
               />
@@ -77,8 +77,8 @@ export function SimpleForm<T extends Record<string, any>>({
       ))}
       {children}
       <Button type="submit" className="w-full" disabled={loading}>
-        {loading ? 'Loading...' : submitText}
+        {loading ? "Loading..." : submitText}
       </Button>
     </form>
-  )
+  );
 }

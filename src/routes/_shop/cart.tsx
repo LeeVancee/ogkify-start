@@ -1,41 +1,41 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import Loading from '@/components/loading'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import Loading from "@/components/loading";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import {
   getUserCart,
   removeFromCart,
   updateCartItemQuantity,
-} from '@/server/cart.server'
+} from "@/server/cart.server";
 
-export const Route = createFileRoute('/_shop/cart')({
+export const Route = createFileRoute("/_shop/cart")({
   component: CartPage,
-})
+});
 
 interface CartItem {
-  id: string
-  productId: string
-  name: string
-  price: number
-  quantity: number
-  image: string
-  colorId?: string | null
-  colorName?: string | null
-  colorValue?: string | null
-  sizeId?: string | null
-  sizeName?: string | null
-  sizeValue?: string | null
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  colorId?: string | null;
+  colorName?: string | null;
+  colorValue?: string | null;
+  sizeId?: string | null;
+  sizeName?: string | null;
+  sizeValue?: string | null;
 }
 
 function CartPage() {
-  const queryClient = useQueryClient()
-  const [isCheckingOut, setIsCheckingOut] = useState(false)
+  const queryClient = useQueryClient();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // Get cart data
   const {
@@ -43,23 +43,23 @@ function CartPage() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['cart'],
+    queryKey: ["cart"],
     queryFn: () => getUserCart(),
     staleTime: 1000 * 60 * 2, // 2 minutes cache
-  })
+  });
 
   // Remove item mutation
   const removeItemMutation = useMutation({
     mutationFn: (cartItemId: string) => removeFromCart({ data: cartItemId }),
     onSuccess: () => {
-      toast.success('Item removed from cart')
+      toast.success("Item removed from cart");
       // Refresh cart data
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      toast.error('Failed to remove item')
+      toast.error("Failed to remove item");
     },
-  })
+  });
 
   // Update quantity mutation
   const updateQuantityMutation = useMutation({
@@ -67,77 +67,77 @@ function CartPage() {
       cartItemId,
       quantity,
     }: {
-      cartItemId: string
-      quantity: number
+      cartItemId: string;
+      quantity: number;
     }) => updateCartItemQuantity({ data: { cartItemId, quantity } }),
     onSuccess: () => {
       // Refresh cart data
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      toast.error('Failed to update quantity')
+      toast.error("Failed to update quantity");
     },
-  })
+  });
 
   const handleRemoveItem = (cartItemId: string) => {
-    removeItemMutation.mutate(cartItemId)
-  }
+    removeItemMutation.mutate(cartItemId);
+  };
 
   const handleUpdateQuantity = (cartItemId: string, newQuantity: number) => {
     if (newQuantity < 1) {
-      handleRemoveItem(cartItemId)
-      return
+      handleRemoveItem(cartItemId);
+      return;
     }
-    updateQuantityMutation.mutate({ cartItemId, quantity: newQuantity })
-  }
+    updateQuantityMutation.mutate({ cartItemId, quantity: newQuantity });
+  };
 
   const handleCheckout = async () => {
-    setIsCheckingOut(true)
+    setIsCheckingOut(true);
     try {
       // Call checkout API to create Stripe session
-      const response = await fetch('/api/checkout', {
-        method: 'POST',
+      const response = await fetch("/api/checkout", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout session')
+        throw new Error(data.error || "Failed to create checkout session");
       }
 
       // Redirect to Stripe checkout page
       if (data.sessionUrl) {
-        window.location.href = data.sessionUrl
-        return
+        window.location.href = data.sessionUrl;
+        return;
       }
 
-      toast.error('Failed to create checkout session')
+      toast.error("Failed to create checkout session");
     } catch (error) {
-      console.error('Checkout error:', error)
+      console.error("Checkout error:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Checkout process failed'
-      )
+        error instanceof Error ? error.message : "Checkout process failed",
+      );
     } finally {
-      setIsCheckingOut(false)
+      setIsCheckingOut(false);
     }
-  }
+  };
 
   // Calculate totals
-  const items = cartData?.items || []
+  const items = cartData?.items || [];
   const subtotal = items.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity,
-    0
-  )
-  const shipping = subtotal > 200 ? 0 : 10 // Free shipping over $200
-  const tax = subtotal * 0.08 // 8% tax
-  const total = subtotal + shipping + tax
+    0,
+  );
+  const shipping = subtotal > 200 ? 0 : 10; // Free shipping over $200
+  const tax = subtotal * 0.08; // 8% tax
+  const total = subtotal + shipping + tax;
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   // Handle error state
@@ -154,7 +154,7 @@ function CartPage() {
             </p>
             <Button
               onClick={() =>
-                queryClient.invalidateQueries({ queryKey: ['cart'] })
+                queryClient.invalidateQueries({ queryKey: ["cart"] })
               }
               variant="outline"
             >
@@ -163,7 +163,7 @@ function CartPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   // Empty cart state
@@ -192,7 +192,7 @@ function CartPage() {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -207,7 +207,7 @@ function CartPage() {
         </Button>
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
         <p className="text-muted-foreground">
-          {items.length} {items.length === 1 ? 'item' : 'items'} in your cart
+          {items.length} {items.length === 1 ? "item" : "items"} in your cart
         </p>
       </div>
 
@@ -253,7 +253,7 @@ function CartPage() {
                             <div
                               className="mr-1 h-2 w-2 rounded-full"
                               style={{
-                                backgroundColor: item.colorValue || '#000',
+                                backgroundColor: item.colorValue || "#000",
                               }}
                             />
                             {item.colorName}
@@ -361,7 +361,7 @@ function CartPage() {
                 onClick={handleCheckout}
                 disabled={isCheckingOut || items.length === 0}
               >
-                {isCheckingOut ? 'Processing...' : 'Proceed to Checkout'}
+                {isCheckingOut ? "Processing..." : "Proceed to Checkout"}
               </Button>
 
               <div className="text-center text-sm text-muted-foreground">
@@ -392,5 +392,5 @@ function CartPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

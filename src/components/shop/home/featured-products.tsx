@@ -1,22 +1,22 @@
-import { useQuery } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
-import { ChevronRight } from 'lucide-react'
-import { ProductGrid } from '@/components/shop/product/product-grid'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { getFeaturedProducts } from '@/server/get-featured-products.server'
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { ChevronRight } from "lucide-react";
+import { ProductGrid } from "@/components/shop/product/product-grid";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getFeaturedProducts } from "@/server/get-featured-products.server";
 
 export function FeaturedProducts() {
   const { data: products, isLoading } = useQuery({
-    queryKey: ['featured-products'],
+    queryKey: ["featured-products"],
     queryFn: () => getFeaturedProducts({ data: 4 }),
     // Cache featured products for 30 minutes since they don't change frequently
     staleTime: 1000 * 60 * 30, // 30 minutes
     gcTime: 1000 * 60 * 60 * 2, // 2 hours (keep in memory)
-  })
+  });
 
   if (isLoading) {
-    return <FeaturedProductsLoading />
+    return <FeaturedProductsLoading />;
   }
 
   return (
@@ -54,7 +54,7 @@ export function FeaturedProducts() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export function FeaturedProductsLoading() {
@@ -96,5 +96,5 @@ export function FeaturedProductsLoading() {
         </div>
       </div>
     </section>
-  )
+  );
 }

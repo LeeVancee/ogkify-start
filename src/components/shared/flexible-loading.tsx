@@ -1,22 +1,22 @@
-import { Loader2 } from 'lucide-react'
-import { Skeleton } from '../ui/skeleton'
+import { Loader2 } from "lucide-react";
+import { Skeleton } from "../ui/skeleton";
 
 interface SpinnerLoadingProps {
-  size?: 'sm' | 'md' | 'lg'
-  className?: string
-  text?: string
+  size?: "sm" | "md" | "lg";
+  className?: string;
+  text?: string;
 }
 
 export function SpinnerLoading({
-  size = 'md',
-  className = '',
+  size = "md",
+  className = "",
   text,
 }: SpinnerLoadingProps) {
   const sizeClasses = {
-    sm: 'h-4 w-4',
-    md: 'h-8 w-8',
-    lg: 'h-12 w-12',
-  }
+    sm: "h-4 w-4",
+    md: "h-8 w-8",
+    lg: "h-12 w-12",
+  };
 
   return (
     <div
@@ -29,28 +29,28 @@ export function SpinnerLoading({
         {text && <p className="text-sm text-muted-foreground">{text}</p>}
       </div>
     </div>
-  )
+  );
 }
 
 interface CardGridLoadingProps {
-  count?: number
-  cols?: 1 | 2 | 3 | 4
-  showButtons?: boolean
-  className?: string
+  count?: number;
+  cols?: 1 | 2 | 3 | 4;
+  showButtons?: boolean;
+  className?: string;
 }
 
 export function CardGridLoading({
   count = 8,
   cols = 4,
   showButtons = true,
-  className = '',
+  className = "",
 }: CardGridLoadingProps) {
   const gridClasses = {
-    1: 'grid-cols-1',
-    2: 'grid-cols-1 sm:grid-cols-2',
-    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
-  }
+    1: "grid-cols-1",
+    2: "grid-cols-1 sm:grid-cols-2",
+    3: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3",
+    4: "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4",
+  };
 
   return (
     <div className={`grid gap-6 ${gridClasses[cols]} ${className}`}>
@@ -71,19 +71,19 @@ export function CardGridLoading({
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 interface FormLoadingProps {
-  fields?: number
-  hasSubmitButton?: boolean
-  className?: string
+  fields?: number;
+  hasSubmitButton?: boolean;
+  className?: string;
 }
 
 export function FormLoading({
   fields = 3,
   hasSubmitButton = true,
-  className = 'space-y-4',
+  className = "space-y-4",
 }: FormLoadingProps) {
   return (
     <div className={className}>
@@ -95,21 +95,21 @@ export function FormLoading({
       ))}
       {hasSubmitButton && <Skeleton className="h-10 w-full" />}
     </div>
-  )
+  );
 }
 
 interface ListLoadingProps {
-  count?: number
-  showAvatar?: boolean
-  showActions?: boolean
-  className?: string
+  count?: number;
+  showAvatar?: boolean;
+  showActions?: boolean;
+  className?: string;
 }
 
 export function ListLoading({
   count = 5,
   showAvatar = false,
   showActions = false,
-  className = '',
+  className = "",
 }: ListLoadingProps) {
   return (
     <div className={`space-y-3 ${className}`}>
@@ -134,5 +134,5 @@ export function ListLoading({
         </div>
       ))}
     </div>
-  )
+  );
 }

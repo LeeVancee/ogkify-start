@@ -7,7 +7,18 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["src/**/*.{js,ts,tsx,jsx,json}"]
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.output",
+      "!.vercel",
+      "!.tanstack-start",
+      "!build",
+      "!dist",
+      "!*.config.js",
+      "!*.config.ts",
+      "!routeTree.gen.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -18,56 +29,14 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "a11y": {
-        "recommended": false,
-        "useValidAnchor": "off",
-        "noRedundantAlt": "off",
-        "useButtonType": "off",
-        "noStaticElementInteractions": "off",
-        "useKeyWithClickEvents": "off"
-      },
-      "complexity": {
-        "recommended": true,
-        "noUselessFragments": "off",
-        "noUselessSwitchCase": "off"
-      },
-      "correctness": {
-        "recommended": false,
-        "useUniqueElementIds": "off",
-        "noUnusedVariables": "off",
-        "noUnusedFunctionParameters": "off",
-        "noUnusedImports": "off",
-        "useExhaustiveDependencies": "off"
-      },
-      "performance": {
-        "recommended": true
-      },
-      "security": {
-        "recommended": true,
-        "noDangerouslySetInnerHtml": "off"
-      },
-      "style": {
-        "recommended": false,
-        "noNonNullAssertion": "off",
-        "useTemplate": "off"
-      },
-      "suspicious": {
-        "recommended": false,
-        "noExplicitAny": "off",
-        "noGlobalIsNan": "off",
-        "noArrayIndexKey": "off"
-      }
+      "recommended": false
     }
   },
   "javascript": {
     "formatter": {
-      "quoteStyle": "single",
-      "semicolons": "asNeeded",
-      "trailingCommas": "es5"
+      "quoteStyle": "double"
     }
   },
-
   "json": {
     "formatter": {
       "enabled": true

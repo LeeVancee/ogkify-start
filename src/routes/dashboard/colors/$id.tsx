@@ -1,19 +1,19 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
-import { ColorEditForm } from '@/components/dashboard/color/color-edit-form'
-import { getColor } from '@/server/colors.server'
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { ColorEditForm } from "@/components/dashboard/color/color-edit-form";
+import { getColor } from "@/server/colors.server";
 
-export const Route = createFileRoute('/dashboard/colors/$id')({
+export const Route = createFileRoute("/dashboard/colors/$id")({
   component: RouteComponent,
   loader: async ({ params }: { params: { id: string } }) => {
-    const response = await getColor({ data: params.id })
-    return { response }
+    const response = await getColor({ data: params.id });
+    return { response };
   },
-})
+});
 
 function RouteComponent() {
-  const { response } = Route.useLoaderData()
+  const { response } = Route.useLoaderData();
   if (!response.success || !response.color) {
-    notFound()
+    notFound();
   }
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
@@ -29,5 +29,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  )
+  );
 }

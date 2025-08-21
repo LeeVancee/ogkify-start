@@ -1,11 +1,11 @@
-import { GalleryVerticalEnd } from 'lucide-react'
-import { useState } from 'react'
-import type { SignInFlow } from '../types'
-import { LoginForm } from './login-form'
-import { SignupForm } from './signup-form'
+import { GalleryVerticalEnd } from "lucide-react";
+import { useState } from "react";
+import type { SignInFlow } from "../types";
+import { LoginForm } from "./login-form";
+import { SignupForm } from "./signup-form";
 
 export default function AuthScreen() {
-  const [state, setState] = useState<SignInFlow>('signIn')
+  const [state, setState] = useState<SignInFlow>("signIn");
 
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
@@ -20,7 +20,7 @@ export default function AuthScreen() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            {state === 'signIn' ? (
+            {state === "signIn" ? (
               <LoginForm setState={setState} />
             ) : (
               <SignupForm setState={setState} />
@@ -36,5 +36,5 @@ export default function AuthScreen() {
         />
       </div>
     </div>
-  )
+  );
 }

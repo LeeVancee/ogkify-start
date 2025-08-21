@@ -1,23 +1,23 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router'
-import type React from 'react'
-import { EnhancedSidebar } from '@/components/dashboard/enhanced-sidebar'
-import { Separator } from '@/components/ui/separator'
+import { createFileRoute, Outlet } from "@tanstack/react-router";
+import type React from "react";
+import { EnhancedSidebar } from "@/components/dashboard/enhanced-sidebar";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from '@/components/ui/sidebar'
+} from "@/components/ui/sidebar";
 
-export const Route = createFileRoute('/dashboard')({
+export const Route = createFileRoute("/dashboard")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
     <SidebarProvider
       style={
         {
-          '--sidebar-width': '19rem',
+          "--sidebar-width": "19rem",
         } as React.CSSProperties
       }
     >
@@ -32,5 +32,5 @@ function RouteComponent() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

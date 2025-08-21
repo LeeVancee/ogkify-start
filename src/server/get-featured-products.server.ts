@@ -1,5 +1,5 @@
-import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db'
+import { createServerFn } from "@tanstack/react-start";
+import { db } from "@/db";
 
 /**
  * Get featured products list
@@ -28,7 +28,7 @@ export const getFeaturedProducts = createServerFn()
         },
         orderBy: (products, { desc }) => [desc(products.createdAt)],
         limit,
-      })
+      });
 
       // Format data to match SimpleProduct interface, return only necessary fields
       return productsList.map((product) => ({
@@ -37,12 +37,12 @@ export const getFeaturedProducts = createServerFn()
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-        category: product.category.name || 'Uncategorized',
+        category: product.category.name || "Uncategorized",
         // Removed unnecessary hardcoded fields: rating, reviews, inStock, freeShipping
         // If these fields are needed, they should be fetched from database
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to get featured products:', error)
-      return []
+      console.error("Failed to get featured products:", error);
+      return [];
     }
-  })
+  });

@@ -1,41 +1,41 @@
-import { createServerFn } from '@tanstack/react-start'
-import { count, eq, inArray } from 'drizzle-orm'
-import { z } from 'zod'
-import { db } from '@/db'
+import { createServerFn } from "@tanstack/react-start";
+import { count, eq, inArray } from "drizzle-orm";
+import { z } from "zod";
+import { db } from "@/db";
 import {
   images,
   products,
   productsToColors,
   productsToSizes,
-} from '@/db/schema'
+} from "@/db/schema";
 
 const productFormSchema = z.object({
   name: z.string().min(1, {
-    message: 'Product name must be at least 1 character.',
+    message: "Product name must be at least 1 character.",
   }),
   description: z.string().min(1, {
-    message: 'Product description must be at least 1 character.',
+    message: "Product description must be at least 1 character.",
   }),
   price: z.string().refine((val) => !isNaN(Number(val)), {
-    message: 'Price must be a valid number.',
+    message: "Price must be a valid number.",
   }),
   categoryId: z.string({
-    required_error: 'Please select a category.',
+    required_error: "Please select a category.",
   }),
   colorIds: z.array(z.string()).min(1, {
-    message: 'Please select at least one color.',
+    message: "Please select at least one color.",
   }),
   sizeIds: z.array(z.string()).min(1, {
-    message: 'Please select at least one size.',
+    message: "Please select at least one size.",
   }),
   images: z.array(z.string()).min(1, {
-    message: 'Please upload at least one product image.',
+    message: "Please upload at least one product image.",
   }),
   isFeatured: z.boolean().default(false),
   isArchived: z.boolean().default(false),
-})
+});
 
-export type ProductFormType = z.infer<typeof productFormSchema>
+export type ProductFormType = z.infer<typeof productFormSchema>;
 
 // Get single product
 export const getProduct = createServerFn()
@@ -58,10 +58,10 @@ export const getProduct = createServerFn()
             },
           },
         },
-      })
+      });
 
       if (!product) {
-        return null
+        return null;
       }
 
       return {
@@ -72,21 +72,21 @@ export const getProduct = createServerFn()
         images: product.images.map((image) => image.url),
         colors: product.colors.map((pc) => pc.color),
         sizes: product.sizes.map((ps) => ps.size),
-      }
+      };
     } catch (error) {
-      console.error('Failed to get product:', error)
-      return null
+      console.error("Failed to get product:", error);
+      return null;
     }
-  })
+  });
 
 // Update product
 export const updateProduct = createServerFn()
   .validator((params: { id: string; data: ProductFormType }) => {
-    const validatedFields = productFormSchema.safeParse(params.data)
+    const validatedFields = productFormSchema.safeParse(params.data);
     if (!validatedFields.success) {
-      throw new Error('Form validation failed')
+      throw new Error("Form validation failed");
     }
-    return params
+    return params;
   })
   .handler(async ({ data: { id, data } }) => {
     try {
@@ -100,30 +100,30 @@ export const updateProduct = createServerFn()
         images: imageUrls,
         isFeatured,
         isArchived,
-      } = data
+      } = data;
 
       // Find existing images
       const existingImages = await db.query.images.findMany({
         where: (imagesTable, { eq }) => eq(imagesTable.productId, id),
-      })
+      });
 
       // Delete unused images
       const imagesToDelete = existingImages.filter(
-        (image) => !imageUrls.includes(image.url)
-      )
+        (image) => !imageUrls.includes(image.url),
+      );
 
       if (imagesToDelete.length > 0) {
         await db.delete(images).where(
           inArray(
             images.id,
-            imagesToDelete.map((img) => img.id)
-          )
-        )
+            imagesToDelete.map((img) => img.id),
+          ),
+        );
       }
 
       // Add new images
-      const existingUrls = existingImages.map((image) => image.url)
-      const newImages = imageUrls.filter((url) => !existingUrls.includes(url))
+      const existingUrls = existingImages.map((image) => image.url);
+      const newImages = imageUrls.filter((url) => !existingUrls.includes(url));
 
       // Update product basic information
       const [updatedProduct] = await db
@@ -137,30 +137,30 @@ export const updateProduct = createServerFn()
           isArchived,
         })
         .where(eq(products.id, id))
-        .returning()
+        .returning();
 
       // Update color associations
       await db
         .delete(productsToColors)
-        .where(eq(productsToColors.productId, id))
+        .where(eq(productsToColors.productId, id));
       if (colorIds.length > 0) {
         await db.insert(productsToColors).values(
           colorIds.map((colorId) => ({
             productId: id,
             colorId,
-          }))
-        )
+          })),
+        );
       }
 
       // Update size associations
-      await db.delete(productsToSizes).where(eq(productsToSizes.productId, id))
+      await db.delete(productsToSizes).where(eq(productsToSizes.productId, id));
       if (sizeIds.length > 0) {
         await db.insert(productsToSizes).values(
           sizeIds.map((sizeId) => ({
             productId: id,
             sizeId,
-          }))
-        )
+          })),
+        );
       }
 
       // Add new images
@@ -169,18 +169,18 @@ export const updateProduct = createServerFn()
           newImages.map((url) => ({
             productId: id,
             url,
-          }))
-        )
+          })),
+        );
       }
 
-      return { success: true, data: updatedProduct }
+      return { success: true, data: updatedProduct };
     } catch (error) {
       return {
         success: false,
-        error: 'Failed to update product. Please try again later.',
-      }
+        error: "Failed to update product. Please try again later.",
+      };
     }
-  })
+  });
 
 // Get all products
 export const getProducts = createServerFn().handler(async () => {
@@ -201,7 +201,7 @@ export const getProducts = createServerFn().handler(async () => {
         },
       },
       orderBy: (productsTable, { desc }) => [desc(productsTable.createdAt)],
-    })
+    });
 
     // Format return data, only return necessary fields
     return productsList.map((product) => ({
@@ -217,21 +217,21 @@ export const getProducts = createServerFn().handler(async () => {
       isArchived: product.isArchived,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
-    }))
+    }));
   } catch (error) {
-    console.error('Failed to get products list:', error)
-    return []
+    console.error("Failed to get products list:", error);
+    return [];
   }
-})
+});
 
 // Create product
 export const createProduct = createServerFn()
   .validator((data: ProductFormType) => {
-    const validatedFields = productFormSchema.safeParse(data)
+    const validatedFields = productFormSchema.safeParse(data);
     if (!validatedFields.success) {
-      throw new Error('Form validation failed')
+      throw new Error("Form validation failed");
     }
-    return data
+    return data;
   })
   .handler(async ({ data }) => {
     try {
@@ -245,7 +245,7 @@ export const createProduct = createServerFn()
         images: imageUrls,
         isFeatured,
         isArchived,
-      } = data
+      } = data;
 
       // Create product
       const [product] = await db
@@ -258,7 +258,7 @@ export const createProduct = createServerFn()
           isFeatured,
           isArchived,
         })
-        .returning()
+        .returning();
 
       // Create color associations
       if (colorIds.length > 0) {
@@ -266,8 +266,8 @@ export const createProduct = createServerFn()
           colorIds.map((colorId) => ({
             productId: product.id,
             colorId,
-          }))
-        )
+          })),
+        );
       }
 
       // Create size associations
@@ -276,8 +276,8 @@ export const createProduct = createServerFn()
           sizeIds.map((sizeId) => ({
             productId: product.id,
             sizeId,
-          }))
-        )
+          })),
+        );
       }
 
       // Create images
@@ -286,15 +286,15 @@ export const createProduct = createServerFn()
           imageUrls.map((url) => ({
             productId: product.id,
             url,
-          }))
-        )
+          })),
+        );
       }
 
-      return { success: true, data: product }
+      return { success: true, data: product };
     } catch (error) {
-      return { success: false, error: 'Failed to create product' }
+      return { success: false, error: "Failed to create product" };
     }
-  })
+  });
 
 // Delete product
 export const deleteProduct = createServerFn()
@@ -302,28 +302,28 @@ export const deleteProduct = createServerFn()
   .handler(async ({ data: id }) => {
     try {
       // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
-      await db.delete(products).where(eq(products.id, id))
+      await db.delete(products).where(eq(products.id, id));
 
-      return { success: true, message: 'Product deleted successfully' }
+      return { success: true, message: "Product deleted successfully" };
     } catch (error) {
-      console.error('Failed to delete product:', error)
+      console.error("Failed to delete product:", error);
       return {
         success: false,
-        message: 'Failed to delete product, please try again later',
-      }
+        message: "Failed to delete product, please try again later",
+      };
     }
-  })
+  });
 
 // Get product count
 export const getProductsCount = createServerFn().handler(async () => {
   try {
-    const [result] = await db.select({ count: count() }).from(products)
-    return result.count
+    const [result] = await db.select({ count: count() }).from(products);
+    return result.count;
   } catch (error) {
-    console.error('Failed to get product count:', error)
-    return 0
+    console.error("Failed to get product count:", error);
+    return 0;
   }
-})
+});
 
 // Get popular products
 export const getPopularProducts = createServerFn()
@@ -338,7 +338,7 @@ export const getPopularProducts = createServerFn()
           orderItems: true,
         },
         limit,
-      })
+      });
 
       // Sort by order count and format return data
       const sortedProducts = productsList
@@ -347,18 +347,18 @@ export const getPopularProducts = createServerFn()
           name: product.name,
           price: product.price,
           imageUrl: product.images[0]?.url || null,
-          category: product.category.name || '',
+          category: product.category.name || "",
           orderCount: product.orderItems.length,
         }))
         .sort((a, b) => b.orderCount - a.orderCount)
-        .slice(0, limit)
+        .slice(0, limit);
 
-      return sortedProducts
+      return sortedProducts;
     } catch (error) {
-      console.error('Failed to get popular products:', error)
-      return []
+      console.error("Failed to get popular products:", error);
+      return [];
     }
-  })
+  });
 
 // Get all product form data in a single request for better performance
 export const getProductFormData = createServerFn().handler(async () => {
@@ -389,19 +389,19 @@ export const getProductFormData = createServerFn().handler(async () => {
           value: true,
         },
       }),
-    ])
+    ]);
 
     return {
       categories,
       colors,
       sizes,
-    }
+    };
   } catch (error) {
-    console.error('Failed to get product form data:', error)
+    console.error("Failed to get product form data:", error);
     return {
       categories: [],
       colors: [],
       sizes: [],
-    }
+    };
   }
-})
+});

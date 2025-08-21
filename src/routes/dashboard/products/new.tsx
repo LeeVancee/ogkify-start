@@ -1,25 +1,25 @@
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { ProductForm } from '@/components/dashboard/product/product-form'
-import Loading from '@/components/loading'
-import { getProductFormData } from '@/server/products.server'
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { ProductForm } from "@/components/dashboard/product/product-form";
+import Loading from "@/components/loading";
+import { getProductFormData } from "@/server/products.server";
 
-export const Route = createFileRoute('/dashboard/products/new')({
+export const Route = createFileRoute("/dashboard/products/new")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   // Use single query to fetch all product form data for optimal performance
   const { data, isLoading } = useQuery({
-    queryKey: ['product-form-data'],
+    queryKey: ["product-form-data"],
     queryFn: () => getProductFormData(),
-  })
+  });
 
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
-  const { categories = [], colors = [], sizes = [] } = data || {}
+  const { categories = [], colors = [], sizes = [] } = data || {};
 
-  return <ProductForm categories={categories} colors={colors} sizes={sizes} />
+  return <ProductForm categories={categories} colors={colors} sizes={sizes} />;
 }

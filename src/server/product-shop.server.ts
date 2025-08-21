@@ -1,5 +1,5 @@
-import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db'
+import { createServerFn } from "@tanstack/react-start";
+import { db } from "@/db";
 
 // Get product details
 export const getProduct = createServerFn()
@@ -22,10 +22,10 @@ export const getProduct = createServerFn()
           },
           images: true,
         },
-      })
+      });
 
       if (!product) {
-        return null
+        return null;
       }
 
       return {
@@ -48,12 +48,12 @@ export const getProduct = createServerFn()
         images: product.images.map((image) => image.url),
         inStock: true, // This can be set based on actual conditions
         freeShipping: product.price > 200, // Assume free shipping for prices above 200
-      }
+      };
     } catch (error) {
-      console.error('Failed to get product details:', error)
-      return null
+      console.error("Failed to get product details:", error);
+      return null;
     }
-  })
+  });
 
 // Get related products
 export const getRelatedProducts = createServerFn()
@@ -65,13 +65,13 @@ export const getRelatedProducts = createServerFn()
           and(
             eq(products.categoryId, category),
             ne(products.id, productId),
-            eq(products.isArchived, false)
+            eq(products.isArchived, false),
           ),
         with: {
           images: true,
         },
         limit: 4,
-      })
+      });
 
       return productsList.map((product) => ({
         id: product.id,
@@ -79,9 +79,9 @@ export const getRelatedProducts = createServerFn()
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-      }))
+      }));
     } catch (error) {
-      console.error('Failed to get related products:', error)
-      return []
+      console.error("Failed to get related products:", error);
+      return [];
     }
-  })
+  });

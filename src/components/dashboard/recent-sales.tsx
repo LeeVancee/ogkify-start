@@ -1,19 +1,19 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface Order {
-  id: string
-  orderNumber: string
-  customer: string
-  email: string
-  date: string | Date
-  status: string
-  paymentStatus: string
-  amount: number
-  totalItems: number
+  id: string;
+  orderNumber: string;
+  customer: string;
+  email: string;
+  date: string | Date;
+  status: string;
+  paymentStatus: string;
+  amount: number;
+  totalItems: number;
 }
 
 interface RecentSalesProps {
-  recentOrders: Array<Order>
+  recentOrders: Array<Order>;
 }
 
 export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
@@ -31,12 +31,12 @@ export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
               <AvatarFallback>
                 {order.customer
                   ? order.customer.substring(0, 2).toUpperCase()
-                  : 'UN'}
+                  : "UN"}
               </AvatarFallback>
             </Avatar>
             <div className="ml-4 space-y-1">
               <p className="text-sm font-medium leading-none">
-                {order.customer || 'Anonymous User'}
+                {order.customer || "Anonymous User"}
               </p>
               <p className="text-sm text-muted-foreground">
                 Order #{order.orderNumber}
@@ -49,5 +49,5 @@ export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
         ))
       )}
     </div>
-  )
+  );
 }

@@ -1,11 +1,11 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { FeaturedCategories } from '@/components/shop/home/featured-categories'
-import { FeaturedProducts } from '@/components/shop/home/featured-products'
-import HeroSection from '@/components/shop/home/hero-section'
+import { createFileRoute } from "@tanstack/react-router";
+import { FeaturedCategories } from "@/components/shop/home/featured-categories";
+import { FeaturedProducts } from "@/components/shop/home/featured-products";
+import HeroSection from "@/components/shop/home/hero-section";
 
-export const Route = createFileRoute('/_shop/')({
+export const Route = createFileRoute("/_shop/")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -16,5 +16,5 @@ function RouteComponent() {
         <FeaturedCategories />
       </div>
     </div>
-  )
+  );
 }

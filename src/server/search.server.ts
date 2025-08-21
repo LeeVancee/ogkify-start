@@ -1,14 +1,14 @@
-import { createServerFn } from '@tanstack/react-start'
-import { db } from '@/db'
+import { createServerFn } from "@tanstack/react-start";
+import { db } from "@/db";
 
 /**
  * 根据查询字符串搜索产品
  */
 export const searchProducts = createServerFn()
-  .validator((query: string = '') => query)
+  .validator((query: string = "") => query)
   .handler(async ({ data: query }) => {
-    if (!query || query.trim() === '') {
-      return []
+    if (!query || query.trim() === "") {
+      return [];
     }
 
     try {
@@ -16,13 +16,13 @@ export const searchProducts = createServerFn()
         where: (products, { or, ilike }) =>
           or(
             ilike(products.name, `%${query}%`),
-            ilike(products.description, `%${query}%`)
+            ilike(products.description, `%${query}%`),
           ),
         with: {
           images: true,
           category: true,
         },
-      })
+      });
 
       // 格式化返回结果
       return productsList.map((product) => ({
@@ -31,11 +31,11 @@ export const searchProducts = createServerFn()
         description: product.description,
         price: product.price,
         image:
-          product.images[0]?.url || '/placeholder.svg?height=300&width=300',
-        category: product.category.name || '',
-      }))
+          product.images[0]?.url || "/placeholder.svg?height=300&width=300",
+        category: product.category.name || "",
+      }));
     } catch (error) {
-      console.error('Error searching products:', error)
-      return []
+      console.error("Error searching products:", error);
+      return [];
     }
-  })
+  });

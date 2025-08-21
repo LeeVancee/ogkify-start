@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { CategoryList } from '@/components/dashboard/category/category-list'
+import { createFileRoute } from "@tanstack/react-router";
+import { CategoryList } from "@/components/dashboard/category/category-list";
 
-export const Route = createFileRoute('/dashboard/categories/')({
+export const Route = createFileRoute("/dashboard/categories/")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -18,5 +18,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  )
+  );
 }

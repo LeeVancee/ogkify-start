@@ -1,20 +1,20 @@
-import { ShoppingBasket } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { EmptyState } from '@/components/shared/empty-state'
+import { ShoppingBasket } from "lucide-react";
+import type { ReactNode } from "react";
+import { EmptyState } from "@/components/shared/empty-state";
 
 interface NoOrdersProps {
-  title: string
-  description: string
-  buttonText: string
-  buttonHref?: string
-  icon?: ReactNode
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonHref?: string;
+  icon?: ReactNode;
 }
 
 export function NoOrders({
   title,
   description,
   buttonText,
-  buttonHref = '/',
+  buttonHref = "/",
   icon = <ShoppingBasket className="h-10 w-10" />,
 }: NoOrdersProps) {
   return (
@@ -25,7 +25,7 @@ export function NoOrders({
       actionText={buttonText}
       actionHref={buttonHref}
     />
-  )
+  );
 }
 
 export function EmptyCart() {
@@ -35,5 +35,5 @@ export function EmptyCart() {
       description="Browse our products and add your favorite items to cart"
       buttonText="Continue Shopping"
     />
-  )
+  );
 }

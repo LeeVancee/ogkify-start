@@ -1,6 +1,6 @@
-import { Loader2, Trash2 } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { Loader2, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,14 +11,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog'
-import { Button } from '@/components/ui/button'
-import { deleteUnpaidOrder } from '@/server/orders.server'
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { deleteUnpaidOrder } from "@/server/orders.server";
 
 interface DeleteOrderButtonProps {
-  orderId: string
-  orderNumber: string
-  onDeleted?: () => void
+  orderId: string;
+  orderNumber: string;
+  onDeleted?: () => void;
 }
 
 export function DeleteOrderButton({
@@ -26,35 +26,35 @@ export function DeleteOrderButton({
   orderNumber,
   onDeleted,
 }: DeleteOrderButtonProps) {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   async function handleDelete() {
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const result = await deleteUnpaidOrder({
         data: orderId,
-      })
+      });
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to delete order')
+        throw new Error(result.error || "Failed to delete order");
       }
 
-      toast.success('Order deleted successfully')
-      setIsOpen(false)
+      toast.success("Order deleted successfully");
+      setIsOpen(false);
 
       // 通知父组件订单已被删除，可以刷新列表
       if (onDeleted) {
-        onDeleted()
+        onDeleted();
       }
     } catch (error) {
-      console.error('Delete error:', error)
+      console.error("Delete error:", error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to delete order'
-      )
+        error instanceof Error ? error.message : "Failed to delete order",
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -80,8 +80,8 @@ export function DeleteOrderButton({
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
-              e.preventDefault()
-              handleDelete()
+              e.preventDefault();
+              handleDelete();
             }}
             disabled={isLoading}
             className="bg-destructive "
@@ -92,11 +92,11 @@ export function DeleteOrderButton({
                 Deleting...
               </>
             ) : (
-              'Delete Order'
+              "Delete Order"
             )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

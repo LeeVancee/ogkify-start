@@ -6,8 +6,8 @@ import {
   Ruler,
   ShoppingBag,
   ShoppingCart,
-} from 'lucide-react'
-import type * as React from 'react'
+} from "lucide-react";
+import type * as React from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -16,90 +16,90 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/components/ui/sidebar'
-import { ActiveLink } from './active-link'
-import { NavMain } from './nav-main'
-import { NavUser } from './nav-user'
+} from "@/components/ui/sidebar";
+import { ActiveLink } from "./active-link";
+import { NavMain } from "./nav-main";
+import { NavUser } from "./nav-user";
 
 // Navigation item type definition
 
 // EMS navigation data
 const emsNavigation = [
   {
-    title: 'Dashboard',
-    url: '/dashboard',
+    title: "Dashboard",
+    url: "/dashboard",
     icon: LayoutDashboard,
     items: [],
   },
 
   {
-    title: 'Categories',
-    url: '/dashboard/categories',
+    title: "Categories",
+    url: "/dashboard/categories",
     icon: Grid,
     items: [
       {
-        title: 'All Categories',
-        url: '/dashboard/categories',
+        title: "All Categories",
+        url: "/dashboard/categories",
       },
       {
-        title: 'Add Category',
-        url: '/dashboard/categories/new',
+        title: "Add Category",
+        url: "/dashboard/categories/new",
       },
     ],
   },
   {
-    title: 'Colors',
-    url: '/dashboard/colors',
+    title: "Colors",
+    url: "/dashboard/colors",
     icon: Palette,
     items: [
       {
-        title: 'All Colors',
-        url: '/dashboard/colors',
+        title: "All Colors",
+        url: "/dashboard/colors",
       },
       {
-        title: 'Add Color',
-        url: '/dashboard/colors/new',
+        title: "Add Color",
+        url: "/dashboard/colors/new",
       },
     ],
   },
   {
-    title: 'Sizes',
-    url: '/dashboard/sizes',
+    title: "Sizes",
+    url: "/dashboard/sizes",
     icon: Ruler,
     items: [
       {
-        title: 'All Sizes',
-        url: '/dashboard/sizes',
+        title: "All Sizes",
+        url: "/dashboard/sizes",
       },
       {
-        title: 'Add Size',
-        url: '/dashboard/sizes/new',
+        title: "Add Size",
+        url: "/dashboard/sizes/new",
       },
     ],
   },
   {
-    title: 'Products',
-    url: '/dashboard/products',
+    title: "Products",
+    url: "/dashboard/products",
     icon: Package,
     items: [
       {
-        title: 'All Products',
-        url: '/dashboard/products',
+        title: "All Products",
+        url: "/dashboard/products",
       },
       {
-        title: 'Add Product',
-        url: '/dashboard/products/new',
+        title: "Add Product",
+        url: "/dashboard/products/new",
       },
     ],
   },
 
   {
-    title: 'Orders',
-    url: '/dashboard/orders',
+    title: "Orders",
+    url: "/dashboard/orders",
     icon: ShoppingCart,
     items: [],
   },
-]
+];
 
 export function EnhancedSidebar({
   ...props
@@ -130,5 +130,5 @@ export function EnhancedSidebar({
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

@@ -1,13 +1,13 @@
-import { ManagementCard } from '@/components/shared/management-card'
+import { ManagementCard } from "@/components/shared/management-card";
 
 interface SizeCardProps {
   size: {
-    id: string
-    name: string
-    value: string
-  }
-  onDelete: (id: string) => void
-  isDeleting?: boolean
+    id: string;
+    name: string;
+    value: string;
+  };
+  onDelete: (id: string) => void;
+  isDeleting?: boolean;
 }
 
 export function SizeCard({
@@ -30,5 +30,5 @@ export function SizeCard({
         </div>
       </div>
     </ManagementCard>
-  )
+  );
 }

@@ -1,8 +1,8 @@
-import { useRouter } from '@tanstack/react-router'
-import { Loader2 } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
+import { useRouter } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,35 +10,35 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { updateOrderStatus } from '@/server/orders.server'
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { updateOrderStatus } from "@/server/orders.server";
 
 // 定义订单类型
 interface Order {
-  id: string
-  orderNumber: string
-  status: string
-  paymentStatus: string
+  id: string;
+  orderNumber: string;
+  status: string;
+  paymentStatus: string;
 }
 
-type OrderStatus = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'CANCELLED'
+type OrderStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED";
 
 // 定义订单状态选项 - 与实际UI显示对应
 const orderStatusOptions = [
-  { value: 'PENDING', label: 'Pending' },
-  { value: 'PROCESSING', label: 'Processing' }, // Frontend displays as "Processing", but maps to PAID
-  { value: 'COMPLETED', label: 'Completed' },
-  { value: 'CANCELLED', label: 'Cancelled' },
-]
+  { value: "PENDING", label: "Pending" },
+  { value: "PROCESSING", label: "Processing" }, // Frontend displays as "Processing", but maps to PAID
+  { value: "COMPLETED", label: "Completed" },
+  { value: "CANCELLED", label: "Cancelled" },
+];
 
 // 定义组件props
 interface UpdateOrderStatusDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  order: Order
-  onStatusUpdated: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  order: Order;
+  onStatusUpdated: () => void;
 }
 
 export function UpdateOrderStatusDialog({
@@ -46,38 +46,38 @@ export function UpdateOrderStatusDialog({
   onOpenChange,
   order,
 }: UpdateOrderStatusDialogProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   // 初始状态，将PAID映射为PROCESSING以便UI显示
   const initialStatus =
-    order.status === 'PAID' ? 'PROCESSING' : (order.status as OrderStatus)
-  const [status, setStatus] = useState<OrderStatus>(initialStatus)
-  const [isUpdating, setIsUpdating] = useState(false)
+    order.status === "PAID" ? "PROCESSING" : (order.status as OrderStatus);
+  const [status, setStatus] = useState<OrderStatus>(initialStatus);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   async function handleUpdate() {
-    if (!order.id) return
+    if (!order.id) return;
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       // 调用更新订单状态API
       const result = await updateOrderStatus({
         data: { orderId: order.id, status },
-      })
+      });
 
       if (result.success) {
-        toast.success('Order status updated')
-        onOpenChange(false)
+        toast.success("Order status updated");
+        onOpenChange(false);
 
         // 使用Next.js的刷新机制刷新页面数据，而不是调用callback
-        router.navigate({ to: '/dashboard/orders' })
+        router.navigate({ to: "/dashboard/orders" });
       } else {
-        toast.error(result.error || 'Update order status failed')
+        toast.error(result.error || "Update order status failed");
       }
     } catch (error) {
-      console.error('Update order status failed:', error)
-      toast.error('Update order status failed')
+      console.error("Update order status failed:", error);
+      toast.error("Update order status failed");
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
   }
 
@@ -119,11 +119,11 @@ export function UpdateOrderStatusDialog({
                 Updating...
               </>
             ) : (
-              'Update Status'
+              "Update Status"
             )}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

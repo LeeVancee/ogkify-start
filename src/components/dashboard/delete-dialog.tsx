@@ -7,22 +7,22 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+} from "@/components/ui/alert-dialog";
 
 interface DeleteDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onConfirm: () => void
-  title?: string
-  description?: string
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onConfirm: () => void;
+  title?: string;
+  description?: string;
 }
 
 export function DeleteDialog({
   open,
   onOpenChange,
   onConfirm,
-  title = 'Are you sure you want to delete?',
-  description = 'This action cannot be undone. The item will be permanently deleted and cannot be recovered.',
+  title = "Are you sure you want to delete?",
+  description = "This action cannot be undone. The item will be permanently deleted and cannot be recovered.",
 }: DeleteDialogProps) {
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -42,5 +42,5 @@ export function DeleteDialog({
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
-  )
+  );
 }

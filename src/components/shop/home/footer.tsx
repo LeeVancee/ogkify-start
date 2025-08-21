@@ -1,7 +1,7 @@
-import { Link } from '@tanstack/react-router'
-import { Facebook, Instagram, Twitter } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Link } from "@tanstack/react-router";
+import { Facebook, Instagram, Twitter } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Footer() {
   return (
@@ -108,5 +108,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

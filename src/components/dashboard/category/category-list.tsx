@@ -1,23 +1,23 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
-import { Plus, Search, X } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import Loading from '@/components/loading'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { deleteCategory, getCategories } from '@/server/categories.server'
-import { CategoryCard } from './category-card'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { Plus, Search, X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import Loading from "@/components/loading";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { deleteCategory, getCategories } from "@/server/categories.server";
+import { CategoryCard } from "./category-card";
 
 type Category = {
-  id: string
-  name: string
-  imageUrl?: string | null
-}
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+};
 
 export function CategoryList() {
-  const queryClient = useQueryClient()
-  const [searchQuery, setSearchQuery] = useState('')
+  const queryClient = useQueryClient();
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Use TanStack Query to get category data
   const {
@@ -25,37 +25,37 @@ export function CategoryList() {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['categories'],
+    queryKey: ["categories"],
     queryFn: () => getCategories(),
     staleTime: 1000 * 60 * 5, // 5 minutes cache
-  })
+  });
 
   // Delete category mutation
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteCategory({ data: id }),
     onSuccess: () => {
-      toast.success('Category deleted successfully')
+      toast.success("Category deleted successfully");
       // Auto refresh data
-      queryClient.invalidateQueries({ queryKey: ['categories'] })
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
     },
     onError: (error) => {
-      toast.error('Failed to delete category')
+      toast.error("Failed to delete category");
     },
-  })
+  });
 
   const filteredCategories = categories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase()),
+  );
 
   const handleDelete = (id: string) => {
-    deleteMutation.mutate(id)
-  }
+    deleteMutation.mutate(id);
+  };
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   // Handle error state
@@ -71,7 +71,7 @@ export function CategoryList() {
           </p>
           <Button
             onClick={() =>
-              queryClient.invalidateQueries({ queryKey: ['categories'] })
+              queryClient.invalidateQueries({ queryKey: ["categories"] })
             }
             variant="outline"
           >
@@ -79,7 +79,7 @@ export function CategoryList() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -98,7 +98,7 @@ export function CategoryList() {
               variant="ghost"
               size="icon"
               className="absolute right-0 top-0 h-9 w-9"
-              onClick={() => setSearchQuery('')}
+              onClick={() => setSearchQuery("")}
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Clear search</span>
@@ -119,8 +119,8 @@ export function CategoryList() {
             <h3 className="mt-4 text-lg font-semibold">No categories found</h3>
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               {searchQuery
-                ? 'No categories match your search criteria. Please try using different search terms.'
-                : 'You have not added any categories yet. Click the button above to add a category.'}
+                ? "No categories match your search criteria. Please try using different search terms."
+                : "You have not added any categories yet. Click the button above to add a category."}
             </p>
           </div>
         </div>
@@ -137,5 +137,5 @@ export function CategoryList() {
         </div>
       )}
     </div>
-  )
+  );
 }

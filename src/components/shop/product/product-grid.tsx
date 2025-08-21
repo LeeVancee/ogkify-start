@@ -1,23 +1,23 @@
-import { Link } from '@tanstack/react-router'
-import { formatPrice } from '@/lib/utils'
+import { Link } from "@tanstack/react-router";
+import { formatPrice } from "@/lib/utils";
 
 // 简化的产品类型
 export interface SimpleProduct {
-  id: string
-  name: string
-  description: string
-  price: number
-  images: Array<string>
-  category?: string
-  inStock?: boolean
-  rating?: number
-  reviews?: number
-  discount?: number
-  freeShipping?: boolean
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  images: Array<string>;
+  category?: string;
+  inStock?: boolean;
+  rating?: number;
+  reviews?: number;
+  discount?: number;
+  freeShipping?: boolean;
 }
 
 interface ProductGridProps {
-  products: Array<SimpleProduct>
+  products: Array<SimpleProduct>;
 }
 
 export function ProductGrid({ products }: ProductGridProps) {
@@ -34,7 +34,7 @@ export function ProductGrid({ products }: ProductGridProps) {
             className="block relative aspect-square overflow-hidden bg-muted"
           >
             <img
-              src={product.images[0] || '/placeholder.svg?height=300&width=300'}
+              src={product.images[0] || "/placeholder.svg?height=300&width=300"}
               alt={product.name}
               className="object-cover transition-transform group-hover:scale-105"
             />
@@ -73,5 +73,5 @@ export function ProductGrid({ products }: ProductGridProps) {
         </div>
       ))}
     </div>
-  )
+  );
 }

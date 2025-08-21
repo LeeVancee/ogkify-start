@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { SizeList } from '@/components/dashboard/size/size-list'
+import { createFileRoute } from "@tanstack/react-router";
+import { SizeList } from "@/components/dashboard/size/size-list";
 
-export const Route = createFileRoute('/dashboard/sizes/')({
+export const Route = createFileRoute("/dashboard/sizes/")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -18,5 +18,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  )
+  );
 }

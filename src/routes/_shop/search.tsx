@@ -1,30 +1,30 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { z } from 'zod'
-import ProductCard from '@/components/shop/product/product-card'
-import { searchProducts } from '@/server/search.server'
+import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+import ProductCard from "@/components/shop/product/product-card";
+import { searchProducts } from "@/server/search.server";
 
 const searchParamsSchema = z.object({
   q: z.string().optional(),
-})
+});
 
-export const Route = createFileRoute('/_shop/search')({
+export const Route = createFileRoute("/_shop/search")({
   validateSearch: searchParamsSchema,
   loaderDeps: ({ search }) => ({
     q: search.q,
   }),
   component: RouteComponent,
   loader: async ({ deps }) => {
-    const query = deps.q || ''
-    const products = await searchProducts({ data: query })
-    return { products, query }
+    const query = deps.q || "";
+    const products = await searchProducts({ data: query });
+    return { products, query };
   },
   // Cache search results for 5 minutes since search results can change more frequently
   staleTime: 1000 * 60 * 5, // 5 minutes
   gcTime: 1000 * 60 * 15, // 15 minutes (keep in memory)
-})
+});
 
 function RouteComponent() {
-  const { products, query } = Route.useLoaderData()
+  const { products, query } = Route.useLoaderData();
 
   return (
     <div className="space-y-6">
@@ -48,5 +48,5 @@ function RouteComponent() {
         </div>
       )}
     </div>
-  )
+  );
 }

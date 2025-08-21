@@ -1,6 +1,6 @@
-import { Link, useRouter } from '@tanstack/react-router'
-import { ChevronsUpDown, LogOut, Store } from 'lucide-react'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Link, useRouter } from "@tanstack/react-router";
+import { ChevronsUpDown, LogOut, Store } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,29 +9,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from '@/components/ui/sidebar'
-import { authClient } from '@/lib/auth-client'
+} from "@/components/ui/sidebar";
+import { authClient } from "@/lib/auth-client";
 
 export function NavUser() {
-  const { isMobile } = useSidebar()
-  const router = useRouter()
-  const { data: session } = authClient.useSession()
+  const { isMobile } = useSidebar();
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
 
   const handleLogout = () => {
     authClient.signOut({
       fetchOptions: {
         onSuccess: () => {
-          router.navigate({ to: '/' })
+          router.navigate({ to: "/" });
         },
       },
-    })
-  }
+    });
+  };
   if (session) {
     return (
       <SidebarMenu>
@@ -44,8 +44,8 @@ export function NavUser() {
               >
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={session.user.image || ''}
-                    alt={session.user.name || ''}
+                    src={session.user.image || ""}
+                    alt={session.user.name || ""}
                   />
                   <AvatarFallback>
                     {session.user.name[0].toUpperCase()}
@@ -62,7 +62,7 @@ export function NavUser() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-              side={isMobile ? 'bottom' : 'right'}
+              side={isMobile ? "bottom" : "right"}
               align="end"
               sideOffset={4}
             >
@@ -70,8 +70,8 @@ export function NavUser() {
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
-                      src={session.user.image || ''}
-                      alt={session.user.name || ''}
+                      src={session.user.image || ""}
+                      alt={session.user.name || ""}
                     />
                     <AvatarFallback>
                       {session.user.name[0].toUpperCase()}
@@ -103,6 +103,6 @@ export function NavUser() {
           </DropdownMenu>
         </SidebarMenuItem>
       </SidebarMenu>
-    )
+    );
   }
 }

@@ -1,9 +1,9 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { ColorForm } from '@/components/dashboard/color/color-form'
+import { createFileRoute } from "@tanstack/react-router";
+import { ColorForm } from "@/components/dashboard/color/color-form";
 
-export const Route = createFileRoute('/dashboard/colors/new')({
+export const Route = createFileRoute("/dashboard/colors/new")({
   component: RouteComponent,
-})
+});
 
 function RouteComponent() {
   return (
@@ -18,5 +18,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  )
+  );
 }

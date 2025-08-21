@@ -1,11 +1,11 @@
-import { Link, useLocation } from '@tanstack/react-router'
-import type { LucideIcon } from 'lucide-react'
-import { ChevronRight } from 'lucide-react'
+import { Link, useLocation } from "@tanstack/react-router";
+import type { LucideIcon } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/components/ui/collapsible'
+} from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -15,41 +15,41 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-} from '@/components/ui/sidebar'
-import { ActiveLink } from './active-link'
+} from "@/components/ui/sidebar";
+import { ActiveLink } from "./active-link";
 
 interface NavItem {
-  title: string
-  url: string
-  icon?: LucideIcon
+  title: string;
+  url: string;
+  icon?: LucideIcon;
   items?: Array<{
-    title: string
-    url: string
-  }>
+    title: string;
+    url: string;
+  }>;
 }
 
 export function NavMain({ items }: { items: Array<NavItem> }) {
-  const location = useLocation()
+  const location = useLocation();
 
   const isActiveGroup = (item: NavItem) => {
     if (item.items?.some((subItem) => location.pathname === subItem.url))
-      return true
+      return true;
     // 只在编辑页面（即URL包含ID的情况）才检查startsWith
     if (
       item.items?.some((subItem) => {
-        const urlParts = location.pathname.split('/')
-        const subItemParts = subItem.url.split('/')
+        const urlParts = location.pathname.split("/");
+        const subItemParts = subItem.url.split("/");
         // 确保基础路径相同，且下一段是ID（数字或字母）
         return (
           urlParts.length > subItemParts.length &&
-          location.pathname.startsWith(subItem.url + '/') &&
+          location.pathname.startsWith(subItem.url + "/") &&
           /^[a-zA-Z0-9]+$/.test(urlParts[subItemParts.length])
-        )
+        );
       })
     )
-      return true
-    return false
-  }
+      return true;
+    return false;
+  };
 
   return (
     <SidebarGroup>
@@ -67,10 +67,10 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
-            )
+            );
           }
 
-          const isActive = isActiveGroup(item)
+          const isActive = isActiveGroup(item);
 
           // 有子菜单的情况
           return (
@@ -98,9 +98,9 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
                 </CollapsibleContent>
               </SidebarMenuItem>
             </Collapsible>
-          )
+          );
         })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

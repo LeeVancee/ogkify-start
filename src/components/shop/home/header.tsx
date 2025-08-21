@@ -1,36 +1,36 @@
-import { useQuery } from '@tanstack/react-query'
-import { Link, useLocation } from '@tanstack/react-router'
-import { Menu, Search, ShoppingCart } from 'lucide-react'
-import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { useQuery } from "@tanstack/react-query";
+import { Link, useLocation } from "@tanstack/react-router";
+import { Menu, Search, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetClose,
   SheetContent,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { cn } from '@/lib/utils'
-import { getUserCart } from '@/server/cart.server'
-import { DropDown } from '../DropDown'
+} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { getUserCart } from "@/server/cart.server";
+import { DropDown } from "../DropDown";
 
 const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Products', href: '/products' },
+  { name: "Home", href: "/" },
+  { name: "Products", href: "/products" },
 
-  { name: 'About', href: '/about' },
-  { name: 'Contact', href: '/contact' },
-]
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
 
 export default function Header() {
-  const pathname = useLocation().pathname
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const pathname = useLocation().pathname;
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // 获取购物车数据
   const { data: cartData } = useQuery({
-    queryKey: ['cart'],
+    queryKey: ["cart"],
     queryFn: () => getUserCart(),
-  })
+  });
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -58,8 +58,8 @@ export default function Header() {
                       <Link
                         to={item.href}
                         className={cn(
-                          'text-lg font-medium',
-                          pathname === item.href ? 'text-primary' : ''
+                          "text-lg font-medium",
+                          pathname === item.href ? "text-primary" : "",
                         )}
                       >
                         {item.name}
@@ -81,10 +81,10 @@ export default function Header() {
                 key={item.name}
                 to={item.href}
                 className={cn(
-                  'font-medium hover:text-primary transition-colors',
+                  "font-medium hover:text-primary transition-colors",
                   pathname === item.href
-                    ? 'text-primary'
-                    : 'text-muted-foreground'
+                    ? "text-primary"
+                    : "text-muted-foreground",
                 )}
               >
                 {item.name}
@@ -120,5 +120,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

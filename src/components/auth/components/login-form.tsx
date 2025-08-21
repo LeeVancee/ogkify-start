@@ -1,25 +1,25 @@
-import { useRouter } from '@tanstack/react-router'
-import { useState } from 'react'
-import type { FieldValues, SubmitHandler } from 'react-hook-form'
-import { useForm } from 'react-hook-form'
-import { FaGithub } from 'react-icons/fa'
-import { FcGoogle } from 'react-icons/fc'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { authClient } from '@/lib/auth-client'
-import { cn } from '@/lib/utils'
-import type { SignInFlow } from '../types'
+import { useRouter } from "@tanstack/react-router";
+import { useState } from "react";
+import type { FieldValues, SubmitHandler } from "react-hook-form";
+import { useForm } from "react-hook-form";
+import { FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import type { SignInFlow } from "../types";
 
-interface LoginFormProps extends React.ComponentProps<'form'> {
-  setState: (state: SignInFlow) => void
+interface LoginFormProps extends React.ComponentProps<"form"> {
+  setState: (state: SignInFlow) => void;
 }
 
 export function LoginForm({ className, setState, ...props }: LoginFormProps) {
-  const router = useRouter()
-  const [error, setError] = useState('')
-  const [pending, setPending] = useState(false)
+  const router = useRouter();
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
 
   const {
     register,
@@ -27,10 +27,10 @@ export function LoginForm({ className, setState, ...props }: LoginFormProps) {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
-  })
+  });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     await authClient.signIn.email(
@@ -40,25 +40,25 @@ export function LoginForm({ className, setState, ...props }: LoginFormProps) {
       },
       {
         onRequest: () => {
-          setPending(true)
+          setPending(true);
         },
         onSuccess: () => {
-          setPending(false)
-          toast.success('Successfully signed in!')
-          router.navigate({ to: '/' })
+          setPending(false);
+          toast.success("Successfully signed in!");
+          router.navigate({ to: "/" });
         },
         onError: (ctx) => {
-          setPending(false)
-          setError(ctx.error.message || 'Failed to sign in')
-          toast.error(ctx.error.message || 'Failed to sign in')
+          setPending(false);
+          setError(ctx.error.message || "Failed to sign in");
+          toast.error(ctx.error.message || "Failed to sign in");
         },
-      }
-    )
-  }
+      },
+    );
+  };
 
   return (
     <form
-      className={cn('flex flex-col gap-6', className)}
+      className={cn("flex flex-col gap-6", className)}
       onSubmit={handleSubmit(onSubmit)}
       {...props}
     >
@@ -76,7 +76,7 @@ export function LoginForm({ className, setState, ...props }: LoginFormProps) {
             type="email"
             placeholder="m@example.com"
             disabled={pending}
-            {...register('email', { required: true })}
+            {...register("email", { required: true })}
           />
           {errors.email && (
             <p className="text-sm text-red-500">Email is required</p>
@@ -96,7 +96,7 @@ export function LoginForm({ className, setState, ...props }: LoginFormProps) {
             id="password"
             type="password"
             disabled={pending}
-            {...register('password', { required: true })}
+            {...register("password", { required: true })}
           />
           {errors.password && (
             <p className="text-sm text-red-500">Password is required</p>
@@ -131,14 +131,14 @@ export function LoginForm({ className, setState, ...props }: LoginFormProps) {
         </div>
       </div>
       <div className="text-center text-sm">
-        Don&apos;t have an account?{' '}
+        Don&apos;t have an account?{" "}
         <span
           className="underline underline-offset-4 cursor-pointer"
-          onClick={() => setState('signUp')}
+          onClick={() => setState("signUp")}
         >
           Sign up
         </span>
       </div>
     </form>
-  )
+  );
 }

@@ -1,10 +1,10 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Link } from '@tanstack/react-router'
-import { ShoppingBag } from 'lucide-react'
-import type React from 'react'
-import { useState } from 'react'
-import { CartItem } from '@/components/shop/cart/cart-item'
-import { Button } from '@/components/ui/button'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { ShoppingBag } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import { CartItem } from "@/components/shop/cart/cart-item";
+import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
@@ -12,32 +12,32 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/components/ui/sheet'
-import { formatPrice } from '@/lib/utils'
+} from "@/components/ui/sheet";
+import { formatPrice } from "@/lib/utils";
 import {
   getUserCart,
   removeFromCart,
   updateCartItemQuantity,
-} from '@/server/cart.server'
+} from "@/server/cart.server";
 
 interface CartItemType {
-  id: string
-  productId: string
-  name: string
-  price: number
-  quantity: number
-  image: string
-  colorId?: string | null
-  colorName?: string | null
-  colorValue?: string | null
-  sizeId?: string | null
-  sizeName?: string | null
-  sizeValue?: string | null
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+  colorId?: string | null;
+  colorName?: string | null;
+  colorValue?: string | null;
+  sizeId?: string | null;
+  sizeName?: string | null;
+  sizeValue?: string | null;
 }
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false)
-  const queryClient = useQueryClient()
+  const [isOpen, setIsOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   // 使用TanStack Query获取购物车数据
   const {
@@ -45,21 +45,21 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
     isLoading,
     isError,
   } = useQuery({
-    queryKey: ['cart'],
+    queryKey: ["cart"],
     queryFn: getUserCart,
     enabled: isOpen, // 只有当侧边栏打开时才获取数据
     staleTime: 1000 * 60 * 5, // 5分钟内不重新获取
     refetchOnWindowFocus: false,
-  })
+  });
 
   // 移除购物车商品的mutation
   const removeMutation = useMutation({
     mutationFn: (itemId: string) => removeFromCart({ data: itemId }),
     onSuccess: () => {
       // 成功后刷新购物车数据
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
-  })
+  });
 
   // 更新购物车商品数量的mutation
   const updateQuantityMutation = useMutation({
@@ -67,30 +67,30 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
       updateCartItemQuantity({ data: params }),
     onSuccess: () => {
       // 成功后刷新购物车数据
-      queryClient.invalidateQueries({ queryKey: ['cart'] })
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
-  })
+  });
 
   // 处理商品移除的函数
   const handleItemRemoved = (itemId: string) => {
-    removeMutation.mutate(itemId)
-  }
+    removeMutation.mutate(itemId);
+  };
 
   // 处理数量变化的函数
   const handleQuantityChanged = (itemId: string, newQuantity: number) => {
     updateQuantityMutation.mutate({
       cartItemId: itemId,
       quantity: newQuantity,
-    })
-  }
+    });
+  };
 
   // 计算总价
   const subtotal = cartData.items.reduce(
     (total: number, item: CartItemType) => total + item.price * item.quantity,
-    0
-  )
+    0,
+  );
 
-  const isEmpty = cartData.items.length === 0
+  const isEmpty = cartData.items.length === 0;
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -98,7 +98,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
       <SheetContent className="flex w-full flex-col sm:max-w-lg">
         <SheetHeader className="px-1 pb-4">
           <SheetTitle className="text-xl">
-            {isLoading ? '' : `Shopping Cart (${cartData.totalItems})`}
+            {isLoading ? "" : `Shopping Cart (${cartData.totalItems})`}
           </SheetTitle>
         </SheetHeader>
 
@@ -114,7 +114,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
             <p className="text-center text-red-500">Failed to load cart data</p>
             <Button
               onClick={() =>
-                queryClient.invalidateQueries({ queryKey: ['cart'] })
+                queryClient.invalidateQueries({ queryKey: ["cart"] })
               }
               variant="outline"
             >
@@ -182,5 +182,5 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
         )}
       </SheetContent>
     </Sheet>
-  )
+  );
 }

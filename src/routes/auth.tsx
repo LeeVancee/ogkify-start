@@ -1,17 +1,17 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import AuthScreen from '@/components/auth/components/auth-screen'
-import { getSession } from '@/server/getSession.server'
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import AuthScreen from "@/components/auth/components/auth-screen";
+import { getSession } from "@/server/getSession.server";
 
-export const Route = createFileRoute('/auth')({
+export const Route = createFileRoute("/auth")({
   component: RouteComponent,
   beforeLoad: async () => {
-    const session = await getSession()
+    const session = await getSession();
     if (session) {
-      throw redirect({ to: '/' })
+      throw redirect({ to: "/" });
     }
   },
-})
+});
 
 function RouteComponent() {
-  return <AuthScreen />
+  return <AuthScreen />;
 }

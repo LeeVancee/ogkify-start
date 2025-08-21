@@ -1,29 +1,34 @@
-import { Link } from '@tanstack/react-router'
-import { Edit, MoreHorizontal, Trash2 } from 'lucide-react'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
+import { Link } from "@tanstack/react-router";
+import { Edit, MoreHorizontal, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 
 interface Product {
-  id: string
-  name: string
-  description: string
-  price: string
-  category: { id: string; name: string }
-  colors: Array<{ id: string; name: string; value: string }>
-  sizes: Array<{ id: string; name: string; value: string }>
-  images: Array<string>
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+  category: { id: string; name: string };
+  colors: Array<{ id: string; name: string; value: string }>;
+  sizes: Array<{ id: string; name: string; value: string }>;
+  images: Array<string>;
 }
 
 interface ProductCardProps {
-  product: Product
-  onDelete: (productId: string) => void
+  product: Product;
+  onDelete: (productId: string) => void;
 }
 
 export function ProductCard({ product, onDelete }: ProductCardProps) {
@@ -31,7 +36,7 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
     <Card className="overflow-hidden group hover:shadow-md transition-shadow">
       <div className="aspect-[4/3] w-full overflow-hidden relative">
         <img
-          src={product.images[0] || '/placeholder.svg'}
+          src={product.images[0] || "/placeholder.svg"}
           alt={product.name}
           className="h-full w-full object-cover transition-all hover:scale-105"
         />
@@ -150,5 +155,5 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

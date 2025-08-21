@@ -1,9 +1,9 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from '@tanstack/react-router'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import * as z from 'zod'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "@tanstack/react-router";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -11,54 +11,54 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { updateCategory } from '@/server/categories.server'
-import { SingleImageUpload } from '../single-image-upload'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { updateCategory } from "@/server/categories.server";
+import { SingleImageUpload } from "../single-image-upload";
 
 const formSchema = z.object({
-  name: z.string().min(1, 'Input category name'),
-  imageUrl: z.string().min(1, 'Upload category image'),
-})
+  name: z.string().min(1, "Input category name"),
+  imageUrl: z.string().min(1, "Upload category image"),
+});
 
-type FormValues = z.infer<typeof formSchema>
+type FormValues = z.infer<typeof formSchema>;
 
 interface Category {
-  id: string
-  name: string
-  imageUrl: string | null
+  id: string;
+  name: string;
+  imageUrl: string | null;
 }
 
 interface CategoryEditFormProps {
-  category: Category
+  category: Category;
 }
 
 export function CategoryEditForm({ category }: CategoryEditFormProps) {
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: category.name,
-      imageUrl: category.imageUrl || '',
+      imageUrl: category.imageUrl || "",
     },
-  })
+  });
 
-  const isSubmitting = form.formState.isSubmitting
+  const isSubmitting = form.formState.isSubmitting;
 
   async function onSubmit(values: FormValues) {
     try {
       const result = await updateCategory({
         data: { id: category.id, name: values.name },
-      })
+      });
       if (result.success) {
-        toast.success('Category updated successfully')
-        router.navigate({ to: '/dashboard/categories' })
+        toast.success("Category updated successfully");
+        router.navigate({ to: "/dashboard/categories" });
       } else {
-        toast.error(result.error)
+        toast.error(result.error);
       }
     } catch (error) {
-      toast.error('Operation failed')
+      toast.error("Operation failed");
     }
   }
 
@@ -98,9 +98,9 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
         />
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? 'Updating...' : 'Update Category'}
+          {isSubmitting ? "Updating..." : "Update Category"}
         </Button>
       </form>
     </Form>
-  )
+  );
 }

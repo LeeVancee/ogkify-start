@@ -1,34 +1,34 @@
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { CheckCircle, Loader2 } from 'lucide-react'
-import { Suspense } from 'react'
-import { z } from 'zod'
-import { Button } from '@/components/ui/button'
-import { getOrderById } from '@/server/orders.server'
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { CheckCircle, Loader2 } from "lucide-react";
+import { Suspense } from "react";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { getOrderById } from "@/server/orders.server";
 
 // order type definition
 interface OrderData {
-  id: string
-  orderNumber: string
-  status: string
-  totalAmount: number
-  shippingAddress: string | null
-  phone: string | null
+  id: string;
+  orderNumber: string;
+  status: string;
+  totalAmount: number;
+  shippingAddress: string | null;
+  phone: string | null;
 }
 
 // define search params schema
 const searchParamsSchema = z.object({
   session_id: z.string().optional(),
   order_id: z.string().optional(),
-})
+});
 
-export const Route = createFileRoute('/_shop/checkout/success')({
+export const Route = createFileRoute("/_shop/checkout/success")({
   validateSearch: searchParamsSchema,
   component: CheckoutSuccessPage,
-})
+});
 
 function CheckoutSuccessContent() {
-  const { session_id, order_id } = Route.useSearch()
+  const { session_id, order_id } = Route.useSearch();
 
   // use TanStack Query to get order data
   const {
@@ -37,30 +37,30 @@ function CheckoutSuccessContent() {
     isError,
     error,
   } = useQuery({
-    queryKey: ['order', order_id, session_id],
+    queryKey: ["order", order_id, session_id],
     queryFn: async () => {
       if (!session_id || !order_id) {
-        return null
+        return null;
       }
 
       // wait for a short time to ensure webhook is processed
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       // get order information from server
-      const result = await getOrderById({ data: order_id })
+      const result = await getOrderById({ data: order_id });
 
       if (!result.success) {
-        throw new Error(result.error || 'Failed to get order information')
+        throw new Error(result.error || "Failed to get order information");
       }
 
-      return result
+      return result;
     },
     retry: 2,
     staleTime: 1000 * 60 * 10, // 10 minutes cache, checkout success page is usually only visited once
     enabled: Boolean(session_id && order_id),
-  })
+  });
 
-  const orderData = orderResult?.order
+  const orderData = orderResult?.order;
 
   if (isLoading) {
     return (
@@ -71,7 +71,7 @@ function CheckoutSuccessContent() {
           Please wait, we are processing your payment.
         </p>
       </div>
-    )
+    );
   }
 
   if (isError || !orderData) {
@@ -83,13 +83,13 @@ function CheckoutSuccessContent() {
         <p className="mb-8 text-center text-muted-foreground">
           {error instanceof Error
             ? error.message
-            : 'Unable to get order details, but your payment may have been processed. Please check your email or contact customer support.'}
+            : "Unable to get order details, but your payment may have been processed. Please check your email or contact customer support."}
         </p>
         <Button asChild>
           <Link to="/">Return to Home</Link>
         </Button>
       </div>
-    )
+    );
   }
 
   return (
@@ -142,7 +142,7 @@ function CheckoutSuccessContent() {
         </div>
       </div>
     </>
-  )
+  );
 }
 
 function CheckoutSuccessPage() {
@@ -157,5 +157,5 @@ function CheckoutSuccessPage() {
     >
       <CheckoutSuccessContent />
     </Suspense>
-  )
+  );
 }

@@ -1,15 +1,15 @@
-import { ImagePlus, Upload, X } from 'lucide-react'
-import { useState } from 'react'
-import Dropzone from 'react-dropzone'
+import { ImagePlus, Upload, X } from "lucide-react";
+import { useState } from "react";
+import Dropzone from "react-dropzone";
 
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { useUploadThing } from '@/lib/uploadthing'
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { useUploadThing } from "@/lib/uploadthing";
 
 interface SingleImageUploadProps {
-  value: string
-  onChange: (value: string) => void
-  disabled?: boolean
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
 export function SingleImageUpload({
@@ -17,28 +17,28 @@ export function SingleImageUpload({
   onChange,
   disabled,
 }: SingleImageUploadProps) {
-  const [file, setFile] = useState<File | null>(null)
+  const [file, setFile] = useState<File | null>(null);
 
   const onRemove = () => {
-    onChange('')
-  }
+    onChange("");
+  };
 
-  const { startUpload, isUploading } = useUploadThing('categoryImage', {
+  const { startUpload, isUploading } = useUploadThing("categoryImage", {
     onClientUploadComplete: (res) => {
-      onChange(res[0].url)
-      setFile(null)
-      toast.success('Image uploaded successfully')
+      onChange(res[0].url);
+      setFile(null);
+      toast.success("Image uploaded successfully");
     },
     onUploadError: (error) => {
-      toast.error(`Upload failed: ${error.message}`)
+      toast.error(`Upload failed: ${error.message}`);
     },
-  })
+  });
 
   const handleUpload = () => {
     if (file) {
-      startUpload([file])
+      startUpload([file]);
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -64,7 +64,7 @@ export function SingleImageUpload({
           maxFiles={1}
           maxSize={4 * 1024 * 1024}
           accept={{
-            'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.webp'],
+            "image/*": [".jpeg", ".jpg", ".png", ".gif", ".webp"],
           }}
           onDrop={(acceptedFiles) => setFile(acceptedFiles[0])}
         >
@@ -81,9 +81,9 @@ export function SingleImageUpload({
                   cursor-pointer
                   flex flex-col items-center justify-center
                   relative
-                  ${isDragActive ? 'border-primary bg-primary/10' : 'border-muted hover:border-muted-foreground'}
-                  ${isUploading ? 'opacity-50 cursor-not-allowed' : ''}
-                  ${fileRejections.length > 0 ? 'border-destructive' : ''}
+                  ${isDragActive ? "border-primary bg-primary/10" : "border-muted hover:border-muted-foreground"}
+                  ${isUploading ? "opacity-50 cursor-not-allowed" : ""}
+                  ${fileRejections.length > 0 ? "border-destructive" : ""}
                 `}
               >
                 <input {...getInputProps()} />
@@ -96,8 +96,8 @@ export function SingleImageUpload({
                       <Button
                         type="button"
                         onClick={(e) => {
-                          e.stopPropagation()
-                          setFile(null)
+                          e.stopPropagation();
+                          setFile(null);
                         }}
                         disabled={isUploading}
                         variant="ghost"
@@ -110,14 +110,14 @@ export function SingleImageUpload({
                     <Button
                       type="button"
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleUpload()
+                        e.stopPropagation();
+                        handleUpload();
                       }}
                       disabled={isUploading}
                       size="sm"
                     >
                       {isUploading ? (
-                        'Uploading...'
+                        "Uploading..."
                       ) : (
                         <>
                           <Upload className="h-4 w-4 mr-2" />
@@ -131,8 +131,8 @@ export function SingleImageUpload({
                     <ImagePlus className="mx-auto h-10 w-10 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
                       {isDragActive
-                        ? 'Drop to upload'
-                        : 'Drop images here or click to select'}
+                        ? "Drop to upload"
+                        : "Drop images here or click to select"}
                     </p>
                     {fileRejections.length > 0 && (
                       <p className="text-sm text-destructive">
@@ -150,5 +150,5 @@ export function SingleImageUpload({
         </Dropzone>
       )}
     </div>
-  )
+  );
 }

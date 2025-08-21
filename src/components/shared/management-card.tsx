@@ -1,17 +1,17 @@
-import { Link } from '@tanstack/react-router'
-import { Edit, Loader2, Trash2 } from 'lucide-react'
-import type { ReactNode } from 'react'
-import { useState } from 'react'
-import { DeleteDialog } from '../dashboard/delete-dialog'
-import { Button } from '../ui/button'
+import { Link } from "@tanstack/react-router";
+import { Edit, Loader2, Trash2 } from "lucide-react";
+import type { ReactNode } from "react";
+import { useState } from "react";
+import { DeleteDialog } from "../dashboard/delete-dialog";
+import { Button } from "../ui/button";
 
 interface ManagementCardProps<T = any> {
-  item: T & { id: string; name: string }
-  editRoute: string
-  onDelete: (id: string) => void
-  isDeleting?: boolean
-  children: ReactNode
-  deleteConfirmTitle?: string
+  item: T & { id: string; name: string };
+  editRoute: string;
+  onDelete: (id: string) => void;
+  isDeleting?: boolean;
+  children: ReactNode;
+  deleteConfirmTitle?: string;
 }
 
 export function ManagementCard<T = any>({
@@ -22,10 +22,10 @@ export function ManagementCard<T = any>({
   children,
   deleteConfirmTitle,
 }: ManagementCardProps<T>) {
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const finalDeleteTitle =
-    deleteConfirmTitle || `Are you sure you want to delete "${item.name}"?`
+    deleteConfirmTitle || `Are you sure you want to delete "${item.name}"?`;
 
   return (
     <>
@@ -59,11 +59,11 @@ export function ManagementCard<T = any>({
         open={showDeleteDialog}
         onOpenChange={setShowDeleteDialog}
         onConfirm={() => {
-          onDelete(item.id)
-          setShowDeleteDialog(false)
+          onDelete(item.id);
+          setShowDeleteDialog(false);
         }}
         title={finalDeleteTitle}
       />
     </>
-  )
+  );
 }

@@ -1,15 +1,15 @@
-import { Link } from '@tanstack/react-router'
-import type { ReactNode } from 'react'
-import { Button } from '../ui/button'
+import { Link } from "@tanstack/react-router";
+import type { ReactNode } from "react";
+import { Button } from "../ui/button";
 
 interface EmptyStateProps {
-  icon: ReactNode
-  title: string
-  description: string
-  actionText: string
-  actionHref?: string
-  onAction?: () => void
-  className?: string
+  icon: ReactNode;
+  title: string;
+  description: string;
+  actionText: string;
+  actionHref?: string;
+  onAction?: () => void;
+  className?: string;
 }
 
 export function EmptyState({
@@ -19,7 +19,7 @@ export function EmptyState({
   actionText,
   actionHref,
   onAction,
-  className = '',
+  className = "",
 }: EmptyStateProps) {
   const content = (
     <div
@@ -40,7 +40,7 @@ export function EmptyState({
         )}
       </div>
     </div>
-  )
+  );
 
-  return content
+  return content;
 }

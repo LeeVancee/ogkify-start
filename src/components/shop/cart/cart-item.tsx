@@ -1,28 +1,28 @@
-import { Link } from '@tanstack/react-router'
-import { MinusIcon, PlusIcon, TrashIcon } from 'lucide-react'
-import { useState } from 'react'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { formatPrice } from '@/lib/utils'
-import { removeFromCart, updateCartItemQuantity } from '@/server/cart.server'
+import { Link } from "@tanstack/react-router";
+import { MinusIcon, PlusIcon, TrashIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { formatPrice } from "@/lib/utils";
+import { removeFromCart, updateCartItemQuantity } from "@/server/cart.server";
 
 interface CartItemProps {
   item: {
-    id: string
-    productId: string
-    name: string
-    price: number
-    quantity: number
-    image: string
-    colorId?: string | null
-    colorName?: string | null
-    colorValue?: string | null
-    sizeId?: string | null
-    sizeName?: string | null
-    sizeValue?: string | null
-  }
-  onItemRemoved?: (itemId: string) => void
-  onQuantityChanged?: (itemId: string, newQuantity: number) => void
+    id: string;
+    productId: string;
+    name: string;
+    price: number;
+    quantity: number;
+    image: string;
+    colorId?: string | null;
+    colorName?: string | null;
+    colorValue?: string | null;
+    sizeId?: string | null;
+    sizeName?: string | null;
+    sizeValue?: string | null;
+  };
+  onItemRemoved?: (itemId: string) => void;
+  onQuantityChanged?: (itemId: string, newQuantity: number) => void;
 }
 
 export function CartItem({
@@ -30,67 +30,67 @@ export function CartItem({
   onItemRemoved,
   onQuantityChanged,
 }: CartItemProps) {
-  const [quantity, setQuantity] = useState(item.quantity)
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [isRemoving, setIsRemoving] = useState(false)
+  const [quantity, setQuantity] = useState(item.quantity);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const handleQuantityChange = async (newQuantity: number) => {
-    if (newQuantity === quantity || newQuantity < 1 || isUpdating) return
+    if (newQuantity === quantity || newQuantity < 1 || isUpdating) return;
 
-    setIsUpdating(true)
+    setIsUpdating(true);
     try {
       const result = await updateCartItemQuantity({
         data: {
           cartItemId: item.id,
           quantity: newQuantity,
         },
-      })
+      });
       if (result.success) {
-        setQuantity(newQuantity)
+        setQuantity(newQuantity);
         // 通知父组件数量已更改
         if (onQuantityChanged) {
-          onQuantityChanged(item.id, newQuantity)
+          onQuantityChanged(item.id, newQuantity);
         }
       } else {
-        toast.error(result.error || 'Failed to update quantity')
-        setQuantity(item.quantity) // 恢复原有数量
+        toast.error(result.error || "Failed to update quantity");
+        setQuantity(item.quantity); // 恢复原有数量
       }
     } catch (error) {
-      toast.error('Failed to update quantity')
-      setQuantity(item.quantity)
+      toast.error("Failed to update quantity");
+      setQuantity(item.quantity);
     } finally {
-      setIsUpdating(false)
+      setIsUpdating(false);
     }
-  }
+  };
 
   const handleRemove = async () => {
-    if (isRemoving) return
+    if (isRemoving) return;
 
-    setIsRemoving(true)
+    setIsRemoving(true);
     try {
-      const result = await removeFromCart({ data: item.id })
+      const result = await removeFromCart({ data: item.id });
       if (result.success) {
-        toast.success('Product removed from cart')
+        toast.success("Product removed from cart");
         // 通知父组件商品已移除，而不是刷新页面
         if (onItemRemoved) {
-          onItemRemoved(item.id)
+          onItemRemoved(item.id);
         }
       } else {
-        toast.error(result.error || 'Failed to remove product')
+        toast.error(result.error || "Failed to remove product");
       }
     } catch (error) {
-      toast.error('Failed to remove product')
+      toast.error("Failed to remove product");
     } finally {
-      setIsRemoving(false)
+      setIsRemoving(false);
     }
-  }
+  };
 
   return (
     <div className="grid grid-cols-[80px_1fr] gap-4 border-b p-4 last:border-0 sm:grid-cols-[100px_1fr] md:grid-cols-[120px_1fr]">
       <div className="relative aspect-square overflow-hidden rounded-md bg-muted">
         <Link to="/">
           <img
-            src={item.image || '/placeholder.svg'}
+            src={item.image || "/placeholder.svg"}
             alt={item.name}
             width={120}
             height={120}
@@ -172,5 +172,5 @@ export function CartItem({
         </div>
       </div>
     </div>
-  )
+  );
 }

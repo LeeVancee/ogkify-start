@@ -1,13 +1,13 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { Loader2, User } from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { toast } from 'sonner'
-import { z } from 'zod'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Loader2, User } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -15,7 +15,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -24,76 +24,76 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { authClient } from '@/lib/auth-client'
-import { getSession } from '@/server/getSession.server'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authClient } from "@/lib/auth-client";
+import { getSession } from "@/server/getSession.server";
 
-export const Route = createFileRoute('/_shop/profile')({
+export const Route = createFileRoute("/_shop/profile")({
   component: ProfilePage,
   beforeLoad: async () => {
-    const session = await getSession()
+    const session = await getSession();
     if (!session) {
-      throw redirect({ to: '/auth' })
+      throw redirect({ to: "/auth" });
     }
-    return { session }
+    return { session };
   },
-})
+});
 
 // profile form validation
 const profileFormSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
   image: z.string().nullable().optional(),
-})
+});
 
 // password change form validation
 const passwordFormSchema = z
   .object({
     currentPassword: z
       .string()
-      .min(6, { message: 'Current password must be at least 6 characters.' }),
+      .min(6, { message: "Current password must be at least 6 characters." }),
     newPassword: z
       .string()
-      .min(6, { message: 'New password must be at least 6 characters.' }),
+      .min(6, { message: "New password must be at least 6 characters." }),
     confirmPassword: z
       .string()
-      .min(6, { message: 'Confirm password must be at least 6 characters.' }),
+      .min(6, { message: "Confirm password must be at least 6 characters." }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match.",
-    path: ['confirmPassword'],
-  })
+    path: ["confirmPassword"],
+  });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>
-type PasswordFormValues = z.infer<typeof passwordFormSchema>
+type ProfileFormValues = z.infer<typeof profileFormSchema>;
+type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 function ProfilePage() {
-  const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState('profile')
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("profile");
 
   // get session
   const { data: session, isLoading: isLoadingSession } = useQuery({
-    queryKey: ['session'],
+    queryKey: ["session"],
     queryFn: getSession,
     staleTime: 1000 * 60 * 5, // 5 minutes
-  })
+  });
 
   // update user profile mutation
   const updateProfileMutation = useMutation({
     mutationFn: async (values: ProfileFormValues) => {
-      return await authClient.updateUser(values)
+      return await authClient.updateUser(values);
     },
     onSuccess: () => {
-      toast.success('Profile updated successfully')
-      queryClient.invalidateQueries({ queryKey: ['session'] })
+      toast.success("Profile updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["session"] });
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to update profile'
-      )
+        error instanceof Error ? error.message : "Failed to update profile",
+      );
     },
-  })
+  });
 
   // change password mutation
   const changePasswordMutation = useMutation({
@@ -102,58 +102,58 @@ function ProfilePage() {
         currentPassword: values.currentPassword,
         newPassword: values.newPassword,
         revokeOtherSessions: true, // revoke other sessions
-      })
+      });
     },
     onSuccess: () => {
-      toast.success('Password changed successfully')
-      passwordForm.reset()
+      toast.success("Password changed successfully");
+      passwordForm.reset();
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : 'Failed to change password'
-      )
+        error instanceof Error ? error.message : "Failed to change password",
+      );
     },
-  })
+  });
 
   // user profile form
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: session?.user.name || '',
-      image: session?.user.image || '',
+      name: session?.user.name || "",
+      image: session?.user.image || "",
     },
     values: {
-      name: session?.user.name || '',
-      image: session?.user.image || '',
+      name: session?.user.name || "",
+      image: session?.user.image || "",
     },
-  })
+  });
 
   // password change form
   const passwordForm = useForm<PasswordFormValues>({
     resolver: zodResolver(passwordFormSchema),
     defaultValues: {
-      currentPassword: '',
-      newPassword: '',
-      confirmPassword: '',
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
     },
-  })
+  });
 
   // update user profile
   const onProfileSubmit = (values: ProfileFormValues) => {
-    updateProfileMutation.mutate(values)
-  }
+    updateProfileMutation.mutate(values);
+  };
 
   // change password
   const onPasswordSubmit = (values: PasswordFormValues) => {
-    changePasswordMutation.mutate(values)
-  }
+    changePasswordMutation.mutate(values);
+  };
 
   if (isLoadingSession) {
     return (
       <div className="container flex items-center justify-center py-20">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
       </div>
-    )
+    );
   }
 
   return (
@@ -186,8 +186,8 @@ function ProfilePage() {
                   <div className="flex flex-col items-center space-y-4 sm:flex-row sm:items-start sm:space-x-6 sm:space-y-0">
                     <Avatar className="h-24 w-24">
                       <AvatarImage
-                        src={session?.user.image || ''}
-                        alt={session?.user.name || 'User'}
+                        src={session?.user.image || ""}
+                        alt={session?.user.name || "User"}
                       />
                       <AvatarFallback className="text-2xl">
                         {session?.user.name ? (
@@ -208,7 +208,7 @@ function ProfilePage() {
                               <Input
                                 placeholder="https://example.com/avatar.jpg"
                                 {...field}
-                                value={field.value || ''}
+                                value={field.value || ""}
                               />
                             </FormControl>
                             <FormDescription>
@@ -243,7 +243,7 @@ function ProfilePage() {
                   <div className="space-y-2">
                     <FormLabel>Email</FormLabel>
                     <Input
-                      value={session?.user.email || ''}
+                      value={session?.user.email || ""}
                       disabled
                       readOnly
                     />
@@ -266,7 +266,7 @@ function ProfilePage() {
                         Saving...
                       </>
                     ) : (
-                      'Save Changes'
+                      "Save Changes"
                     )}
                   </Button>
                 </CardFooter>
@@ -349,7 +349,7 @@ function ProfilePage() {
                         Changing...
                       </>
                     ) : (
-                      'Change Password'
+                      "Change Password"
                     )}
                   </Button>
                 </CardFooter>
@@ -359,5 +359,5 @@ function ProfilePage() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   AlertCircle,
   AlertTriangle,
@@ -15,12 +15,12 @@ import {
   RefreshCw,
   Search,
   X,
-} from 'lucide-react'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import Loading from '@/components/loading'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
+} from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import Loading from "@/components/loading";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,8 +36,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -45,64 +45,64 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { cn, formatPrice } from '@/lib/utils'
-import { getOrderDetails, getUserOrders } from '@/server/orders.server'
-import { UpdateOrderStatusDialog } from './update-order-status-dialog'
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn, formatPrice } from "@/lib/utils";
+import { getOrderDetails, getUserOrders } from "@/server/orders.server";
+import { UpdateOrderStatusDialog } from "./update-order-status-dialog";
 
 // 定义订单项类型
 interface OrderItem {
-  id: string
-  productId: string
-  productName: string
-  quantity: number
-  price: number
-  imageUrl: string | null
-  color?: { name: string; value: string } | null
-  size?: { name: string; value: string } | null
+  id: string;
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number;
+  imageUrl: string | null;
+  color?: { name: string; value: string } | null;
+  size?: { name: string; value: string } | null;
 }
 
 // 定义订单类型
 interface Order {
-  id: string
-  orderNumber: string
-  customer?: string
-  email?: string
-  createdAt: string
-  createdAtFormatted?: string
-  status: string
-  paymentStatus: string
-  totalAmount: number
-  totalAmountFormatted?: string
-  totalItems: number
-  shippingAddress?: string | null
-  phone?: string | null
-  items: Array<OrderItem>
-  firstItemImage?: string | null
+  id: string;
+  orderNumber: string;
+  customer?: string;
+  email?: string;
+  createdAt: string;
+  createdAtFormatted?: string;
+  status: string;
+  paymentStatus: string;
+  totalAmount: number;
+  totalAmountFormatted?: string;
+  totalItems: number;
+  shippingAddress?: string | null;
+  phone?: string | null;
+  items: Array<OrderItem>;
+  firstItemImage?: string | null;
   user?: {
-    id: string
-    name: string
-    email: string
-  }
+    id: string;
+    name: string;
+    email: string;
+  };
 }
 
 // 过滤表单类型
 interface FilterForm {
-  searchQuery: string
-  statusFilter: string
+  searchQuery: string;
+  statusFilter: string;
   dateRange?: {
-    from: Date
-    to: Date
-  }
+    from: Date;
+    to: Date;
+  };
 }
 
 export function OrderManagement() {
-  const queryClient = useQueryClient()
-  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const [isDetailsOpen, setIsDetailsOpen] = useState(false)
-  const [isStatusUpdateOpen, setIsStatusUpdateOpen] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const queryClient = useQueryClient();
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isStatusUpdateOpen, setIsStatusUpdateOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // 使用 TanStack Query 获取订单数据
   const {
@@ -111,91 +111,91 @@ export function OrderManagement() {
     isError,
     refetch,
   } = useQuery({
-    queryKey: ['orders'],
+    queryKey: ["orders"],
     queryFn: async () => {
-      const response = await getUserOrders()
-      return response
+      const response = await getUserOrders();
+      return response;
     },
     staleTime: 1000 * 60 * 2, // 2分钟缓存
-  })
+  });
 
   // 从响应中提取订单数组
-  const orders = ordersResponse?.success ? ordersResponse.orders : []
+  const orders = ordersResponse?.success ? ordersResponse.orders : [];
 
   // 使用react-hook-form管理过滤表单
   const { register, watch, setValue, handleSubmit } = useForm<FilterForm>({
     defaultValues: {
-      searchQuery: '',
-      statusFilter: 'all',
+      searchQuery: "",
+      statusFilter: "all",
     },
-  })
+  });
 
   // 监听表单值变化
-  const searchQuery = watch('searchQuery')
-  const statusFilter = watch('statusFilter')
+  const searchQuery = watch("searchQuery");
+  const statusFilter = watch("statusFilter");
 
   // 清除搜索
   const clearSearch = () => {
-    setValue('searchQuery', '')
-  }
+    setValue("searchQuery", "");
+  };
 
   // 刷新订单列表
   function refreshOrders() {
-    refetch()
+    refetch();
   }
 
   // 查看订单详情
   async function handleViewDetails(order: Order) {
     try {
       // 先显示基本信息
-      setSelectedOrder(order)
-      setIsDetailsOpen(true)
+      setSelectedOrder(order);
+      setIsDetailsOpen(true);
 
       // 然后异步加载详细信息
-      const response = await getOrderDetails({ data: order.id })
+      const response = await getOrderDetails({ data: order.id });
       if (response.success && response.order) {
-        setSelectedOrder(response.order)
+        setSelectedOrder(response.order);
       }
     } catch (err) {
-      console.error('Failed to get order details:', err)
+      console.error("Failed to get order details:", err);
     }
   }
 
   // 打开更新状态对话框
   function handleUpdateStatus(order: Order) {
-    setSelectedOrder(order)
-    setIsStatusUpdateOpen(true)
+    setSelectedOrder(order);
+    setIsStatusUpdateOpen(true);
   }
 
   // 订单状态更新后的回调
   function handleStatusUpdated() {
     // 关闭状态更新对话框
-    setIsStatusUpdateOpen(false)
+    setIsStatusUpdateOpen(false);
     // 刷新订单数据
-    queryClient.invalidateQueries({ queryKey: ['orders'] })
+    queryClient.invalidateQueries({ queryKey: ["orders"] });
   }
 
   // 过滤订单
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (order.customer.toLowerCase() || '').includes(
-        searchQuery.toLowerCase()
+      (order.customer.toLowerCase() || "").includes(
+        searchQuery.toLowerCase(),
       ) ||
-      (order.email.toLowerCase() || '').includes(searchQuery.toLowerCase())
+      (order.email.toLowerCase() || "").includes(searchQuery.toLowerCase());
 
     const matchesStatus =
-      statusFilter === 'all' ||
-      (statusFilter === 'paid' && order.paymentStatus === 'PAID') ||
-      (statusFilter === 'unpaid' && order.paymentStatus === 'UNPAID') ||
-      (statusFilter === 'processing' && order.status === 'PAID')
+      statusFilter === "all" ||
+      (statusFilter === "paid" && order.paymentStatus === "PAID") ||
+      (statusFilter === "unpaid" && order.paymentStatus === "UNPAID") ||
+      (statusFilter === "processing" && order.status === "PAID");
 
-    return matchesSearch && matchesStatus
-  })
+    return matchesSearch && matchesStatus;
+  });
 
   // 处理加载状态
   if (isLoading) {
-    return <Loading />
+    return <Loading />;
   }
 
   // 处理错误状态
@@ -214,76 +214,76 @@ export function OrderManagement() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   // 获取订单状态图标
   function getOrderStatusIcon(status: string) {
     switch (status) {
-      case 'COMPLETED':
-        return <CheckCircle className="h-5 w-5 text-green-500" />
-      case 'PAID':
-        return <Clock className="h-5 w-5 text-blue-500" />
-      case 'PENDING':
-        return <Clock className="h-5 w-5 text-blue-500" />
-      case 'CANCELLED':
-        return <AlertCircle className="h-5 w-5 text-red-500" />
+      case "COMPLETED":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "PAID":
+        return <Clock className="h-5 w-5 text-blue-500" />;
+      case "PENDING":
+        return <Clock className="h-5 w-5 text-blue-500" />;
+      case "CANCELLED":
+        return <AlertCircle className="h-5 w-5 text-red-500" />;
       default:
-        return <Package className="h-5 w-5 text-gray-500" />
+        return <Package className="h-5 w-5 text-gray-500" />;
     }
   }
 
   // 获取支付状态图标
   function getPaymentStatusIcon(status: string) {
     switch (status) {
-      case 'PAID':
-        return <CheckCircle className="h-5 w-5 text-green-500" />
-      case 'UNPAID':
-        return <AlertTriangle className="h-5 w-5 text-amber-500" />
-      case 'REFUNDED':
-        return <ArrowDownUp className="h-5 w-5 text-blue-500" />
+      case "PAID":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "UNPAID":
+        return <AlertTriangle className="h-5 w-5 text-amber-500" />;
+      case "REFUNDED":
+        return <ArrowDownUp className="h-5 w-5 text-blue-500" />;
       default:
-        return <X className="h-5 w-5 text-gray-500" />
+        return <X className="h-5 w-5 text-gray-500" />;
     }
   }
 
   // 获取订单状态名称（中文）
   function getOrderStatusName(status: string) {
     switch (status) {
-      case 'COMPLETED':
-        return 'Completed'
-      case 'PAID':
-        return 'Processing'
-      case 'PENDING':
-        return 'Pending'
-      case 'CANCELLED':
-        return 'Cancelled'
+      case "COMPLETED":
+        return "Completed";
+      case "PAID":
+        return "Processing";
+      case "PENDING":
+        return "Pending";
+      case "CANCELLED":
+        return "Cancelled";
       default:
-        return 'Unknown Status'
+        return "Unknown Status";
     }
   }
 
   // 获取支付状态名称（中文）
   function getPaymentStatusName(status: string) {
     switch (status) {
-      case 'PAID':
-        return 'Paid'
-      case 'UNPAID':
-        return 'Unpaid'
-      case 'REFUNDED':
-        return 'Refunded'
-      case 'FAILED':
-        return 'Failed'
+      case "PAID":
+        return "Paid";
+      case "UNPAID":
+        return "Unpaid";
+      case "REFUNDED":
+        return "Refunded";
+      case "FAILED":
+        return "Failed";
       default:
-        return 'Unknown Status'
+        return "Unknown Status";
     }
   }
 
   // 处理表单提交
   const onSubmit = (data: FilterForm) => {
-    console.log('Filter form submitted:', data)
+    console.log("Filter form submitted:", data);
     // 可以进行更复杂的过滤操作
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -304,8 +304,8 @@ export function OrderManagement() {
             disabled={isLoading}
           >
             <RefreshCw
-              className={cn('mr-2 h-4 w-4', {
-                'animate-spin': isLoading,
+              className={cn("mr-2 h-4 w-4", {
+                "animate-spin": isLoading,
               })}
             />
             Refresh
@@ -327,7 +327,7 @@ export function OrderManagement() {
         <Tabs
           defaultValue="all"
           value={statusFilter}
-          onValueChange={(value) => setValue('statusFilter', value)}
+          onValueChange={(value) => setValue("statusFilter", value)}
         >
           <div className="flex flex-col md:flex-row justify-between gap-4">
             <TabsList>
@@ -343,7 +343,7 @@ export function OrderManagement() {
                   type="search"
                   placeholder="Search orders..."
                   className="pl-8 w-full md:w-[250px]"
-                  {...register('searchQuery')}
+                  {...register("searchQuery")}
                 />
                 {searchQuery && (
                   <Button
@@ -443,8 +443,8 @@ export function OrderManagement() {
                   Order Details #{selectedOrder.orderNumber}
                 </DialogTitle>
                 <DialogDescription className="text-base">
-                  Created at{' '}
-                  {new Date(selectedOrder.createdAt).toLocaleString('zh-CN')}
+                  Created at{" "}
+                  {new Date(selectedOrder.createdAt).toLocaleString("zh-CN")}
                 </DialogDescription>
               </DialogHeader>
 
@@ -565,7 +565,7 @@ export function OrderManagement() {
                               </div>
                               <div className="text-xs text-muted-foreground">
                                 {item.color && `Color: ${item.color.name}`}
-                                {item.color && item.size && ' | '}
+                                {item.color && item.size && " | "}
                                 {item.size && `Size: ${item.size.name}`}
                               </div>
                             </div>
@@ -598,8 +598,8 @@ export function OrderManagement() {
                 </Button>
                 <Button
                   onClick={() => {
-                    setIsDetailsOpen(false)
-                    handleUpdateStatus(selectedOrder)
+                    setIsDetailsOpen(false);
+                    handleUpdateStatus(selectedOrder);
                   }}
                 >
                   Update Status
@@ -620,19 +620,19 @@ export function OrderManagement() {
         />
       )}
     </div>
-  )
+  );
 }
 
 // 订单表格组件
 interface OrdersTableProps {
-  orders: Array<Order>
-  isLoading: boolean
-  onViewDetails: (order: Order) => void
-  onUpdateStatus: (order: Order) => void
-  getOrderStatusIcon: (status: string) => React.ReactNode
-  getPaymentStatusIcon: (status: string) => React.ReactNode
-  getOrderStatusName: (status: string) => string
-  getPaymentStatusName: (status: string) => string
+  orders: Array<Order>;
+  isLoading: boolean;
+  onViewDetails: (order: Order) => void;
+  onUpdateStatus: (order: Order) => void;
+  getOrderStatusIcon: (status: string) => React.ReactNode;
+  getPaymentStatusIcon: (status: string) => React.ReactNode;
+  getOrderStatusName: (status: string) => string;
+  getPaymentStatusName: (status: string) => string;
 }
 
 function OrdersTable({
@@ -689,15 +689,15 @@ function OrdersTable({
                     {order.orderNumber}
                   </TableCell>
                   <TableCell className="hidden md:table-cell">
-                    {new Date(order.createdAt).toLocaleDateString('zh-CN')}
+                    {new Date(order.createdAt).toLocaleDateString("zh-CN")}
                   </TableCell>
                   <TableCell>
                     <div>
                       <div className="font-medium">
-                        {order.customer || 'Unknown User'}
+                        {order.customer || "Unknown User"}
                       </div>
                       <div className="text-sm text-muted-foreground hidden md:block">
-                        {order.email || 'No email information'}
+                        {order.email || "No email information"}
                       </div>
                     </div>
                   </TableCell>
@@ -746,5 +746,5 @@ function OrdersTable({
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }

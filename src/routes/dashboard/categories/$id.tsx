@@ -1,20 +1,20 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
-import { CategoryEditForm } from '@/components/dashboard/category/category-edit-form'
-import { getCategory } from '@/server/categories.server'
+import { createFileRoute, notFound } from "@tanstack/react-router";
+import { CategoryEditForm } from "@/components/dashboard/category/category-edit-form";
+import { getCategory } from "@/server/categories.server";
 
-export const Route = createFileRoute('/dashboard/categories/$id')({
+export const Route = createFileRoute("/dashboard/categories/$id")({
   component: RouteComponent,
   loader: async ({ params }: { params: { id: string } }) => {
-    const response = await getCategory({ data: params.id })
-    return { response }
+    const response = await getCategory({ data: params.id });
+    return { response };
   },
-})
+});
 
 function RouteComponent() {
-  const { response } = Route.useLoaderData()
+  const { response } = Route.useLoaderData();
 
   if (!response.success || !response.category) {
-    notFound()
+    notFound();
   }
 
   return (
@@ -31,5 +31,5 @@ function RouteComponent() {
         </div>
       </div>
     </div>
-  )
+  );
 }
