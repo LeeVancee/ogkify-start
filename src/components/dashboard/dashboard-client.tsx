@@ -84,7 +84,7 @@ export function DashboardClient({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  ${(totalRevenue / 100).toFixed(2)}
+                  ${totalRevenue.toFixed(2)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   All completed orders
