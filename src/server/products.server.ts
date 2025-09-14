@@ -19,8 +19,8 @@ const productFormSchema = z.object({
   price: z.string().refine((val) => !isNaN(Number(val)), {
     message: "Price must be a valid number.",
   }),
-  categoryId: z.string({
-    required_error: "Please select a category.",
+  categoryId: z.string().min(1, {
+    message: "Please select a category.",
   }),
   colorIds: z.array(z.string()).min(1, {
     message: "Please select at least one color.",
@@ -80,7 +80,7 @@ export const getProduct = createServerFn()
   });
 
 // Update product
-export const updateProduct = createServerFn()
+export const updateProduct = createServerFn({ method: "POST" })
   .validator((params: { id: string; data: ProductFormType }) => {
     const validatedFields = productFormSchema.safeParse(params.data);
     if (!validatedFields.success) {
@@ -225,7 +225,7 @@ export const getProducts = createServerFn().handler(async () => {
 });
 
 // Create product
-export const createProduct = createServerFn()
+export const createProduct = createServerFn({ method: "POST" })
   .validator((data: ProductFormType) => {
     const validatedFields = productFormSchema.safeParse(data);
     if (!validatedFields.success) {
@@ -297,7 +297,7 @@ export const createProduct = createServerFn()
   });
 
 // Delete product
-export const deleteProduct = createServerFn()
+export const deleteProduct = createServerFn({ method: "POST" })
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {

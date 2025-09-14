@@ -51,7 +51,7 @@ export const getSize = createServerFn()
   });
 
 // Create size
-export const createSize = createServerFn()
+export const createSize = createServerFn({ method: "POST" })
   .validator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
@@ -70,7 +70,7 @@ export const createSize = createServerFn()
   });
 
 // Update size
-export const updateSize = createServerFn()
+export const updateSize = createServerFn({ method: "POST" })
   .validator(
     (params: { id: string; data: { name: string; value: string } }) => params,
   )
@@ -92,7 +92,7 @@ export const updateSize = createServerFn()
   });
 
 // Delete size
-export const deleteSize = createServerFn()
+export const deleteSize = createServerFn({ method: "POST" })
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {

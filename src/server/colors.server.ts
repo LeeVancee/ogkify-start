@@ -51,7 +51,7 @@ export const getColor = createServerFn()
   });
 
 // Create color
-export const createColor = createServerFn()
+export const createColor = createServerFn({ method: "POST" })
   .validator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
@@ -70,7 +70,7 @@ export const createColor = createServerFn()
   });
 
 // Update color
-export const updateColor = createServerFn()
+export const updateColor = createServerFn({ method: "POST" })
   .validator(
     (params: { id: string; data: { name: string; value: string } }) => params,
   )
@@ -92,7 +92,7 @@ export const updateColor = createServerFn()
   });
 
 // Delete color
-export const deleteColor = createServerFn()
+export const deleteColor = createServerFn({ method: "POST" })
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {

@@ -51,7 +51,7 @@ interface CreateCategoryInput {
 }
 
 // Create category
-export const createCategory = createServerFn()
+export const createCategory = createServerFn({ method: "POST" })
   .validator((input: CreateCategoryInput) => input)
   .handler(async ({ data: input }) => {
     try {
@@ -71,7 +71,7 @@ export const createCategory = createServerFn()
   });
 
 // Update category
-export const updateCategory = createServerFn()
+export const updateCategory = createServerFn({ method: "POST" })
   .validator((params: { id: string; name: string }) => params)
   .handler(async ({ data: { id, name } }) => {
     try {
@@ -88,7 +88,7 @@ export const updateCategory = createServerFn()
   });
 
 // Delete category
-export const deleteCategory = createServerFn()
+export const deleteCategory = createServerFn({ method: "POST" })
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
