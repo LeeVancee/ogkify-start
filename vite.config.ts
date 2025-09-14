@@ -1,4 +1,5 @@
 import tailwindcss from '@tailwindcss/vite'
+import { nitroV2Plugin } from '@tanstack/nitro-v2-vite-plugin'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
@@ -12,13 +13,14 @@ export default defineConfig({
     tsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
-    tanstackStart({ customViteReactPlugin: true }),
+    tanstackStart(),
     viteReact({
       babel: {
         plugins: ['babel-plugin-react-compiler'],
       },
     }),
     tailwindcss(),
+    nitroV2Plugin(),
   ],
   optimizeDeps: {
     include: ['better-auth/react', 'react-hook-form'],

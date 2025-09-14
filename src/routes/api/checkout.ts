@@ -1,7 +1,7 @@
 import { json } from "@tanstack/react-start";
 import {
   createServerFileRoute,
-  getWebRequest,
+  getRequest,
 } from "@tanstack/react-start/server";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
@@ -12,7 +12,7 @@ import { formatAmountForStripe, stripe } from "@/lib/stripe";
 export const ServerRoute = createServerFileRoute("/api/checkout").methods({
   POST: async ({ request }: { request: any }) => {
     try {
-      const { headers } = getWebRequest();
+      const { headers } = getRequest();
 
       const session = await auth.api.getSession({
         headers,
