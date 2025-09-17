@@ -22,7 +22,5 @@ export default defineConfig({
     tailwindcss(),
     nitroV2Plugin(),
   ],
-  optimizeDeps: {
-    include: ['better-auth/react', 'react-hook-form'],
-  },
+
 })

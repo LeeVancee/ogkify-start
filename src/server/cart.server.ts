@@ -260,29 +260,31 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
   });
 
 // Clear cart
-export const clearCart = createServerFn({ method: "POST" }).handler(async () => {
-  try {
-    const session = await getSession();
+export const clearCart = createServerFn({ method: "POST" }).handler(
+  async () => {
+    try {
+      const session = await getSession();
 
-    if (!session?.user.id) {
-      return { error: "user not logged in", success: false };
+      if (!session?.user.id) {
+        return { error: "user not logged in", success: false };
+      }
+
+      // Get user's cart
+      const cart = await db.query.carts.findFirst({
+        where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
+      });
+
+      if (!cart) {
+        return { success: true, message: "cart is already empty" };
+      }
+
+      // Delete all items in the cart
+      await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
+
+      return { success: true, message: "cart cleared" };
+    } catch (error) {
+      console.error("clear cart failed:", error);
+      return { error: "clear cart failed", success: false };
     }
-
-    // Get user's cart
-    const cart = await db.query.carts.findFirst({
-      where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
-    });
-
-    if (!cart) {
-      return { success: true, message: "cart is already empty" };
-    }
-
-    // Delete all items in the cart
-    await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
-
-    return { success: true, message: "cart cleared" };
-  } catch (error) {
-    console.error("clear cart failed:", error);
-    return { error: "clear cart failed", success: false };
-  }
-});
+  },
+);
