@@ -48,7 +48,7 @@ function RouteComponent() {
           setError(ctx.error.message || "Failed to sign in");
           toast.error(ctx.error.message || "Failed to sign in");
         },
-      }
+      },
     );
   };
   return (

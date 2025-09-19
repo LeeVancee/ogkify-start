@@ -1,6 +1,6 @@
+import { Folder } from "lucide-react";
 import { ManagementCard } from "@/components/shared/management-card";
 import { Badge } from "@/components/ui/badge";
-import { Folder } from "lucide-react";
 
 interface CategoryCardProps {
   category: {

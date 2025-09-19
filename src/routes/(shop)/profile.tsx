@@ -90,7 +90,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update profile"
+        error instanceof Error ? error.message : "Failed to update profile",
       );
     },
   });
@@ -110,7 +110,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to change password"
+        error instanceof Error ? error.message : "Failed to change password",
       );
     },
   });

@@ -1,6 +1,6 @@
+import { Hash, Palette } from "lucide-react";
 import { ManagementCard } from "@/components/shared/management-card";
 import { Badge } from "@/components/ui/badge";
-import { Palette, Hash } from "lucide-react";
 
 interface ColorCardProps {
   color: {

@@ -1,6 +1,6 @@
+import { Package, Ruler } from "lucide-react";
 import { ManagementCard } from "@/components/shared/management-card";
 import { Badge } from "@/components/ui/badge";
-import { Ruler, Package } from "lucide-react";
 
 interface SizeCardProps {
   size: {
