@@ -6,7 +6,7 @@ import { getColors } from "@/server/colors.server";
 import { getSizes } from "@/server/sizes.server";
 // Loading component for the entire products page
 
-export const Route = createFileRoute("/_shop/products")({
+export const Route = createFileRoute("/(shop)/products")({
   component: RouteComponent,
   loader: async () => {
     const categories = await getCategories();

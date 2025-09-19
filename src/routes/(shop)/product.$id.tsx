@@ -6,7 +6,7 @@ import { ProductTabs } from "@/components/shop/product/product-tabs";
 import { handleAddToCartFormAction } from "@/server/cart.server";
 import { getProduct, getRelatedProducts } from "@/server/product-shop.server";
 
-export const Route = createFileRoute("/_shop/product/$id")({
+export const Route = createFileRoute("/(shop)/product/$id")({
   pendingComponent: () => <ProductInfoLoading />,
   //  pendingMs: 0,
   component: RouteComponent,

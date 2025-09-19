@@ -55,7 +55,7 @@ interface Order {
   firstItemImage: string | null;
 }
 
-export const Route = createFileRoute("/_shop/myorders")({
+export const Route = createFileRoute("/(shop)/myorders")({
   component: MyOrdersPage,
 });
 

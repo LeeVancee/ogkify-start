@@ -7,7 +7,7 @@ const searchParamsSchema = z.object({
   q: z.string().optional(),
 });
 
-export const Route = createFileRoute("/_shop/search")({
+export const Route = createFileRoute("/(shop)/search")({
   validateSearch: searchParamsSchema,
   loaderDeps: ({ search }) => ({
     q: search.q,

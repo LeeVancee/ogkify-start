@@ -22,7 +22,7 @@ const searchParamsSchema = z.object({
   order_id: z.string().optional(),
 });
 
-export const Route = createFileRoute("/_shop/checkout/success")({
+export const Route = createFileRoute("/(shop)/checkout/success")({
   validateSearch: searchParamsSchema,
   component: CheckoutSuccessPage,
 });

@@ -2,7 +2,7 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import Footer from "@/components/shop/home/footer";
 import Header from "@/components/shop/home/header";
 
-export const Route = createFileRoute("/_shop")({
+export const Route = createFileRoute("/(shop)")({
   component: RouteComponent,
 });
 

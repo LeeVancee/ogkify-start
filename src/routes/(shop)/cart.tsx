@@ -14,7 +14,7 @@ import {
   updateCartItemQuantity,
 } from "@/server/cart.server";
 
-export const Route = createFileRoute("/_shop/cart")({
+export const Route = createFileRoute("/(shop)/cart")({
   component: CartPage,
 });
 

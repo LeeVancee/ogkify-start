@@ -30,7 +30,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
 import { getSession } from "@/server/getSession.server";
 
-export const Route = createFileRoute("/_shop/profile")({
+export const Route = createFileRoute("/(shop)/profile")({
   component: ProfilePage,
   beforeLoad: async () => {
     const session = await getSession();
