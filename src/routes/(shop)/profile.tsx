@@ -35,7 +35,7 @@ export const Route = createFileRoute("/(shop)/profile")({
   beforeLoad: async () => {
     const session = await getSession();
     if (!session) {
-      throw redirect({ to: "/auth" });
+      throw redirect({ to: "/login" });
     }
     return { session };
   },
@@ -90,7 +90,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update profile",
+        error instanceof Error ? error.message : "Failed to update profile"
       );
     },
   });
@@ -110,7 +110,7 @@ function ProfilePage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to change password",
+        error instanceof Error ? error.message : "Failed to change password"
       );
     },
   });

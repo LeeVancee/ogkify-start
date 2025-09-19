@@ -40,7 +40,7 @@ export function DropDown() {
 
   if (!session) {
     return (
-      <Button variant="ghost" onClick={() => navigate({ to: "/auth" })}>
+      <Button variant="ghost" onClick={() => navigate({ to: "/login" })}>
         login
       </Button>
     );

@@ -11,15 +11,17 @@
 import { createServerRootRoute } from '@tanstack/react-start/server'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as DashboardRouteRouteImport } from './routes/dashboard/route'
 import { Route as shopRouteRouteImport } from './routes/(shop)/route'
+import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as shopIndexRouteImport } from './routes/(shop)/index'
 import { Route as shopSearchRouteImport } from './routes/(shop)/search'
 import { Route as shopProfileRouteImport } from './routes/(shop)/profile'
 import { Route as shopMyordersRouteImport } from './routes/(shop)/myorders'
 import { Route as shopCartRouteImport } from './routes/(shop)/cart'
+import { Route as authSignupRouteImport } from './routes/(auth)/signup'
+import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as shopProductsRouteRouteImport } from './routes/(shop)/products/route'
 import { Route as DashboardSizesIndexRouteImport } from './routes/dashboard/sizes/index'
 import { Route as DashboardProductsIndexRouteImport } from './routes/dashboard/products/index'
@@ -44,11 +46,6 @@ import { ServerRoute as ApiAuthSplatServerRouteImport } from './routes/api/auth.
 
 const rootServerRouteImport = createServerRootRoute()
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const DashboardRouteRoute = DashboardRouteRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -56,6 +53,10 @@ const DashboardRouteRoute = DashboardRouteRouteImport.update({
 } as any)
 const shopRouteRoute = shopRouteRouteImport.update({
   id: '/(shop)',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const authRouteRoute = authRouteRouteImport.update({
+  id: '/(auth)',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardIndexRoute = DashboardIndexRouteImport.update({
@@ -87,6 +88,16 @@ const shopCartRoute = shopCartRouteImport.update({
   id: '/cart',
   path: '/cart',
   getParentRoute: () => shopRouteRoute,
+} as any)
+const authSignupRoute = authSignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => authRouteRoute,
+} as any)
+const authLoginRoute = authLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => authRouteRoute,
 } as any)
 const shopProductsRouteRoute = shopProductsRouteRouteImport.update({
   id: '/products',
@@ -198,8 +209,9 @@ const ApiAuthSplatServerRoute = ApiAuthSplatServerRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof shopIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/auth': typeof AuthRoute
   '/products': typeof shopProductsRouteRouteWithChildren
+  '/login': typeof authLoginRoute
+  '/signup': typeof authSignupRoute
   '/cart': typeof shopCartRoute
   '/myorders': typeof shopMyordersRoute
   '/profile': typeof shopProfileRoute
@@ -223,12 +235,13 @@ export interface FileRoutesByFullPath {
   '/dashboard/sizes': typeof DashboardSizesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/auth': typeof AuthRoute
+  '/': typeof shopIndexRoute
+  '/login': typeof authLoginRoute
+  '/signup': typeof authSignupRoute
   '/cart': typeof shopCartRoute
   '/myorders': typeof shopMyordersRoute
   '/profile': typeof shopProfileRoute
   '/search': typeof shopSearchRoute
-  '/': typeof shopIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/checkout/success': typeof shopCheckoutSuccessRoute
   '/product/$id': typeof shopProductIdRoute
@@ -249,10 +262,12 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/(auth)': typeof authRouteRouteWithChildren
   '/(shop)': typeof shopRouteRouteWithChildren
   '/dashboard': typeof DashboardRouteRouteWithChildren
-  '/auth': typeof AuthRoute
   '/(shop)/products': typeof shopProductsRouteRouteWithChildren
+  '/(auth)/login': typeof authLoginRoute
+  '/(auth)/signup': typeof authSignupRoute
   '/(shop)/cart': typeof shopCartRoute
   '/(shop)/myorders': typeof shopMyordersRoute
   '/(shop)/profile': typeof shopProfileRoute
@@ -281,8 +296,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/dashboard'
-    | '/auth'
     | '/products'
+    | '/login'
+    | '/signup'
     | '/cart'
     | '/myorders'
     | '/profile'
@@ -306,12 +322,13 @@ export interface FileRouteTypes {
     | '/dashboard/sizes'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/auth'
+    | '/'
+    | '/login'
+    | '/signup'
     | '/cart'
     | '/myorders'
     | '/profile'
     | '/search'
-    | '/'
     | '/dashboard'
     | '/checkout/success'
     | '/product/$id'
@@ -331,10 +348,12 @@ export interface FileRouteTypes {
     | '/dashboard/sizes'
   id:
     | '__root__'
+    | '/(auth)'
     | '/(shop)'
     | '/dashboard'
-    | '/auth'
     | '/(shop)/products'
+    | '/(auth)/login'
+    | '/(auth)/signup'
     | '/(shop)/cart'
     | '/(shop)/myorders'
     | '/(shop)/profile'
@@ -360,9 +379,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  authRouteRoute: typeof authRouteRouteWithChildren
   shopRouteRoute: typeof shopRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
 }
 export interface FileServerRoutesByFullPath {
   '/api/checkout': typeof ApiCheckoutServerRoute
@@ -413,13 +432,6 @@ export interface RootServerRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/dashboard': {
       id: '/dashboard'
       path: '/dashboard'
@@ -432,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof shopRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(auth)': {
+      id: '/(auth)'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof authRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/': {
@@ -475,6 +494,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/cart'
       preLoaderRoute: typeof shopCartRouteImport
       parentRoute: typeof shopRouteRoute
+    }
+    '/(auth)/signup': {
+      id: '/(auth)/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof authSignupRouteImport
+      parentRoute: typeof authRouteRoute
+    }
+    '/(auth)/login': {
+      id: '/(auth)/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof authLoginRouteImport
+      parentRoute: typeof authRouteRoute
     }
     '/(shop)/products': {
       id: '/(shop)/products'
@@ -630,6 +663,20 @@ declare module '@tanstack/react-start/server' {
   }
 }
 
+interface authRouteRouteChildren {
+  authLoginRoute: typeof authLoginRoute
+  authSignupRoute: typeof authSignupRoute
+}
+
+const authRouteRouteChildren: authRouteRouteChildren = {
+  authLoginRoute: authLoginRoute,
+  authSignupRoute: authSignupRoute,
+}
+
+const authRouteRouteWithChildren = authRouteRoute._addFileChildren(
+  authRouteRouteChildren,
+)
+
 interface shopProductsRouteRouteChildren {
   shopProductsIndexRoute: typeof shopProductsIndexRoute
 }
@@ -706,9 +753,9 @@ const DashboardRouteRouteWithChildren = DashboardRouteRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  authRouteRoute: authRouteRouteWithChildren,
   shopRouteRoute: shopRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
