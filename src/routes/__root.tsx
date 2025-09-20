@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
+import { seo } from "@/lib/seo";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
@@ -21,9 +22,11 @@ export const Route = createRootRouteWithContext<{
         name: "viewport",
         content: "width=device-width, initial-scale=1",
       },
-      {
+      ...seo({
         title: "OGKIFY",
-      },
+        description:
+          "OGKIFY - Premium fashion shopping platform offering high-quality clothing, accessories and more with convenient shopping experience",
+      }),
     ],
     links: [
       {

@@ -26,7 +26,7 @@ export default function HeroSection() {
             </div>
             <div className="relative aspect-video overflow-hidden rounded-xl lg:aspect-square">
               <img
-                src="/billboard.webp"
+                src="/billboard1.webp"
                 alt="Hero Image"
                 className="object-cover"
               />
