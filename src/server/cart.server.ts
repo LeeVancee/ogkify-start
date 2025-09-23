@@ -13,7 +13,7 @@ export interface CartItemData {
 
 // Add product to cart
 export const addToCart = createServerFn({ method: "POST" })
-  .validator((data: CartItemData) => data)
+  .inputValidator((data: CartItemData) => data)
   .handler(async ({ data }) => {
     try {
       const session = await getSession();
@@ -100,7 +100,7 @@ export const addToCart = createServerFn({ method: "POST" })
 
 // Handle form submission server action
 export const handleAddToCartFormAction = createServerFn({ method: "POST" })
-  .validator((formData: FormData) => {
+  .inputValidator((formData: FormData) => {
     if (!(formData instanceof FormData)) {
       throw new Error("Invalid form data");
     }
@@ -182,7 +182,7 @@ export const getUserCart = createServerFn().handler(async () => {
 
 // Remove product from cart
 export const removeFromCart = createServerFn({ method: "POST" })
-  .validator((cartItemId: string) => cartItemId)
+  .inputValidator((cartItemId: string) => cartItemId)
   .handler(async ({ data: cartItemId }) => {
     try {
       const session = await getSession();
@@ -218,7 +218,7 @@ export const removeFromCart = createServerFn({ method: "POST" })
 
 // Update cart item quantity
 export const updateCartItemQuantity = createServerFn({ method: "POST" })
-  .validator((params: { cartItemId: string; quantity: number }) => params)
+  .inputValidator((params: { cartItemId: string; quantity: number }) => params)
   .handler(async ({ data: { cartItemId, quantity } }) => {
     try {
       const session = await getSession();

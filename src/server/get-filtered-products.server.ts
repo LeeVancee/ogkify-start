@@ -20,7 +20,7 @@ export interface FilterOptions {
  * Server function to get and filter product list
  */
 export const getFilteredProducts = createServerFn()
-  .validator((options: FilterOptions = {}) => options)
+  .inputValidator((options: FilterOptions = {}) => options)
   .handler(async ({ data: options }) => {
     try {
       // Build base query conditions

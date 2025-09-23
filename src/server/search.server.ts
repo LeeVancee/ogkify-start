@@ -5,7 +5,7 @@ import { db } from "@/db";
  * 根据查询字符串搜索产品
  */
 export const searchProducts = createServerFn()
-  .validator((query: string = "") => query)
+  .inputValidator((query: string = "") => query)
   .handler(async ({ data: query }) => {
     if (!query || query.trim() === "") {
       return [];

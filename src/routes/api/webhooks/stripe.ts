@@ -1,71 +1,74 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import { createServerFileRoute } from "@tanstack/react-start/server";
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 import { db } from "@/db";
 import { cartItems, carts, orders } from "@/db/schema";
 import { stripe } from "@/lib/stripe";
 
-export const ServerRoute = createServerFileRoute(
-  "/api/webhooks/stripe",
-).methods({
-  POST: async ({ request }: { request: any }) => {
-    try {
-      const body = await request.text();
-      const signature = request.headers.get("stripe-signature");
+export const Route = createFileRoute("/api/webhooks/stripe")({
+  server: {
+    handlers: {
+      POST: async ({ request }: { request: any }) => {
+        try {
+          const body = await request.text();
+          const signature = request.headers.get("stripe-signature");
 
-      if (!signature) {
-        console.error("缺少 Stripe 签名头");
-        return json({ error: "缺少 Stripe 签名头" }, { status: 400 });
-      }
+          if (!signature) {
+            console.error("缺少 Stripe 签名头");
+            return json({ error: "缺少 Stripe 签名头" }, { status: 400 });
+          }
 
-      // 确保 Webhook 密钥已设置
-      if (!process.env.STRIPE_WEBHOOK_SECRET) {
-        console.error("缺少 STRIPE_WEBHOOK_SECRET 环境变量");
-        return json({ error: "Webhook 配置错误" }, { status: 500 });
-      }
+          // 确保 Webhook 密钥已设置
+          if (!process.env.STRIPE_WEBHOOK_SECRET) {
+            console.error("缺少 STRIPE_WEBHOOK_SECRET 环境变量");
+            return json({ error: "Webhook 配置错误" }, { status: 500 });
+          }
 
-      // 验证 Webhook 签名
-      let event: Stripe.Event;
-      try {
-        event = stripe.webhooks.constructEvent(
-          body,
-          signature,
-          process.env.STRIPE_WEBHOOK_SECRET,
-        );
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "未知错误";
-        console.error(`Webhook 签名验证失败: ${errorMessage}`);
-        return json(
-          { error: `Webhook 签名验证失败: ${errorMessage}` },
-          { status: 400 },
-        );
-      }
+          // 验证 Webhook 签名
+          let event: Stripe.Event;
+          try {
+            event = stripe.webhooks.constructEvent(
+              body,
+              signature,
+              process.env.STRIPE_WEBHOOK_SECRET,
+            );
+          } catch (err) {
+            const errorMessage =
+              err instanceof Error ? err.message : "未知错误";
+            console.error(`Webhook 签名验证失败: ${errorMessage}`);
+            return json(
+              { error: `Webhook 签名验证失败: ${errorMessage}` },
+              { status: 400 },
+            );
+          }
 
-      // 根据事件类型处理
-      switch (event.type) {
-        case "checkout.session.completed":
-          await handleCheckoutSessionCompleted(
-            event.data.object as Stripe.Checkout.Session,
-          );
-          break;
-        case "payment_intent.payment_failed":
-          await handlePaymentIntentFailed(
-            event.data.object as Stripe.PaymentIntent,
-          );
-          break;
-        case "charge.refunded":
-          await handleChargeRefunded(event.data.object as Stripe.Charge);
-          break;
-        default:
-          console.log(`未处理的事件类型: ${event.type}`);
-      }
+          // 根据事件类型处理
+          switch (event.type) {
+            case "checkout.session.completed":
+              await handleCheckoutSessionCompleted(
+                event.data.object as Stripe.Checkout.Session,
+              );
+              break;
+            case "payment_intent.payment_failed":
+              await handlePaymentIntentFailed(
+                event.data.object as Stripe.PaymentIntent,
+              );
+              break;
+            case "charge.refunded":
+              await handleChargeRefunded(event.data.object as Stripe.Charge);
+              break;
+            default:
+              console.log(`未处理的事件类型: ${event.type}`);
+          }
 
-      return json({ received: true });
-    } catch (error) {
-      console.error("Webhook 错误:", error);
-      return json({ error: "处理 webhook 时发生错误" }, { status: 500 });
-    }
+          return json({ received: true });
+        } catch (error) {
+          console.error("Webhook 错误:", error);
+          return json({ error: "处理 webhook 时发生错误" }, { status: 500 });
+        }
+      },
+    },
   },
 });
 

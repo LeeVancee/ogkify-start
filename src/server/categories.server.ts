@@ -22,7 +22,7 @@ export const getCategories = createServerFn().handler(async () => {
 
 // Get single category
 export const getCategory = createServerFn()
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       const category = await db.query.categories.findFirst({
@@ -52,7 +52,7 @@ interface CreateCategoryInput {
 
 // Create category
 export const createCategory = createServerFn({ method: "POST" })
-  .validator((input: CreateCategoryInput) => input)
+  .inputValidator((input: CreateCategoryInput) => input)
   .handler(async ({ data: input }) => {
     try {
       const [category] = await db
@@ -72,7 +72,7 @@ export const createCategory = createServerFn({ method: "POST" })
 
 // Update category
 export const updateCategory = createServerFn({ method: "POST" })
-  .validator((params: { id: string; name: string }) => params)
+  .inputValidator((params: { id: string; name: string }) => params)
   .handler(async ({ data: { id, name } }) => {
     try {
       const [category] = await db
@@ -89,7 +89,7 @@ export const updateCategory = createServerFn({ method: "POST" })
 
 // Delete category
 export const deleteCategory = createServerFn({ method: "POST" })
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       await db.delete(categories).where(eq(categories.id, id));

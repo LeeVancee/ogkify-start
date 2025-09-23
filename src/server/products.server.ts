@@ -39,7 +39,7 @@ export type ProductFormType = z.infer<typeof productFormSchema>;
 
 // Get single product
 export const getProduct = createServerFn()
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       const product = await db.query.products.findFirst({
@@ -81,7 +81,7 @@ export const getProduct = createServerFn()
 
 // Update product
 export const updateProduct = createServerFn({ method: "POST" })
-  .validator((params: { id: string; data: ProductFormType }) => {
+  .inputValidator((params: { id: string; data: ProductFormType }) => {
     const validatedFields = productFormSchema.safeParse(params.data);
     if (!validatedFields.success) {
       throw new Error("Form validation failed");
@@ -226,7 +226,7 @@ export const getProducts = createServerFn().handler(async () => {
 
 // Create product
 export const createProduct = createServerFn({ method: "POST" })
-  .validator((data: ProductFormType) => {
+  .inputValidator((data: ProductFormType) => {
     const validatedFields = productFormSchema.safeParse(data);
     if (!validatedFields.success) {
       throw new Error("Form validation failed");
@@ -298,7 +298,7 @@ export const createProduct = createServerFn({ method: "POST" })
 
 // Delete product
 export const deleteProduct = createServerFn({ method: "POST" })
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
@@ -327,7 +327,7 @@ export const getProductsCount = createServerFn().handler(async () => {
 
 // Get popular products
 export const getPopularProducts = createServerFn()
-  .validator((limit?: number) => limit || 5)
+  .inputValidator((limit?: number) => limit || 5)
   .handler(async ({ data: limit }) => {
     try {
       // Use relational query to get popular products

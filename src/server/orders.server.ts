@@ -78,7 +78,7 @@ export const getUserOrders = createServerFn().handler(async () => {
 
 // Get order details
 export const getOrderDetails = createServerFn()
-  .validator((orderId: string) => orderId)
+  .inputValidator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     try {
       const session = await getSession();
@@ -248,7 +248,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
 
 // Create new payment session for unpaid order
 export const createPaymentSession = createServerFn()
-  .validator((orderId: string) => orderId)
+  .inputValidator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     try {
       const session = await getSession();
@@ -352,7 +352,7 @@ export const createPaymentSession = createServerFn()
 
 // Update order status
 export const updateOrderStatus = createServerFn()
-  .validator((input: { orderId: string; status: string }) => input)
+  .inputValidator((input: { orderId: string; status: string }) => input)
   .handler(async ({ data: { orderId, status } }) => {
     try {
       const session = await getSession();
@@ -451,7 +451,7 @@ export const getOrdersStats = createServerFn().handler(async () => {
 
 // Get recent orders
 export const getRecentOrders = createServerFn()
-  .validator((limit: number = 5) => limit)
+  .inputValidator((limit: number = 5) => limit)
   .handler(async ({ data: limit }) => {
     try {
       const recentOrdersList = await db.query.orders.findMany({
@@ -560,7 +560,7 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
 
 // Get single order by ID
 export const getOrderById = createServerFn()
-  .validator((orderId: string) => orderId)
+  .inputValidator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     try {
       const session = await getSession();
@@ -604,7 +604,7 @@ export const getOrderById = createServerFn()
 
 // Delete unpaid order
 export const deleteUnpaidOrder = createServerFn()
-  .validator((orderId: string) => orderId)
+  .inputValidator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     try {
       const session = await getSession();

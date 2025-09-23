@@ -3,7 +3,7 @@ import { db } from "@/db";
 
 // Get product details
 export const getProduct = createServerFn()
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       const product = await db.query.products.findFirst({
@@ -57,7 +57,7 @@ export const getProduct = createServerFn()
 
 // Get related products
 export const getRelatedProducts = createServerFn()
-  .validator((params: { productId: string; category: string }) => params)
+  .inputValidator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
     try {
       const productsList = await db.query.products.findMany({

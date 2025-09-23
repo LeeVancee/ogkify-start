@@ -5,7 +5,7 @@ import { db } from "@/db";
  * Get featured products list
  */
 export const getFeaturedProducts = createServerFn()
-  .validator((limit?: number) => limit || 4)
+  .inputValidator((limit?: number) => limit || 4)
   .handler(async ({ data: limit }) => {
     try {
       // Get featured products from database

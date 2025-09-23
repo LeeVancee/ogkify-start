@@ -24,7 +24,7 @@ export const getColors = createServerFn().handler(async () => {
 
 // Get single color
 export const getColor = createServerFn()
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       const color = await db.query.colors.findFirst({
@@ -52,7 +52,7 @@ export const getColor = createServerFn()
 
 // Create color
 export const createColor = createServerFn({ method: "POST" })
-  .validator((data: { name: string; value: string }) => data)
+  .inputValidator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
       const [color] = await db
@@ -71,7 +71,7 @@ export const createColor = createServerFn({ method: "POST" })
 
 // Update color
 export const updateColor = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     (params: { id: string; data: { name: string; value: string } }) => params,
   )
   .handler(async ({ data: { id, data } }) => {
@@ -93,7 +93,7 @@ export const updateColor = createServerFn({ method: "POST" })
 
 // Delete color
 export const deleteColor = createServerFn({ method: "POST" })
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       await db.delete(colors).where(eq(colors.id, id));

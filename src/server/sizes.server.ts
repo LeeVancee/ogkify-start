@@ -24,7 +24,7 @@ export const getSizes = createServerFn().handler(async () => {
 
 // Get single size
 export const getSize = createServerFn()
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       const size = await db.query.sizes.findFirst({
@@ -52,7 +52,7 @@ export const getSize = createServerFn()
 
 // Create size
 export const createSize = createServerFn({ method: "POST" })
-  .validator((data: { name: string; value: string }) => data)
+  .inputValidator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
       const [size] = await db
@@ -71,7 +71,7 @@ export const createSize = createServerFn({ method: "POST" })
 
 // Update size
 export const updateSize = createServerFn({ method: "POST" })
-  .validator(
+  .inputValidator(
     (params: { id: string; data: { name: string; value: string } }) => params,
   )
   .handler(async ({ data: { id, data } }) => {
@@ -93,7 +93,7 @@ export const updateSize = createServerFn({ method: "POST" })
 
 // Delete size
 export const deleteSize = createServerFn({ method: "POST" })
-  .validator((id: string) => id)
+  .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
       await db.delete(sizes).where(eq(sizes.id, id));
