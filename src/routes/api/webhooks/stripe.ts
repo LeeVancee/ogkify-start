@@ -9,7 +9,7 @@ import { stripe } from "@/lib/stripe";
 export const Route = createFileRoute("/api/webhooks/stripe")({
   server: {
     handlers: {
-      POST: async ({ request }: { request: any }) => {
+      POST: async ({ request }: { request: Request }) => {
         try {
           const body = await request.text();
           const signature = request.headers.get("stripe-signature");
