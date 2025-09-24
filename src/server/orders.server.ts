@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { count, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
+import { env } from "@/env/server";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { formatPrice } from "@/lib/utils";
 import { getSession } from "./getSession.server";
@@ -308,9 +309,7 @@ export const createPaymentSession = createServerFn()
       });
 
       // Use absolute URL
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
+      const baseUrl = env.VITE_BASE_URL;
       // Create Stripe checkout session
       const checkoutSession = await stripe.checkout.sessions.create({
         mode: "payment",

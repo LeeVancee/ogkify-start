@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 import { db } from "@/db";
 import { cartItems, carts, orders } from "@/db/schema";
+import { env } from "@/env/server";
 import { stripe } from "@/lib/stripe";
 
 export const Route = createFileRoute("/api/webhooks/stripe")({
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
           }
 
           // 确保 Webhook 密钥已设置
-          if (!process.env.STRIPE_WEBHOOK_SECRET) {
+          if (!env.STRIPE_WEBHOOK_SECRET) {
             console.error("缺少 STRIPE_WEBHOOK_SECRET 环境变量");
             return json({ error: "Webhook 配置错误" }, { status: 500 });
           }
@@ -31,7 +32,7 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
             event = stripe.webhooks.constructEvent(
               body,
               signature,
-              process.env.STRIPE_WEBHOOK_SECRET,
+              env.STRIPE_WEBHOOK_SECRET,
             );
           } catch (err) {
             const errorMessage =

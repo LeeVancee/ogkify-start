@@ -21,6 +21,7 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
     "@neondatabase/serverless": "^1.0.1",
+    "@t3-oss/env-core": "^0.13.8",
     "@tailwindcss/vite": "^4.1.12",
     "@tanstack/nitro-v2-vite-plugin": "1.132.0",
     "@tanstack/react-form": "^1.23.0",
