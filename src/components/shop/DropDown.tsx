@@ -13,10 +13,18 @@ import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
-export function DropDown() {
+interface DropDownProps {
+  initialSession?: any;
+}
+
+export function DropDown({ initialSession }: DropDownProps = {}) {
   const navigate = useNavigate();
 
+  // 如果没有传入初始会话数据，则使用客户端获取（兼容其他页面）
   const { data: session, isPending } = authClient.useSession();
+
+  // 优先使用服务端预加载的会话数据
+  const currentSession = initialSession || session;
 
   const handleLogout = () => {
     authClient.signOut({
@@ -28,7 +36,7 @@ export function DropDown() {
     });
   };
 
-  if (isPending) {
+  if (!initialSession && isPending) {
     return (
       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
         <Avatar className="h-8 w-8">
@@ -38,7 +46,7 @@ export function DropDown() {
     );
   }
 
-  if (!session) {
+  if (!currentSession) {
     return (
       <Button variant="ghost" onClick={() => navigate({ to: "/login" })}>
         login
@@ -52,11 +60,11 @@ export function DropDown() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src={session.user.image || ""}
-              alt={session.user.name || ""}
+              src={currentSession.user.image || ""}
+              alt={currentSession.user.name || ""}
             />
             <AvatarFallback>
-              {session.user.name[0].toUpperCase()}
+              {currentSession.user.name?.[0]?.toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -65,14 +73,14 @@ export function DropDown() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {session.user.name}
+              {currentSession.user.name}
             </p>
             <p className="text-xs leading-none text-muted-foreground">
-              {session.user.email}
+              {currentSession.user.email}
             </p>
           </div>
         </DropdownMenuLabel>
-        {session.user.role === "admin" && (
+        {currentSession.user.role === "admin" && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate({ to: "/dashboard" })}>

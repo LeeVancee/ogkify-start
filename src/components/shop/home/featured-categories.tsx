@@ -1,13 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getCategories } from "@/server/categories.server";
 
-export function FeaturedCategories() {
-  const { data: categories, isLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => getCategories(),
-  });
+interface FeaturedCategoriesProps {
+  initialData?: any[];
+}
+
+export function FeaturedCategories({
+  initialData,
+}: FeaturedCategoriesProps = {}) {
+  const categories = initialData || [];
+  const isLoading = !initialData;
 
   if (isLoading) {
     return <FeaturedCategoriesLoading />;

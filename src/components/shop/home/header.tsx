@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart } from "lucide-react";
 import { useState } from "react";
@@ -11,7 +10,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { getUserCart } from "@/server/cart.server";
 import { DropDown } from "../DropDown";
 
 const navigation = [
@@ -22,15 +20,23 @@ const navigation = [
   { name: "Contact", href: "/contact" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  initialCartData?: {
+    items: any[];
+    totalItems: number;
+  };
+  initialSession?: any;
+}
+
+export default function Header({
+  initialCartData,
+  initialSession,
+}: HeaderProps = {}) {
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 获取购物车数据
-  const { data: cartData } = useQuery({
-    queryKey: ["cart"],
-    queryFn: () => getUserCart(),
-  });
+  // 直接使用服务端预加载的数据
+  const cartData = initialCartData || { items: [], totalItems: 0 };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -106,7 +112,7 @@ export default function Header() {
             <form id="search-form" action="/search" className="hidden"></form>
           </div>
 
-          <DropDown />
+          <DropDown initialSession={initialSession} />
 
           <Link to="/cart" className="relative">
             <ShoppingCart className="h-5 w-5" />

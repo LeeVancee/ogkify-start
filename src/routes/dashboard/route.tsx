@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import type React from "react";
 import { EnhancedSidebar } from "@/components/dashboard/enhanced-sidebar";
 import { Separator } from "@/components/ui/separator";
@@ -7,8 +7,24 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { getSession } from "@/server/getSession.server";
 
 export const Route = createFileRoute("/dashboard")({
+  beforeLoad: async () => {
+    const session = await getSession();
+
+    // 检查用户是否已登录
+    if (!session) {
+      throw redirect({ to: "/login" });
+    }
+
+    // 检查用户是否为管理员
+    if (session.user.role !== "admin") {
+      throw redirect({ to: "/" });
+    }
+
+    return { session };
+  },
   component: RouteComponent,
 });
 
