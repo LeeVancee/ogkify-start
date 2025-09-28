@@ -1,20 +1,38 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { CategoryEditForm } from "@/components/dashboard/category/category-edit-form";
+import Loading from "@/components/loading";
 import { getCategory } from "@/server/categories.server";
 
 export const Route = createFileRoute("/dashboard/categories/$id")({
   component: RouteComponent,
-  loader: async ({ params }: { params: { id: string } }) => {
-    const response = await getCategory({ data: params.id });
-    return { response };
-  },
 });
 
 function RouteComponent() {
-  const { response } = Route.useLoaderData();
+  const { id } = Route.useParams();
 
-  if (!response.success || !response.category) {
-    notFound();
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["category", id],
+    queryFn: () => getCategory({ data: id }),
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError || !response?.success || !response.category) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold">Category not found</h3>
+        <p className="text-muted-foreground">
+          The category you're looking for doesn't exist.
+        </p>
+      </div>
+    );
   }
 
   return (

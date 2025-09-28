@@ -1,19 +1,38 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { ColorEditForm } from "@/components/dashboard/color/color-edit-form";
+import Loading from "@/components/loading";
 import { getColor } from "@/server/colors.server";
 
 export const Route = createFileRoute("/dashboard/colors/$id")({
   component: RouteComponent,
-  loader: async ({ params }: { params: { id: string } }) => {
-    const response = await getColor({ data: params.id });
-    return { response };
-  },
 });
 
 function RouteComponent() {
-  const { response } = Route.useLoaderData();
-  if (!response.success || !response.color) {
-    notFound();
+  const { id } = Route.useParams();
+
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["color", id],
+    queryFn: () => getColor({ data: id }),
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError || !response?.success || !response.color) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold">Color not found</h3>
+        <p className="text-muted-foreground">
+          The color you're looking for doesn't exist.
+        </p>
+      </div>
+    );
   }
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">

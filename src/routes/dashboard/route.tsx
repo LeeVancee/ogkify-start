@@ -22,7 +22,7 @@ export const Route = createFileRoute("/dashboard")({
     if (session.user.role !== "admin") {
       throw redirect({ to: "/" });
     }
-
+    console.log(session);
     return { session };
   },
   component: RouteComponent,

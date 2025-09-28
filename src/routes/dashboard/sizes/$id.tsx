@@ -1,20 +1,38 @@
-import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { SizeEditForm } from "@/components/dashboard/size/size-edit-form";
+import Loading from "@/components/loading";
 import { getSize } from "@/server/sizes.server";
 
 export const Route = createFileRoute("/dashboard/sizes/$id")({
   component: RouteComponent,
-  loader: async ({ params }: { params: { id: string } }) => {
-    const response = await getSize({ data: params.id });
-    return { response };
-  },
 });
 
 function RouteComponent() {
-  const { response } = Route.useLoaderData();
+  const { id } = Route.useParams();
 
-  if (!response.success || !response.size) {
-    notFound();
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["size", id],
+    queryFn: () => getSize({ data: id }),
+  });
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError || !response?.success || !response.size) {
+    return (
+      <div className="flex h-[400px] flex-col items-center justify-center">
+        <h3 className="text-lg font-semibold">Size not found</h3>
+        <p className="text-muted-foreground">
+          The size you're looking for doesn't exist.
+        </p>
+      </div>
+    );
   }
 
   return (
