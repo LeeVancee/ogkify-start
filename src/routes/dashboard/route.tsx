@@ -8,23 +8,23 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getSession } from "@/server/getSession.server";
-
 export const Route = createFileRoute("/dashboard")({
-  beforeLoad: async () => {
+  loader: async () => {
     const session = await getSession();
 
     // 检查用户是否已登录
     if (!session) {
       throw redirect({ to: "/login" });
     }
-
-    // 检查用户是否为管理员
     if (session.user.role !== "admin") {
       throw redirect({ to: "/" });
     }
-    console.log(session);
+
     return { session };
   },
+
+  staleTime: 1000 * 60 * 5,
+  gcTime: 1000 * 60 * 15,
   component: RouteComponent,
 });
 
