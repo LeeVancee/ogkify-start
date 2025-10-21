@@ -39,7 +39,7 @@ export default function Header({
   const cartData = initialCartData || { items: [], totalItems: 0 };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
@@ -65,7 +65,7 @@ export default function Header({
                         to={item.href}
                         className={cn(
                           "text-lg font-medium",
-                          pathname === item.href ? "text-primary" : "",
+                          pathname === item.href ? "text-primary" : ""
                         )}
                       >
                         {item.name}
@@ -90,7 +90,7 @@ export default function Header({
                   "font-medium hover:text-primary transition-colors",
                   pathname === item.href
                     ? "text-primary"
-                    : "text-muted-foreground",
+                    : "text-muted-foreground"
                 )}
               >
                 {item.name}
