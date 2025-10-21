@@ -1,5 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { GalleryVerticalEnd, LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/(auth)/signup")({
 function RouteComponent() {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
-
+  const router = useRouter();
   const form = useForm({
     defaultValues: {
       name: "",
@@ -35,13 +35,15 @@ function RouteComponent() {
           },
           onSuccess: () => {
             setIsPending(false);
+            toast.success("Sign up successful");
+            router.navigate({ to: "/login" });
           },
           onError: (ctx) => {
             setIsPending(false);
             setError(ctx.error.message || "Failed to sign up");
             toast.error(ctx.error.message || "Failed to sign up");
           },
-        },
+        }
       );
     },
   });
