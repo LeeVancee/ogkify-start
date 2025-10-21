@@ -10,7 +10,7 @@ export function CheckoutButton() {
     setIsLoading(true);
 
     try {
-      // 调用结账 API
+      // Call checkout API
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: {
@@ -24,7 +24,7 @@ export function CheckoutButton() {
         throw new Error(data.error || "Failed to create checkout session");
       }
 
-      // 如果成功，重定向到 Stripe 支付页面
+      // If successful, redirect to Stripe payment page
       if (data.sessionUrl) {
         window.location.href = data.sessionUrl;
         return;

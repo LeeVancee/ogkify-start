@@ -34,12 +34,12 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
   const isActiveGroup = (item: NavItem) => {
     if (item.items?.some((subItem) => location.pathname === subItem.url))
       return true;
-    // 只在编辑页面（即URL包含ID的情况）才检查startsWith
+    // Only check startsWith for edit pages (URLs containing IDs)
     if (
       item.items?.some((subItem) => {
         const urlParts = location.pathname.split("/");
         const subItemParts = subItem.url.split("/");
-        // 确保基础路径相同，且下一段是ID（数字或字母）
+        // Ensure base path matches and next segment is an ID (alphanumeric)
         return (
           urlParts.length > subItemParts.length &&
           location.pathname.startsWith(subItem.url + "/") &&
@@ -56,7 +56,7 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
-          // 如果没有子菜单或子菜单项为空
+          // If there's no submenu or submenu items are empty
           if (!item.items || item.items.length === 0) {
             return (
               <SidebarMenuItem key={item.title}>
@@ -72,7 +72,7 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
 
           const isActive = isActiveGroup(item);
 
-          // 有子菜单的情况
+          // Case with submenu
           return (
             <Collapsible key={item.title} asChild defaultOpen={isActive}>
               <SidebarMenuItem>

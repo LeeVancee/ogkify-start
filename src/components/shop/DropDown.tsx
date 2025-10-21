@@ -20,10 +20,10 @@ interface DropDownProps {
 export function DropDown({ initialSession }: DropDownProps = {}) {
   const navigate = useNavigate();
 
-  // 如果没有传入初始会话数据，则使用客户端获取（兼容其他页面）
+  // If no initial session data is passed, fetch on client side (compatible with other pages)
   const { data: session, isPending } = authClient.useSession();
 
-  // 优先使用服务端预加载的会话数据
+  // Prioritize server-side preloaded session data
   const currentSession = initialSession || session;
 
   const handleLogout = () => {

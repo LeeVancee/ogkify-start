@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { updateOrderStatus } from "@/server/orders.server";
 
-// 定义订单类型
+// Define order type
 interface Order {
   id: string;
   orderNumber: string;
@@ -25,7 +25,7 @@ interface Order {
 
 type OrderStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "CANCELLED";
 
-// 定义订单状态选项 - 与实际UI显示对应
+// Define order status options - corresponds to actual UI display
 const orderStatusOptions = [
   { value: "PENDING", label: "Pending" },
   { value: "PROCESSING", label: "Processing" }, // Frontend displays as "Processing", but maps to PAID
@@ -33,7 +33,7 @@ const orderStatusOptions = [
   { value: "CANCELLED", label: "Cancelled" },
 ];
 
-// 定义组件props
+// Define component props
 interface UpdateOrderStatusDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -48,7 +48,7 @@ export function UpdateOrderStatusDialog({
 }: UpdateOrderStatusDialogProps) {
   const router = useRouter();
 
-  // 初始状态，将PAID映射为PROCESSING以便UI显示
+  // Initial status, map PAID to PROCESSING for UI display
   const initialStatus =
     order.status === "PAID" ? "PROCESSING" : (order.status as OrderStatus);
   const [status, setStatus] = useState<OrderStatus>(initialStatus);
@@ -59,7 +59,7 @@ export function UpdateOrderStatusDialog({
 
     setIsUpdating(true);
     try {
-      // 调用更新订单状态API
+      // Call update order status API
       const result = await updateOrderStatus({
         data: { orderId: order.id, status },
       });
@@ -68,7 +68,7 @@ export function UpdateOrderStatusDialog({
         toast.success("Order status updated");
         onOpenChange(false);
 
-        // 使用Next.js的刷新机制刷新页面数据，而不是调用callback
+        // Use router's refresh mechanism to refresh page data instead of calling callback
         router.navigate({ to: "/dashboard/orders" });
       } else {
         toast.error(result.error || "Update order status failed");

@@ -1,18 +1,18 @@
 import Stripe from "stripe";
 import { env } from "@/env/server";
 
-// 确保环境变量已设置
+// Ensure environment variable is set
 if (!env.STRIPE_SECRET_KEY) {
   throw new Error("STRIPE_SECRET_KEY environment variable is not set");
 }
 
-// 创建 Stripe 实例
+// Create Stripe instance
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-07-30.basil", // 使用您的 Stripe 库支持的 API 版本
+  apiVersion: "2025-08-27.basil", // Use API version supported by your Stripe library
   typescript: true,
 });
 
-// 货币格式化函数，转换为 Stripe 使用的最小单位（例如，将元转换为分）
+// Currency formatting function, converts to smallest unit used by Stripe (e.g., dollars to cents)
 export function formatAmountForStripe(
   amount: number,
   currency: string = "usd",
@@ -21,14 +21,14 @@ export function formatAmountForStripe(
     usd: 100, // $1.00 = 100 cents
     eur: 100, // €1.00 = 100 cents
     gbp: 100, // £1.00 = 100 pence
-    cny: 100, // ¥1.00 = 100 分
+    cny: 100, // ¥1.00 = 100 fen
   };
 
   const multiplier = currencies[currency.toLowerCase()] || 100;
   return Math.round(amount * multiplier);
 }
 
-// 从 Stripe 最小单位转换回普通金额
+// Convert from Stripe's smallest unit back to regular amount
 export function formatAmountFromStripe(
   amount: number,
   currency: string = "usd",

@@ -4,7 +4,7 @@ export function ProductInfoLoading() {
   return (
     <div className="container px-4 py-8 md:px-6 md:py-12">
       <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
-        {/* 左侧图片区域 */}
+        {/* Left side image area */}
         <div className="space-y-4">
           <Skeleton className="aspect-square w-full rounded-lg" />
           <div className="grid grid-cols-4 gap-4">
@@ -14,7 +14,7 @@ export function ProductInfoLoading() {
           </div>
         </div>
 
-        {/* 右侧产品信息 */}
+        {/* Right side product information */}
         <div className="space-y-6">
           <div>
             <Skeleton className="h-10 w-3/4 mb-2" />
@@ -28,7 +28,7 @@ export function ProductInfoLoading() {
             <Skeleton className="h-4 w-3/4" />
           </div>
 
-          {/* 颜色选择 */}
+          {/* Color selection */}
           <div className="space-y-2">
             <Skeleton className="h-5 w-1/5" />
             <div className="flex flex-wrap gap-2">
@@ -38,7 +38,7 @@ export function ProductInfoLoading() {
             </div>
           </div>
 
-          {/* 尺寸选择 */}
+          {/* Size selection */}
           <div className="space-y-2">
             <Skeleton className="h-5 w-1/5" />
             <div className="flex flex-wrap gap-2">
@@ -48,13 +48,13 @@ export function ProductInfoLoading() {
             </div>
           </div>
 
-          {/* 数量选择 */}
+          {/* Quantity selection */}
           <div className="space-y-2">
             <Skeleton className="h-5 w-1/5" />
             <Skeleton className="h-10 w-24 rounded-md" />
           </div>
 
-          {/* 按钮 */}
+          {/* Buttons */}
           <div className="flex flex-col gap-4 sm:flex-row">
             <Skeleton className="h-12 sm:flex-1" />
             <Skeleton className="h-12 w-32" />
@@ -64,7 +64,7 @@ export function ProductInfoLoading() {
         </div>
       </div>
 
-      {/* 产品选项卡骨架 */}
+      {/* Product tabs skeleton */}
       <div className="mt-10">
         <div className="flex space-x-4 border-b">
           {Array.from({ length: 3 }).map((_, i) => (

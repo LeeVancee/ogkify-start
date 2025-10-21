@@ -37,7 +37,7 @@ function ProductPaginationContent({
     });
   };
 
-  // 显示最多5个页码按钮
+  // Display up to 5 page number buttons
   const getPageNumbers = () => {
     const pages = [];
     const leftOffset = Math.min(2, currentPage - 1);

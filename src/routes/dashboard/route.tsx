@@ -12,7 +12,7 @@ export const Route = createFileRoute("/dashboard")({
   loader: async () => {
     const session = await getSession();
 
-    // 检查用户是否已登录
+    // Check if user is logged in
     if (!session) {
       throw redirect({ to: "/login" });
     }

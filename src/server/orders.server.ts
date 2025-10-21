@@ -255,7 +255,7 @@ export const createPaymentSession = createServerFn()
       const session = await getSession();
 
       if (!session?.user.id) {
-        return { error: "未授权", success: false };
+        return { error: "Unauthorized", success: false };
       }
 
       // Get order information
@@ -380,7 +380,7 @@ export const updateOrderStatus = createServerFn()
           return { error: "Invalid order status", success: false };
       }
 
-      // 查询订单，确保订单存在
+      // Query order to ensure it exists
       const order = await db.query.orders.findFirst({
         where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
       });

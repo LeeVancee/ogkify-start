@@ -32,7 +32,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatPrice } from "@/lib/utils";
 import { getUnpaidOrders, getUserOrders } from "@/server/orders.server";
 
-// 定义类型
+// Define types
 interface OrderItem {
   id: string;
   productId: string;
@@ -63,35 +63,35 @@ function MyOrdersPage() {
   const [activeTab, setActiveTab] = useState("all");
   const queryClient = useQueryClient();
 
-  // 使用TanStack Query获取所有订单
+  // Use TanStack Query to fetch all orders
   const { data: allOrders = [], isLoading: isLoadingAll } = useQuery({
     queryKey: ["orders", "all"],
     queryFn: async () => {
       const response = await getUserOrders({});
       return response.success ? response.orders : [];
     },
-    staleTime: 1000 * 60 * 3, // 3分钟缓存
+    staleTime: 1000 * 60 * 3, // 3-minute cache
   });
 
-  // 使用TanStack Query获取未支付订单
+  // Use TanStack Query to fetch unpaid orders
   const { data: unpaidOrders = [], isLoading: isLoadingUnpaid } = useQuery({
     queryKey: ["orders", "unpaid"],
     queryFn: async () => {
       const response = await getUnpaidOrders({});
       return response.success ? response.orders : [];
     },
-    staleTime: 1000 * 60 * 3, // 3分钟缓存
+    staleTime: 1000 * 60 * 3, // 3-minute cache
   });
 
   const isLoading = isLoadingAll || isLoadingUnpaid;
 
-  // 处理订单删除后的刷新
+  // Handle refresh after order deletion
   const handleOrderDeleted = () => {
-    // 使用TanStack Query重新获取数据
+    // Use TanStack Query to refetch data
     queryClient.invalidateQueries({ queryKey: ["orders"] });
   };
 
-  // 获取订单状态图标
+  // Get order status icon
   function getOrderStatusIcon(status: string) {
     switch (status) {
       case "COMPLETED":
@@ -108,7 +108,7 @@ function MyOrdersPage() {
     }
   }
 
-  // 获取订单状态名称
+  // Get order status name
   function getOrderStatusName(status: string) {
     switch (status) {
       case "COMPLETED":
@@ -219,7 +219,7 @@ function MyOrdersPage() {
   );
 }
 
-// 订单列表组件
+// Order list component
 interface OrdersListProps {
   orders: Array<Order>;
   showPayButton: boolean;

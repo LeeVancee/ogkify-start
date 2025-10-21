@@ -24,9 +24,9 @@ export function UploadThingImage({
 
   const { startUpload, isUploading } = useUploadThing("imageUploader", {
     onClientUploadComplete: (res) => {
-      // 获取所有上传成功的图片 URL
+      // Get all successfully uploaded image URLs
       const uploadedUrls = res.map((file) => file.ufsUrl);
-      // 将新上传的 URL 添加到现有的 value 中
+      // Add newly uploaded URLs to existing value
       onChange([...value, ...uploadedUrls]);
       setFiles([]);
       toast.success("Image uploaded successfully");
@@ -44,7 +44,7 @@ export function UploadThingImage({
 
   return (
     <div className="space-y-4">
-      {/* 已上传图片预览 */}
+      {/* Uploaded image preview */}
       <div className="flex items-center gap-4 flex-wrap">
         {value.map((url) => (
           <div
@@ -68,7 +68,7 @@ export function UploadThingImage({
         ))}
       </div>
 
-      {/* 自定义Dropzone */}
+      {/* Custom Dropzone */}
       <Dropzone
         disabled={disabled || isUploading}
         maxFiles={4}
@@ -91,7 +91,11 @@ export function UploadThingImage({
                 cursor-pointer
                 flex flex-col items-center justify-center
                 relative
-                ${isDragActive ? "border-primary bg-primary/10" : "border-muted hover:border-muted-foreground"}
+                ${
+                  isDragActive
+                    ? "border-primary bg-primary/10"
+                    : "border-muted hover:border-muted-foreground"
+                }
                 ${isUploading ? "opacity-50 cursor-not-allowed" : ""}
                 ${fileRejections.length > 0 ? "border-destructive" : ""}
               `}

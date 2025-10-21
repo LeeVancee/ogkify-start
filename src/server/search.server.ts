@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { db } from "@/db";
 
 /**
- * 根据查询字符串搜索产品
+ * Search products based on query string
  */
 export const searchProducts = createServerFn()
   .inputValidator((query: string = "") => query)
@@ -24,7 +24,7 @@ export const searchProducts = createServerFn()
         },
       });
 
-      // 格式化返回结果
+      // Format return results
       return productsList.map((product) => ({
         id: product.id,
         name: product.name,

@@ -17,7 +17,7 @@
       "!dist",
       "!*.config.js",
       "!*.config.ts",
-      "!routeTree.gen.ts"
+      "!src/routeTree.gen.ts"
     ]
   },
   "formatter": {

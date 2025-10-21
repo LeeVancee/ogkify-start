@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { formatPrice } from "@/lib/utils";
 
-// 简化的产品类型
+// Simplified product type
 export interface SimpleProduct {
   id: string;
   name: string;

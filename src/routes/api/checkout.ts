@@ -7,6 +7,14 @@ import { orderItems, orders } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 
+// Generate order number: YYYYMMDDHHMMSS + 4-digit random number
+function generateOrderNumber(): string {
+  const now = new Date();
+  const datePart = now.toISOString().slice(0, 19).replace(/[-:T]/g, "");
+  const randomPart = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+  return `${datePart}${randomPart}`;
+}
+
 export const Route = createFileRoute("/api/checkout")({
   server: {
     handlers: {
@@ -17,7 +25,7 @@ export const Route = createFileRoute("/api/checkout")({
           const session = await auth.api.getSession({
             headers,
           });
-          // 检查用户是否已登录
+          // Check if user is logged in
           if (!session?.user.id) {
             return json(
               { error: "Must be logged in to checkout" },
@@ -25,7 +33,7 @@ export const Route = createFileRoute("/api/checkout")({
             );
           }
 
-          // 获取用户的购物车
+          // Get user's cart
           const cart = await db.query.carts.findFirst({
             where: (carts, { eq }) => eq(carts.userId, session.user.id),
             with: {
@@ -47,13 +55,13 @@ export const Route = createFileRoute("/api/checkout")({
             return json({ error: "Cart is empty" }, { status: 400 });
           }
 
-          // 计算总金额
+          // Calculate total amount
           const amount = cart.items.reduce(
             (total, item) => total + item.product.price * item.quantity,
             0,
           );
 
-          // 构建行项目
+          // Build line items
           const lineItems = cart.items.map((item) => {
             const productName = item.product.name;
             const colorName = item.color?.name || "";
@@ -78,19 +86,19 @@ export const Route = createFileRoute("/api/checkout")({
             };
           });
 
-          // 创建订单
+          // Create order
           const [order] = await db
             .insert(orders)
             .values({
               userId: session.user.id,
-              orderNumber: `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+              orderNumber: generateOrderNumber(),
               totalAmount: amount,
               status: "PENDING",
               paymentStatus: "UNPAID",
             })
             .returning();
 
-          // 创建订单项
+          // Create order items
           await db.insert(orderItems).values(
             cart.items.map((item) => ({
               orderId: order.id,
@@ -104,7 +112,7 @@ export const Route = createFileRoute("/api/checkout")({
 
           const origin = new URL(request.url).origin;
 
-          // 创建 Stripe 结账会话
+          // Create Stripe checkout session
           const checkoutSession = await stripe.checkout.sessions.create({
             mode: "payment",
             line_items: lineItems,
@@ -132,7 +140,7 @@ export const Route = createFileRoute("/api/checkout")({
             },
           });
 
-          // 更新订单，添加 Stripe 会话 ID
+          // Update order with Stripe session ID
           await db
             .update(orders)
             .set({

@@ -44,7 +44,7 @@ export function DeleteOrderButton({
       toast.success("Order deleted successfully");
       setIsOpen(false);
 
-      // 通知父组件订单已被删除，可以刷新列表
+      // Notify parent component that order has been deleted so it can refresh the list
       if (onDeleted) {
         onDeleted();
       }

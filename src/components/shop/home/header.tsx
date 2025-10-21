@@ -35,7 +35,7 @@ export default function Header({
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // 直接使用服务端预加载的数据
+  // Use server-side preloaded data directly
   const cartData = initialCartData || { items: [], totalItems: 0 };
 
   return (

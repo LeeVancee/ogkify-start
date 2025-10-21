@@ -7,7 +7,7 @@ import { getSession } from "@/server/getSession.server";
 export const Route = createFileRoute("/(shop)")({
   component: RouteComponent,
   loader: async () => {
-    // 并行获取 Header 所需的所有数据
+    // Fetch all data needed for Header in parallel
     const [cartData, session] = await Promise.all([
       getUserCart(),
       getSession(),

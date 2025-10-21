@@ -39,7 +39,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  // 使用TanStack Query获取购物车数据
+  // Use TanStack Query to fetch cart data
   const {
     data: cartData = { items: [], totalItems: 0 },
     isLoading,
@@ -47,36 +47,36 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   } = useQuery({
     queryKey: ["cart"],
     queryFn: getUserCart,
-    enabled: isOpen, // 只有当侧边栏打开时才获取数据
-    staleTime: 1000 * 60 * 5, // 5分钟内不重新获取
+    enabled: isOpen, // Only fetch data when sidebar is open
+    staleTime: 1000 * 60 * 5, // Don't refetch within 5 minutes
     refetchOnWindowFocus: false,
   });
 
-  // 移除购物车商品的mutation
+  // Remove cart item mutation
   const removeMutation = useMutation({
     mutationFn: (itemId: string) => removeFromCart({ data: itemId }),
     onSuccess: () => {
-      // 成功后刷新购物车数据
+      // Refresh cart data after success
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 
-  // 更新购物车商品数量的mutation
+  // Update cart item quantity mutation
   const updateQuantityMutation = useMutation({
     mutationFn: (params: { cartItemId: string; quantity: number }) =>
       updateCartItemQuantity({ data: params }),
     onSuccess: () => {
-      // 成功后刷新购物车数据
+      // Refresh cart data after success
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
   });
 
-  // 处理商品移除的函数
+  // Handle item removal function
   const handleItemRemoved = (itemId: string) => {
     removeMutation.mutate(itemId);
   };
 
-  // 处理数量变化的函数
+  // Handle quantity change function
   const handleQuantityChanged = (itemId: string, newQuantity: number) => {
     updateQuantityMutation.mutate({
       cartItemId: itemId,
@@ -84,7 +84,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
     });
   };
 
-  // 计算总价
+  // Calculate total price
   const subtotal = cartData.items.reduce(
     (total: number, item: CartItemType) => total + item.price * item.quantity,
     0,

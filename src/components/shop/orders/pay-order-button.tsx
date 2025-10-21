@@ -21,7 +21,7 @@ export function PayOrderButton({ orderId }: PayOrderButtonProps) {
         throw new Error(result.error || "Failed to create payment session");
       }
 
-      // 如果成功，重定向到 Stripe 支付页面
+      // If successful, redirect to Stripe payment page
       if (result.sessionUrl) {
         window.location.href = result.sessionUrl;
         return;

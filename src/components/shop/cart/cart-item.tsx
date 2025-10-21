@@ -47,13 +47,13 @@ export function CartItem({
       });
       if (result.success) {
         setQuantity(newQuantity);
-        // 通知父组件数量已更改
+        // Notify parent component that quantity has changed
         if (onQuantityChanged) {
           onQuantityChanged(item.id, newQuantity);
         }
       } else {
         toast.error(result.error || "Failed to update quantity");
-        setQuantity(item.quantity); // 恢复原有数量
+        setQuantity(item.quantity); // Restore original quantity
       }
     } catch (error) {
       toast.error("Failed to update quantity");
@@ -71,7 +71,7 @@ export function CartItem({
       const result = await removeFromCart({ data: item.id });
       if (result.success) {
         toast.success("Product removed from cart");
-        // 通知父组件商品已移除，而不是刷新页面
+        // Notify parent component that item has been removed instead of refreshing page
         if (onItemRemoved) {
           onItemRemoved(item.id);
         }
@@ -105,7 +105,7 @@ export function CartItem({
               {item.name}
             </Link>
 
-            {/* 显示颜色和尺寸信息 */}
+            {/* Display color and size information */}
             <p className="text-sm text-neutral-500 dark:text-neutral-400">
               {item.colorName} / {item.sizeName}
             </p>

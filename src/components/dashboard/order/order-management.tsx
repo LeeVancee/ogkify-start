@@ -51,7 +51,7 @@ import { cn, formatPrice } from "@/lib/utils";
 import { getOrderDetails, getUserOrders } from "@/server/orders.server";
 import { UpdateOrderStatusDialog } from "./update-order-status-dialog";
 
-// 定义订单项类型
+// Define order item type
 interface OrderItem {
   id: string;
   productId: string;
@@ -63,7 +63,7 @@ interface OrderItem {
   size?: { name: string; value: string } | null;
 }
 
-// 定义订单类型
+// Define order type
 interface Order {
   id: string;
   orderNumber: string;
@@ -87,7 +87,7 @@ interface Order {
   };
 }
 
-// 过滤表单类型
+// Filter form type
 interface FilterForm {
   searchQuery: string;
   statusFilter: string;
@@ -104,7 +104,7 @@ export function OrderManagement() {
   const [isStatusUpdateOpen, setIsStatusUpdateOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 使用 TanStack Query 获取订单数据
+  // Use TanStack Query to fetch order data
   const {
     data: ordersResponse,
     isLoading,
@@ -116,13 +116,13 @@ export function OrderManagement() {
       const response = await getUserOrders();
       return response;
     },
-    staleTime: 1000 * 60 * 2, // 2分钟缓存
+    staleTime: 1000 * 60 * 2, // 2-minute cache
   });
 
-  // 从响应中提取订单数组
+  // Extract order array from response
   const orders = ordersResponse?.success ? ordersResponse.orders : [];
 
-  // 使用react-hook-form管理过滤表单
+  // Use react-hook-form to manage filter form
   const { register, watch, setValue, handleSubmit } = useForm<FilterForm>({
     defaultValues: {
       searchQuery: "",
@@ -130,28 +130,28 @@ export function OrderManagement() {
     },
   });
 
-  // 监听表单值变化
+  // Watch form value changes
   const searchQuery = watch("searchQuery");
   const statusFilter = watch("statusFilter");
 
-  // 清除搜索
+  // Clear search
   const clearSearch = () => {
     setValue("searchQuery", "");
   };
 
-  // 刷新订单列表
+  // Refresh order list
   function refreshOrders() {
     refetch();
   }
 
-  // 查看订单详情
+  // View order details
   async function handleViewDetails(order: Order) {
     try {
-      // 先显示基本信息
+      // First show basic information
       setSelectedOrder(order);
       setIsDetailsOpen(true);
 
-      // 然后异步加载详细信息
+      // Then load detailed information asynchronously
       const response = await getOrderDetails({ data: order.id });
       if (response.success && response.order) {
         setSelectedOrder(response.order);
@@ -161,21 +161,21 @@ export function OrderManagement() {
     }
   }
 
-  // 打开更新状态对话框
+  // Open update status dialog
   function handleUpdateStatus(order: Order) {
     setSelectedOrder(order);
     setIsStatusUpdateOpen(true);
   }
 
-  // 订单状态更新后的回调
+  // Callback after order status update
   function handleStatusUpdated() {
-    // 关闭状态更新对话框
+    // Close status update dialog
     setIsStatusUpdateOpen(false);
-    // 刷新订单数据
+    // Refresh order data
     queryClient.invalidateQueries({ queryKey: ["orders"] });
   }
 
-  // 过滤订单
+  // Filter orders
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -193,12 +193,12 @@ export function OrderManagement() {
     return matchesSearch && matchesStatus;
   });
 
-  // 处理加载状态
+  // Handle loading state
   if (isLoading) {
     return <Loading />;
   }
 
-  // 处理错误状态
+  // Handle error state
   if (isError) {
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
@@ -217,7 +217,7 @@ export function OrderManagement() {
     );
   }
 
-  // 获取订单状态图标
+  // Get order status icon
   function getOrderStatusIcon(status: string) {
     switch (status) {
       case "COMPLETED":
@@ -233,7 +233,7 @@ export function OrderManagement() {
     }
   }
 
-  // 获取支付状态图标
+  // Get payment status icon
   function getPaymentStatusIcon(status: string) {
     switch (status) {
       case "PAID":
@@ -247,7 +247,7 @@ export function OrderManagement() {
     }
   }
 
-  // 获取订单状态名称（中文）
+  // Get order status name
   function getOrderStatusName(status: string) {
     switch (status) {
       case "COMPLETED":
@@ -263,7 +263,7 @@ export function OrderManagement() {
     }
   }
 
-  // 获取支付状态名称（中文）
+  // Get payment status name
   function getPaymentStatusName(status: string) {
     switch (status) {
       case "PAID":
@@ -279,10 +279,10 @@ export function OrderManagement() {
     }
   }
 
-  // 处理表单提交
+  // Handle form submission
   const onSubmit = (data: FilterForm) => {
     console.log("Filter form submitted:", data);
-    // 可以进行更复杂的过滤操作
+    // Can perform more complex filtering operations
   };
 
   return (
@@ -433,7 +433,7 @@ export function OrderManagement() {
         </Tabs>
       </form>
 
-      {/* 订单详情对话框 */}
+      {/* Order details dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
         <DialogContent className="max-w-5xl max-h-[85vh] overflow-auto">
           {selectedOrder && (
@@ -610,7 +610,7 @@ export function OrderManagement() {
         </DialogContent>
       </Dialog>
 
-      {/* 更新订单状态对话框 */}
+      {/* Update order status dialog */}
       {selectedOrder && (
         <UpdateOrderStatusDialog
           open={isStatusUpdateOpen}
@@ -623,7 +623,7 @@ export function OrderManagement() {
   );
 }
 
-// 订单表格组件
+// Order table component
 interface OrdersTableProps {
   orders: Array<Order>;
   isLoading: boolean;

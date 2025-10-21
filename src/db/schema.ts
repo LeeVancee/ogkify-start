@@ -11,7 +11,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-// 枚举定义
+// Enum definitions
 export const orderStatusEnum = pgEnum("order_status", [
   "PENDING",
   "PAID",
@@ -25,7 +25,7 @@ export const paymentStatusEnum = pgEnum("payment_status", [
   "FAILED",
 ]);
 
-// 模型定义
+// Model definitions
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name").notNull(),
@@ -188,7 +188,7 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// 多对多关系表
+// Many-to-many relationship tables
 export const productsToColors = pgTable("products_to_colors", {
   productId: uuid("product_id")
     .notNull()
@@ -207,7 +207,7 @@ export const productsToSizes = pgTable("products_to_sizes", {
     .references(() => sizes.id, { onDelete: "cascade" }),
 });
 
-// 关系定义
+// Relationship definitions
 export const categoriesRelations = relations(categories, ({ many }) => ({
   products: many(products),
 }));
@@ -318,7 +318,7 @@ export const accountsRelations = relations(account, ({ one }) => ({
   }),
 }));
 
-// 连接多对多关系的辅助关系
+// Helper relationships for connecting many-to-many relationships
 export const productsToColorsRelations = relations(
   productsToColors,
   ({ one }) => ({

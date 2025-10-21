@@ -19,7 +19,7 @@ interface ProductFiltersProps {
   maxPrice?: number;
 }
 
-// 定义搜索参数类型
+// Define search params type
 interface SearchParams {
   category?: string;
   sort?: string;
@@ -47,7 +47,7 @@ function ProductFiltersContent({
   const currentMinPrice = Number(search.minPrice || "0");
   const currentMaxPrice = Number(search.maxPrice || maxPrice.toString());
 
-  // 获取已选择的颜色和尺寸名称
+  // Get selected color and size names
   const currentColorNames = Array.isArray(search.color)
     ? search.color
     : search.color
@@ -76,7 +76,7 @@ function ProductFiltersContent({
   };
 
   const handleCategoryChange = (categoryId: string) => {
-    // 找到对应的分类名称
+    // Find corresponding category name
     const categoryName =
       categories.find((cat) => cat.id === categoryId)?.name || categoryId;
 
@@ -108,7 +108,7 @@ function ProductFiltersContent({
     name: string;
     value: string;
   }) => {
-    const colorName = color.name; // 使用颜色名称而不是ID
+    const colorName = color.name; // Use color name instead of ID
 
     const newColors = currentColorNames.includes(colorName)
       ? currentColorNames.filter((name: string) => name !== colorName)
@@ -130,7 +130,7 @@ function ProductFiltersContent({
     name: string;
     value: string;
   }) => {
-    const sizeName = size.value; // 使用尺寸值而不是ID
+    const sizeName = size.value; // Use size value instead of ID
 
     const newSizes = currentSizeNames.includes(sizeName)
       ? currentSizeNames.filter((name: string) => name !== sizeName)
