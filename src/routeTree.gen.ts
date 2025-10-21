@@ -203,7 +203,6 @@ const shopCheckoutSuccessRoute = shopCheckoutSuccessRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof shopIndexRoute
   '/dashboard': typeof DashboardRouteRouteWithChildren
   '/products': typeof shopProductsRouteRouteWithChildren
   '/login': typeof authLoginRoute
@@ -214,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof shopSearchRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/uploadthing': typeof ApiUploadthingRoute
+  '/': typeof shopIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/checkout/success': typeof shopCheckoutSuccessRoute
   '/product/$id': typeof shopProductIdRoute
@@ -235,7 +235,6 @@ export interface FileRoutesByFullPath {
   '/dashboard/sizes': typeof DashboardSizesIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof shopIndexRoute
   '/login': typeof authLoginRoute
   '/signup': typeof authSignupRoute
   '/cart': typeof shopCartRoute
@@ -244,6 +243,7 @@ export interface FileRoutesByTo {
   '/search': typeof shopSearchRoute
   '/api/checkout': typeof ApiCheckoutRoute
   '/api/uploadthing': typeof ApiUploadthingRoute
+  '/': typeof shopIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/checkout/success': typeof shopCheckoutSuccessRoute
   '/product/$id': typeof shopProductIdRoute
@@ -302,7 +302,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/dashboard'
     | '/products'
     | '/login'
@@ -313,6 +312,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/api/checkout'
     | '/api/uploadthing'
+    | '/'
     | '/dashboard/'
     | '/checkout/success'
     | '/product/$id'
@@ -334,7 +334,6 @@ export interface FileRouteTypes {
     | '/dashboard/sizes'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
     | '/signup'
     | '/cart'
@@ -343,6 +342,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/api/checkout'
     | '/api/uploadthing'
+    | '/'
     | '/dashboard'
     | '/checkout/success'
     | '/product/$id'
@@ -419,15 +419,15 @@ declare module '@tanstack/react-router' {
     }
     '/(shop)': {
       id: '/(shop)'
-      path: '/'
-      fullPath: '/'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof shopRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)': {
       id: '/(auth)'
-      path: '/'
-      fullPath: '/'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof authRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
