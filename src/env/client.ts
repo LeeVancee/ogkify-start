@@ -5,6 +5,8 @@ export const env = createEnv({
   clientPrefix: "VITE_",
   client: {
     VITE_BASE_URL: z.url().default("http://localhost:3000"),
+    VITE_CLOUDINARY_CLOUD_NAME: z.string(),
+    VITE_CLOUDINARY_UPLOAD_PRESET: z.string(),
   },
   runtimeEnv: import.meta.env,
 });

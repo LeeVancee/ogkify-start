@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { updateCategory } from "@/server/categories.server";
-import { SingleImageUpload } from "../single-image-upload";
+import { CloudinarySingleImageUpload } from "../cloudinary-single-image-upload";
 
 const formSchema = z.object({
   name: z.string().min(1, "Input category name"),
@@ -86,7 +86,7 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
             <FormItem>
               <FormLabel>Category Image</FormLabel>
               <FormControl>
-                <SingleImageUpload
+                <CloudinarySingleImageUpload
                   value={field.value}
                   onChange={field.onChange}
                   disabled={isSubmitting}

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { UploadThingImage } from "@/components/dashboard/upload-thing";
+import { CloudinaryMultiImageUpload } from "@/components/dashboard/cloudinary-multi-image-upload";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,9 +46,7 @@ const formSchema = z.object({
   price: z.string().refine((val) => !isNaN(Number(val)), {
     message: "Price must be a valid number.",
   }),
-  categoryId: z.string({
-    required_error: "Please select a category.",
-  }),
+  categoryId: z.string().min(1, "Please select a category."),
   colorIds: z.array(z.string()).min(1, {
     message: "Please select at least one color.",
   }),
@@ -330,7 +328,7 @@ export function EditProductForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <UploadThingImage
+                        <CloudinaryMultiImageUpload
                           value={field.value}
                           onChange={field.onChange}
                           disabled={isLoading}
@@ -388,8 +386,8 @@ export function EditProductForm({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id,
-                                              ),
+                                                  value !== color.id
+                                              )
                                             );
                                       }}
                                     />
@@ -453,8 +451,8 @@ export function EditProductForm({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id,
-                                              ),
+                                                  value !== size.id
+                                              )
                                             );
                                       }}
                                     />

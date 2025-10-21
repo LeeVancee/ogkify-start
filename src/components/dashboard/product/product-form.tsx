@@ -17,7 +17,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { UploadThingImage } from "@/components/dashboard/upload-thing";
+import { CloudinaryMultiImageUpload } from "@/components/dashboard/cloudinary-multi-image-upload";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -83,9 +83,7 @@ const productFormSchema = z.object({
   price: z.string().refine((val) => !isNaN(Number(val)), {
     message: "Price must be a valid number.",
   }),
-  categoryId: z.string({
-    required_error: "Please select a category.",
-  }),
+  categoryId: z.string().min(1, "Please select a category."),
   colorIds: z.array(z.string()).min(1, {
     message: "Please select at least one color.",
   }),
@@ -383,7 +381,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                     <FormItem>
                       <FormControl>
                         <div className="rounded-lg border-2 border-dashed p-4 transition-colors hover:border-primary/50 bg-muted/30">
-                          <UploadThingImage
+                          <CloudinaryMultiImageUpload
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading}
@@ -439,7 +437,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                             name="colorIds"
                             render={({ field }) => {
                               const isSelected = field.value?.includes(
-                                color.id,
+                                color.id
                               );
                               return (
                                 <FormItem
@@ -462,8 +460,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id,
-                                              ),
+                                                  value !== color.id
+                                              )
                                             );
                                       }}
                                     />
@@ -539,8 +537,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id,
-                                              ),
+                                                  value !== size.id
+                                              )
                                             );
                                       }}
                                     />
