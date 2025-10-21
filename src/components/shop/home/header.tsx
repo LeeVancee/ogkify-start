@@ -65,7 +65,7 @@ export default function Header({
                         to={item.href}
                         className={cn(
                           "text-lg font-medium",
-                          pathname === item.href ? "text-primary" : ""
+                          pathname === item.href ? "text-primary" : "",
                         )}
                       >
                         {item.name}
@@ -90,7 +90,7 @@ export default function Header({
                   "font-medium hover:text-primary transition-colors",
                   pathname === item.href
                     ? "text-primary"
-                    : "text-muted-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {item.name}

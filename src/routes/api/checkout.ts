@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
+import { format } from "date-fns";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
@@ -10,8 +11,8 @@ import { formatAmountForStripe, stripe } from "@/lib/stripe";
 // Generate order number: YYYYMMDDHHMMSS + 4-digit random number
 function generateOrderNumber(): string {
   const now = new Date();
-  const datePart = now.toISOString().slice(0, 19).replace(/[-:T]/g, "");
-  const randomPart = String(Math.floor(Math.random() * 10000)).padStart(4, "0");
+  const datePart = format(now, "yyyyMMddHHmmss");
+  const randomPart = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
   return `${datePart}${randomPart}`;
 }
 

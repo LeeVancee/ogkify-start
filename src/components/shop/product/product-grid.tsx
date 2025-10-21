@@ -116,7 +116,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                   <>
                     <p className="text-xl font-bold text-foreground">
                       {formatPrice(
-                        product.price * (1 - product.discount / 100)
+                        product.price * (1 - product.discount / 100),
                       )}
                     </p>
                     <p className="text-sm text-muted-foreground line-through">

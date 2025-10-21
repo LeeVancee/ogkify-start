@@ -45,6 +45,7 @@ export function UpdateOrderStatusDialog({
   open,
   onOpenChange,
   order,
+  onStatusUpdated,
 }: UpdateOrderStatusDialogProps) {
   const router = useRouter();
 
@@ -66,9 +67,11 @@ export function UpdateOrderStatusDialog({
 
       if (result.success) {
         toast.success("Order status updated");
-        onOpenChange(false);
 
-        // Use router's refresh mechanism to refresh page data instead of calling callback
+        // Call the callback to refresh data
+        onStatusUpdated();
+
+        // Navigate back to orders page
         router.navigate({ to: "/dashboard/orders" });
       } else {
         toast.error(result.error || "Update order status failed");

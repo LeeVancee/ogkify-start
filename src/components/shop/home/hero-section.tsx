@@ -45,7 +45,7 @@ export default function HeroSection() {
               <div>
                 <h3 className="font-semibold">Free Shipping</h3>
                 <p className="text-sm text-muted-foreground">
-                  On orders over $50
+                  On orders over $25
                 </p>
               </div>
             </div>

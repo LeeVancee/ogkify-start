@@ -118,7 +118,7 @@ function CartPage() {
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Checkout process failed",
+        error instanceof Error ? error.message : "Checkout process failed"
       );
     } finally {
       setIsCheckingOut(false);
@@ -129,9 +129,9 @@ function CartPage() {
   const items = cartData?.items || [];
   const subtotal = items.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity,
-    0,
+    0
   );
-  const shipping = subtotal > 200 ? 0 : 10; // Free shipping over $200
+  const shipping = subtotal > 25 ? 0 : 10; // Free shipping over $25
   const tax = subtotal * 0.08; // 8% tax
   const total = subtotal + shipping + tax;
 
@@ -223,7 +223,7 @@ function CartPage() {
                 <div key={item.id}>
                   <div className="flex gap-4">
                     {/* Product Image */}
-                    <div className="h-20 w-20 flex-shrink-0 overflow-hidden rounded-md border">
+                    <div className="h-20 w-20 shrink-0 overflow-hidden rounded-md border">
                       <img
                         src={item.image}
                         alt={item.name}
@@ -351,7 +351,7 @@ function CartPage() {
 
               {shipping > 0 && (
                 <div className="rounded-md bg-blue-50 p-3 text-sm text-blue-800">
-                  Add ${(200 - subtotal).toFixed(2)} more for free shipping!
+                  Add ${(25 - subtotal).toFixed(2)} more for free shipping!
                 </div>
               )}
 
