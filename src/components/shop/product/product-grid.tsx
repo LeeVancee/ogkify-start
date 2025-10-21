@@ -50,7 +50,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           <Link
             to="/product/$id"
             params={{ id: product.id }}
-            className="relative aspect-[4/5] overflow-hidden bg-muted/30"
+            className="relative aspect-4/5 overflow-hidden bg-muted/30"
           >
             <img
               src={product.images[0] || "/placeholder.svg?height=400&width=300"}
@@ -116,7 +116,7 @@ export function ProductGrid({ products }: ProductGridProps) {
                   <>
                     <p className="text-xl font-bold text-foreground">
                       {formatPrice(
-                        product.price * (1 - product.discount / 100),
+                        product.price * (1 - product.discount / 100)
                       )}
                     </p>
                     <p className="text-sm text-muted-foreground line-through">
