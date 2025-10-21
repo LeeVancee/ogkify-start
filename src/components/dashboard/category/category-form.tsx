@@ -1,4 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { FolderTree } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -28,6 +30,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 export function CategoryForm() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -43,7 +48,10 @@ export function CategoryForm() {
       const result = await createCategory({ data: values });
       if (result.success) {
         toast.success("Category created successfully");
-        form.reset();
+        // Invalidate queries to refresh the list
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
+        // Navigate back to the categories list
+        router.navigate({ to: "/dashboard/categories" });
       } else {
         toast.error(result.error);
       }

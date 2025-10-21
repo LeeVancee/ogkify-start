@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import {
   Archive,
@@ -97,6 +98,7 @@ type FormValues = z.infer<typeof productFormSchema>;
 
 export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<any>({
@@ -122,8 +124,13 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
 
       if (result.error) {
         toast.error(result.error);
+        return;
       }
+
       toast.success("Product created successfully!");
+      // Invalidate queries to refresh the list
+      queryClient.invalidateQueries({ queryKey: ["products"] });
+      // Navigate back to the products list
       router.navigate({ to: "/dashboard/products" });
     } catch (error) {
       toast.error("Create product failed. Please try again later.");
@@ -136,7 +143,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
     <div className="w-full space-y-6 p-6 md:p-8">
       <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg">
+          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-linear-to-br from-green-500 to-emerald-500 shadow-lg">
             <Package className="h-7 w-7 text-white" />
           </div>
           <div>

@@ -1,4 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { Ruler } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -34,6 +36,9 @@ const commonSizes = [
 ];
 
 export function SizeForm() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -49,7 +54,10 @@ export function SizeForm() {
       const result = await createSize({ data: values });
       if (result.success) {
         toast.success("Size created successfully");
-        form.reset();
+        // Invalidate queries to refresh the list
+        queryClient.invalidateQueries({ queryKey: ["sizes"] });
+        // Navigate back to the sizes list
+        router.navigate({ to: "/dashboard/sizes" });
       } else {
         toast.error(result.error);
       }

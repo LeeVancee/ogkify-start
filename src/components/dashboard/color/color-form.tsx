@@ -1,4 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -22,13 +24,16 @@ const formSchema = z.object({
     .string()
     .regex(
       /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-      "Please enter a valid hex color",
+      "Please enter a valid hex color"
     ),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 export function ColorForm() {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -45,7 +50,10 @@ export function ColorForm() {
       const result = await createColor({ data: values });
       if (result.success) {
         toast.success("Color created successfully");
-        form.reset();
+        // Invalidate queries to refresh the list
+        queryClient.invalidateQueries({ queryKey: ["colors"] });
+        // Navigate back to the colors list
+        router.navigate({ to: "/dashboard/colors" });
       } else {
         toast.error(result.error);
       }
