@@ -84,12 +84,8 @@ const productFormSchema = z.object({
     message: "Price must be a valid number.",
   }),
   categoryId: z.string().min(1, "Please select a category."),
-  colorIds: z.array(z.string()).min(1, {
-    message: "Please select at least one color.",
-  }),
-  sizeIds: z.array(z.string()).min(1, {
-    message: "Please select at least one size.",
-  }),
+  colorIds: z.array(z.string()).default([]),
+  sizeIds: z.array(z.string()).default([]),
   images: z.array(z.string()).min(1, {
     message: "Please upload at least one product image.",
   }),
@@ -427,7 +423,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                         </Badge>
                       </div>
                       <FormDescription className="text-xs mb-3">
-                        Select at least one color option for this product
+                        Select color options for this product (optional, leave
+                        empty if not applicable)
                       </FormDescription>
                       <div className="grid grid-cols-2 gap-2">
                         {colors.map((color) => (
@@ -506,7 +503,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                         </Badge>
                       </div>
                       <FormDescription className="text-xs mb-3">
-                        Select at least one size option for this product
+                        Select size options for this product (optional, leave
+                        empty if not applicable)
                       </FormDescription>
                       <div className="grid grid-cols-2 gap-2">
                         {sizes.map((size) => (

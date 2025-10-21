@@ -22,12 +22,8 @@ const productFormSchema = z.object({
   categoryId: z.string().min(1, {
     message: "Please select a category.",
   }),
-  colorIds: z.array(z.string()).min(1, {
-    message: "Please select at least one color.",
-  }),
-  sizeIds: z.array(z.string()).min(1, {
-    message: "Please select at least one size.",
-  }),
+  colorIds: z.array(z.string()).default([]),
+  sizeIds: z.array(z.string()).default([]),
   images: z.array(z.string()).min(1, {
     message: "Please upload at least one product image.",
   }),

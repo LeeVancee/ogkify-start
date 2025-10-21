@@ -65,18 +65,23 @@ export const Route = createFileRoute("/api/checkout")({
           // Build line items
           const lineItems = cart.items.map((item) => {
             const productName = item.product.name;
-            const colorName = item.color?.name || "";
-            const sizeName = item.size?.name || "";
-            const variantInfo = [colorName, sizeName]
-              .filter(Boolean)
-              .join(", ");
+            const colorName = item.color?.name;
+            const sizeName = item.size?.name;
+            
+            // Build variant info string (only include non-empty values)
+            const variantParts = [colorName, sizeName].filter(
+              (part) => part && part.trim().length > 0,
+            );
+            const variantInfo = variantParts.length > 0 
+              ? variantParts.join(", ") 
+              : null;
 
             return {
               price_data: {
                 currency: "usd",
                 product_data: {
                   name: productName,
-                  description: variantInfo ? `${variantInfo}` : undefined,
+                  description: variantInfo || undefined,
                   images: item.product.images[0]?.url
                     ? [item.product.images[0].url]
                     : undefined,
