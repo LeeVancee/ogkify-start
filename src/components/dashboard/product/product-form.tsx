@@ -441,7 +441,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                             name="colorIds"
                             render={({ field }) => {
                               const isSelected = field.value?.includes(
-                                color.id
+                                color.id,
                               );
                               return (
                                 <FormItem
@@ -464,8 +464,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id
-                                              )
+                                                  value !== color.id,
+                                              ),
                                             );
                                       }}
                                     />
@@ -542,8 +542,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id
-                                              )
+                                                  value !== size.id,
+                                              ),
                                             );
                                       }}
                                     />

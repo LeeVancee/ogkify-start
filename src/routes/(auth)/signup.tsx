@@ -43,7 +43,7 @@ function RouteComponent() {
             setError(ctx.error.message || "Failed to sign up");
             toast.error(ctx.error.message || "Failed to sign up");
           },
-        }
+        },
       );
     },
   });

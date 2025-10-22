@@ -58,7 +58,7 @@ export function CloudinarySingleImageUpload({
               onChange(result.info.secure_url);
               toast.success("Image uploaded successfully");
             }
-          }
+          },
         );
 
         // Add click event to open widget

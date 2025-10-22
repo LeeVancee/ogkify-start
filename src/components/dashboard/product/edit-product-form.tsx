@@ -382,8 +382,8 @@ export function EditProductForm({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id
-                                              )
+                                                  value !== color.id,
+                                              ),
                                             );
                                       }}
                                     />
@@ -447,8 +447,8 @@ export function EditProductForm({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id
-                                              )
+                                                  value !== size.id,
+                                              ),
                                             );
                                       }}
                                     />

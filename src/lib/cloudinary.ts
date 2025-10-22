@@ -9,4 +9,3 @@ export const cld = new Cloudinary({
 // Upload preset for client-side uploads
 export const CLOUDINARY_UPLOAD_PRESET = env.VITE_CLOUDINARY_UPLOAD_PRESET;
 export const CLOUDINARY_CLOUD_NAME = env.VITE_CLOUDINARY_CLOUD_NAME;
-

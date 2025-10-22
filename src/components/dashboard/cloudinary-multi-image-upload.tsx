@@ -75,7 +75,7 @@ export function CloudinaryMultiImageUpload({
                 toast.success("Images uploaded successfully");
               }
             }
-          }
+          },
         );
 
         // Add click event to open widget

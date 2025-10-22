@@ -12,7 +12,10 @@ import { formatAmountForStripe, stripe } from "@/lib/stripe";
 function generateOrderNumber(): string {
   const now = new Date();
   const datePart = format(now, "yyyyMMddHHmmss");
-  const randomPart = String(Math.floor(Math.random() * 1000000)).padStart(6, "0");
+  const randomPart = String(Math.floor(Math.random() * 1000000)).padStart(
+    6,
+    "0",
+  );
   return `${datePart}${randomPart}`;
 }
 
@@ -67,14 +70,13 @@ export const Route = createFileRoute("/api/checkout")({
             const productName = item.product.name;
             const colorName = item.color?.name;
             const sizeName = item.size?.name;
-            
+
             // Build variant info string (only include non-empty values)
             const variantParts = [colorName, sizeName].filter(
               (part) => part && part.trim().length > 0,
             );
-            const variantInfo = variantParts.length > 0 
-              ? variantParts.join(", ") 
-              : null;
+            const variantInfo =
+              variantParts.length > 0 ? variantParts.join(", ") : null;
 
             return {
               price_data: {

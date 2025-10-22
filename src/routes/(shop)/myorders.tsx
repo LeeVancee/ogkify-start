@@ -5,9 +5,9 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
+  Hash,
   Package,
   ShoppingBag,
-  Hash,
 } from "lucide-react";
 import { useState } from "react";
 import { NoOrders } from "@/components/shop/cart/empty-cart";
