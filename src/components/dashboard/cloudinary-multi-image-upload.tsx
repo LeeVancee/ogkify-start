@@ -129,33 +129,7 @@ export function CloudinaryMultiImageUpload({
       </div>
 
       {/* Upload button area */}
-      <div className="space-y-4">
-        <div
-          className={`
-            border-2 border-dashed 
-            p-8
-            h-[200px]
-            rounded-lg 
-            transition 
-            flex flex-col items-center justify-center
-            relative
-            border-muted
-            ${disabled ? "opacity-50" : ""}
-          `}
-        >
-          <div className="text-center space-y-2">
-            <Upload className="mx-auto h-10 w-10 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">
-              Click the button below to upload images
-            </p>
-            <p className="text-xs text-muted-foreground">
-              Supported formats: JPG, PNG, GIF, WEBP (max 5MB each)
-            </p>
-            <p className="text-xs font-medium text-muted-foreground">
-              {value.length} / 4 images uploaded
-            </p>
-          </div>
-        </div>
+      <div>
         <button
           ref={uploadButtonRef}
           type="button"

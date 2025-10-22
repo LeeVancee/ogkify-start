@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ interface SizeEditFormProps {
 
 export function SizeEditForm({ size }: SizeEditFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [name, setName] = useState(size.name);
   const [value, setValue] = useState(size.value);
   const [loading, setLoading] = useState(false);
@@ -33,6 +35,7 @@ export function SizeEditForm({ size }: SizeEditFormProps) {
       });
       if (result.success) {
         toast.success("Size updated successfully");
+        queryClient.invalidateQueries({ queryKey: ["sizes"] });
         router.navigate({ to: "/dashboard/sizes" });
       } else {
         toast.error(result.error);

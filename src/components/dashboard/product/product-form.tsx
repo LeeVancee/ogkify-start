@@ -383,7 +383,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <div className="rounded-lg border-2 border-dashed p-4 transition-colors hover:border-primary/50 bg-muted/30">
+                        <div className="rounded-lg border-2 border-dashed p-4 transition-colors bg-muted/30">
                           <CloudinaryMultiImageUpload
                             value={field.value}
                             onChange={field.onChange}

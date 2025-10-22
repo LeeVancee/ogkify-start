@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -100,6 +101,7 @@ export function EditProductForm({
   sizes,
 }: EditProductFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<any>({
@@ -130,6 +132,7 @@ export function EditProductForm({
         setIsLoading(false);
       }
       toast.success("Product updated successfully");
+      queryClient.invalidateQueries({ queryKey: ["products"] });
       router.navigate({ to: "/dashboard/products" });
     } catch (error) {
       toast.error("Update product failed. Please try again later.");

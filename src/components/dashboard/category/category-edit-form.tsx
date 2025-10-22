@@ -1,4 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -35,6 +36,7 @@ interface CategoryEditFormProps {
 
 export function CategoryEditForm({ category }: CategoryEditFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -49,10 +51,11 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
   async function onSubmit(values: FormValues) {
     try {
       const result = await updateCategory({
-        data: { id: category.id, name: values.name },
+        data: { id: category.id, name: values.name, imageUrl: values.imageUrl },
       });
       if (result.success) {
         toast.success("Category updated successfully");
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
         router.navigate({ to: "/dashboard/categories" });
       } else {
         toast.error(result.error);

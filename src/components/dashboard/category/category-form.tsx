@@ -95,7 +95,7 @@ export function CategoryForm() {
                 (recommended: 800x800px)
               </FormDescription>
               <FormControl>
-                <div className="rounded-lg border-2 border-dashed p-6 transition-colors hover:border-primary/50 bg-muted/30">
+                <div className="rounded-lg border-2 border-dashed p-6 transition-colors  bg-muted/30">
                   <CloudinarySingleImageUpload
                     value={field.value}
                     onChange={field.onChange}

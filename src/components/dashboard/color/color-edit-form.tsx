@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -15,6 +16,7 @@ interface ColorEditFormProps {
 
 export function ColorEditForm({ color }: ColorEditFormProps) {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [name, setName] = useState(color.name);
   const [value, setValue] = useState(color.value);
   const [loading, setLoading] = useState(false);
@@ -39,6 +41,7 @@ export function ColorEditForm({ color }: ColorEditFormProps) {
       });
       if (result.success) {
         toast.success("Color updated successfully");
+        queryClient.invalidateQueries({ queryKey: ["colors"] });
         router.navigate({ to: "/dashboard/colors" });
       } else {
         toast.error(result.error);

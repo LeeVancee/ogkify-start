@@ -33,7 +33,8 @@ export function CloudinarySingleImageUpload({
 
   useEffect(() => {
     const initializeUploadWidget = () => {
-      if (window.cloudinary && uploadButtonRef.current) {
+      // Only initialize when there's no image (button is visible)
+      if (window.cloudinary && uploadButtonRef.current && !value) {
         // Create upload widget
         uploadWidgetRef.current = window.cloudinary.createUploadWidget(
           {
@@ -79,7 +80,7 @@ export function CloudinarySingleImageUpload({
     };
 
     initializeUploadWidget();
-  }, [disabled, onChange]);
+  }, [disabled, onChange, value]);
 
   return (
     <div className="space-y-4">
@@ -100,31 +101,7 @@ export function CloudinarySingleImageUpload({
           <img className="object-cover" alt="Category image" src={value} />
         </div>
       ) : (
-        <div className="space-y-4">
-          <div
-            className={`
-              border-2 border-dashed 
-              p-8
-              h-[200px]
-              rounded-lg 
-              transition 
-              cursor-pointer
-              flex flex-col items-center justify-center
-              relative
-              border-muted hover:border-muted-foreground
-              ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-            `}
-          >
-            <div className="text-center space-y-2">
-              <ImagePlus className="mx-auto h-10 w-10 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                Click the button below to upload
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Supported formats: JPG, PNG, GIF, WEBP (max 4MB)
-              </p>
-            </div>
-          </div>
+        <div>
           <button
             ref={uploadButtonRef}
             type="button"

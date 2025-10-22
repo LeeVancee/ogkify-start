@@ -72,12 +72,14 @@ export const createCategory = createServerFn({ method: "POST" })
 
 // Update category
 export const updateCategory = createServerFn({ method: "POST" })
-  .inputValidator((params: { id: string; name: string }) => params)
-  .handler(async ({ data: { id, name } }) => {
+  .inputValidator(
+    (params: { id: string; name: string; imageUrl?: string }) => params,
+  )
+  .handler(async ({ data: { id, name, imageUrl } }) => {
     try {
       const [category] = await db
         .update(categories)
-        .set({ name })
+        .set({ name, imageUrl })
         .where(eq(categories.id, id))
         .returning();
 
