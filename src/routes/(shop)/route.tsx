@@ -15,7 +15,7 @@ export const Route = createFileRoute("/(shop)")({
 
     return {
       initialCartData: cartData,
-      initialSession: session,
+      initialSession: session || undefined,
     };
   },
 });
