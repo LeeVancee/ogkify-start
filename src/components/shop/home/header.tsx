@@ -20,12 +20,28 @@ const navigation = [
   { name: "Contact", href: "/contact" },
 ];
 
+interface CartItem {
+  id: string;
+  [key: string]: unknown;
+}
+
+interface SessionUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: string;
+}
+
+interface Session {
+  user: SessionUser;
+}
+
 interface HeaderProps {
   initialCartData?: {
-    items: any[];
+    items: Array<CartItem>;
     totalItems: number;
   };
-  initialSession?: any;
+  initialSession?: Session;
 }
 
 export default function Header({

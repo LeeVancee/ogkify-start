@@ -1,8 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { Skeleton } from "@/components/ui/skeleton";
 
+interface CategoryWithImage {
+  id: string;
+  name: string;
+  imageUrl: string | null;
+}
+
 interface FeaturedCategoriesProps {
-  initialData?: any[];
+  initialData?: Array<CategoryWithImage>;
 }
 
 export function FeaturedCategories({

@@ -48,14 +48,16 @@ const formSchema = z.object({
     message: "Price must be a valid number.",
   }),
   categoryId: z.string().min(1, "Please select a category."),
-  colorIds: z.array(z.string()).default([]),
-  sizeIds: z.array(z.string()).default([]),
+  colorIds: z.array(z.string()),
+  sizeIds: z.array(z.string()),
   images: z.array(z.string()).min(1, {
     message: "Please upload at least one product image.",
   }),
-  isFeatured: z.boolean().default(false),
-  isArchived: z.boolean().default(false),
+  isFeatured: z.boolean(),
+  isArchived: z.boolean(),
 });
+
+type FormValues = z.infer<typeof formSchema>;
 
 interface ProductFormValues {
   id: string;
@@ -104,7 +106,7 @@ export function EditProductForm({
   const queryClient = useQueryClient();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<any>({
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: product.name,
@@ -119,7 +121,7 @@ export function EditProductForm({
     },
   });
 
-  async function onSubmit(values: any) {
+  async function onSubmit(values: FormValues) {
     setIsLoading(true);
 
     try {

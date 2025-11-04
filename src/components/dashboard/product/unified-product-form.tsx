@@ -48,6 +48,7 @@ import { createProduct, updateProduct } from "@/server/products.server";
 import { VariantsCardContent } from "./product-form-fields";
 import {
   type ProductFormProps,
+  type ProductFormValues,
   productFormSchema,
 } from "./product-form-schema";
 
@@ -86,7 +87,7 @@ export function UnifiedProductForm({
   const submitButtonText = isEditMode ? "Update Product" : "Create Product";
   const submitLoadingText = isEditMode ? "Updating..." : "Creating...";
 
-  const form = useForm<any>({
+  const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
     defaultValues: product || {
       name: "",
@@ -101,7 +102,7 @@ export function UnifiedProductForm({
     },
   });
 
-  async function onSubmit(values: any) {
+  async function onSubmit(values: ProductFormValues) {
     setIsLoading(true);
 
     try {

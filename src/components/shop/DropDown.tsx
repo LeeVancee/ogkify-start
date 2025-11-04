@@ -13,8 +13,19 @@ import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
+interface SessionUser {
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+  role?: string;
+}
+
+interface Session {
+  user: SessionUser;
+}
+
 interface DropDownProps {
-  initialSession?: any;
+  initialSession?: Session;
 }
 
 export function DropDown({ initialSession }: DropDownProps = {}) {

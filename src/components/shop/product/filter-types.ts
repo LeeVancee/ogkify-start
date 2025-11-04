@@ -8,7 +8,7 @@ export interface SearchParams {
   maxPrice?: string;
   color?: string | Array<string>;
   size?: string | Array<string>;
-  [key: string]: any;
+  [key: string]: string | Array<string> | boolean | undefined;
 }
 
 export interface FilterProps {

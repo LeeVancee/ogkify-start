@@ -36,13 +36,13 @@ export const productFormSchema = z.object({
     message: "Price must be a valid number.",
   }),
   categoryId: z.string().min(1, "Please select a category."),
-  colorIds: z.array(z.string()).default([]),
-  sizeIds: z.array(z.string()).default([]),
+  colorIds: z.array(z.string()),
+  sizeIds: z.array(z.string()),
   images: z.array(z.string()).min(1, {
     message: "Please upload at least one product image.",
   }),
-  isFeatured: z.boolean().default(false),
-  isArchived: z.boolean().default(false),
+  isFeatured: z.boolean(),
+  isArchived: z.boolean(),
 });
 
 export type ProductFormValues = z.infer<typeof productFormSchema>;

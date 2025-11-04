@@ -6,12 +6,11 @@ import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
 } from "@/lib/cloudinary";
-
-declare global {
-  interface Window {
-    cloudinary: CloudinaryBase;
-  }
-}
+import type {
+  CloudinaryUploadError,
+  CloudinaryUploadResult,
+  CloudinaryUploadWidget,
+} from "@/lib/cloudinary-types";
 
 interface CloudinarySingleImageUploadProps {
   value: string;
@@ -24,7 +23,7 @@ export function CloudinarySingleImageUpload({
   onChange,
   disabled,
 }: CloudinarySingleImageUploadProps) {
-  const uploadWidgetRef = useRef<any>(null);
+  const uploadWidgetRef = useRef<CloudinaryUploadWidget | null>(null);
   const uploadButtonRef = useRef<HTMLButtonElement>(null);
 
   const onRemove = () => {
@@ -47,14 +46,17 @@ export function CloudinarySingleImageUpload({
             clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
             resourceType: "image",
           },
-          (error: any, result: any) => {
+          (
+            error: CloudinaryUploadError | null,
+            result: CloudinaryUploadResult,
+          ) => {
             if (error) {
               console.error("Upload error:", error);
               toast.error(`Upload failed: ${error.message || "Unknown error"}`);
               return;
             }
 
-            if (result && result.event === "success") {
+            if (result && result.event === "success" && result.info) {
               console.log("Upload successful:", result.info);
               onChange(result.info.secure_url);
               toast.success("Image uploaded successfully");

@@ -1,7 +1,15 @@
 import { Link } from "@tanstack/react-router";
 import { formatPrice } from "@/lib/utils";
 
-export default function ProductCard({ product }: { product: any }) {
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  image: string | null;
+  discount?: number;
+}
+
+export default function ProductCard({ product }: { product: Product }) {
   return (
     <div
       key={product.id}

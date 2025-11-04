@@ -6,13 +6,30 @@ import { ContactFormSection } from "./contact-form-section";
 import { PaymentMethodSection } from "./payment-method-section";
 import { ShippingAddressSection } from "./shipping-address-section";
 
+export interface CheckoutFormData {
+  email: string;
+  firstName: string;
+  lastName: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  country: string;
+  phone: string;
+  sameShippingAddress: boolean;
+  paymentMethod: string;
+  cardNumber: string;
+  cardExpiry: string;
+  cardCvc: string;
+}
+
 interface CheckoutFormProps {
-  onSubmit: (formData: any) => void;
+  onSubmit: (formData: CheckoutFormData) => void;
   isSubmitting: boolean;
 }
 
 export function CheckoutForm({ onSubmit, isSubmitting }: CheckoutFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CheckoutFormData>({
     email: "",
     firstName: "",
     lastName: "",

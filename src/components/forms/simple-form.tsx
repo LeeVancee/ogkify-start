@@ -14,7 +14,7 @@ interface FormFieldConfig {
 interface SimpleFormProps<T> {
   fields: FormFieldConfig[];
   formData: T;
-  onFieldChange: (field: keyof T, value: any) => void;
+  onFieldChange: (field: keyof T, value: string) => void;
   onSubmit: () => void;
   loading?: boolean;
   submitText?: string;

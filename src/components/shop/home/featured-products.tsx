@@ -1,11 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
-import { ProductGrid } from "@/components/shop/product/product-grid";
+import {
+  ProductGrid,
+  type SimpleProduct,
+} from "@/components/shop/product/product-grid";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface FeaturedProductsProps {
-  initialData?: any[];
+  initialData?: Array<SimpleProduct>;
 }
 
 export function FeaturedProducts({ initialData }: FeaturedProductsProps = {}) {
