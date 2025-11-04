@@ -48,7 +48,6 @@ import { createProduct, updateProduct } from "@/server/products.server";
 import { VariantsCardContent } from "./product-form-fields";
 import {
   type ProductFormProps,
-  type ProductFormValues,
   productFormSchema,
 } from "./product-form-schema";
 
