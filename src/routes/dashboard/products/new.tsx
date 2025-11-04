@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
-import { ProductForm } from "@/components/dashboard/product/product-form";
+import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
 import Loading from "@/components/loading";
 import { Button } from "@/components/ui/button";
 import { getProductFormData } from "@/server/products.server";
@@ -33,7 +33,12 @@ function RouteComponent() {
           </Button>
         </Link>
       </div>
-      <ProductForm categories={categories} colors={colors} sizes={sizes} />
+      <UnifiedProductForm
+        mode="create"
+        categories={categories}
+        colors={colors}
+        sizes={sizes}
+      />
     </div>
   );
 }

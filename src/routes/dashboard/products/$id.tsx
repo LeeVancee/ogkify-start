@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { EditProductForm } from "@/components/dashboard/product/edit-product-form";
+import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
 import Loading from "@/components/loading";
 import { getCategories } from "@/server/categories.server";
 import { getColors } from "@/server/colors.server";
@@ -62,7 +62,8 @@ function RouteComponent() {
         <h1 className="text-2xl font-bold tracking-tight">Edit Product</h1>
       </div>
       <div className="rounded-xl border p-6">
-        <EditProductForm
+        <UnifiedProductForm
+          mode="edit"
           product={{
             ...product,
             price: product.price.toString(),
