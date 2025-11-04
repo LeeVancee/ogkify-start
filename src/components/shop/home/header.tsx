@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -50,6 +50,17 @@ export default function Header({
 }: HeaderProps = {}) {
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate({
+        to: "/search",
+        search: { q: searchQuery.trim() },
+      });
+    }
+  };
 
   // Use server-side preloaded data directly
   const cartData = initialCartData || { items: [], totalItems: 0 };
@@ -81,7 +92,7 @@ export default function Header({
                         to={item.href}
                         className={cn(
                           "text-lg font-medium",
-                          pathname === item.href ? "text-primary" : "",
+                          pathname === item.href ? "text-primary" : ""
                         )}
                       >
                         {item.name}
@@ -106,7 +117,7 @@ export default function Header({
                   "font-medium hover:text-primary transition-colors",
                   pathname === item.href
                     ? "text-primary"
-                    : "text-muted-foreground",
+                    : "text-muted-foreground"
                 )}
               >
                 {item.name}
@@ -120,12 +131,12 @@ export default function Header({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              name="q"
               placeholder="Search..."
               className="pl-8 w-full"
-              form="search-form"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
             />
-            <form id="search-form" action="/search" className="hidden"></form>
           </div>
 
           <DropDown initialSession={initialSession} />

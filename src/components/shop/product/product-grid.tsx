@@ -50,7 +50,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           <Link
             to="/product/$id"
             params={{ id: product.id }}
-            className="relative aspect-4/5 overflow-hidden bg-muted/30"
+            className="relative aspect-square overflow-hidden bg-muted/30"
           >
             <img
               src={product.images[0] || "/placeholder.svg?height=400&width=300"}
@@ -62,7 +62,7 @@ export function ProductGrid({ products }: ProductGridProps) {
           </Link>
 
           {/* Product Info */}
-          <div className="flex flex-col flex-1 p-5 space-y-3">
+          <div className="flex flex-col flex-1 p-4 space-y-2">
             {/* Category */}
             {product.category && (
               <Link
@@ -110,13 +110,13 @@ export function ProductGrid({ products }: ProductGridProps) {
             )}
 
             {/* Price Section */}
-            <div className="flex items-end justify-between pt-2 border-t border-border/50">
+            <div className="flex items-end justify-between pt-1.5 border-t border-border/50">
               <div className="flex items-baseline gap-2">
                 {product.discount ? (
                   <>
                     <p className="text-xl font-bold text-foreground">
                       {formatPrice(
-                        product.price * (1 - product.discount / 100),
+                        product.price * (1 - product.discount / 100)
                       )}
                     </p>
                     <p className="text-sm text-muted-foreground line-through">
