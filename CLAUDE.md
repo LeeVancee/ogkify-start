@@ -9,7 +9,7 @@ This is **ogkify**, a full-stack e-commerce application built with TanStack Star
 ## Key Technologies
 
 - **Framework**: TanStack Start with TanStack Router
-- **Database**: PostgreSQL with Drizzle ORM
+- **Database**: PostgreSQL with Prisma ORM
 - **Authentication**: Better Auth
 - **Styling**: Tailwind CSS v4 + shadcn/ui components
 - **Payment**: Stripe integration
@@ -40,8 +40,9 @@ pnpm check            # Format and fix linting issues
 ### Database
 
 ```bash
-pnpm db:push          # Push schema changes to database
-pnpm db:studio        # Open Drizzle Studio for database management
+pnpm db:generate      # Generate Prisma Client
+pnpm db:migrate       # Run database migrations
+pnpm db:studio:prisma # Open Prisma Studio for database management
 ```
 
 ## Architecture
@@ -57,7 +58,7 @@ Routes are defined in `src/routes/` using TanStack Router:
 
 ### Database Schema
 
-Located in `src/db/schema.ts` with comprehensive e-commerce entities:
+Located in `prisma/schema.prisma` with comprehensive e-commerce entities:
 
 - Users, authentication tables (Better Auth)
 - Products with categories, colors, sizes (many-to-many relationships)
@@ -77,7 +78,7 @@ Located in `src/db/schema.ts` with comprehensive e-commerce entities:
 Server-side logic in `src/server/` organized by feature:
 
 - `*.server.ts` files handle data fetching and mutations
-- Use Drizzle ORM for database operations
+- Use Prisma ORM for database operations
 - Follow server/client data flow patterns
 
 ## Development Patterns
@@ -99,7 +100,7 @@ Better Auth is configured in `src/lib/auth.ts`. Use throughout the app for user 
 
 ### Database Operations
 
-Use Drizzle ORM with type-safe queries. Schema relationships are fully defined in `src/db/schema.ts`.
+Use Prisma ORM with type-safe queries. Schema relationships are fully defined in `prisma/schema.prisma`. Import `prisma` from `@/db` for database operations.
 
 ### Form Handling
 

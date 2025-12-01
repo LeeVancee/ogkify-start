@@ -2,9 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { format } from "date-fns";
-import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { orderItems, orders } from "@/db/schema";
+import { prisma } from "@/db";
 import { auth } from "@/lib/auth";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 
@@ -38,13 +36,13 @@ export const Route = createFileRoute("/api/checkout")({
           }
 
           // Get user's cart
-          const cart = await db.query.carts.findFirst({
-            where: (carts, { eq }) => eq(carts.userId, session.user.id),
-            with: {
+          const cart = await prisma.cart.findFirst({
+            where: { userId: session.user.id },
+            include: {
               items: {
-                with: {
+                include: {
                   product: {
-                    with: {
+                    include: {
                       images: true,
                     },
                   },
@@ -95,20 +93,19 @@ export const Route = createFileRoute("/api/checkout")({
           });
 
           // Create order
-          const [order] = await db
-            .insert(orders)
-            .values({
+          const order = await prisma.order.create({
+            data: {
               userId: session.user.id,
               orderNumber: generateOrderNumber(),
               totalAmount: amount,
               status: "PENDING",
               paymentStatus: "UNPAID",
-            })
-            .returning();
+            },
+          });
 
           // Create order items
-          await db.insert(orderItems).values(
-            cart.items.map((item) => ({
+          await prisma.orderItem.createMany({
+            data: cart.items.map((item) => ({
               orderId: order.id,
               productId: item.productId,
               quantity: item.quantity,
@@ -116,7 +113,7 @@ export const Route = createFileRoute("/api/checkout")({
               colorId: item.colorId,
               sizeId: item.sizeId,
             })),
-          );
+          });
 
           const origin = new URL(request.url).origin;
 
@@ -149,13 +146,13 @@ export const Route = createFileRoute("/api/checkout")({
           });
 
           // Update order with Stripe session ID
-          await db
-            .update(orders)
-            .set({
+          await prisma.order.update({
+            where: { id: order.id },
+            data: {
               paymentMethod: "Stripe",
               paymentIntent: checkoutSession.id,
-            })
-            .where(eq(orders.id, order.id));
+            },
+          });
 
           return json({
             sessionId: checkoutSession.id,

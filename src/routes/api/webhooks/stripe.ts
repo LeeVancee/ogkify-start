@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
-import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
-import { db } from "@/db";
-import { cartItems, carts, orders } from "@/db/schema";
+import { prisma } from "@/db";
 import { env } from "@/env/server";
 import { stripe } from "@/lib/stripe";
 
@@ -113,27 +111,28 @@ async function handleCheckoutSessionCompleted(
       .join(", ");
 
     // Update order status and address information
-    await db
-      .update(orders)
-      .set({
+    await prisma.order.update({
+      where: { id: orderId },
+      data: {
         status: "PAID",
         paymentStatus: "PAID",
         paymentIntent: session.payment_intent as string,
         phone: session.customer_details?.phone || null,
         shippingAddress: addressString || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId));
+      },
+    });
 
     // Clear user's shopping cart
     if (userId) {
-      const userCart = await db.query.carts.findFirst({
-        where: (carts, { eq }) => eq(carts.userId, userId),
+      const userCart = await prisma.cart.findFirst({
+        where: { userId },
       });
 
       if (userCart) {
         // Delete cart items
-        await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
+        await prisma.cartItem.deleteMany({
+          where: { cartId: userCart.id },
+        });
         console.log(`Cart cleared for user ${userId}`);
       }
     }
@@ -153,14 +152,13 @@ async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
 
     if (orderId) {
       // Update order status
-      await db
-        .update(orders)
-        .set({
+      await prisma.order.update({
+        where: { id: orderId },
+        data: {
           status: "CANCELLED",
           paymentStatus: "FAILED",
-          updatedAt: new Date(),
-        })
-        .where(eq(orders.id, orderId));
+        },
+      });
 
       console.log(`Order ${orderId} payment failed, status updated`);
     } else {
@@ -184,13 +182,12 @@ async function handleChargeRefunded(charge: Stripe.Charge) {
       const orderId = paymentIntent.metadata?.orderId;
 
       if (orderId) {
-        await db
-          .update(orders)
-          .set({
+        await prisma.order.update({
+          where: { id: orderId },
+          data: {
             paymentStatus: "REFUNDED",
-            updatedAt: new Date(),
-          })
-          .where(eq(orders.id, orderId));
+          },
+        });
 
         console.log(`Order ${orderId} refunded`);
       }

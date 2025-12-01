@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins";
-import { prisma } from "@/db/index"; // Use dedicated Drizzle instance
+import { prisma } from "@/db/index";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {

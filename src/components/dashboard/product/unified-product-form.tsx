@@ -121,7 +121,7 @@ export function UnifiedProductForm({
       toast.success(
         isEditMode
           ? "Product updated successfully!"
-          : "Product created successfully!"
+          : "Product created successfully!",
       );
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.navigate({ to: "/dashboard/products" });
@@ -129,7 +129,7 @@ export function UnifiedProductForm({
       toast.error(
         `${
           isEditMode ? "Update" : "Create"
-        } product failed. Please try again later.`
+        } product failed. Please try again later.`,
       );
     } finally {
       setIsLoading(false);
