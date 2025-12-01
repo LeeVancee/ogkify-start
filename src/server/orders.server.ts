@@ -47,7 +47,10 @@ export const getUserOrders = createServerFn().handler(async () => {
       status: order.status,
       paymentStatus: order.payment_status,
       totalAmount: order.total_amount,
-      totalItems: order.order_items.reduce((sum, item) => sum + item.quantity, 0),
+      totalItems: order.order_items.reduce(
+        (sum, item) => sum + item.quantity,
+        0,
+      ),
       firstItemImage: order.order_items[0]?.products?.images[0]?.url || null,
       items: order.order_items.map((item) => ({
         id: item.id,

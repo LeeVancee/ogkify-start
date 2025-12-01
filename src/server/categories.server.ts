@@ -21,7 +21,7 @@ export const getCategories = createServerFn().handler(async () => {
     });
 
     // Map image_url to imageUrl for frontend compatibility
-    return categories.map(category => ({
+    return categories.map((category) => ({
       ...category,
       imageUrl: category.image_url,
     }));
@@ -45,12 +45,12 @@ export const getCategory = createServerFn()
       }
 
       // Map image_url to imageUrl for frontend compatibility
-      return { 
-        success: true, 
+      return {
+        success: true,
         category: {
           ...category,
           imageUrl: category.image_url,
-        }
+        },
       };
     } catch (error) {
       console.error("Failed to get category:", error);
@@ -106,12 +106,12 @@ export const updateCategory = createServerFn({ method: "POST" })
       });
 
       // Map image_url to imageUrl for frontend compatibility
-      return { 
-        success: true, 
+      return {
+        success: true,
         data: {
           ...category,
           imageUrl: category.image_url,
-        }
+        },
       };
     } catch (error) {
       console.error("Failed to update category:", error);

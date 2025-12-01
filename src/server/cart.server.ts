@@ -31,7 +31,11 @@ export const addToCart = createServerFn({ method: "POST" })
         return { error: "product not found", success: false };
       }
 
-      console.log("try to add product to cart", session.user.id, data.productId);
+      console.log(
+        "try to add product to cart",
+        session.user.id,
+        data.productId,
+      );
 
       // Check if user already has a cart
       let cart = await prisma.carts.findFirst({

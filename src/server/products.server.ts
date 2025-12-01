@@ -397,7 +397,7 @@ export const getProductFormData = createServerFn().handler(async () => {
     ]);
 
     // Map image_url to imageUrl for frontend compatibility
-    const categories = categoriesRaw.map(category => ({
+    const categories = categoriesRaw.map((category) => ({
       id: category.id,
       name: category.name,
       imageUrl: category.image_url,

@@ -1,19 +1,11 @@
 import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 import { admin } from "better-auth/plugins";
-import { drizzleDb } from "@/db/auth-db"; // Use dedicated Drizzle instance
-import { account, session, user, verification } from "@/db/schema";
+import { prisma } from "@/db/index"; // Use dedicated Drizzle instance
 
 export const auth = betterAuth({
-  database: drizzleAdapter(drizzleDb, {
-    provider: "pg", // or "mysql", "postgresql", ...etc
-
-    schema: {
-      user,
-      session,
-      account,
-      verification,
-    },
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
   }),
 
   emailAndPassword: {

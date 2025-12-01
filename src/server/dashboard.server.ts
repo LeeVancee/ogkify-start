@@ -1,11 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { prisma } from "@/db";
 import {
   getMonthlySalesData,
   getOrdersStats,
   getRecentOrders,
 } from "@/server/orders.server";
 import { getProductsCount } from "@/server/products.server";
-import { prisma } from "@/db";
 
 // Get categories count
 export const getCategoriesCount = createServerFn().handler(async () => {
