@@ -16,59 +16,56 @@ export const getUserOrders = createServerFn().handler(async () => {
       return { success: false, orders: [] };
     }
 
-    const ordersList = await prisma.orders.findMany({
-      where: { user_id: session.user.id },
+    const ordersList = await prisma.order.findMany({
+      where: { userId: session.user.id },
       include: {
-        order_items: {
+        items: {
           include: {
-            products: {
+            product: {
               include: {
                 images: true,
               },
             },
-            colors: true,
-            sizes: true,
+            color: true,
+            size: true,
           },
         },
         user: true,
       },
       orderBy: {
-        created_at: "desc",
+        createdAt: "desc",
       },
     });
 
     // Convert to frontend-friendly format
     const formattedOrders = ordersList.map((order) => ({
       id: order.id,
-      orderNumber: order.order_number,
+      orderNumber: order.orderNumber,
       customer: order.user.name,
       email: order.user.email,
-      createdAt: order.created_at.toISOString(),
+      createdAt: order.createdAt.toISOString(),
       status: order.status,
-      paymentStatus: order.payment_status,
-      totalAmount: order.total_amount,
-      totalItems: order.order_items.reduce(
-        (sum, item) => sum + item.quantity,
-        0,
-      ),
-      firstItemImage: order.order_items[0]?.products?.images[0]?.url || null,
-      items: order.order_items.map((item) => ({
+      paymentStatus: order.paymentStatus,
+      totalAmount: order.totalAmount,
+      totalItems: order.items.reduce((sum, item) => sum + item.quantity, 0),
+      firstItemImage: order.items[0]?.product?.images[0]?.url || null,
+      items: order.items.map((item) => ({
         id: item.id,
-        productId: item.product_id,
-        productName: item.products.name,
+        productId: item.productId,
+        productName: item.product.name,
         quantity: item.quantity,
         price: item.price,
-        imageUrl: item.products.images[0]?.url || null,
-        color: item.colors
+        imageUrl: item.product.images[0]?.url || null,
+        color: item.color
           ? {
-              name: item.colors.name,
-              value: item.colors.value,
+              name: item.color.name,
+              value: item.color.value,
             }
           : null,
-        size: item.sizes
+        size: item.size
           ? {
-              name: item.sizes.name,
-              value: item.sizes.value,
+              name: item.size.name,
+              value: item.size.value,
             }
           : null,
       })),
@@ -93,21 +90,21 @@ export const getOrderDetails = createServerFn()
       }
 
       // Query order, ensure order belongs to current logged-in user
-      const order = await prisma.orders.findFirst({
+      const order = await prisma.order.findFirst({
         where: {
           id: orderId,
-          user_id: session.user.id,
+          userId: session.user.id,
         },
         include: {
-          order_items: {
+          items: {
             include: {
-              products: {
+              product: {
                 include: {
                   images: true,
                 },
               },
-              colors: true,
-              sizes: true,
+              color: true,
+              size: true,
             },
           },
         },
@@ -118,16 +115,16 @@ export const getOrderDetails = createServerFn()
       }
 
       // Format order details
-      const totalItems = order.order_items.reduce(
+      const totalItems = order.items.reduce(
         (sum, item) => sum + item.quantity,
         0,
       );
 
       const formattedOrder = {
         id: order.id,
-        orderNumber: order.order_number,
-        createdAt: order.created_at.toISOString(),
-        createdAtFormatted: new Date(order.created_at).toLocaleDateString(
+        orderNumber: order.orderNumber,
+        createdAt: order.createdAt.toISOString(),
+        createdAtFormatted: new Date(order.createdAt).toLocaleDateString(
           "zh-CN",
           {
             year: "numeric",
@@ -139,35 +136,35 @@ export const getOrderDetails = createServerFn()
         ),
         status: order.status,
         statusText: getOrderStatusText(order.status),
-        paymentStatus: order.payment_status,
-        paymentStatusText: getPaymentStatusText(order.payment_status),
-        totalAmount: order.total_amount,
-        totalAmountFormatted: formatPrice(order.total_amount),
+        paymentStatus: order.paymentStatus,
+        paymentStatusText: getPaymentStatusText(order.paymentStatus),
+        totalAmount: order.totalAmount,
+        totalAmountFormatted: formatPrice(order.totalAmount),
         totalItems,
-        shippingAddress: order.shipping_address,
+        shippingAddress: order.shippingAddress,
         phone: order.phone,
-        paymentMethod: order.payment_method,
-        items: order.order_items.map((item) => ({
+        paymentMethod: order.paymentMethod,
+        items: order.items.map((item) => ({
           id: item.id,
-          productId: item.product_id,
-          productName: item.products.name,
-          productDescription: item.products.description,
+          productId: item.productId,
+          productName: item.product.name,
+          productDescription: item.product.description,
           quantity: item.quantity,
           price: item.price,
           priceFormatted: formatPrice(item.price),
           totalPrice: item.price * item.quantity,
           totalPriceFormatted: formatPrice(item.price * item.quantity),
-          imageUrl: item.products.images[0]?.url || null,
-          color: item.colors
+          imageUrl: item.product.images[0]?.url || null,
+          color: item.color
             ? {
-                name: item.colors.name,
-                value: item.colors.value,
+                name: item.color.name,
+                value: item.color.value,
               }
             : null,
-          size: item.sizes
+          size: item.size
             ? {
-                name: item.sizes.name,
-                value: item.sizes.value,
+                name: item.size.name,
+                value: item.size.value,
               }
             : null,
         })),
@@ -191,54 +188,54 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
       return { success: false, orders: [] };
     }
 
-    const ordersList = await prisma.orders.findMany({
+    const ordersList = await prisma.order.findMany({
       where: {
-        user_id: session.user.id,
-        payment_status: "UNPAID",
+        userId: session.user.id,
+        paymentStatus: "UNPAID",
       },
       include: {
-        order_items: {
+        items: {
           include: {
-            products: {
+            product: {
               include: {
                 images: true,
               },
             },
-            colors: true,
-            sizes: true,
+            color: true,
+            size: true,
           },
         },
       },
       orderBy: {
-        created_at: "desc",
+        createdAt: "desc",
       },
     });
 
     const formattedOrders = ordersList.map((order) => ({
       id: order.id,
-      orderNumber: order.order_number,
-      createdAt: order.created_at.toISOString(),
+      orderNumber: order.orderNumber,
+      createdAt: order.createdAt.toISOString(),
       status: order.status,
-      paymentStatus: order.payment_status,
-      totalAmount: order.total_amount,
-      firstItemImage: order.order_items[0]?.products?.images[0]?.url || null,
-      items: order.order_items.map((item) => ({
+      paymentStatus: order.paymentStatus,
+      totalAmount: order.totalAmount,
+      firstItemImage: order.items[0]?.product?.images[0]?.url || null,
+      items: order.items.map((item) => ({
         id: item.id,
-        productId: item.product_id,
-        productName: item.products.name,
+        productId: item.productId,
+        productName: item.product.name,
         quantity: item.quantity,
         price: item.price,
-        imageUrl: item.products.images[0]?.url || null,
-        color: item.colors
+        imageUrl: item.product.images[0]?.url || null,
+        color: item.color
           ? {
-              name: item.colors.name,
-              value: item.colors.value,
+              name: item.color.name,
+              value: item.color.value,
             }
           : null,
-        size: item.sizes
+        size: item.size
           ? {
-              name: item.sizes.name,
-              value: item.sizes.value,
+              name: item.size.name,
+              value: item.size.value,
             }
           : null,
       })),
@@ -263,22 +260,22 @@ export const createPaymentSession = createServerFn()
       }
 
       // Get order information
-      const order = await prisma.orders.findFirst({
+      const order = await prisma.order.findFirst({
         where: {
           id: orderId,
-          user_id: session.user.id,
-          payment_status: "UNPAID",
+          userId: session.user.id,
+          paymentStatus: "UNPAID",
         },
         include: {
-          order_items: {
+          items: {
             include: {
-              products: {
+              product: {
                 include: {
                   images: true,
                 },
               },
-              colors: true,
-              sizes: true,
+              color: true,
+              size: true,
             },
           },
         },
@@ -289,10 +286,10 @@ export const createPaymentSession = createServerFn()
       }
 
       // Build line items
-      const lineItems = order.order_items.map((item) => {
-        const productName = item.products.name;
-        const colorName = item.colors?.name || "";
-        const sizeName = item.sizes?.name || "";
+      const lineItems = order.items.map((item) => {
+        const productName = item.product.name;
+        const colorName = item.color?.name || "";
+        const sizeName = item.size?.name || "";
         const variantInfo = [colorName, sizeName].filter(Boolean).join(", ");
 
         return {
@@ -301,8 +298,8 @@ export const createPaymentSession = createServerFn()
             product_data: {
               name: productName,
               description: variantInfo ? `${variantInfo}` : undefined,
-              images: item.products.images[0]?.url
-                ? [item.products.images[0].url]
+              images: item.product.images[0]?.url
+                ? [item.product.images[0].url]
                 : undefined,
             },
             unit_amount: formatAmountForStripe(item.price),
@@ -333,11 +330,11 @@ export const createPaymentSession = createServerFn()
       });
 
       // Update order payment intent ID
-      await prisma.orders.update({
+      await prisma.order.update({
         where: { id: order.id },
         data: {
-          payment_method: "Stripe",
-          payment_intent: checkoutSession.id,
+          paymentMethod: "Stripe",
+          paymentIntent: checkoutSession.id,
         },
       });
 
@@ -384,7 +381,7 @@ export const updateOrderStatus = createServerFn()
       }
 
       // Query order to ensure it exists
-      const order = await prisma.orders.findUnique({
+      const order = await prisma.order.findUnique({
         where: { id: orderId },
       });
 
@@ -393,7 +390,7 @@ export const updateOrderStatus = createServerFn()
       }
 
       // Update order status
-      await prisma.orders.update({
+      await prisma.order.update({
         where: { id: orderId },
         data: { status: orderStatus },
       });
@@ -412,25 +409,25 @@ export const updateOrderStatus = createServerFn()
 export const getOrdersStats = createServerFn().handler(async () => {
   try {
     // Get pending order count
-    const pendingCount = await prisma.orders.count({
+    const pendingCount = await prisma.order.count({
       where: { status: "PENDING" },
     });
 
     // Get completed order count
-    const completedCount = await prisma.orders.count({
+    const completedCount = await prisma.order.count({
       where: { status: "COMPLETED" },
     });
 
     // Get total revenue (only for paid orders)
-    const paidOrders = await prisma.orders.findMany({
-      where: { payment_status: "PAID" },
+    const paidOrders = await prisma.order.findMany({
+      where: { paymentStatus: "PAID" },
       select: {
-        total_amount: true,
+        totalAmount: true,
       },
     });
 
     const totalRevenue = paidOrders.reduce(
-      (total, order) => total + order.total_amount,
+      (total, order) => total + order.totalAmount,
       0,
     );
 
@@ -454,10 +451,10 @@ export const getRecentOrders = createServerFn()
   .inputValidator((limit: number = 5) => limit)
   .handler(async ({ data: limit }) => {
     try {
-      const recentOrdersList = await prisma.orders.findMany({
+      const recentOrdersList = await prisma.order.findMany({
         take: limit,
         orderBy: {
-          created_at: "desc",
+          createdAt: "desc",
         },
         include: {
           user: {
@@ -466,9 +463,9 @@ export const getRecentOrders = createServerFn()
               email: true,
             },
           },
-          order_items: {
+          items: {
             include: {
-              products: {
+              product: {
                 select: {
                   name: true,
                 },
@@ -480,13 +477,13 @@ export const getRecentOrders = createServerFn()
 
       return recentOrdersList.map((order) => ({
         id: order.id,
-        orderNumber: order.order_number,
-        date: order.created_at,
+        orderNumber: order.orderNumber,
+        date: order.createdAt,
         customerName: order.user.name || "Guest",
         status: order.status,
-        paymentStatus: order.payment_status,
-        amount: order.total_amount,
-        itemsCount: order.order_items.length,
+        paymentStatus: order.paymentStatus,
+        amount: order.totalAmount,
+        itemsCount: order.items.length,
       }));
     } catch (error) {
       console.error("Failed to get recent orders:", error);
@@ -512,22 +509,22 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
       }
 
       // Query orders for this month
-      const monthlyOrdersList = await prisma.orders.findMany({
+      const monthlyOrdersList = await prisma.order.findMany({
         where: {
-          created_at: {
+          createdAt: {
             gte: startDate,
             lt: endDate,
           },
-          payment_status: "PAID",
+          paymentStatus: "PAID",
         },
         select: {
-          total_amount: true,
+          totalAmount: true,
         },
       });
 
       // Calculate monthly total revenue
       const total = monthlyOrdersList.reduce(
-        (sum, order) => sum + order.total_amount,
+        (sum, order) => sum + order.totalAmount,
         0,
       );
 
@@ -573,21 +570,21 @@ export const getOrderById = createServerFn()
       }
 
       // Get order with all related data
-      const order = await prisma.orders.findFirst({
+      const order = await prisma.order.findFirst({
         where: {
           id: orderId,
-          user_id: session.user.id,
+          userId: session.user.id,
         },
         include: {
-          order_items: {
+          items: {
             include: {
-              products: {
+              product: {
                 include: {
                   images: true,
                 },
               },
-              colors: true,
-              sizes: true,
+              color: true,
+              size: true,
             },
           },
         },
@@ -616,11 +613,11 @@ export const deleteUnpaidOrder = createServerFn()
       }
 
       // Get order information, ensure it is the user's unpaid order
-      const order = await prisma.orders.findFirst({
+      const order = await prisma.order.findFirst({
         where: {
           id: orderId,
-          user_id: session.user.id,
-          payment_status: "UNPAID",
+          userId: session.user.id,
+          paymentStatus: "UNPAID",
         },
       });
 
@@ -632,7 +629,7 @@ export const deleteUnpaidOrder = createServerFn()
       }
 
       // Delete order (cascade will delete order items)
-      await prisma.orders.delete({
+      await prisma.order.delete({
         where: { id: orderId },
       });
 

@@ -8,205 +8,237 @@ datasource db {
 }
 
 model account {
-  id                       String    @id
-  account_id               String    @db.VarChar
-  provider_id              String    @db.VarChar
-  user_id                  String
-  access_token             String?
-  refresh_token            String?
-  id_token                 String?
-  access_token_expires_at  DateTime? @db.Timestamp(6)
-  refresh_token_expires_at DateTime? @db.Timestamp(6)
-  scope                    String?
-  password                 String?
-  created_at               DateTime  @default(now()) @db.Timestamp(6)
-  updated_at               DateTime  @default(now()) @db.Timestamp(6)
-  user                     user      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "account_user_id_user_id_fk")
+  id                    String    @id
+  accountId             String    @db.VarChar @map("account_id")
+  providerId            String    @db.VarChar @map("provider_id")
+  userId                String    @map("user_id")
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @db.Timestamp(6) @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @db.Timestamp(6) @map("refresh_token_expires_at")
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt             DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "account_user_id_user_id_fk")
+
+  @@map("account")
 }
 
 model session {
   id              String   @id
-  expires_at      DateTime @db.Timestamp(6)
+  expiresAt       DateTime @db.Timestamp(6) @map("expires_at")
   token           String   @db.VarChar
-  created_at      DateTime @default(now()) @db.Timestamp(6)
-  updated_at      DateTime @default(now()) @db.Timestamp(6)
-  ip_address      String?  @db.VarChar
-  user_agent      String?
-  user_id         String
-  impersonated_by String?  @db.VarChar
-  user            user     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "session_user_id_user_id_fk")
+  createdAt       DateTime @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt       DateTime @default(now()) @db.Timestamp(6) @map("updated_at")
+  ipAddress       String?  @db.VarChar @map("ip_address")
+  userAgent       String?  @map("user_agent")
+  userId          String   @map("user_id")
+  impersonatedBy  String?  @db.VarChar @map("impersonated_by")
+  user            user     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "session_user_id_user_id_fk")
+
+  @@map("session")
 }
 
 model user {
-  id             String    @id
-  name           String    @db.VarChar
-  email          String    @db.VarChar
-  email_verified Boolean
-  image          String?
-  role           String?   @db.VarChar
-  banned         Boolean?
-  ban_reason     String?
-  ban_expires    DateTime? @db.Timestamp(6)
-  created_at     DateTime  @default(now()) @db.Timestamp(6)
-  updated_at     DateTime  @default(now()) @db.Timestamp(6)
-  account        account[]
-  carts          carts[]
-  orders         orders[]
-  session        session[]
+  id            String    @id
+  name          String    @db.VarChar
+  email         String    @db.VarChar
+  emailVerified Boolean   @map("email_verified")
+  image         String?
+  role          String?   @db.VarChar
+  banned        Boolean?
+  banReason     String?   @map("ban_reason")
+  banExpires    DateTime? @db.Timestamp(6) @map("ban_expires")
+  createdAt     DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt     DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
+  accounts      account[]
+  carts         cart[]
+  orders        order[]
+  sessions      session[]
+
+  @@map("user")
 }
 
 model verification {
-  id         String    @id
+  id        String    @id
   identifier String    @db.VarChar
-  value      String    @db.VarChar
-  expires_at DateTime  @db.Timestamp(6)
-  created_at DateTime? @default(now()) @db.Timestamp(6)
-  updated_at DateTime? @default(now()) @db.Timestamp(6)
+  value     String    @db.VarChar
+  expiresAt DateTime  @db.Timestamp(6) @map("expires_at")
+  createdAt DateTime? @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime? @default(now()) @db.Timestamp(6) @map("updated_at")
+
+  @@map("verification")
 }
 
-model cart_items {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cart_id    String   @db.Uuid
-  product_id String   @db.Uuid
-  quantity   Int      @default(1)
-  color_id   String?  @db.Uuid
-  size_id    String?  @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  carts      carts    @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_cart_id_carts_id_fk")
-  colors     colors?  @relation(fields: [color_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_color_id_colors_id_fk")
-  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_product_id_products_id_fk")
-  sizes      sizes?   @relation(fields: [size_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_size_id_sizes_id_fk")
+model cartItem {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cartId    String    @db.Uuid @map("cart_id")
+  productId String    @db.Uuid @map("product_id")
+  quantity  Int       @default(1)
+  colorId   String?   @db.Uuid @map("color_id")
+  sizeId    String?   @db.Uuid @map("size_id")
+  createdAt DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
+  cart      cart      @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_cart_id_carts_id_fk")
+  color     color?    @relation(fields: [colorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_color_id_colors_id_fk")
+  product   product   @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_product_id_products_id_fk")
+  size      size?     @relation(fields: [sizeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_size_id_sizes_id_fk")
+
+  @@map("cart_items")
 }
 
-model carts {
-  id         String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user_id    String
-  created_at DateTime     @default(now()) @db.Timestamp(6)
-  updated_at DateTime     @default(now()) @db.Timestamp(6)
-  cart_items cart_items[]
-  user       user         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "carts_user_id_user_id_fk")
+model cart {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String     @map("user_id")
+  createdAt DateTime   @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime   @default(now()) @db.Timestamp(6) @map("updated_at")
+  items     cartItem[]
+  user      user       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "carts_user_id_user_id_fk")
+
+  @@map("carts")
 }
 
-model categories {
-  id         String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name       String     @db.VarChar
-  image_url  String?
-  created_at DateTime   @default(now()) @db.Timestamp(6)
-  updated_at DateTime   @default(now()) @db.Timestamp(6)
-  products   products[]
+model category {
+  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name      String    @db.VarChar
+  imageUrl  String?   @map("image_url")
+  createdAt DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
+  products  product[]
+
+  @@map("categories")
 }
 
-model colors {
-  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name               String               @db.VarChar
-  value              String               @db.VarChar
-  created_at         DateTime             @default(now()) @db.Timestamp(6)
-  updated_at         DateTime             @default(now()) @db.Timestamp(6)
-  cart_items         cart_items[]
-  order_items        order_items[]
-  products_to_colors products_to_colors[]
-}
-
-model images {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  product_id String   @db.Uuid
-  url        String
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "images_product_id_products_id_fk")
-}
-
-model order_items {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  order_id   String   @db.Uuid
-  product_id String   @db.Uuid
-  quantity   Int
-  price      Float
-  color_id   String?  @db.Uuid
-  size_id    String?  @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamp(6)
-  updated_at DateTime @default(now()) @db.Timestamp(6)
-  colors     colors?  @relation(fields: [color_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_color_id_colors_id_fk")
-  orders     orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_order_id_orders_id_fk")
-  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_product_id_products_id_fk")
-  sizes      sizes?   @relation(fields: [size_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_size_id_sizes_id_fk")
-}
-
-model orders {
-  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  order_number     String         @db.VarChar
-  user_id          String
-  status           order_status   @default(PENDING)
-  total_amount     Float
-  phone            String?        @db.VarChar
-  shipping_address String?
-  payment_method   String?        @db.VarChar
-  payment_intent   String?        @db.VarChar
-  payment_status   payment_status @default(UNPAID)
-  created_at       DateTime       @default(now()) @db.Timestamp(6)
-  updated_at       DateTime       @default(now()) @db.Timestamp(6)
-  order_items      order_items[]
-  user             user           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_user_id_user_id_fk")
-}
-
-model products {
-  id                 String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name               String               @db.VarChar
-  description        String
-  price              Float
-  is_featured        Boolean              @default(false)
-  is_archived        Boolean              @default(false)
-  category_id        String               @db.Uuid
-  created_at         DateTime             @default(now()) @db.Timestamp(6)
-  updated_at         DateTime             @default(now()) @db.Timestamp(6)
-  cart_items         cart_items[]
-  images             images[]
-  order_items        order_items[]
-  categories         categories           @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_category_id_categories_id_fk")
-  products_to_colors products_to_colors[]
-  products_to_sizes  products_to_sizes[]
-}
-
-model products_to_colors {
-  product_id String   @db.Uuid
-  color_id   String   @db.Uuid
-  colors     colors   @relation(fields: [color_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_colors_color_id_colors_id_fk")
-  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_colors_product_id_products_id_fk")
-
-  @@id([product_id, color_id])
-}
-
-model products_to_sizes {
-  product_id String   @db.Uuid
-  size_id    String   @db.Uuid
-  products   products @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_sizes_product_id_products_id_fk")
-  sizes      sizes    @relation(fields: [size_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_sizes_size_id_sizes_id_fk")
-
-  @@id([product_id, size_id])
-}
-
-model sizes {
+model color {
   id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name              String              @db.VarChar
   value             String              @db.VarChar
-  created_at        DateTime            @default(now()) @db.Timestamp(6)
-  updated_at        DateTime            @default(now()) @db.Timestamp(6)
-  cart_items        cart_items[]
-  order_items       order_items[]
-  products_to_sizes products_to_sizes[]
+  createdAt         DateTime            @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt         DateTime            @default(now()) @db.Timestamp(6) @map("updated_at")
+  cartItems         cartItem[]
+  orderItems        orderItem[]
+  productToColors   productToColor[]
+
+  @@map("colors")
 }
 
-enum order_status {
+model image {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  productId String   @db.Uuid @map("product_id")
+  url       String
+  createdAt DateTime @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime @default(now()) @db.Timestamp(6) @map("updated_at")
+  product   product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "images_product_id_products_id_fk")
+
+  @@map("images")
+}
+
+model orderItem {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderId   String   @db.Uuid @map("order_id")
+  productId String   @db.Uuid @map("product_id")
+  quantity  Int
+  price     Float
+  colorId   String?  @db.Uuid @map("color_id")
+  sizeId    String?  @db.Uuid @map("size_id")
+  createdAt DateTime @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt DateTime @default(now()) @db.Timestamp(6) @map("updated_at")
+  color     color?   @relation(fields: [colorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_color_id_colors_id_fk")
+  order     order    @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_order_id_orders_id_fk")
+  product   product  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_product_id_products_id_fk")
+  size      size?    @relation(fields: [sizeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_size_id_sizes_id_fk")
+
+  @@map("order_items")
+}
+
+model order {
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderNumber      String         @db.VarChar @map("order_number")
+  userId           String         @map("user_id")
+  status           orderStatus    @default(PENDING)
+  totalAmount      Float          @map("total_amount")
+  phone            String?        @db.VarChar
+  shippingAddress  String?        @map("shipping_address")
+  paymentMethod    String?        @db.VarChar @map("payment_method")
+  paymentIntent    String?        @db.VarChar @map("payment_intent")
+  paymentStatus    paymentStatus  @default(UNPAID) @map("payment_status")
+  createdAt        DateTime       @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt        DateTime       @default(now()) @db.Timestamp(6) @map("updated_at")
+  items            orderItem[]
+  user             user           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_user_id_user_id_fk")
+
+  @@map("orders")
+}
+
+model product {
+  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String              @db.VarChar
+  description       String
+  price             Float
+  isFeatured        Boolean             @default(false) @map("is_featured")
+  isArchived        Boolean             @default(false) @map("is_archived")
+  categoryId        String              @db.Uuid @map("category_id")
+  createdAt         DateTime            @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt         DateTime            @default(now()) @db.Timestamp(6) @map("updated_at")
+  cartItems         cartItem[]
+  images            image[]
+  orderItems        orderItem[]
+  category          category            @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_category_id_categories_id_fk")
+  productToColors   productToColor[]
+  productToSizes    productToSize[]
+
+  @@map("products")
+}
+
+model productToColor {
+  productId String @db.Uuid @map("product_id")
+  colorId   String @db.Uuid @map("color_id")
+  color     color  @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_colors_color_id_colors_id_fk")
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_colors_product_id_products_id_fk")
+
+  @@id([productId, colorId])
+  @@map("products_to_colors")
+}
+
+model productToSize {
+  productId String @db.Uuid @map("product_id")
+  sizeId    String @db.Uuid @map("size_id")
+  product   product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_sizes_product_id_products_id_fk")
+  size      size   @relation(fields: [sizeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_sizes_size_id_sizes_id_fk")
+
+  @@id([productId, sizeId])
+  @@map("products_to_sizes")
+}
+
+model size {
+  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name              String           @db.VarChar
+  value             String           @db.VarChar
+  createdAt         DateTime         @default(now()) @db.Timestamp(6) @map("created_at")
+  updatedAt         DateTime         @default(now()) @db.Timestamp(6) @map("updated_at")
+  cartItems         cartItem[]
+  orderItems        orderItem[]
+  productToSizes    productToSize[]
+
+  @@map("sizes")
+}
+
+enum orderStatus {
   PENDING
   PAID
   COMPLETED
   CANCELLED
+
+  @@map("order_status")
 }
 
-enum payment_status {
+enum paymentStatus {
   UNPAID
   PAID
   REFUNDED
   FAILED
+
+  @@map("payment_status")
 }

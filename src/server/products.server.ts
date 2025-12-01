@@ -31,7 +31,7 @@ export const getProduct = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const product = await prisma.products.findUnique({
+      const product = await prisma.product.findUnique({
         where: { id },
         include: {
           categories: true,
@@ -58,17 +58,17 @@ export const getProduct = createServerFn()
         name: product.name,
         description: product.description,
         price: product.price,
-        categoryId: product.category_id,
-        isFeatured: product.is_featured,
-        isArchived: product.is_archived,
+        categoryId: product.categoryId,
+        isFeatured: product.isFeatured,
+        isArchived: product.isArchived,
         category: product.categories,
         colorIds: product.products_to_colors.map((pc) => pc.colors.id),
         sizeIds: product.products_to_sizes.map((ps) => ps.sizes.id),
         images: product.images.map((image) => image.url),
         colors: product.products_to_colors.map((pc) => pc.colors),
         sizes: product.products_to_sizes.map((ps) => ps.sizes),
-        createdAt: product.created_at,
-        updatedAt: product.updated_at,
+        createdAt: product.createdAt,
+        updatedAt: product.updatedAt,
       };
     } catch (error) {
       console.error("Failed to get product:", error);
@@ -100,8 +100,8 @@ export const updateProduct = createServerFn({ method: "POST" })
       } = data;
 
       // Find existing images
-      const existingImages = await prisma.images.findMany({
-        where: { product_id: id },
+      const existingImages = await prisma.image.findMany({
+        where: { productId: id },
       });
 
       // Delete unused images
@@ -110,7 +110,7 @@ export const updateProduct = createServerFn({ method: "POST" })
       );
 
       if (imagesToDelete.length > 0) {
-        await prisma.images.deleteMany({
+        await prisma.image.deleteMany({
           where: {
             id: {
               in: imagesToDelete.map((img) => img.id),
@@ -124,49 +124,49 @@ export const updateProduct = createServerFn({ method: "POST" })
       const newImages = imageUrls.filter((url) => !existingUrls.includes(url));
 
       // Update product basic information
-      const updatedProduct = await prisma.products.update({
+      const updatedProduct = await prisma.product.update({
         where: { id },
         data: {
           name,
           description,
           price: parseFloat(price),
-          category_id: categoryId,
-          is_featured: isFeatured,
-          is_archived: isArchived,
+          categoryId: categoryId,
+          isFeatured: isFeatured,
+          isArchived: isArchived,
         },
       });
 
       // Update color associations
-      await prisma.products_to_colors.deleteMany({
-        where: { product_id: id },
+      await prisma.productToColor.deleteMany({
+        where: { productId: id },
       });
       if (colorIds.length > 0) {
-        await prisma.products_to_colors.createMany({
+        await prisma.productToColor.createMany({
           data: colorIds.map((colorId) => ({
-            product_id: id,
-            color_id: colorId,
+            productId: id,
+            colorId: colorId,
           })),
         });
       }
 
       // Update size associations
-      await prisma.products_to_sizes.deleteMany({
-        where: { product_id: id },
+      await prisma.productToSize.deleteMany({
+        where: { productId: id },
       });
       if (sizeIds.length > 0) {
-        await prisma.products_to_sizes.createMany({
+        await prisma.productToSize.createMany({
           data: sizeIds.map((sizeId) => ({
-            product_id: id,
-            size_id: sizeId,
+            productId: id,
+            sizeId: sizeId,
           })),
         });
       }
 
       // Add new images
       if (newImages.length > 0) {
-        await prisma.images.createMany({
+        await prisma.image.createMany({
           data: newImages.map((url) => ({
-            product_id: id,
+            productId: id,
             url,
           })),
         });
@@ -184,7 +184,7 @@ export const updateProduct = createServerFn({ method: "POST" })
 // Get all products
 export const getProducts = createServerFn().handler(async () => {
   try {
-    const productsList = await prisma.products.findMany({
+    const productsList = await prisma.product.findMany({
       include: {
         categories: true,
         images: true,
@@ -200,7 +200,7 @@ export const getProducts = createServerFn().handler(async () => {
         },
       },
       orderBy: {
-        created_at: "desc",
+        createdAt: "desc",
       },
     });
 
@@ -214,10 +214,10 @@ export const getProducts = createServerFn().handler(async () => {
       colors: product.products_to_colors.map((pc) => pc.colors),
       sizes: product.products_to_sizes.map((ps) => ps.sizes),
       images: product.images,
-      isFeatured: product.is_featured,
-      isArchived: product.is_archived,
-      createdAt: product.created_at,
-      updatedAt: product.updated_at,
+      isFeatured: product.isFeatured,
+      isArchived: product.isArchived,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
     }));
   } catch (error) {
     console.error("Failed to get products list:", error);
@@ -249,42 +249,42 @@ export const createProduct = createServerFn({ method: "POST" })
       } = data;
 
       // Create product
-      const product = await prisma.products.create({
+      const product = await prisma.product.create({
         data: {
           name,
           description,
           price: parseFloat(price),
-          category_id: categoryId,
-          is_featured: isFeatured,
-          is_archived: isArchived,
+          categoryId: categoryId,
+          isFeatured: isFeatured,
+          isArchived: isArchived,
         },
       });
 
       // Create color associations
       if (colorIds.length > 0) {
-        await prisma.products_to_colors.createMany({
+        await prisma.productToColor.createMany({
           data: colorIds.map((colorId) => ({
-            product_id: product.id,
-            color_id: colorId,
+            productId: product.id,
+            colorId: colorId,
           })),
         });
       }
 
       // Create size associations
       if (sizeIds.length > 0) {
-        await prisma.products_to_sizes.createMany({
+        await prisma.productToSize.createMany({
           data: sizeIds.map((sizeId) => ({
-            product_id: product.id,
-            size_id: sizeId,
+            productId: product.id,
+            sizeId: sizeId,
           })),
         });
       }
 
       // Create images
       if (imageUrls.length > 0) {
-        await prisma.images.createMany({
+        await prisma.image.createMany({
           data: imageUrls.map((url) => ({
-            product_id: product.id,
+            productId: product.id,
             url,
           })),
         });
@@ -301,7 +301,7 @@ export const deleteProduct = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await prisma.products.delete({
+      await prisma.product.delete({
         where: { id },
       });
 
@@ -318,7 +318,7 @@ export const deleteProduct = createServerFn({ method: "POST" })
 // Get product count
 export const getProductsCount = createServerFn().handler(async () => {
   try {
-    const count = await prisma.products.count();
+    const count = await prisma.product.count();
     return count;
   } catch (error) {
     console.error("Failed to get product count:", error);
@@ -331,7 +331,7 @@ export const getPopularProducts = createServerFn()
   .inputValidator((limit?: number) => limit || 5)
   .handler(async ({ data: limit }) => {
     try {
-      const productsList = await prisma.products.findMany({
+      const productsList = await prisma.product.findMany({
         include: {
           images: true,
           categories: true,
@@ -366,7 +366,7 @@ export const getProductFormData = createServerFn().handler(async () => {
     const [categoriesRaw, colors, sizes] = await Promise.all([
       prisma.categories.findMany({
         orderBy: {
-          created_at: "desc",
+          createdAt: "desc",
         },
         select: {
           id: true,

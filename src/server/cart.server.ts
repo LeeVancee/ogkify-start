@@ -38,45 +38,45 @@ export const addToCart = createServerFn({ method: "POST" })
       );
 
       // Check if user already has a cart
-      let cart = await prisma.carts.findFirst({
-        where: { user_id: session.user.id },
+      let cart = await prisma.cart.findFirst({
+        where: { userId: session.user.id },
       });
 
       // If no cart exists, create a new one
       if (!cart) {
         console.log("user has no cart, create new cart");
-        cart = await prisma.carts.create({
+        cart = await prisma.cart.create({
           data: {
-            user_id: session.user.id,
+            userId: session.user.id,
           },
         });
       }
 
       // Check if the product already exists in the cart
-      const existingItem = await prisma.cart_items.findFirst({
+      const existingItem = await prisma.cartItem.findFirst({
         where: {
-          cart_id: cart.id,
-          product_id: data.productId,
-          color_id: data.colorId || null,
-          size_id: data.sizeId || null,
+          cartId: cart.id,
+          productId: data.productId,
+          colorId: data.colorId || null,
+          sizeId: data.sizeId || null,
         },
       });
 
       if (existingItem) {
         console.log("cart already has this product, update quantity");
-        await prisma.cart_items.update({
+        await prisma.cartItem.update({
           where: { id: existingItem.id },
           data: { quantity: existingItem.quantity + data.quantity },
         });
       } else {
         console.log("add new product to cart");
-        await prisma.cart_items.create({
+        await prisma.cartItem.create({
           data: {
-            cart_id: cart.id,
-            product_id: data.productId,
+            cartId: cart.id,
+            productId: data.productId,
             quantity: data.quantity,
-            color_id: data.colorId || null,
-            size_id: data.sizeId || null,
+            colorId: data.colorId || null,
+            sizeId: data.sizeId || null,
           },
         });
       }
@@ -121,42 +121,42 @@ export const getUserCart = createServerFn().handler(async () => {
     }
 
     // Get cart with all associated data
-    const cart = await prisma.carts.findFirst({
-      where: { user_id: session.user.id },
+    const cart = await prisma.cart.findFirst({
+      where: { userId: session.user.id },
       include: {
-        cart_items: {
+        items: {
           include: {
-            products: {
+            product: {
               include: {
                 images: true,
               },
             },
-            colors: true,
-            sizes: true,
+            color: true,
+            size: true,
           },
         },
       },
     });
 
-    if (!cart || !cart.cart_items.length) {
+    if (!cart || !cart.items.length) {
       return { items: [], totalItems: 0 };
     }
 
     // Format cart data
-    const formattedItems = cart.cart_items.map((item) => {
+    const formattedItems = cart.items.map((item) => {
       return {
         id: item.id,
-        productId: item.product_id,
-        name: item.products.name,
-        price: item.products.price,
+        productId: item.productId,
+        name: item.product.name,
+        price: item.product.price,
         quantity: item.quantity,
-        image: item.products.images[0]?.url || "/placeholder.svg",
-        colorId: item.color_id,
-        colorName: item.colors?.name || null,
-        colorValue: item.colors?.value || null,
-        sizeId: item.size_id,
-        sizeName: item.sizes?.name || null,
-        sizeValue: item.sizes?.value || null,
+        image: item.product.images[0]?.url || "/placeholder.svg",
+        colorId: item.colorId,
+        colorName: item.color?.name || null,
+        colorValue: item.color?.value || null,
+        sizeId: item.sizeId,
+        sizeName: item.size?.name || null,
+        sizeValue: item.size?.value || null,
       };
     });
 
@@ -182,14 +182,14 @@ export const removeFromCart = createServerFn({ method: "POST" })
       }
 
       // Verify this cart item belongs to current user
-      const cartItem = await prisma.cart_items.findUnique({
+      const cartItem = await prisma.cartItem.findUnique({
         where: { id: cartItemId },
         include: {
-          carts: true,
+          cart: true,
         },
       });
 
-      if (!cartItem || cartItem.carts.user_id !== session.user.id) {
+      if (!cartItem || cartItem.cart.userId !== session.user.id) {
         return {
           error: "no permission to operate this cart item",
           success: false,
@@ -197,7 +197,7 @@ export const removeFromCart = createServerFn({ method: "POST" })
       }
 
       // Delete cart item
-      await prisma.cart_items.delete({
+      await prisma.cartItem.delete({
         where: { id: cartItemId },
       });
 
@@ -224,14 +224,14 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
       }
 
       // Verify this cart item belongs to current user
-      const cartItem = await prisma.cart_items.findUnique({
+      const cartItem = await prisma.cartItem.findUnique({
         where: { id: cartItemId },
         include: {
-          carts: true,
+          cart: true,
         },
       });
 
-      if (!cartItem || cartItem.carts.user_id !== session.user.id) {
+      if (!cartItem || cartItem.cart.userId !== session.user.id) {
         return {
           error: "no permission to operate this cart item",
           success: false,
@@ -239,7 +239,7 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
       }
 
       // Update quantity
-      await prisma.cart_items.update({
+      await prisma.cartItem.update({
         where: { id: cartItemId },
         data: { quantity },
       });
@@ -262,8 +262,8 @@ export const clearCart = createServerFn({ method: "POST" }).handler(
       }
 
       // Get user's cart
-      const cart = await prisma.carts.findFirst({
-        where: { user_id: session.user.id },
+      const cart = await prisma.cart.findFirst({
+        where: { userId: session.user.id },
       });
 
       if (!cart) {
@@ -271,8 +271,8 @@ export const clearCart = createServerFn({ method: "POST" }).handler(
       }
 
       // Delete all items in the cart
-      await prisma.cart_items.deleteMany({
-        where: { cart_id: cart.id },
+      await prisma.cartItem.deleteMany({
+        where: { cartId: cart.id },
       });
 
       return { success: true, message: "cart cleared" };
