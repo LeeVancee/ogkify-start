@@ -1,22 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getCategoriesCount } from "@/server/categories.server";
 import {
   getMonthlySalesData,
   getOrdersStats,
   getRecentOrders,
 } from "@/server/orders.server";
 import { getProductsCount } from "@/server/products.server";
-import { prisma } from "@/db";
-
-// Get categories count
-export const getCategoriesCount = createServerFn().handler(async () => {
-  try {
-    const count = await prisma.categories.count();
-    return count;
-  } catch (error) {
-    console.error("Failed to get categories count:", error);
-    return 0;
-  }
-});
 
 // Get all dashboard data in a single request for optimal performance
 export const getDashboardData = createServerFn().handler(async () => {

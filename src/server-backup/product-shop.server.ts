@@ -1,23 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
-import { prisma } from "@/db";
+import { db } from "@/db";
 
 // Get product details
 export const getProduct = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const product = await prisma.products.findUnique({
-        where: { id },
-        include: {
-          categories: true,
-          products_to_colors: {
-            include: {
-              colors: true,
+      const product = await db.query.products.findFirst({
+        where: (products, { eq }) => eq(products.id, id),
+        with: {
+          category: true,
+          colors: {
+            with: {
+              color: true,
             },
           },
-          products_to_sizes: {
-            include: {
-              sizes: true,
+          sizes: {
+            with: {
+              size: true,
             },
           },
           images: true,
@@ -33,21 +33,21 @@ export const getProduct = createServerFn()
         name: product.name,
         description: product.description,
         price: product.price,
-        category: product.categories.name,
-        categoryId: product.category_id,
-        colors: product.products_to_colors.map((pc) => ({
-          id: pc.colors.id,
-          name: pc.colors.name,
-          value: pc.colors.value,
+        category: product.category.name,
+        categoryId: product.categoryId,
+        colors: product.colors.map((pc) => ({
+          id: pc.color.id,
+          name: pc.color.name,
+          value: pc.color.value,
         })),
-        sizes: product.products_to_sizes.map((ps) => ({
-          id: ps.sizes.id,
-          name: ps.sizes.name,
-          value: ps.sizes.value,
+        sizes: product.sizes.map((ps) => ({
+          id: ps.size.id,
+          name: ps.size.name,
+          value: ps.size.value,
         })),
         images: product.images.map((image) => image.url),
-        inStock: true,
-        freeShipping: product.price > 25,
+        inStock: true, // This can be set based on actual conditions
+        freeShipping: product.price > 25, // Assume free shipping for prices above 25
       };
     } catch (error) {
       console.error("Failed to get product details:", error);
@@ -60,16 +60,17 @@ export const getRelatedProducts = createServerFn()
   .inputValidator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
     try {
-      const productsList = await prisma.products.findMany({
-        where: {
-          category_id: category,
-          id: { not: productId },
-          is_archived: false,
-        },
-        include: {
+      const productsList = await db.query.products.findMany({
+        where: (products, { eq, ne, and }) =>
+          and(
+            eq(products.categoryId, category),
+            ne(products.id, productId),
+            eq(products.isArchived, false),
+          ),
+        with: {
           images: true,
         },
-        take: 4,
+        limit: 4,
       });
 
       return productsList.map((product) => ({

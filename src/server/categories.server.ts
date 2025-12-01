@@ -1,21 +1,32 @@
 import { createServerFn } from "@tanstack/react-start";
-import { count, eq } from "drizzle-orm";
-import { db } from "@/db";
-import { categories } from "@/db/schema";
+import { z } from "zod";
+import { prisma } from "@/db";
+
+const categoryFormSchema = z.object({
+  name: z.string().min(1, {
+    message: "Category name must be at least 1 character.",
+  }),
+  imageUrl: z.string().optional(),
+});
+
+export type CategoryFormType = z.infer<typeof categoryFormSchema>;
 
 // Get all categories
 export const getCategories = createServerFn().handler(async () => {
   try {
-    const categoriesList = await db.query.categories.findMany({
-      orderBy: (categories, { desc }) => [desc(categories.createdAt)],
-      columns: {
-        id: true,
-        name: true,
-        imageUrl: true,
+    const categories = await prisma.categories.findMany({
+      orderBy: {
+        created_at: "desc",
       },
     });
-    return categoriesList;
+
+    // Map image_url to imageUrl for frontend compatibility
+    return categories.map(category => ({
+      ...category,
+      imageUrl: category.image_url,
+    }));
   } catch (error) {
+    console.error("Failed to get categories:", error);
     return [];
   }
 });
@@ -25,43 +36,45 @@ export const getCategory = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const category = await db.query.categories.findFirst({
-        where: (categories, { eq }) => eq(categories.id, id),
-        columns: {
-          id: true,
-          name: true,
-          imageUrl: true,
-        },
+      const category = await prisma.categories.findUnique({
+        where: { id },
       });
 
       if (!category) {
-        return { success: false, error: "Category not found" };
+        return { success: false, category: null };
       }
 
-      return { success: true, category };
+      // Map image_url to imageUrl for frontend compatibility
+      return { 
+        success: true, 
+        category: {
+          ...category,
+          imageUrl: category.image_url,
+        }
+      };
     } catch (error) {
       console.error("Failed to get category:", error);
-      return { success: false, error: "Failed to get category" };
+      return { success: false, category: null };
     }
   });
 
-interface CreateCategoryInput {
-  name: string;
-  imageUrl: string;
-}
-
 // Create category
 export const createCategory = createServerFn({ method: "POST" })
-  .inputValidator((input: CreateCategoryInput) => input)
-  .handler(async ({ data: input }) => {
+  .inputValidator((data: CategoryFormType) => {
+    const validatedFields = categoryFormSchema.safeParse(data);
+    if (!validatedFields.success) {
+      throw new Error("Form validation failed");
+    }
+    return data;
+  })
+  .handler(async ({ data }) => {
     try {
-      const [category] = await db
-        .insert(categories)
-        .values({
-          name: input.name,
-          imageUrl: input.imageUrl,
-        })
-        .returning();
+      const category = await prisma.categories.create({
+        data: {
+          name: data.name,
+          image_url: data.imageUrl || null,
+        },
+      });
 
       return { success: true, data: category };
     } catch (error) {
@@ -72,19 +85,36 @@ export const createCategory = createServerFn({ method: "POST" })
 
 // Update category
 export const updateCategory = createServerFn({ method: "POST" })
-  .inputValidator(
-    (params: { id: string; name: string; imageUrl?: string }) => params,
-  )
+  .inputValidator((params: { id: string; name: string; imageUrl?: string }) => {
+    const validatedFields = categoryFormSchema.safeParse({
+      name: params.name,
+      imageUrl: params.imageUrl,
+    });
+    if (!validatedFields.success) {
+      throw new Error("Form validation failed");
+    }
+    return params;
+  })
   .handler(async ({ data: { id, name, imageUrl } }) => {
     try {
-      const [category] = await db
-        .update(categories)
-        .set({ name, imageUrl })
-        .where(eq(categories.id, id))
-        .returning();
+      const category = await prisma.categories.update({
+        where: { id },
+        data: {
+          name: name,
+          image_url: imageUrl || null,
+        },
+      });
 
-      return { success: true, data: category };
+      // Map image_url to imageUrl for frontend compatibility
+      return { 
+        success: true, 
+        data: {
+          ...category,
+          imageUrl: category.image_url,
+        }
+      };
     } catch (error) {
+      console.error("Failed to update category:", error);
       return { success: false, error: "Failed to update category" };
     }
   });
@@ -94,21 +124,16 @@ export const deleteCategory = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await db.delete(categories).where(eq(categories.id, id));
+      await prisma.categories.delete({
+        where: { id },
+      });
 
-      return { success: true };
+      return { success: true, message: "Category deleted successfully" };
     } catch (error) {
-      return { success: false, error: "Failed to delete category" };
+      console.error("Failed to delete category:", error);
+      return {
+        success: false,
+        message: "Failed to delete category, please try again later",
+      };
     }
   });
-
-// Get category count
-export const getCategoriesCount = createServerFn().handler(async () => {
-  try {
-    const [result] = await db.select({ count: count() }).from(categories);
-    return result.count;
-  } catch (error) {
-    console.error("Failed to get category count:", error);
-    return 0;
-  }
-});

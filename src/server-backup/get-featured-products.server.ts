@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { prisma } from "@/db";
+import { db } from "@/db";
 
 /**
  * Get featured products list
@@ -9,29 +9,25 @@ export const getFeaturedProducts = createServerFn()
   .handler(async ({ data: limit }) => {
     try {
       // Get featured products from database
-      const productsList = await prisma.products.findMany({
-        where: {
-          is_featured: true,
-          is_archived: false,
-        },
-        include: {
-          categories: true,
+      const productsList = await db.query.products.findMany({
+        where: (products, { eq, and }) =>
+          and(eq(products.isFeatured, true), eq(products.isArchived, false)),
+        with: {
+          category: true,
           images: true,
-          products_to_colors: {
-            include: {
-              colors: true,
+          colors: {
+            with: {
+              color: true,
             },
           },
-          products_to_sizes: {
-            include: {
-              sizes: true,
+          sizes: {
+            with: {
+              size: true,
             },
           },
         },
-        orderBy: {
-          created_at: "desc",
-        },
-        take: limit,
+        orderBy: (products, { desc }) => [desc(products.createdAt)],
+        limit,
       });
 
       // Format data to match SimpleProduct interface, return only necessary fields
@@ -41,7 +37,9 @@ export const getFeaturedProducts = createServerFn()
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-        category: product.categories.name || "Uncategorized",
+        category: product.category.name || "Uncategorized",
+        // Removed unnecessary hardcoded fields: rating, reviews, inStock, freeShipping
+        // If these fields are needed, they should be fetched from database
       }));
     } catch (error) {
       console.error("Failed to get featured products:", error);

@@ -1,5 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { prisma } from "@/db";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { cartItems, carts } from "@/db/schema";
 import { getSession } from "./getSession.server";
 
 export interface CartItemData {
@@ -16,14 +18,15 @@ export const addToCart = createServerFn({ method: "POST" })
     try {
       const session = await getSession();
 
+      // Check if user is logged in
       if (!session?.user.id) {
         console.error("add to cart failed: user not logged in");
         return { error: "user not logged in, please login", success: false };
       }
 
       // Check if product exists
-      const product = await prisma.products.findUnique({
-        where: { id: data.productId },
+      const product = await db.query.products.findFirst({
+        where: (productsTable, { eq }) => eq(productsTable.id, data.productId),
       });
 
       if (!product) {
@@ -31,49 +34,60 @@ export const addToCart = createServerFn({ method: "POST" })
         return { error: "product not found", success: false };
       }
 
-      console.log("try to add product to cart", session.user.id, data.productId);
+      console.log(
+        "try to add product to cart",
+        session.user.id,
+        data.productId,
+      );
 
       // Check if user already has a cart
-      let cart = await prisma.carts.findFirst({
-        where: { user_id: session.user.id },
+      let cart = await db.query.carts.findFirst({
+        where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
       });
 
       // If no cart exists, create a new one
       if (!cart) {
         console.log("user has no cart, create new cart");
-        cart = await prisma.carts.create({
-          data: {
-            user_id: session.user.id,
-          },
-        });
+        const [newCart] = await db
+          .insert(carts)
+          .values({
+            userId: session.user.id,
+          })
+          .returning();
+        cart = newCart;
       }
 
       // Check if the product already exists in the cart
-      const existingItem = await prisma.cart_items.findFirst({
-        where: {
-          cart_id: cart.id,
-          product_id: data.productId,
-          color_id: data.colorId || null,
-          size_id: data.sizeId || null,
-        },
+      const existingItem = await db.query.cartItems.findFirst({
+        where: (cartItemsTable, { eq, and, isNull }) =>
+          and(
+            eq(cartItemsTable.cartId, cart.id),
+            eq(cartItemsTable.productId, data.productId),
+            data.colorId
+              ? eq(cartItemsTable.colorId, data.colorId)
+              : isNull(cartItemsTable.colorId),
+            data.sizeId
+              ? eq(cartItemsTable.sizeId, data.sizeId)
+              : isNull(cartItemsTable.sizeId),
+          ),
       });
 
       if (existingItem) {
         console.log("cart already has this product, update quantity");
-        await prisma.cart_items.update({
-          where: { id: existingItem.id },
-          data: { quantity: existingItem.quantity + data.quantity },
-        });
+        // Update existing product quantity
+        await db
+          .update(cartItems)
+          .set({ quantity: existingItem.quantity + data.quantity })
+          .where(eq(cartItems.id, existingItem.id));
       } else {
         console.log("add new product to cart");
-        await prisma.cart_items.create({
-          data: {
-            cart_id: cart.id,
-            product_id: data.productId,
-            quantity: data.quantity,
-            color_id: data.colorId || null,
-            size_id: data.sizeId || null,
-          },
+        // Add new product to cart
+        await db.insert(cartItems).values({
+          cartId: cart.id,
+          productId: data.productId,
+          quantity: data.quantity,
+          colorId: data.colorId || null,
+          sizeId: data.sizeId || null,
         });
       }
 
@@ -116,43 +130,43 @@ export const getUserCart = createServerFn().handler(async () => {
       return { items: [], totalItems: 0 };
     }
 
-    // Get cart with all associated data
-    const cart = await prisma.carts.findFirst({
-      where: { user_id: session.user.id },
-      include: {
-        cart_items: {
-          include: {
-            products: {
-              include: {
+    // Use Drizzle relational query to fetch cart with all associated data in one query
+    const cart = await db.query.carts.findFirst({
+      where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
+      with: {
+        items: {
+          with: {
+            product: {
+              with: {
                 images: true,
               },
             },
-            colors: true,
-            sizes: true,
+            color: true,
+            size: true,
           },
         },
       },
     });
 
-    if (!cart || !cart.cart_items.length) {
+    if (!cart || !cart.items.length) {
       return { items: [], totalItems: 0 };
     }
 
     // Format cart data
-    const formattedItems = cart.cart_items.map((item) => {
+    const formattedItems = cart.items.map((item) => {
       return {
         id: item.id,
-        productId: item.product_id,
-        name: item.products.name,
-        price: item.products.price,
+        productId: item.productId,
+        name: item.product.name,
+        price: item.product.price,
         quantity: item.quantity,
-        image: item.products.images[0]?.url || "/placeholder.svg",
-        colorId: item.color_id,
-        colorName: item.colors?.name || null,
-        colorValue: item.colors?.value || null,
-        sizeId: item.size_id,
-        sizeName: item.sizes?.name || null,
-        sizeValue: item.sizes?.value || null,
+        image: item.product.images[0]?.url || "/placeholder.svg",
+        colorId: item.colorId,
+        colorName: item.color?.name || null,
+        colorValue: item.color?.value || null,
+        sizeId: item.sizeId,
+        sizeName: item.size?.name || null,
+        sizeValue: item.size?.value || null,
       };
     });
 
@@ -178,14 +192,14 @@ export const removeFromCart = createServerFn({ method: "POST" })
       }
 
       // Verify this cart item belongs to current user
-      const cartItem = await prisma.cart_items.findUnique({
-        where: { id: cartItemId },
-        include: {
-          carts: true,
+      const cartItem = await db.query.cartItems.findFirst({
+        where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
+        with: {
+          cart: true,
         },
       });
 
-      if (!cartItem || cartItem.carts.user_id !== session.user.id) {
+      if (!cartItem || cartItem.cart.userId !== session.user.id) {
         return {
           error: "no permission to operate this cart item",
           success: false,
@@ -193,9 +207,7 @@ export const removeFromCart = createServerFn({ method: "POST" })
       }
 
       // Delete cart item
-      await prisma.cart_items.delete({
-        where: { id: cartItemId },
-      });
+      await db.delete(cartItems).where(eq(cartItems.id, cartItemId));
 
       return { success: true, message: "product removed from cart" };
     } catch (error) {
@@ -220,14 +232,14 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
       }
 
       // Verify this cart item belongs to current user
-      const cartItem = await prisma.cart_items.findUnique({
-        where: { id: cartItemId },
-        include: {
-          carts: true,
+      const cartItem = await db.query.cartItems.findFirst({
+        where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
+        with: {
+          cart: true,
         },
       });
 
-      if (!cartItem || cartItem.carts.user_id !== session.user.id) {
+      if (!cartItem || cartItem.cart.userId !== session.user.id) {
         return {
           error: "no permission to operate this cart item",
           success: false,
@@ -235,10 +247,10 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
       }
 
       // Update quantity
-      await prisma.cart_items.update({
-        where: { id: cartItemId },
-        data: { quantity },
-      });
+      await db
+        .update(cartItems)
+        .set({ quantity })
+        .where(eq(cartItems.id, cartItemId));
 
       return { success: true, message: "cart updated" };
     } catch (error) {
@@ -258,8 +270,8 @@ export const clearCart = createServerFn({ method: "POST" }).handler(
       }
 
       // Get user's cart
-      const cart = await prisma.carts.findFirst({
-        where: { user_id: session.user.id },
+      const cart = await db.query.carts.findFirst({
+        where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
       });
 
       if (!cart) {
@@ -267,9 +279,7 @@ export const clearCart = createServerFn({ method: "POST" }).handler(
       }
 
       // Delete all items in the cart
-      await prisma.cart_items.deleteMany({
-        where: { cart_id: cart.id },
-      });
+      await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
 
       return { success: true, message: "cart cleared" };
     } catch (error) {

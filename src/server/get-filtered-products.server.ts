@@ -1,7 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { asc, desc, eq, gte, ilike, lte, or } from "drizzle-orm";
-import { db } from "@/db";
-import { products } from "@/db/schema";
+import { prisma } from "@/db";
 
 export interface FilterOptions {
   category?: string;
@@ -24,107 +22,100 @@ export const getFilteredProducts = createServerFn()
   .handler(async ({ data: options }) => {
     try {
       // Build base query conditions
-      const baseConditions = [eq(products.isArchived, false)];
+      const whereConditions: any = {
+        is_archived: false,
+      };
 
       // Featured products filter
       if (options.featured) {
-        baseConditions.push(eq(products.isFeatured, true));
+        whereConditions.is_featured = true;
       }
 
       // Price range filter
-      if (options.minPrice !== undefined) {
-        baseConditions.push(gte(products.price, options.minPrice));
-      }
-      if (options.maxPrice !== undefined) {
-        baseConditions.push(lte(products.price, options.maxPrice));
+      if (options.minPrice !== undefined || options.maxPrice !== undefined) {
+        whereConditions.price = {};
+        if (options.minPrice !== undefined) {
+          whereConditions.price.gte = options.minPrice;
+        }
+        if (options.maxPrice !== undefined) {
+          whereConditions.price.lte = options.maxPrice;
+        }
       }
 
       // Search query
       if (options.search) {
-        baseConditions.push(
-          or(
-            ilike(products.name, `%${options.search}%`),
-            ilike(products.description, `%${options.search}%`),
-          )!,
-        );
+        whereConditions.OR = [
+          { name: { contains: options.search, mode: "insensitive" } },
+          { description: { contains: options.search, mode: "insensitive" } },
+        ];
+      }
+
+      // Category filter
+      if (options.category) {
+        whereConditions.categories = {
+          name: options.category,
+        };
       }
 
       // Handle pagination
       const page = options.page || 1;
       const limit = options.limit || 12;
-      const offset = (page - 1) * limit;
+      const skip = (page - 1) * limit;
 
       // Handle sorting
-      let orderBy: any = [desc(products.createdAt)]; // Default sort by creation time descending
+      let orderBy: any = { created_at: "desc" };
 
       if (options.sort) {
         switch (options.sort) {
           case "price-asc":
-            orderBy = [asc(products.price)];
+            orderBy = { price: "asc" };
             break;
           case "price-desc":
-            orderBy = [desc(products.price)];
+            orderBy = { price: "desc" };
             break;
           case "newest":
-            orderBy = [desc(products.createdAt)];
+            orderBy = { created_at: "desc" };
             break;
           case "featured":
           default:
-            // Featured products first, then by creation time descending
-            orderBy = [desc(products.isFeatured), desc(products.createdAt)];
+            orderBy = [{ is_featured: "desc" }, { created_at: "desc" }];
         }
       }
 
-      // Use relational query to get product list
-      let productsList = await db.query.products.findMany({
-        where: (productsTable, { and: andFn }) => andFn(...baseConditions),
-        with: {
-          category: true,
+      // Get products with relations
+      let productsList = await prisma.products.findMany({
+        where: whereConditions,
+        include: {
+          categories: true,
           images: true,
-          colors: {
-            with: {
-              color: true,
+          products_to_colors: {
+            include: {
+              colors: true,
             },
           },
-          sizes: {
-            with: {
-              size: true,
+          products_to_sizes: {
+            include: {
+              sizes: true,
             },
           },
         },
-        orderBy: (productsTable, { desc: descFn, asc: ascFn }) => {
-          if (options.sort === "price-asc") {
-            return [ascFn(productsTable.price)];
-          } else if (options.sort === "price-desc") {
-            return [descFn(productsTable.price)];
-          } else if (options.sort === "newest") {
-            return [descFn(productsTable.createdAt)];
-          } else {
-            // featured or default sorting
-            return [
-              descFn(productsTable.isFeatured),
-              descFn(productsTable.createdAt),
-            ];
-          }
-        },
+        orderBy,
       });
 
-      // Additional filtering in memory (category, colors, sizes)
-      if (options.category) {
-        productsList = productsList.filter(
-          (product) => product.category.name === options.category,
-        );
-      }
-
+      // Additional filtering for colors and sizes (in-memory)
       if (options.colors && options.colors.length > 0) {
         productsList = productsList.filter((product) =>
-          product.colors.some((pc) => options.colors!.includes(pc.color.name)),
+          product.products_to_colors.some((pc) =>
+            options.colors!.includes(pc.colors.name),
+          ),
         );
       }
 
       if (options.sizes && options.sizes.length > 0) {
         productsList = productsList.filter((product) =>
-          product.sizes.some((ps) => options.sizes!.includes(ps.size.value)),
+          product.products_to_sizes.some((ps) =>
+            options.sizes!.includes(ps.sizes.value),
+          ),
         );
       }
 
@@ -132,19 +123,16 @@ export const getFilteredProducts = createServerFn()
       const total = productsList.length;
 
       // Apply pagination
-      const paginatedProducts = productsList.slice(offset, offset + limit);
+      const paginatedProducts = productsList.slice(skip, skip + limit);
 
-      // Format data to match SimpleProduct interface, return only necessary fields
+      // Format data
       const formattedProducts = paginatedProducts.map((product) => ({
         id: product.id,
         name: product.name,
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-        category: product.category.name,
-        // Removed unnecessary hardcoded fields: inStock, rating, reviews, discount, freeShipping
-        // These fields are not used in ProductGrid, reducing data transfer
-        // If these fields are needed in the future, they should be fetched from database instead of hardcoded
+        category: product.categories.name,
       }));
 
       return {

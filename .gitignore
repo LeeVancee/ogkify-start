@@ -25,3 +25,4 @@ dist
 /playwright/.cache/
 .tanstack
 generated
+/generated/prisma

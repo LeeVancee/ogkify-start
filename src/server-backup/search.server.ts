@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { prisma } from "@/db";
+import { db } from "@/db";
 
 /**
  * Search products based on query string
@@ -12,16 +12,15 @@ export const searchProducts = createServerFn()
     }
 
     try {
-      const productsList = await prisma.products.findMany({
-        where: {
-          OR: [
-            { name: { contains: query, mode: "insensitive" } },
-            { description: { contains: query, mode: "insensitive" } },
-          ],
-        },
-        include: {
+      const productsList = await db.query.products.findMany({
+        where: (products, { or, ilike }) =>
+          or(
+            ilike(products.name, `%${query}%`),
+            ilike(products.description, `%${query}%`),
+          ),
+        with: {
           images: true,
-          categories: true,
+          category: true,
         },
       });
 
@@ -33,7 +32,7 @@ export const searchProducts = createServerFn()
         price: product.price,
         image:
           product.images[0]?.url || "/placeholder.svg?height=300&width=300",
-        category: product.categories.name || "",
+        category: product.category.name || "",
       }));
     } catch (error) {
       console.error("Error searching products:", error);
