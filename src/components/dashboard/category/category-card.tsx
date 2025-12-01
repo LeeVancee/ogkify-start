@@ -25,7 +25,7 @@ export function CategoryCard({
       isDeleting={isDeleting}
       deleteConfirmTitle={`Are you sure you want to delete the category "${category.name}"?`}
     >
-      <div className="aspect-[4/3] overflow-hidden relative bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="aspect-4/3 overflow-hidden relative bg-linear-to-br from-gray-50 to-gray-100">
         <img
           src={category.imageUrl || "/placeholder.svg"}
           alt={category.name}
@@ -33,7 +33,7 @@ export function CategoryCard({
         />
 
         {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
         {/* Category type badge */}
         <div className="absolute top-3 left-3">
