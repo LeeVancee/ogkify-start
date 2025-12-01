@@ -12,7 +12,7 @@ export const searchProducts = createServerFn()
     }
 
     try {
-      const productsList = await prisma.products.findMany({
+      const productsList = await prisma.product.findMany({
         where: {
           OR: [
             { name: { contains: query, mode: "insensitive" } },
@@ -21,7 +21,7 @@ export const searchProducts = createServerFn()
         },
         include: {
           images: true,
-          categories: true,
+          category: true,
         },
       });
 
@@ -33,7 +33,7 @@ export const searchProducts = createServerFn()
         price: product.price,
         image:
           product.images[0]?.url || "/placeholder.svg?height=300&width=300",
-        category: product.categories.name || "",
+        category: product.category.name || "",
       }));
     } catch (error) {
       console.error("Error searching products:", error);

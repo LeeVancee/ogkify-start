@@ -22,7 +22,7 @@ export const addToCart = createServerFn({ method: "POST" })
       }
 
       // Check if product exists
-      const product = await prisma.products.findUnique({
+      const product = await prisma.product.findUnique({
         where: { id: data.productId },
       });
 

@@ -21,11 +21,11 @@ model User {
   banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
-  carts         cart[]
-  orders        order[]
+  carts         Cart[]
+  orders        Order[]
 
   @@unique([email])
-  @@map("user")
+  @@map("users")
 }
 
 model Session {
@@ -42,7 +42,7 @@ model Session {
 
   @@unique([token])
   @@index([userId])
-  @@map("session")
+  @@map("sessions")
 }
 
 model Account {
@@ -62,7 +62,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@index([userId])
-  @@map("account")
+  @@map("accounts")
 }
 
 model Verification {
@@ -74,10 +74,10 @@ model Verification {
   updatedAt  DateTime @updatedAt
 
   @@index([identifier])
-  @@map("verification")
+  @@map("verifications")
 }
 
-model cartItem {
+model CartItem {
   id        String   @id @default(uuid())
   cartId    String
   productId String
@@ -86,61 +86,61 @@ model cartItem {
   sizeId    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  cart      cart     @relation(fields: [cartId], references: [id])
-  color     color?   @relation(fields: [colorId], references: [id])
-  product   product  @relation(fields: [productId], references: [id])
-  size      size?    @relation(fields: [sizeId], references: [id])
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  color     Color?   @relation(fields: [colorId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  size      Size?    @relation(fields: [sizeId], references: [id])
 
   @@map("cart_items")
 }
 
-model cart {
+model Cart {
   id        String     @id @default(uuid())
   userId    String
   createdAt DateTime   @default(now())
   updatedAt DateTime   @default(now())
-  items     cartItem[]
+  items     CartItem[]
   user      User       @relation(fields: [userId], references: [id])
 
   @@map("carts")
 }
 
-model category {
+model Category {
   id        String    @id @default(uuid())
   name      String
   imageUrl  String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now())
-  products  product[]
+  products  Product[]
 
   @@map("categories")
 }
 
-model color {
+model Color {
   id              String           @id @default(uuid())
   name            String
   value           String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @default(now())
-  cartItems       cartItem[]
-  orderItems      orderItem[]
-  productToColors productToColor[]
+  cartItems       CartItem[]
+  orderItems      OrderItem[]
+  productToColors ProductToColor[]
 
   @@map("colors")
 }
 
-model image {
+model Image {
   id        String   @id @default(uuid())
   productId String
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  product   product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
 
   @@map("images")
 }
 
-model orderItem {
+model OrderItem {
   id        String   @id @default(uuid())
   orderId   String
   productId String
@@ -150,34 +150,34 @@ model orderItem {
   sizeId    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-  color     color?   @relation(fields: [colorId], references: [id])
-  order     order    @relation(fields: [orderId], references: [id])
-  product   product  @relation(fields: [productId], references: [id])
-  size      size?    @relation(fields: [sizeId], references: [id])
+  color     Color?   @relation(fields: [colorId], references: [id])
+  order     Order    @relation(fields: [orderId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+  size      Size?    @relation(fields: [sizeId], references: [id])
 
   @@map("order_items")
 }
 
-model order {
+model Order {
   id              String        @id @default(uuid())
   orderNumber     String
   userId          String
-  status          orderStatus   @default(PENDING)
+  status          OrderStatus   @default(PENDING)
   totalAmount     Float
   phone           String?
   shippingAddress String?
   paymentMethod   String?
   paymentIntent   String?
-  paymentStatus   paymentStatus @default(UNPAID)
+  paymentStatus   PaymentStatus @default(UNPAID)
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @default(now())
-  items           orderItem[]
+  items           OrderItem[]
   user            User          @relation(fields: [userId], references: [id])
 
   @@map("orders")
 }
 
-model product {
+model Product {
   id              String           @id @default(uuid())
   name            String
   description     String
@@ -187,50 +187,50 @@ model product {
   categoryId      String
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @default(now())
-  cartItems       cartItem[]
-  images          image[]
-  orderItems      orderItem[]
-  category        category         @relation(fields: [categoryId], references: [id])
-  productToColors productToColor[]
-  productToSizes  productToSize[]
+  cartItems       CartItem[]
+  images          Image[]
+  orderItems      OrderItem[]
+  category        Category         @relation(fields: [categoryId], references: [id])
+  productToColors ProductToColor[]
+  productToSizes  ProductToSize[]
 
   @@map("products")
 }
 
-model productToColor {
+model ProductToColor {
   productId String
   colorId   String
-  color     color   @relation(fields: [colorId], references: [id])
-  product   product @relation(fields: [productId], references: [id])
+  color     Color   @relation(fields: [colorId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
 
   @@id([productId, colorId])
   @@map("products_to_colors")
 }
 
-model productToSize {
+model ProductToSize {
   productId String
   sizeId    String
-  product   product @relation(fields: [productId], references: [id])
-  size      size    @relation(fields: [sizeId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+  size      Size    @relation(fields: [sizeId], references: [id])
 
   @@id([productId, sizeId])
   @@map("products_to_sizes")
 }
 
-model size {
+model Size {
   id             String          @id @default(uuid())
   name           String
   value          String
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @default(now())
-  cartItems      cartItem[]
-  orderItems     orderItem[]
-  productToSizes productToSize[]
+  cartItems      CartItem[]
+  orderItems     OrderItem[]
+  productToSizes ProductToSize[]
 
   @@map("sizes")
 }
 
-enum orderStatus {
+enum OrderStatus {
   PENDING
   PAID
   COMPLETED
@@ -239,7 +239,7 @@ enum orderStatus {
   @@map("order_status")
 }
 
-enum paymentStatus {
+enum PaymentStatus {
   UNPAID
   PAID
   REFUNDED

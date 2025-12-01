@@ -9,27 +9,27 @@ export const getFeaturedProducts = createServerFn()
   .handler(async ({ data: limit }) => {
     try {
       // Get featured products from database
-      const productsList = await prisma.products.findMany({
+      const productsList = await prisma.product.findMany({
         where: {
-          is_featured: true,
-          is_archived: false,
+          isFeatured: true,
+          isArchived: false,
         },
         include: {
-          categories: true,
+          category: true,
           images: true,
-          products_to_colors: {
+          productToColors: {
             include: {
-              colors: true,
+              color: true,
             },
           },
-          products_to_sizes: {
+          productToSizes: {
             include: {
-              sizes: true,
+              size: true,
             },
           },
         },
         orderBy: {
-          created_at: "desc",
+          createdAt: "desc",
         },
         take: limit,
       });
@@ -41,7 +41,7 @@ export const getFeaturedProducts = createServerFn()
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-        category: product.categories.name || "Uncategorized",
+        category: product.category.name || "Uncategorized",
       }));
     } catch (error) {
       console.error("Failed to get featured products:", error);

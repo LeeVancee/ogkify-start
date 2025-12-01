@@ -54,6 +54,7 @@ export function SizeEditForm({ size }: SizeEditFormProps) {
           placeholder="Input size name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          autoComplete="off"
         />
       </div>
       <div className="space-y-2">
@@ -61,6 +62,7 @@ export function SizeEditForm({ size }: SizeEditFormProps) {
           placeholder="Input size value (e.g., S, M, L)"
           value={value}
           onChange={(e) => setValue(e.target.value)}
+          autoComplete="off"
         />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>

@@ -189,6 +189,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                             placeholder="e.g., Classic Cotton T-Shirt"
                             className="h-11 text-base"
                             {...field}
+                            autoComplete="off"
                           />
                         </FormControl>
                         <FormDescription className="text-xs">
@@ -217,6 +218,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                               placeholder="0.00"
                               className="h-11 pl-8 text-base font-semibold"
                               {...field}
+                              autoComplete="off"
                             />
                           </div>
                         </FormControl>
@@ -441,7 +443,7 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                             name="colorIds"
                             render={({ field }) => {
                               const isSelected = field.value?.includes(
-                                color.id,
+                                color.id
                               );
                               return (
                                 <FormItem
@@ -464,8 +466,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id,
-                                              ),
+                                                  value !== color.id
+                                              )
                                             );
                                       }}
                                     />
@@ -542,8 +544,8 @@ export function ProductForm({ categories, colors, sizes }: ProductFormProps) {
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id,
-                                              ),
+                                                  value !== size.id
+                                              )
                                             );
                                       }}
                                     />

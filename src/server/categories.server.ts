@@ -14,16 +14,16 @@ export type CategoryFormType = z.infer<typeof categoryFormSchema>;
 // Get all categories
 export const getCategories = createServerFn().handler(async () => {
   try {
-    const categories = await prisma.categories.findMany({
+    const categories = await prisma.category.findMany({
       orderBy: {
-        created_at: "desc",
+        createdAt: "desc",
       },
     });
 
     // Map image_url to imageUrl for frontend compatibility
     return categories.map((category) => ({
       ...category,
-      imageUrl: category.image_url,
+      imageUrl: category.imageUrl,
     }));
   } catch (error) {
     console.error("Failed to get categories:", error);
@@ -36,7 +36,7 @@ export const getCategory = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const category = await prisma.categories.findUnique({
+      const category = await prisma.category.findUnique({
         where: { id },
       });
 
@@ -49,7 +49,7 @@ export const getCategory = createServerFn()
         success: true,
         category: {
           ...category,
-          imageUrl: category.image_url,
+          imageUrl: category.imageUrl,
         },
       };
     } catch (error) {
@@ -69,10 +69,10 @@ export const createCategory = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     try {
-      const category = await prisma.categories.create({
+      const category = await prisma.category.create({
         data: {
           name: data.name,
-          image_url: data.imageUrl || null,
+          imageUrl: data.imageUrl || null,
         },
       });
 
@@ -97,11 +97,11 @@ export const updateCategory = createServerFn({ method: "POST" })
   })
   .handler(async ({ data: { id, name, imageUrl } }) => {
     try {
-      const category = await prisma.categories.update({
+      const category = await prisma.category.update({
         where: { id },
         data: {
           name: name,
-          image_url: imageUrl || null,
+          imageUrl: imageUrl || null,
         },
       });
 
@@ -110,7 +110,7 @@ export const updateCategory = createServerFn({ method: "POST" })
         success: true,
         data: {
           ...category,
-          imageUrl: category.image_url,
+          imageUrl: category.imageUrl,
         },
       };
     } catch (error) {
@@ -124,7 +124,7 @@ export const deleteCategory = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await prisma.categories.delete({
+      await prisma.category.delete({
         where: { id },
       });
 

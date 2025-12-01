@@ -16,7 +16,7 @@ export type ColorFormType = z.infer<typeof colorFormSchema>;
 // Get all colors
 export const getColors = createServerFn().handler(async () => {
   try {
-    const colors = await prisma.colors.findMany({
+    const colors = await prisma.color.findMany({
       orderBy: {
         name: "asc",
       },
@@ -34,7 +34,7 @@ export const getColor = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const color = await prisma.colors.findUnique({
+      const color = await prisma.color.findUnique({
         where: { id },
       });
 
@@ -60,7 +60,7 @@ export const createColor = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     try {
-      const color = await prisma.colors.create({
+      const color = await prisma.color.create({
         data: {
           name: data.name,
           value: data.value,
@@ -85,7 +85,7 @@ export const updateColor = createServerFn({ method: "POST" })
   })
   .handler(async ({ data: { id, data } }) => {
     try {
-      const color = await prisma.colors.update({
+      const color = await prisma.color.update({
         where: { id },
         data: {
           name: data.name,
@@ -105,7 +105,7 @@ export const deleteColor = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await prisma.colors.delete({
+      await prisma.color.delete({
         where: { id },
       });
 

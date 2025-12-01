@@ -10,7 +10,7 @@ import { getProductsCount } from "@/server/products.server";
 // Get categories count
 export const getCategoriesCount = createServerFn().handler(async () => {
   try {
-    const count = await prisma.categories.count();
+    const count = await prisma.category.count();
     return count;
   } catch (error) {
     console.error("Failed to get categories count:", error);

@@ -6,18 +6,18 @@ export const getProduct = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const product = await prisma.products.findUnique({
+      const product = await prisma.product.findUnique({
         where: { id },
         include: {
-          categories: true,
-          products_to_colors: {
+          category: true,
+          productToColors: {
             include: {
-              colors: true,
+              color: true,
             },
           },
-          products_to_sizes: {
+          productToSizes: {
             include: {
-              sizes: true,
+              size: true,
             },
           },
           images: true,
@@ -33,17 +33,17 @@ export const getProduct = createServerFn()
         name: product.name,
         description: product.description,
         price: product.price,
-        category: product.categories.name,
-        categoryId: product.category_id,
-        colors: product.products_to_colors.map((pc) => ({
-          id: pc.colors.id,
-          name: pc.colors.name,
-          value: pc.colors.value,
+        category: product.category.name,
+        categoryId: product.categoryId,
+        colors: product.productToColors.map((pc) => ({
+          id: pc.color.id,
+          name: pc.color.name,
+          value: pc.color.value,
         })),
-        sizes: product.products_to_sizes.map((ps) => ({
-          id: ps.sizes.id,
-          name: ps.sizes.name,
-          value: ps.sizes.value,
+        sizes: product.productToSizes.map((ps) => ({
+          id: ps.size.id,
+          name: ps.size.name,
+          value: ps.size.value,
         })),
         images: product.images.map((image) => image.url),
         inStock: true,
@@ -60,11 +60,11 @@ export const getRelatedProducts = createServerFn()
   .inputValidator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
     try {
-      const productsList = await prisma.products.findMany({
+      const productsList = await prisma.product.findMany({
         where: {
-          category_id: category,
+          categoryId: category,
           id: { not: productId },
-          is_archived: false,
+          isArchived: false,
         },
         include: {
           images: true,

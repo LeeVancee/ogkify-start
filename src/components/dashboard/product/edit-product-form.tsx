@@ -175,6 +175,7 @@ export function EditProductForm({
                             placeholder="Enter product name"
                             className="h-11"
                             {...field}
+                            autoComplete="off"
                           />
                         </FormControl>
                         <FormMessage />
@@ -197,6 +198,7 @@ export function EditProductForm({
                               placeholder="99.99"
                               className="h-11 pl-8"
                               {...field}
+                              autoComplete="off"
                             />
                           </div>
                         </FormControl>
@@ -387,8 +389,8 @@ export function EditProductForm({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== color.id,
-                                              ),
+                                                  value !== color.id
+                                              )
                                             );
                                       }}
                                     />
@@ -452,8 +454,8 @@ export function EditProductForm({
                                           : field.onChange(
                                               field.value?.filter(
                                                 (value: string) =>
-                                                  value !== size.id,
-                                              ),
+                                                  value !== size.id
+                                              )
                                             );
                                       }}
                                     />

@@ -34,16 +34,16 @@ export const getProduct = createServerFn()
       const product = await prisma.product.findUnique({
         where: { id },
         include: {
-          categories: true,
+          category: true,
           images: true,
-          products_to_colors: {
+          productToColors: {
             include: {
-              colors: true,
+              color: true,
             },
           },
-          products_to_sizes: {
+          productToSizes: {
             include: {
-              sizes: true,
+              size: true,
             },
           },
         },
@@ -61,12 +61,12 @@ export const getProduct = createServerFn()
         categoryId: product.categoryId,
         isFeatured: product.isFeatured,
         isArchived: product.isArchived,
-        category: product.categories,
-        colorIds: product.products_to_colors.map((pc) => pc.colors.id),
-        sizeIds: product.products_to_sizes.map((ps) => ps.sizes.id),
+        category: product.category,
+        colorIds: product.productToColors.map((pc) => pc.color.id),
+        sizeIds: product.productToSizes.map((ps) => ps.size.id),
         images: product.images.map((image) => image.url),
-        colors: product.products_to_colors.map((pc) => pc.colors),
-        sizes: product.products_to_sizes.map((ps) => ps.sizes),
+        colors: product.productToColors.map((pc) => pc.color),
+        sizes: product.productToSizes.map((ps) => ps.size),
         createdAt: product.createdAt,
         updatedAt: product.updatedAt,
       };
@@ -186,16 +186,16 @@ export const getProducts = createServerFn().handler(async () => {
   try {
     const productsList = await prisma.product.findMany({
       include: {
-        categories: true,
+        category: true,
         images: true,
-        products_to_colors: {
+        productToColors: {
           include: {
-            colors: true,
+            color: true,
           },
         },
-        products_to_sizes: {
+        productToSizes: {
           include: {
-            sizes: true,
+            size: true,
           },
         },
       },
@@ -210,9 +210,9 @@ export const getProducts = createServerFn().handler(async () => {
       name: product.name,
       description: product.description,
       price: product.price,
-      category: product.categories,
-      colors: product.products_to_colors.map((pc) => pc.colors),
-      sizes: product.products_to_sizes.map((ps) => ps.sizes),
+      category: product.category,
+      colors: product.productToColors.map((pc) => pc.color),
+      sizes: product.productToSizes.map((ps) => ps.size),
       images: product.images,
       isFeatured: product.isFeatured,
       isArchived: product.isArchived,
@@ -334,8 +334,8 @@ export const getPopularProducts = createServerFn()
       const productsList = await prisma.product.findMany({
         include: {
           images: true,
-          categories: true,
-          order_items: true,
+          category: true,
+          cartItems: true,
         },
         take: limit,
       });
@@ -347,8 +347,8 @@ export const getPopularProducts = createServerFn()
           name: product.name,
           price: product.price,
           imageUrl: product.images[0]?.url || null,
-          category: product.categories.name || "",
-          orderCount: product.order_items.length,
+          category: product.category.name || "",
+          orderCount: product.cartItems.length,
         }))
         .sort((a, b) => b.orderCount - a.orderCount)
         .slice(0, limit);
@@ -364,17 +364,17 @@ export const getPopularProducts = createServerFn()
 export const getProductFormData = createServerFn().handler(async () => {
   try {
     const [categoriesRaw, colors, sizes] = await Promise.all([
-      prisma.categories.findMany({
+      prisma.category.findMany({
         orderBy: {
           createdAt: "desc",
         },
         select: {
           id: true,
           name: true,
-          image_url: true,
+          imageUrl: true,
         },
       }),
-      prisma.colors.findMany({
+      prisma.color.findMany({
         orderBy: {
           name: "asc",
         },
@@ -384,7 +384,7 @@ export const getProductFormData = createServerFn().handler(async () => {
           value: true,
         },
       }),
-      prisma.sizes.findMany({
+      prisma.size.findMany({
         orderBy: {
           name: "asc",
         },
@@ -400,7 +400,7 @@ export const getProductFormData = createServerFn().handler(async () => {
     const categories = categoriesRaw.map((category) => ({
       id: category.id,
       name: category.name,
-      imageUrl: category.image_url,
+      imageUrl: category.imageUrl,
     }));
 
     return {

@@ -16,7 +16,7 @@ export type SizeFormType = z.infer<typeof sizeFormSchema>;
 // Get all sizes
 export const getSizes = createServerFn().handler(async () => {
   try {
-    const sizes = await prisma.sizes.findMany({
+    const sizes = await prisma.size.findMany({
       orderBy: {
         name: "asc",
       },
@@ -34,7 +34,7 @@ export const getSize = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      const size = await prisma.sizes.findUnique({
+      const size = await prisma.size.findUnique({
         where: { id },
       });
 
@@ -60,7 +60,7 @@ export const createSize = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     try {
-      const size = await prisma.sizes.create({
+      const size = await prisma.size.create({
         data: {
           name: data.name,
           value: data.value,
@@ -85,7 +85,7 @@ export const updateSize = createServerFn({ method: "POST" })
   })
   .handler(async ({ data: { id, data } }) => {
     try {
-      const size = await prisma.sizes.update({
+      const size = await prisma.size.update({
         where: { id },
         data: {
           name: data.name,
@@ -105,7 +105,7 @@ export const deleteSize = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
-      await prisma.sizes.delete({
+      await prisma.size.delete({
         where: { id },
       });
 

@@ -23,12 +23,12 @@ export const getFilteredProducts = createServerFn()
     try {
       // Build base query conditions
       const whereConditions: any = {
-        is_archived: false,
+        isArchived: false,
       };
 
       // Featured products filter
       if (options.featured) {
-        whereConditions.is_featured = true;
+        whereConditions.isFeatured = true;
       }
 
       // Price range filter
@@ -52,7 +52,7 @@ export const getFilteredProducts = createServerFn()
 
       // Category filter
       if (options.category) {
-        whereConditions.categories = {
+        whereConditions.category = {
           name: options.category,
         };
       }
@@ -63,7 +63,7 @@ export const getFilteredProducts = createServerFn()
       const skip = (page - 1) * limit;
 
       // Handle sorting
-      let orderBy: any = { created_at: "desc" };
+      let orderBy: any = { createdAt: "desc" };
 
       if (options.sort) {
         switch (options.sort) {
@@ -74,28 +74,28 @@ export const getFilteredProducts = createServerFn()
             orderBy = { price: "desc" };
             break;
           case "newest":
-            orderBy = { created_at: "desc" };
+            orderBy = { createdAt: "desc" };
             break;
           case "featured":
           default:
-            orderBy = [{ is_featured: "desc" }, { created_at: "desc" }];
+            orderBy = [{ isFeatured: "desc" }, { createdAt: "desc" }];
         }
       }
 
       // Get products with relations
-      let productsList = await prisma.products.findMany({
+      let productsList = await prisma.product.findMany({
         where: whereConditions,
         include: {
-          categories: true,
+          category: true,
           images: true,
-          products_to_colors: {
+          productToColors: {
             include: {
-              colors: true,
+              color: true,
             },
           },
-          products_to_sizes: {
+          productToSizes: {
             include: {
-              sizes: true,
+              size: true,
             },
           },
         },
@@ -105,16 +105,16 @@ export const getFilteredProducts = createServerFn()
       // Additional filtering for colors and sizes (in-memory)
       if (options.colors && options.colors.length > 0) {
         productsList = productsList.filter((product) =>
-          product.products_to_colors.some((pc) =>
-            options.colors!.includes(pc.colors.name),
+          product.productToColors.some((pc) =>
+            options.colors!.includes(pc.color.name),
           ),
         );
       }
 
       if (options.sizes && options.sizes.length > 0) {
         productsList = productsList.filter((product) =>
-          product.products_to_sizes.some((ps) =>
-            options.sizes!.includes(ps.sizes.value),
+          product.productToSizes.some((ps) =>
+            options.sizes!.includes(ps.size.value),
           ),
         );
       }
@@ -132,7 +132,7 @@ export const getFilteredProducts = createServerFn()
         description: product.description,
         price: product.price,
         images: product.images.map((image) => image.url),
-        category: product.categories.name,
+        category: product.category.name,
       }));
 
       return {

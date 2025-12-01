@@ -75,7 +75,11 @@ export function CategoryEditForm({ category }: CategoryEditFormProps) {
             <FormItem>
               <FormLabel>Category Name</FormLabel>
               <FormControl>
-                <Input placeholder="Input category name" {...field} />
+                <Input
+                  placeholder="Input category name"
+                  {...field}
+                  autoComplete="off"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

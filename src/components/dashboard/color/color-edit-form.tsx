@@ -60,6 +60,7 @@ export function ColorEditForm({ color }: ColorEditFormProps) {
           placeholder="Input color name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          autoComplete="off"
         />
       </div>
       <div className="space-y-2">
@@ -74,6 +75,7 @@ export function ColorEditForm({ color }: ColorEditFormProps) {
             placeholder="Color Value (Hex)"
             value={value}
             onChange={(e) => setValue(e.target.value)}
+            autoComplete="off"
           />
         </div>
       </div>
