@@ -1,10 +1,11 @@
 import { PrismaPg } from "@prisma/adapter-pg";
+import { env } from "@/env/server";
 import { PrismaClient } from "../../generated/prisma/client.js";
 
 // Prisma Client singleton
 
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
+  connectionString: env.DATABASE_URL,
 });
 
 declare global {
@@ -17,5 +18,4 @@ if (process.env.NODE_ENV !== "production") {
   globalThis.__prisma = prisma;
 }
 
-// Re-export drizzle for Better Auth
-export { drizzleDb as db } from "./auth-db";
+
