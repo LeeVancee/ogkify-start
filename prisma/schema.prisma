@@ -9,34 +9,34 @@ datasource db {
 
 model account {
   id                    String    @id
-  accountId             String    @db.VarChar @map("account_id")
-  providerId            String    @db.VarChar @map("provider_id")
+  accountId             String    @map("account_id") @db.VarChar
+  providerId            String    @map("provider_id") @db.VarChar
   userId                String    @map("user_id")
   accessToken           String?   @map("access_token")
   refreshToken          String?   @map("refresh_token")
   idToken               String?   @map("id_token")
-  accessTokenExpiresAt  DateTime? @db.Timestamp(6) @map("access_token_expires_at")
-  refreshTokenExpiresAt DateTime? @db.Timestamp(6) @map("refresh_token_expires_at")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at") @db.Timestamp(6)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at") @db.Timestamp(6)
   scope                 String?
   password              String?
-  createdAt             DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt             DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
-  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "account_user_id_user_id_fk")
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt             DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
+  user                  user      @relation(fields: [userId], references: [id])
 
   @@map("account")
 }
 
 model session {
-  id              String   @id
-  expiresAt       DateTime @db.Timestamp(6) @map("expires_at")
-  token           String   @db.VarChar
-  createdAt       DateTime @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt       DateTime @default(now()) @db.Timestamp(6) @map("updated_at")
-  ipAddress       String?  @db.VarChar @map("ip_address")
-  userAgent       String?  @map("user_agent")
-  userId          String   @map("user_id")
-  impersonatedBy  String?  @db.VarChar @map("impersonated_by")
-  user            user     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "session_user_id_user_id_fk")
+  id             String   @id
+  expiresAt      DateTime @map("expires_at") @db.Timestamp(6)
+  token          String   @db.VarChar
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  ipAddress      String?  @map("ip_address") @db.VarChar
+  userAgent      String?  @map("user_agent")
+  userId         String   @map("user_id")
+  impersonatedBy String?  @map("impersonated_by") @db.VarChar
+  user           user     @relation(fields: [userId], references: [id])
 
   @@map("session")
 }
@@ -50,9 +50,9 @@ model user {
   role          String?   @db.VarChar
   banned        Boolean?
   banReason     String?   @map("ban_reason")
-  banExpires    DateTime? @db.Timestamp(6) @map("ban_expires")
-  createdAt     DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt     DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
+  banExpires    DateTime? @map("ban_expires") @db.Timestamp(6)
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt     DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
   accounts      account[]
   carts         cart[]
   orders        order[]
@@ -62,29 +62,29 @@ model user {
 }
 
 model verification {
-  id        String    @id
+  id         String    @id
   identifier String    @db.VarChar
-  value     String    @db.VarChar
-  expiresAt DateTime  @db.Timestamp(6) @map("expires_at")
-  createdAt DateTime? @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime? @default(now()) @db.Timestamp(6) @map("updated_at")
+  value      String    @db.VarChar
+  expiresAt  DateTime  @map("expires_at") @db.Timestamp(6)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt  DateTime? @default(now()) @map("updated_at") @db.Timestamp(6)
 
   @@map("verification")
 }
 
 model cartItem {
-  id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  cartId    String    @db.Uuid @map("cart_id")
-  productId String    @db.Uuid @map("product_id")
-  quantity  Int       @default(1)
-  colorId   String?   @db.Uuid @map("color_id")
-  sizeId    String?   @db.Uuid @map("size_id")
-  createdAt DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
-  cart      cart      @relation(fields: [cartId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "cart_items_cart_id_carts_id_fk")
-  color     color?    @relation(fields: [colorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_color_id_colors_id_fk")
-  product   product   @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_product_id_products_id_fk")
-  size      size?     @relation(fields: [sizeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "cart_items_size_id_sizes_id_fk")
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cartId    String   @map("cart_id") @db.Uuid
+  productId String   @map("product_id") @db.Uuid
+  quantity  Int      @default(1)
+  colorId   String?  @map("color_id") @db.Uuid
+  sizeId    String?  @map("size_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  cart      cart     @relation(fields: [cartId], references: [id])
+  color     color?   @relation(fields: [colorId], references: [id])
+  product   product  @relation(fields: [productId], references: [id])
+  size      size?    @relation(fields: [sizeId], references: [id])
 
   @@map("cart_items")
 }
@@ -92,10 +92,10 @@ model cartItem {
 model cart {
   id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   userId    String     @map("user_id")
-  createdAt DateTime   @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime   @default(now()) @db.Timestamp(6) @map("updated_at")
+  createdAt DateTime   @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime   @default(now()) @map("updated_at") @db.Timestamp(6)
   items     cartItem[]
-  user      user       @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "carts_user_id_user_id_fk")
+  user      user       @relation(fields: [userId], references: [id])
 
   @@map("carts")
 }
@@ -104,123 +104,123 @@ model category {
   id        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name      String    @db.VarChar
   imageUrl  String?   @map("image_url")
-  createdAt DateTime  @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime  @default(now()) @db.Timestamp(6) @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime  @default(now()) @map("updated_at") @db.Timestamp(6)
   products  product[]
 
   @@map("categories")
 }
 
 model color {
-  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name              String              @db.VarChar
-  value             String              @db.VarChar
-  createdAt         DateTime            @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt         DateTime            @default(now()) @db.Timestamp(6) @map("updated_at")
-  cartItems         cartItem[]
-  orderItems        orderItem[]
-  productToColors   productToColor[]
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String           @db.VarChar
+  value           String           @db.VarChar
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
+  cartItems       cartItem[]
+  orderItems      orderItem[]
+  productToColors productToColor[]
 
   @@map("colors")
 }
 
 model image {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  productId String   @db.Uuid @map("product_id")
+  productId String   @map("product_id") @db.Uuid
   url       String
-  createdAt DateTime @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime @default(now()) @db.Timestamp(6) @map("updated_at")
-  product   product  @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "images_product_id_products_id_fk")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  product   product  @relation(fields: [productId], references: [id])
 
   @@map("images")
 }
 
 model orderItem {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  orderId   String   @db.Uuid @map("order_id")
-  productId String   @db.Uuid @map("product_id")
+  orderId   String   @map("order_id") @db.Uuid
+  productId String   @map("product_id") @db.Uuid
   quantity  Int
   price     Float
-  colorId   String?  @db.Uuid @map("color_id")
-  sizeId    String?  @db.Uuid @map("size_id")
-  createdAt DateTime @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt DateTime @default(now()) @db.Timestamp(6) @map("updated_at")
-  color     color?   @relation(fields: [colorId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_color_id_colors_id_fk")
-  order     order    @relation(fields: [orderId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_order_id_orders_id_fk")
-  product   product  @relation(fields: [productId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_product_id_products_id_fk")
-  size      size?    @relation(fields: [sizeId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_items_size_id_sizes_id_fk")
+  colorId   String?  @map("color_id") @db.Uuid
+  sizeId    String?  @map("size_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamp(6)
+  color     color?   @relation(fields: [colorId], references: [id])
+  order     order    @relation(fields: [orderId], references: [id])
+  product   product  @relation(fields: [productId], references: [id])
+  size      size?    @relation(fields: [sizeId], references: [id])
 
   @@map("order_items")
 }
 
 model order {
-  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  orderNumber      String         @db.VarChar @map("order_number")
-  userId           String         @map("user_id")
-  status           orderStatus    @default(PENDING)
-  totalAmount      Float          @map("total_amount")
-  phone            String?        @db.VarChar
-  shippingAddress  String?        @map("shipping_address")
-  paymentMethod    String?        @db.VarChar @map("payment_method")
-  paymentIntent    String?        @db.VarChar @map("payment_intent")
-  paymentStatus    paymentStatus  @default(UNPAID) @map("payment_status")
-  createdAt        DateTime       @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt        DateTime       @default(now()) @db.Timestamp(6) @map("updated_at")
-  items            orderItem[]
-  user             user           @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orders_user_id_user_id_fk")
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  orderNumber     String        @map("order_number") @db.VarChar
+  userId          String        @map("user_id")
+  status          orderStatus   @default(PENDING)
+  totalAmount     Float         @map("total_amount")
+  phone           String?       @db.VarChar
+  shippingAddress String?       @map("shipping_address")
+  paymentMethod   String?       @map("payment_method") @db.VarChar
+  paymentIntent   String?       @map("payment_intent") @db.VarChar
+  paymentStatus   paymentStatus @default(UNPAID) @map("payment_status")
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime      @default(now()) @map("updated_at") @db.Timestamp(6)
+  items           orderItem[]
+  user            user          @relation(fields: [userId], references: [id])
 
   @@map("orders")
 }
 
 model product {
-  id                String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name              String              @db.VarChar
-  description       String
-  price             Float
-  isFeatured        Boolean             @default(false) @map("is_featured")
-  isArchived        Boolean             @default(false) @map("is_archived")
-  categoryId        String              @db.Uuid @map("category_id")
-  createdAt         DateTime            @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt         DateTime            @default(now()) @db.Timestamp(6) @map("updated_at")
-  cartItems         cartItem[]
-  images            image[]
-  orderItems        orderItem[]
-  category          category            @relation(fields: [categoryId], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "products_category_id_categories_id_fk")
-  productToColors   productToColor[]
-  productToSizes    productToSize[]
+  id              String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name            String           @db.VarChar
+  description     String
+  price           Float
+  isFeatured      Boolean          @default(false) @map("is_featured")
+  isArchived      Boolean          @default(false) @map("is_archived")
+  categoryId      String           @map("category_id") @db.Uuid
+  createdAt       DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime         @default(now()) @map("updated_at") @db.Timestamp(6)
+  cartItems       cartItem[]
+  images          image[]
+  orderItems      orderItem[]
+  category        category         @relation(fields: [categoryId], references: [id])
+  productToColors productToColor[]
+  productToSizes  productToSize[]
 
   @@map("products")
 }
 
 model productToColor {
-  productId String @db.Uuid @map("product_id")
-  colorId   String @db.Uuid @map("color_id")
-  color     color  @relation(fields: [colorId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_colors_color_id_colors_id_fk")
-  product   product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_colors_product_id_products_id_fk")
+  productId String  @map("product_id") @db.Uuid
+  colorId   String  @map("color_id") @db.Uuid
+  color     color   @relation(fields: [colorId], references: [id])
+  product   product @relation(fields: [productId], references: [id])
 
   @@id([productId, colorId])
   @@map("products_to_colors")
 }
 
 model productToSize {
-  productId String @db.Uuid @map("product_id")
-  sizeId    String @db.Uuid @map("size_id")
-  product   product @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_sizes_product_id_products_id_fk")
-  size      size   @relation(fields: [sizeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "products_to_sizes_size_id_sizes_id_fk")
+  productId String  @map("product_id") @db.Uuid
+  sizeId    String  @map("size_id") @db.Uuid
+  product   product @relation(fields: [productId], references: [id])
+  size      size    @relation(fields: [sizeId], references: [id])
 
   @@id([productId, sizeId])
   @@map("products_to_sizes")
 }
 
 model size {
-  id                String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  name              String           @db.VarChar
-  value             String           @db.VarChar
-  createdAt         DateTime         @default(now()) @db.Timestamp(6) @map("created_at")
-  updatedAt         DateTime         @default(now()) @db.Timestamp(6) @map("updated_at")
-  cartItems         cartItem[]
-  orderItems        orderItem[]
-  productToSizes    productToSize[]
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String          @db.VarChar
+  value          String          @db.VarChar
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime        @default(now()) @map("updated_at") @db.Timestamp(6)
+  cartItems      cartItem[]
+  orderItems     orderItem[]
+  productToSizes productToSize[]
 
   @@map("sizes")
 }
