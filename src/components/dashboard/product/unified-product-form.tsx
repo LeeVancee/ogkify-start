@@ -121,13 +121,15 @@ export function UnifiedProductForm({
       toast.success(
         isEditMode
           ? "Product updated successfully!"
-          : "Product created successfully!",
+          : "Product created successfully!"
       );
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.navigate({ to: "/dashboard/products" });
     } catch (error) {
       toast.error(
-        `${isEditMode ? "Update" : "Create"} product failed. Please try again later.`,
+        `${
+          isEditMode ? "Update" : "Create"
+        } product failed. Please try again later.`
       );
     } finally {
       setIsLoading(false);
@@ -179,6 +181,7 @@ export function UnifiedProductForm({
                           <Input
                             placeholder="e.g., Classic Cotton T-Shirt"
                             className="h-11 text-base"
+                            autoComplete="off"
                             {...field}
                           />
                         </FormControl>
@@ -208,6 +211,7 @@ export function UnifiedProductForm({
                               placeholder="0.00"
                               className="h-11 pl-8 text-base font-semibold"
                               {...field}
+                              autoComplete="off"
                             />
                           </div>
                         </FormControl>
@@ -233,6 +237,7 @@ export function UnifiedProductForm({
                           placeholder="Describe your product features, materials, and benefits..."
                           className="min-h-[120px] resize-none text-base"
                           {...field}
+                          autoComplete="off"
                         />
                       </FormControl>
                       <FormDescription className="text-xs">

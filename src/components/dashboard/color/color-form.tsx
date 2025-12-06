@@ -24,7 +24,7 @@ const formSchema = z.object({
     .string()
     .regex(
       /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-      "Please enter a valid hex color",
+      "Please enter a valid hex color"
     ),
 });
 
@@ -80,6 +80,7 @@ export function ColorForm() {
                   placeholder="e.g., Forest Green"
                   {...field}
                   className="text-base"
+                  autoComplete="off"
                 />
               </FormControl>
               <FormMessage />
@@ -104,6 +105,7 @@ export function ColorForm() {
                       {...field}
                       className="h-24 w-24 cursor-pointer rounded-lg border-2 p-1 shadow-sm transition-all hover:shadow-md"
                       disabled={isSubmitting}
+                      autoComplete="off"
                     />
                   </div>
                 </FormControl>
@@ -122,6 +124,7 @@ export function ColorForm() {
                           field.onChange(`#${value}`);
                         }
                       }}
+                      autoComplete="off"
                     />
                   </FormControl>
                   <div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">

@@ -77,6 +77,7 @@ export function CategoryForm() {
                   placeholder="e.g., T-Shirts, Shoes, Accessories"
                   {...field}
                   className="text-base"
+                  autoComplete="off"
                 />
               </FormControl>
               <FormMessage />

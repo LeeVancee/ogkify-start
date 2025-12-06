@@ -89,6 +89,7 @@ export function SizeForm() {
                   placeholder="e.g., Medium"
                   {...field}
                   className="text-base"
+                  autoComplete="off"
                 />
               </FormControl>
               <FormMessage />
@@ -111,6 +112,7 @@ export function SizeForm() {
                   placeholder="e.g., M"
                   {...field}
                   className="text-base font-semibold"
+                  autoComplete="off"
                 />
               </FormControl>
               <FormMessage />
