@@ -24,4 +24,5 @@ dist
 /blob-report/
 /playwright/.cache/
 .tanstack
+.tasks
 generated

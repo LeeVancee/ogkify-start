@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -123,7 +124,7 @@ export function OrderManagement() {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (order.customer.toLowerCase() || "").includes(
-        searchQuery.toLowerCase(),
+        searchQuery.toLowerCase()
       ) ||
       (order.email.toLowerCase() || "").includes(searchQuery.toLowerCase());
 
@@ -248,16 +249,18 @@ export function OrderManagement() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuLabel>Filter Conditions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Date Range
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <ArrowDownUp className="mr-2 h-4 w-4" />
-                    Amount
-                  </DropdownMenuItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Filter Conditions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Date Range
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <ArrowDownUp className="mr-2 h-4 w-4" />
+                      Amount
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

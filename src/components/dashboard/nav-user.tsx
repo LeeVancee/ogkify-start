@@ -66,27 +66,29 @@ export function NavUser() {
               align="end"
               sideOffset={4}
             >
-              <DropdownMenuLabel className="p-0 font-normal">
-                <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar className="h-8 w-8 rounded-lg">
-                    <AvatarImage
-                      src={session.user.image || ""}
-                      alt={session.user.name || ""}
-                    />
-                    <AvatarFallback>
-                      {session.user.name[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {session.user.name}
-                    </span>
-                    <span className="truncate text-xs">
-                      {session.user.email}
-                    </span>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="p-0 font-normal">
+                  <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                    <Avatar className="h-8 w-8 rounded-lg">
+                      <AvatarImage
+                        src={session.user.image || ""}
+                        alt={session.user.name || ""}
+                      />
+                      <AvatarFallback>
+                        {session.user.name[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {session.user.name}
+                      </span>
+                      <span className="truncate text-xs">
+                        {session.user.email}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </DropdownMenuLabel>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem>
