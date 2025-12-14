@@ -89,16 +89,16 @@ export function ProductTableView({
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8"
-                    asChild
-                  >
-                    <Link
-                      to={`/dashboard/products/$id`}
-                      params={{ id: product.id }}
-                    >
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Edit</span>
-                    </Link>
-                  </Button>
+                    render={
+                      <Link
+                        to={`/dashboard/products/$id`}
+                        params={{ id: product.id }}
+                        className="flex items-center"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Link>
+                    }
+                  />
                   <Button
                     variant="ghost"
                     size="icon"

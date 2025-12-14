@@ -118,7 +118,7 @@ function CartPage() {
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Checkout process failed",
+        error instanceof Error ? error.message : "Checkout process failed"
       );
     } finally {
       setIsCheckingOut(false);
@@ -129,7 +129,7 @@ function CartPage() {
   const items = cartData?.items || [];
   const subtotal = items.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity,
-    0,
+    0
   );
   const shipping = subtotal > 25 ? 0 : 10; // Free shipping over $25
   const tax = subtotal * 0.08; // 8% tax
@@ -171,12 +171,15 @@ function CartPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Button variant="ghost" asChild>
-            <Link to="/products">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Continue Shopping
-            </Link>
-          </Button>
+          <Button
+            variant="ghost"
+            render={
+              <Link to="/products">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Continue Shopping
+              </Link>
+            }
+          />
         </div>
 
         <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
@@ -186,9 +189,7 @@ function CartPage() {
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               Looks like you haven't added any items to your cart yet.
             </p>
-            <Button asChild>
-              <Link to="/products">Start Shopping</Link>
-            </Button>
+            <Button render={<Link to="/products">Start Shopping</Link>} />
           </div>
         </div>
       </div>
@@ -199,12 +200,16 @@ function CartPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" asChild className="mb-4">
-          <Link to="/products">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Continue Shopping
-          </Link>
-        </Button>
+        <Button
+          variant="ghost"
+          className="mb-4"
+          render={
+            <Link to="/products">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Continue Shopping
+            </Link>
+          }
+        ></Button>
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
         <p className="text-muted-foreground">
           {items.length} {items.length === 1 ? "item" : "items"} in your cart

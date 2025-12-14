@@ -85,9 +85,7 @@ function CheckoutSuccessContent() {
             ? error.message
             : "Unable to get order details, but your payment may have been processed. Please check your email or contact customer support."}
         </p>
-        <Button asChild>
-          <Link to="/">Return to Home</Link>
-        </Button>
+        <Button render={<Link to="/">Return to Home</Link>}></Button>
       </div>
     );
   }
@@ -133,12 +131,14 @@ function CheckoutSuccessContent() {
         </div>
 
         <div className="flex gap-4">
-          <Button asChild variant="outline">
-            <Link to="/">Continue Shopping</Link>
-          </Button>
-          <Button asChild>
-            <Link to="/myorders">View My Orders</Link>
-          </Button>
+          <Button
+            render={<Link to="/">Continue Shopping</Link>}
+            variant="outline"
+          />
+          <Button
+            render={<Link to="/myorders">View My Orders</Link>}
+            variant="outline"
+          />
         </div>
       </div>
     </>

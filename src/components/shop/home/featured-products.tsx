@@ -34,22 +34,25 @@ export function FeaturedProducts({ initialData }: FeaturedProductsProps = {}) {
             </div>
             <Button
               variant="outline"
-              asChild
               className="hidden md:flex items-center gap-1 self-start"
-            >
-              <Link to="/products" search={{ featured: true }}>
-                View All
-                <ChevronRight className="h-4 w-4" />
-              </Link>
-            </Button>
+              render={
+                <Link to="/products" search={{ featured: true }}>
+                  View All
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+              }
+            />
           </div>
           <ProductGrid products={products || []} />
           <div className="flex justify-center md:hidden mt-4">
-            <Button asChild variant="outline">
-              <Link to="/products" search={{ featured: true }}>
-                View All Products
-              </Link>
-            </Button>
+            <Button
+              variant="outline"
+              render={
+                <Link to="/products" search={{ featured: true }}>
+                  View All Products
+                </Link>
+              }
+            />
           </div>
         </div>
       </div>
@@ -75,6 +78,7 @@ export function FeaturedProductsLoading() {
           {/* skeleton */}
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
               <div key={i} className="space-y-4">
                 <Skeleton className="aspect-square w-full rounded-lg" />
                 <div className="space-y-2">

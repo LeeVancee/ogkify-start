@@ -46,7 +46,7 @@ export function ColorList() {
   const filteredColors = colors.filter(
     (color) =>
       color.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      color.value.toLowerCase().includes(searchQuery.toLowerCase()),
+      color.value.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDelete = (id: string) => {
@@ -105,12 +105,14 @@ export function ColorList() {
             </Button>
           )}
         </div>
-        <Button asChild>
-          <Link to="/dashboard/colors/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Color
-          </Link>
-        </Button>
+        <Button
+          render={
+            <Link to="/dashboard/colors/new">
+              <Plus className="mr-2 h-4 w-4" />
+              Add Color
+            </Link>
+          }
+        />
       </div>
 
       {filteredColors.length === 0 ? (

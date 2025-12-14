@@ -68,35 +68,39 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
             variant="secondary"
             size="icon"
             className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
-            asChild
-          >
-            <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
-              <Eye className="h-4 w-4" />
-            </Link>
-          </Button>
+            render={
+              <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
+                <Eye className="h-4 w-4" />
+              </Link>
+            }
+          />
 
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="secondary"
-                size="icon"
-                className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
-              >
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">More options</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem asChild>
-                <Link
-                  to={`/dashboard/products/$id`}
-                  params={{ id: product.id }}
-                  className="flex w-full cursor-pointer items-center"
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
                 >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit Product
-                </Link>
-              </DropdownMenuItem>
+                  <MoreHorizontal className="h-4 w-4" />
+                  <span className="sr-only">More options</span>
+                </Button>
+              }
+            />
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem
+                render={
+                  <Link
+                    to={`/dashboard/products/$id`}
+                    params={{ id: product.id }}
+                    className="flex w-full cursor-pointer items-center"
+                  >
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Product
+                  </Link>
+                }
+              />
               <DropdownMenuItem
                 className="text-destructive focus:text-destructive"
                 onClick={() => onDelete(product.id)}
@@ -208,23 +212,24 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
           variant="outline"
           size="sm"
           className="flex-1 h-8 text-xs font-medium hover:bg-primary hover:text-primary-foreground transition-colors"
-          asChild
-        >
-          <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
-            <Edit className="mr-1.5 h-3.5 w-3.5" />
-            Edit Product
-          </Link>
-        </Button>
+          render={
+            <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
+              <Edit className="mr-1.5 h-3.5 w-3.5" />
+              Edit Product
+            </Link>
+          }
+        />
+
         <Button
           variant="outline"
           size="sm"
           className="h-8 px-3 text-xs font-medium hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition-colors"
-          asChild
-        >
-          <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
-            <Eye className="h-3.5 w-3.5" />
-          </Link>
-        </Button>
+          render={
+            <Link to={`/dashboard/products/$id`} params={{ id: product.id }}>
+              <Eye className="h-3.5 w-3.5" />
+            </Link>
+          }
+        />
       </CardFooter>
     </Card>
   );

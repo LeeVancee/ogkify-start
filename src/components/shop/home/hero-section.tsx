@@ -19,9 +19,10 @@ export default function HeroSection() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button size="lg" asChild>
-                  <Link to="/products">Shop Now</Link>
-                </Button>
+                <Button
+                  size="lg"
+                  render={<Link to="/products">Shop Now</Link>}
+                />
               </div>
             </div>
             <div className="relative aspect-video overflow-hidden rounded-xl lg:aspect-square">

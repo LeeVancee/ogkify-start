@@ -277,7 +277,7 @@ export function UnifiedProductForm({
                       >
                         <FormControl>
                           <SelectTrigger className="h-11 text-base">
-                            <SelectValue placeholder="Select a category" />
+                            <SelectValue>Select a category</SelectValue>
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>

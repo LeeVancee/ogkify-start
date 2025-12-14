@@ -70,12 +70,14 @@ export default function Header({
       <div className="container mx-auto px-4 flex h-16 items-center justify-between">
         <div className="flex items-center">
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
+            <SheetTrigger
+              render={
+                <Button variant="ghost" size="icon" className="md:hidden">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle menu</span>
+                </Button>
+              }
+            />
             <SheetContent side="left" className="w-[300px] sm:w-[400px]">
               <nav className="flex flex-col gap-6">
                 <Link
@@ -87,17 +89,20 @@ export default function Header({
                 </Link>
                 <div className="grid gap-4">
                   {navigation.map((item) => (
-                    <SheetClose key={item.name} asChild>
-                      <Link
-                        to={item.href}
-                        className={cn(
-                          "text-lg font-medium",
-                          pathname === item.href ? "text-primary" : "",
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    </SheetClose>
+                    <SheetClose
+                      key={item.name}
+                      render={
+                        <Link
+                          to={item.href}
+                          className={cn(
+                            "text-lg font-medium",
+                            pathname === item.href ? "text-primary" : ""
+                          )}
+                        >
+                          {item.name}
+                        </Link>
+                      }
+                    />
                   ))}
                 </div>
               </nav>
@@ -117,7 +122,7 @@ export default function Header({
                   "font-medium hover:text-primary transition-colors",
                   pathname === item.href
                     ? "text-primary"
-                    : "text-muted-foreground",
+                    : "text-muted-foreground"
                 )}
               >
                 {item.name}

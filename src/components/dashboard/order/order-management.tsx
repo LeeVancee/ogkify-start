@@ -241,13 +241,15 @@ export function OrderManagement() {
                 )}
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Filter className="mr-2 h-4 w-4" />
-                    Filter
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline" size="sm">
+                      <Filter className="mr-2 h-4 w-4" />
+                      Filter
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  }
+                />
                 <DropdownMenuContent align="end" className="w-[200px]">
                   <DropdownMenuGroup>
                     <DropdownMenuLabel>Filter Conditions</DropdownMenuLabel>

@@ -51,7 +51,7 @@ export function DeleteOrderButton({
     } catch (error) {
       console.error("Delete error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to delete order",
+        error instanceof Error ? error.message : "Failed to delete order"
       );
     } finally {
       setIsLoading(false);
@@ -60,12 +60,15 @@ export function DeleteOrderButton({
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        <Button variant="destructive" size="sm">
-          <Trash2 className="mr-2 h-4 w-4" />
-          Cancel Order
-        </Button>
-      </AlertDialogTrigger>
+      <AlertDialogTrigger
+        render={
+          <Button variant="destructive" size="sm">
+            <Trash2 className="mr-2 h-4 w-4" />
+            Cancel Order
+          </Button>
+        }
+      />
+
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
