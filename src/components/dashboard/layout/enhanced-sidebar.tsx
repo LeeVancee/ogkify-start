@@ -17,7 +17,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ActiveLink } from "./active-link";
+import { ActiveLink } from "../active-link";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 

@@ -16,7 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { ActiveLink } from "./active-link";
+import { ActiveLink } from "../active-link";
 
 interface NavItem {
   title: string;
@@ -67,7 +67,6 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
                       <span>{item.title}</span>
                     </ActiveLink>
                   }
-                  tooltip={item.title}
                 />
               </SidebarMenuItem>
             );
