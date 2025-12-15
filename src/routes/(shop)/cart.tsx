@@ -118,7 +118,7 @@ function CartPage() {
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Checkout process failed"
+        error instanceof Error ? error.message : "Checkout process failed",
       );
     } finally {
       setIsCheckingOut(false);
@@ -129,7 +129,7 @@ function CartPage() {
   const items = cartData?.items || [];
   const subtotal = items.reduce(
     (sum: number, item: CartItem) => sum + item.price * item.quantity,
-    0
+    0,
   );
   const shipping = subtotal > 25 ? 0 : 10; // Free shipping over $25
   const tax = subtotal * 0.08; // 8% tax

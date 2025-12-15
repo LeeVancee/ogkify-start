@@ -51,7 +51,7 @@ export function DeleteOrderButton({
     } catch (error) {
       console.error("Delete error:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to delete order"
+        error instanceof Error ? error.message : "Failed to delete order",
       );
     } finally {
       setIsLoading(false);

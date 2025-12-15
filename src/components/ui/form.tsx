@@ -1,8 +1,10 @@
-import { type Label as LabelPrimitive, Slot as SlotPrimitive } from "radix-ui";
+import { useRender } from "@base-ui/react/use-render";
 import * as React from "react";
-import type { ControllerProps, FieldPath, FieldValues } from "react-hook-form";
 import {
   Controller,
+  type ControllerProps,
+  type FieldPath,
+  type FieldValues,
   FormProvider,
   useFormContext,
   useFormState,
@@ -84,7 +86,7 @@ function FormItem({ className, ...props }: React.ComponentProps<"div">) {
 function FormLabel({
   className,
   ...props
-}: React.ComponentProps<typeof LabelPrimitive.Root>) {
+}: React.ComponentProps<typeof Label>) {
   const { error, formItemId } = useFormField();
 
   return (
@@ -99,24 +101,24 @@ function FormLabel({
 }
 
 function FormControl({
-  ...props
-}: React.ComponentProps<typeof SlotPrimitive.Root>) {
+  children = <div />,
+}: {
+  children?: useRender.RenderProp;
+}) {
   const { error, formItemId, formDescriptionId, formMessageId } =
     useFormField();
 
-  return (
-    <SlotPrimitive.Root
-      data-slot="form-control"
-      id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
-      aria-invalid={!!error}
-      {...props}
-    />
-  );
+  return useRender({
+    render: children,
+    props: {
+      "data-slot": "form-control",
+      id: formItemId,
+      "aria-describedby": !error
+        ? `${formDescriptionId}`
+        : `${formDescriptionId} ${formMessageId}`,
+      "aria-invalid": !!error,
+    },
+  });
 }
 
 function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
@@ -134,7 +136,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error.message ?? "") : props.children;
+  const body = error ? String(error?.message ?? "") : props.children;
 
   if (!body) {
     return null;
@@ -153,12 +155,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };

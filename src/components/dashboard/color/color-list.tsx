@@ -46,7 +46,7 @@ export function ColorList() {
   const filteredColors = colors.filter(
     (color) =>
       color.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      color.value.toLowerCase().includes(searchQuery.toLowerCase())
+      color.value.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDelete = (id: string) => {

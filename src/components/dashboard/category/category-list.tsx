@@ -46,7 +46,7 @@ export function CategoryList() {
   const filteredCategories = categories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase())
+      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDelete = (id: string) => {

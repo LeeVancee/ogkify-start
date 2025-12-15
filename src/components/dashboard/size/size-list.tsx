@@ -46,7 +46,7 @@ export function SizeList() {
   const filteredSizes = sizes.filter(
     (size) =>
       size.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      size.value.toLowerCase().includes(searchQuery.toLowerCase())
+      size.value.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDelete = (id: string) => {
