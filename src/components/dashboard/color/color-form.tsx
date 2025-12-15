@@ -24,7 +24,7 @@ const formSchema = z.object({
     .string()
     .regex(
       /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/,
-      "Please enter a valid hex color"
+      "Please enter a valid hex color",
     ),
 });
 

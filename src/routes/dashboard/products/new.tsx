@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { getProductFormData } from "@/server/products.server";
 
@@ -18,7 +18,7 @@ function RouteComponent() {
   });
 
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   const { categories = [], colors = [], sizes = [] } = data || {};

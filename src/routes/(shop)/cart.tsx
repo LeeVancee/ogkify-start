@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -137,7 +137,7 @@ function CartPage() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state
@@ -171,12 +171,13 @@ function CartPage() {
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
-          <Button variant="ghost" asChild>
-            <Link to="/products">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Continue Shopping
-            </Link>
-          </Button>
+          <Link
+            to="/products"
+            className="inline-flex items-center justify-center gap-2 h-9 px-4 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Continue Shopping
+          </Link>
         </div>
 
         <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
@@ -186,9 +187,12 @@ function CartPage() {
             <p className="mb-4 mt-2 text-sm text-muted-foreground">
               Looks like you haven't added any items to your cart yet.
             </p>
-            <Button asChild>
-              <Link to="/products">Start Shopping</Link>
-            </Button>
+            <Link
+              to="/products"
+              className="inline-flex items-center justify-center gap-2 h-10 px-6 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Start Shopping
+            </Link>
           </div>
         </div>
       </div>
@@ -199,12 +203,13 @@ function CartPage() {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="mb-6">
-        <Button variant="ghost" asChild className="mb-4">
-          <Link to="/products">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Continue Shopping
-          </Link>
-        </Button>
+        <Link
+          to="/products"
+          className="inline-flex items-center justify-center gap-2 h-9 px-4 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Continue Shopping
+        </Link>
         <h1 className="text-3xl font-bold">Shopping Cart</h1>
         <p className="text-muted-foreground">
           {items.length} {items.length === 1 ? "item" : "items"} in your cart

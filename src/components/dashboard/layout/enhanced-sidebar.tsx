@@ -17,7 +17,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ActiveLink } from "./active-link";
+import { ActiveLink } from "../active-link";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 
@@ -109,17 +109,20 @@ export function EnhancedSidebar({
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <ActiveLink href="/dashboard" exact>
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <ShoppingBag className="size-4" />
-                </div>
-                <div className="flex flex-col gap-0.5 leading-none">
-                  <span className="font-semibold">OGKIFY</span>
-                  <span className="">v1.0.0</span>
-                </div>
-              </ActiveLink>
-            </SidebarMenuButton>
+            <SidebarMenuButton
+              size="lg"
+              render={
+                <ActiveLink href="/dashboard" exact>
+                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                    <ShoppingBag className="size-4" />
+                  </div>
+                  <div className="flex flex-col gap-0.5 leading-none">
+                    <span className="font-semibold">OGKIFY</span>
+                    <span className="">v1.0.0</span>
+                  </div>
+                </ActiveLink>
+              }
+            ></SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>

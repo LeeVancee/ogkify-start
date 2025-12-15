@@ -11,11 +11,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -138,7 +139,7 @@ export function OrderManagement() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state
@@ -240,24 +241,28 @@ export function OrderManagement() {
                 )}
               </div>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Filter className="mr-2 h-4 w-4" />
-                    Filter
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
+                <DropdownMenuTrigger
+                  render={
+                    <Button variant="outline" size="sm">
+                      <Filter className="mr-2 h-4 w-4" />
+                      Filter
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    </Button>
+                  }
+                />
                 <DropdownMenuContent align="end" className="w-[200px]">
-                  <DropdownMenuLabel>Filter Conditions</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Calendar className="mr-2 h-4 w-4" />
-                    Date Range
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <ArrowDownUp className="mr-2 h-4 w-4" />
-                    Amount
-                  </DropdownMenuItem>
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>Filter Conditions</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <Calendar className="mr-2 h-4 w-4" />
+                      Date Range
+                    </DropdownMenuItem>
+                    <DropdownMenuItem>
+                      <ArrowDownUp className="mr-2 h-4 w-4" />
+                      Amount
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

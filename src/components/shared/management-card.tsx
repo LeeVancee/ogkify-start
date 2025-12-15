@@ -46,40 +46,44 @@ export function ManagementCard<T = any>({
               variant="secondary"
               size="icon"
               className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
-              asChild
-            >
-              <Link to={editRoute} params={{ id: item.id }}>
-                <Eye className="h-4 w-4" />
-              </Link>
-            </Button>
+              render={
+                <Link to={editRoute} params={{ id: item.id }}>
+                  <Eye className="h-4 w-4" />
+                </Link>
+              }
+            />
 
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
-                  disabled={isDeleting}
-                >
-                  {isDeleting ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <MoreHorizontal className="h-4 w-4" />
-                  )}
-                  <span className="sr-only">More options</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link
-                    to={editRoute}
-                    params={{ id: item.id }}
-                    className="flex w-full cursor-pointer items-center"
+              <DropdownMenuTrigger
+                render={
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
+                    disabled={isDeleting}
                   >
-                    <Edit className="mr-2 h-4 w-4" />
-                    Edit {item.name}
-                  </Link>
-                </DropdownMenuItem>
+                    {isDeleting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <MoreHorizontal className="h-4 w-4" />
+                    )}
+                    <span className="sr-only">More options</span>
+                  </Button>
+                }
+              />
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem
+                  render={
+                    <Link
+                      to={editRoute}
+                      params={{ id: item.id }}
+                      className="flex w-full cursor-pointer items-center"
+                    >
+                      <Edit className="mr-2 h-4 w-4" />
+                      Edit {item.name}
+                    </Link>
+                  }
+                />
                 <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onClick={() => setShowDeleteDialog(true)}

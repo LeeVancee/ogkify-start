@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag, Star, TrendingUp, Truck } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 export default function HeroSection() {
   return (
@@ -19,9 +18,12 @@ export default function HeroSection() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                <Button size="lg" asChild>
-                  <Link to="/products">Shop Now</Link>
-                </Button>
+                <Link
+                  to="/products"
+                  className="inline-flex items-center justify-center gap-2 h-11 px-8 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+                >
+                  Shop Now
+                </Link>
               </div>
             </div>
             <div className="relative aspect-video overflow-hidden rounded-xl lg:aspect-square">

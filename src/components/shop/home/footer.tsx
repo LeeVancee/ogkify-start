@@ -20,36 +20,27 @@ export default function Footer() {
             <div className="grid grid-cols-1 gap-4">
               <div className="font-medium">Shop</div>
               <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <Link to="/categories" className="hover:underline">
+                <Link to="/products" className="hover:underline">
                   All Products
                 </Link>
-                <Link to="/categories" className="hover:underline">
+                <Link to="/products" className="hover:underline">
                   Categories
-                </Link>
-                <Link to="/categories?sort=newest" className="hover:underline">
-                  New Arrivals
-                </Link>
-                <Link
-                  to="/categories?sort=bestselling"
-                  className="hover:underline"
-                >
-                  Best Sellers
                 </Link>
               </nav>
             </div>
             <div className="grid grid-cols-1 gap-4">
               <div className="font-medium">Company</div>
               <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <Link to="/about" className="hover:underline">
+                <Link to="/" className="hover:underline">
                   About Us
                 </Link>
-                <Link to="/contact" className="hover:underline">
+                <Link to="/" className="hover:underline">
                   Contact
                 </Link>
-                <Link to="/terms" className="hover:underline">
+                <Link to="/" className="hover:underline">
                   Terms & Conditions
                 </Link>
-                <Link to="/privacy" className="hover:underline">
+                <Link to="/" className="hover:underline">
                   Privacy Policy
                 </Link>
               </nav>
@@ -69,36 +60,33 @@ export default function Footer() {
                 <Button type="submit">Subscribe</Button>
               </form>
               <div className="mt-4 flex gap-4">
-                <Button variant="ghost" size="icon" asChild>
-                  <Link
-                    to="https://facebook.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Facebook className="h-5 w-5" />
-                    <span className="sr-only">Facebook</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="icon" asChild>
-                  <Link
-                    to="https://instagram.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Instagram className="h-5 w-5" />
-                    <span className="sr-only">Instagram</span>
-                  </Link>
-                </Button>
-                <Button variant="ghost" size="icon" asChild>
-                  <Link
-                    to="https://twitter.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Twitter className="h-5 w-5" />
-                    <span className="sr-only">Twitter</span>
-                  </Link>
-                </Button>
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <Facebook className="h-5 w-5" />
+                  <span className="sr-only">Facebook</span>
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <Instagram className="h-5 w-5" />
+                  <span className="sr-only">Instagram</span>
+                </a>
+                <a
+                  href="https://twitter.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <Twitter className="h-5 w-5" />
+                  <span className="sr-only">Twitter</span>
+                </a>
               </div>
             </div>
           </div>

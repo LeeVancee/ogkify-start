@@ -30,21 +30,19 @@ export function DefaultCatchBoundary({ error }: Readonly<ErrorComponentProps>) {
           Try Again
         </Button>
         {isRoot ? (
-          <Button asChild variant="secondary">
-            <Link to="/">Home</Link>
-          </Button>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
+          >
+            Home
+          </Link>
         ) : (
-          <Button asChild variant="secondary">
-            <Link
-              to="/"
-              onClick={(e) => {
-                e.preventDefault();
-                window.history.back();
-              }}
-            >
-              Go Back
-            </Link>
-          </Button>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
+          >
+            Go Back
+          </Link>
         )}
       </div>
     </div>

@@ -38,6 +38,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectPositioner,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -121,7 +122,7 @@ export function UnifiedProductForm({
       toast.success(
         isEditMode
           ? "Product updated successfully!"
-          : "Product created successfully!"
+          : "Product created successfully!",
       );
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.navigate({ to: "/dashboard/products" });
@@ -129,7 +130,7 @@ export function UnifiedProductForm({
       toast.error(
         `${
           isEditMode ? "Update" : "Create"
-        } product failed. Please try again later.`
+        } product failed. Please try again later.`,
       );
     } finally {
       setIsLoading(false);
@@ -267,33 +268,51 @@ export function UnifiedProductForm({
                 <FormField
                   control={form.control}
                   name="categoryId"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-base">Category</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="h-11 text-base">
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {categories.map((category) => (
-                            <SelectItem key={category.id} value={category.id}>
-                              {category.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription className="text-xs">
-                        Choose the most relevant category
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
+                  render={({ field }) => {
+                    const selectedCategory = categories.find(
+                      (cat) => cat.id === field.value,
+                    );
+                    return (
+                      <FormItem>
+                        <FormLabel className="text-base">Category</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="h-11 text-base">
+                              <SelectValue
+                                placeholder="Select a category"
+                                render={() => (
+                                  <span>
+                                    {selectedCategory?.name ||
+                                      "Select a category"}
+                                  </span>
+                                )}
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectPositioner>
+                            <SelectContent>
+                              {categories.map((category) => (
+                                <SelectItem
+                                  key={category.id}
+                                  value={category.id}
+                                >
+                                  {category.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </SelectPositioner>
+                        </Select>
+                        <FormDescription className="text-xs">
+                          Choose the most relevant category
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
 
                 <Separator />

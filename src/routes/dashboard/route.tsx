@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import type React from "react";
-import { EnhancedSidebar } from "@/components/dashboard/enhanced-sidebar";
+import { EnhancedSidebar } from "@/components/dashboard/layout/enhanced-sidebar";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,

@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteSize, getSizes } from "@/server/sizes.server";
@@ -55,7 +55,7 @@ export function SizeList() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state
@@ -105,12 +105,13 @@ export function SizeList() {
             </Button>
           )}
         </div>
-        <Button asChild>
-          <Link to="/dashboard/sizes/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Size
-          </Link>
-        </Button>
+        <Link
+          to="/dashboard/sizes/new"
+          className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add Size
+        </Link>
       </div>
 
       {filteredSizes.length === 0 ? (

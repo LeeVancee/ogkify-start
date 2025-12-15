@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { CategoryEditForm } from "@/components/dashboard/category/category-edit-form";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getCategory } from "@/server/categories.server";
 
 export const Route = createFileRoute("/dashboard/categories/$id")({
@@ -21,7 +21,7 @@ function RouteComponent() {
   });
 
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   if (isError || !response?.success || !response.category) {

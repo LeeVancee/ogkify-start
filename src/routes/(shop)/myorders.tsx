@@ -10,8 +10,8 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useState } from "react";
-import { NoOrders } from "@/components/shop/cart/empty-cart";
 import { DeleteOrderButton } from "@/components/shop/orders/delete-order-button";
+import { NoOrders } from "@/components/shop/orders/no-orders";
 import { PayOrderButton } from "@/components/shop/orders/pay-order-button";
 import { Button } from "@/components/ui/button";
 import {

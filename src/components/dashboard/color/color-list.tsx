@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteColor, getColors } from "@/server/colors.server";
@@ -55,7 +55,7 @@ export function ColorList() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state
@@ -105,12 +105,13 @@ export function ColorList() {
             </Button>
           )}
         </div>
-        <Button asChild>
-          <Link to="/dashboard/colors/new">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Color
-          </Link>
-        </Button>
+        <Link
+          to="/dashboard/colors/new"
+          className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add Color
+        </Link>
       </div>
 
       {filteredColors.length === 0 ? (

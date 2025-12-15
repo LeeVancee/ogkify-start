@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Grid, List, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -66,7 +66,7 @@ export function ProductsView() {
     : null;
 
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   if (isError) {
@@ -144,12 +144,13 @@ export function ProductsView() {
                 : "You have not added any products yet. Click the button below to add a product."}
             </p>
             {!searchQuery && (
-              <Button asChild>
-                <Link to="/dashboard/products/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Product
-                </Link>
-              </Button>
+              <Link
+                to="/dashboard/products/new"
+                className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Product
+              </Link>
             )}
           </div>
         </div>

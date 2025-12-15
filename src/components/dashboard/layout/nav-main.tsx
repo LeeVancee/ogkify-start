@@ -16,7 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { ActiveLink } from "./active-link";
+import { ActiveLink } from "../active-link";
 
 interface NavItem {
   title: string;
@@ -60,12 +60,14 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
           if (!item.items || item.items.length === 0) {
             return (
               <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild tooltip={item.title}>
-                  <Link to={item.url}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
+                <SidebarMenuButton
+                  render={
+                    <ActiveLink href={item.url}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                    </ActiveLink>
+                  }
+                />
               </SidebarMenuItem>
             );
           }
@@ -74,24 +76,28 @@ export function NavMain({ items }: { items: Array<NavItem> }) {
 
           // Case with submenu
           return (
-            <Collapsible key={item.title} asChild defaultOpen={isActive}>
+            <Collapsible key={item.title} defaultOpen={isActive}>
               <SidebarMenuItem>
-                <CollapsibleTrigger asChild>
-                  <SidebarMenuButton tooltip={item.title}>
-                    {item.icon && <item.icon />}
-                    <span>{item.title}</span>
-                    <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                  </SidebarMenuButton>
-                </CollapsibleTrigger>
+                <CollapsibleTrigger
+                  render={
+                    <SidebarMenuButton tooltip={item.title}>
+                      {item.icon && <item.icon />}
+                      <span>{item.title}</span>
+                      <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                  }
+                />
                 <CollapsibleContent>
                   <SidebarMenuSub>
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
-                        <SidebarMenuSubButton asChild>
-                          <ActiveLink href={subItem.url} exact>
-                            <span>{subItem.title}</span>
-                          </ActiveLink>
-                        </SidebarMenuSubButton>
+                        <SidebarMenuSubButton
+                          render={
+                            <ActiveLink href={subItem.url} exact>
+                              <span>{subItem.title}</span>
+                            </ActiveLink>
+                          }
+                        />
                       </SidebarMenuSubItem>
                     ))}
                   </SidebarMenuSub>

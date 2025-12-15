@@ -3,6 +3,7 @@ import { LayoutDashboard, LogOut, ShoppingBag, User } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -67,30 +68,34 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
-            <AvatarImage
-              src={currentSession.user.image || ""}
-              alt={currentSession.user.name || ""}
-            />
-            <AvatarFallback>
-              {currentSession.user.name?.[0]?.toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
+      <DropdownMenuTrigger
+        render={
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={currentSession.user.image || ""}
+                alt={currentSession.user.name || ""}
+              />
+              <AvatarFallback>
+                {currentSession.user.name?.[0]?.toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        }
+      />
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
-              {currentSession.user.name}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {currentSession.user.email}
-            </p>
-          </div>
-        </DropdownMenuLabel>
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {currentSession.user.name}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {currentSession.user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+        </DropdownMenuGroup>
         {currentSession.user.role === "admin" && (
           <>
             <DropdownMenuSeparator />
