@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -124,7 +124,7 @@ export function OrderManagement() {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (order.customer.toLowerCase() || "").includes(
-        searchQuery.toLowerCase(),
+        searchQuery.toLowerCase()
       ) ||
       (order.email.toLowerCase() || "").includes(searchQuery.toLowerCase());
 
@@ -139,7 +139,7 @@ export function OrderManagement() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state

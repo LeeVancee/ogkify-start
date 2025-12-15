@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getCategories } from "@/server/categories.server";
 import { getColors } from "@/server/colors.server";
 import { getProduct } from "@/server/products.server";
@@ -42,7 +42,7 @@ function RouteComponent() {
     isLoadingSizes;
 
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   if (!product) {

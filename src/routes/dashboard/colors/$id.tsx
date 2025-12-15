@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ColorEditForm } from "@/components/dashboard/color/color-edit-form";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getColor } from "@/server/colors.server";
 
 export const Route = createFileRoute("/dashboard/colors/$id")({
@@ -21,7 +21,7 @@ function RouteComponent() {
   });
 
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   if (isError || !response?.success || !response.color) {

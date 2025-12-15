@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Grid, List, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -46,7 +46,7 @@ export function ProductsView() {
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDeleteClick = (productId: string) => {
@@ -66,7 +66,7 @@ export function ProductsView() {
     : null;
 
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   if (isError) {

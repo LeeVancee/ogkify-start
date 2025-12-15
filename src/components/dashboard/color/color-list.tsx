@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteColor, getColors } from "@/server/colors.server";
@@ -46,7 +46,7 @@ export function ColorList() {
   const filteredColors = colors.filter(
     (color) =>
       color.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      color.value.toLowerCase().includes(searchQuery.toLowerCase()),
+      color.value.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDelete = (id: string) => {
@@ -55,7 +55,7 @@ export function ColorList() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state

@@ -27,13 +27,3 @@ export function NoOrders({
     />
   );
 }
-
-export function EmptyCart() {
-  return (
-    <NoOrders
-      title="Your cart is empty"
-      description="Browse our products and add your favorite items to cart"
-      buttonText="Continue Shopping"
-    />
-  );
-}

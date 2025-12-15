@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteCategory, getCategories } from "@/server/categories.server";
@@ -46,7 +46,7 @@ export function CategoryList() {
   const filteredCategories = categories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase()),
+      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDelete = (id: string) => {
@@ -55,7 +55,7 @@ export function CategoryList() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state

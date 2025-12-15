@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Loading from "@/components/loading";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { deleteSize, getSizes } from "@/server/sizes.server";
@@ -46,7 +46,7 @@ export function SizeList() {
   const filteredSizes = sizes.filter(
     (size) =>
       size.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      size.value.toLowerCase().includes(searchQuery.toLowerCase()),
+      size.value.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleDelete = (id: string) => {
@@ -55,7 +55,7 @@ export function SizeList() {
 
   // Handle loading state
   if (isLoading) {
-    return <Loading />;
+    return <SpinnerLoading />;
   }
 
   // Handle error state
