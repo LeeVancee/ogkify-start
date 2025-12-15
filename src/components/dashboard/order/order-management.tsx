@@ -124,7 +124,7 @@ export function OrderManagement() {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (order.customer.toLowerCase() || "").includes(
-        searchQuery.toLowerCase()
+        searchQuery.toLowerCase(),
       ) ||
       (order.email.toLowerCase() || "").includes(searchQuery.toLowerCase());
 

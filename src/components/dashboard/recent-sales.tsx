@@ -27,7 +27,6 @@ export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
         recentOrders.map((order) => (
           <div key={order.id} className="flex items-center">
             <Avatar className="h-9 w-9">
-              <AvatarImage src="/avatars/01.png" alt="Avatar" />
               <AvatarFallback>
                 {order.customer
                   ? order.customer.substring(0, 2).toUpperCase()

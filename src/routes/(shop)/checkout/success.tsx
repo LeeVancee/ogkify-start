@@ -3,7 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Suspense } from "react";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import { getOrderById } from "@/server/orders.server";
 
 // order type definition
@@ -85,7 +84,12 @@ function CheckoutSuccessContent() {
             ? error.message
             : "Unable to get order details, but your payment may have been processed. Please check your email or contact customer support."}
         </p>
-        <Button render={<Link to="/">Return to Home</Link>}></Button>
+        <Link
+          to="/"
+          className="inline-flex items-center justify-center gap-2 h-10 px-6 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          Return to Home
+        </Link>
       </div>
     );
   }
@@ -131,14 +135,18 @@ function CheckoutSuccessContent() {
         </div>
 
         <div className="flex gap-4">
-          <Button
-            render={<Link to="/">Continue Shopping</Link>}
-            variant="outline"
-          />
-          <Button
-            render={<Link to="/myorders">View My Orders</Link>}
-            variant="outline"
-          />
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-2 h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
+          >
+            Continue Shopping
+          </Link>
+          <Link
+            to="/myorders"
+            className="inline-flex items-center justify-center gap-2 h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
+          >
+            View My Orders
+          </Link>
         </div>
       </div>
     </>

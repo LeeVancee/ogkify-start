@@ -46,7 +46,7 @@ export function CategoryList() {
   const filteredCategories = categories.filter(
     (category) =>
       category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase())
+      category.imageUrl?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDelete = (id: string) => {
@@ -105,14 +105,13 @@ export function CategoryList() {
             </Button>
           )}
         </div>
-        <Button
-          render={
-            <Link to="/dashboard/categories/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Category
-            </Link>
-          }
-        />
+        <Link
+          to="/dashboard/categories/new"
+          className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add Category
+        </Link>
       </div>
 
       {filteredCategories.length === 0 ? (

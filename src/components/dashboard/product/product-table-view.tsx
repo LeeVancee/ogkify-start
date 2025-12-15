@@ -85,20 +85,13 @@ export function ProductTableView({
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    render={
-                      <Link
-                        to={`/dashboard/products/$id`}
-                        params={{ id: product.id }}
-                        className="flex items-center"
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                    }
-                  />
+                  <Link
+                    to={`/dashboard/products/$id`}
+                    params={{ id: product.id }}
+                    className="inline-flex items-center justify-center h-8 w-8 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                  >
+                    <Edit className="h-4 w-4" />
+                  </Link>
                   <Button
                     variant="ghost"
                     size="icon"

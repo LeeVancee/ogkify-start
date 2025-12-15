@@ -4,7 +4,6 @@ import {
   ProductGrid,
   type SimpleProduct,
 } from "@/components/shop/product/product-grid";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface FeaturedProductsProps {
@@ -32,27 +31,24 @@ export function FeaturedProducts({ initialData }: FeaturedProductsProps = {}) {
                 Explore our carefully selected products
               </p>
             </div>
-            <Button
-              variant="outline"
-              className="hidden md:flex items-center gap-1 self-start"
-              render={
-                <Link to="/products" search={{ featured: true }}>
-                  View All
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-              }
-            />
+            <Link
+              to="/products"
+              search={{ featured: true }}
+              className="hidden md:inline-flex items-center gap-1 self-start h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
+            >
+              View All
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
           <ProductGrid products={products || []} />
           <div className="flex justify-center md:hidden mt-4">
-            <Button
-              variant="outline"
-              render={
-                <Link to="/products" search={{ featured: true }}>
-                  View All Products
-                </Link>
-              }
-            />
+            <Link
+              to="/products"
+              search={{ featured: true }}
+              className="inline-flex items-center justify-center gap-2 h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
+            >
+              View All Products
+            </Link>
           </div>
         </div>
       </div>

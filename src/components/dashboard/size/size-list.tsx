@@ -46,7 +46,7 @@ export function SizeList() {
   const filteredSizes = sizes.filter(
     (size) =>
       size.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      size.value.toLowerCase().includes(searchQuery.toLowerCase())
+      size.value.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDelete = (id: string) => {
@@ -105,14 +105,13 @@ export function SizeList() {
             </Button>
           )}
         </div>
-        <Button
-          render={
-            <Link to="/dashboard/sizes/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Size
-            </Link>
-          }
-        />
+        <Link
+          to="/dashboard/sizes/new"
+          className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          <Plus className="h-4 w-4" />
+          Add Size
+        </Link>
       </div>
 
       {filteredSizes.length === 0 ? (

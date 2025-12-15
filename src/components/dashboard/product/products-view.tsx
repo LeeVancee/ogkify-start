@@ -46,7 +46,7 @@ export function ProductsView() {
     (product) =>
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
+      product.category.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const handleDeleteClick = (productId: string) => {
@@ -144,14 +144,13 @@ export function ProductsView() {
                 : "You have not added any products yet. Click the button below to add a product."}
             </p>
             {!searchQuery && (
-              <Button
-                render={
-                  <Link to="/dashboard/products/new">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add Product
-                  </Link>
-                }
-              />
+              <Link
+                to="/dashboard/products/new"
+                className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                Add Product
+              </Link>
             )}
           </div>
         </div>
