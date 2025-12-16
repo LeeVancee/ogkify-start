@@ -1,4 +1,11 @@
-import { Heart, ShoppingCart } from "lucide-react";
+import {
+  Divide,
+  Heart,
+  RotateCcw,
+  Shield,
+  ShoppingCart,
+  Truck,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -6,6 +13,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectPositioner,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -38,20 +46,20 @@ interface Product {
 interface ProductInfoProps {
   product: Product;
   addToCartAction: (
-    formData: FormData,
+    formData: FormData
   ) => Promise<{ success: boolean; error?: string; message?: string }>;
 }
 
 export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
   const [quantity, setQuantity] = useState("1");
   const [mainImage, setMainImage] = useState(
-    product.images[0] || "/placeholder.svg",
+    product.images[0] || "/placeholder.svg"
   );
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    product.colors.length > 0 ? product.colors[0].id : undefined,
+    product.colors.length > 0 ? product.colors[0].id : undefined
   );
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    product.sizes.length > 0 ? product.sizes[0].id : undefined,
+    product.sizes.length > 0 ? product.sizes[0].id : undefined
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -145,7 +153,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                       "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
                       selectedColor === color.id
                         ? "border-blue-600 bg-muted text-blue-600"
-                        : "border-gray-200 hover:border-gray-300",
+                        : "border-gray-200 hover:border-gray-300"
                     )}
                     title={color.name}
                     onClick={() => setSelectedColor(color.id)}
@@ -169,7 +177,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                       "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
                       selectedSize === size.id
                         ? "border-blue-600 bg-muted text-blue-600"
-                        : "border-gray-200 hover:border-gray-300",
+                        : "border-gray-200 hover:border-gray-300"
                     )}
                     onClick={() => setSelectedSize(size.id)}
                   >
@@ -182,18 +190,30 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
           <div className="grid gap-2">
             <div className="font-medium">Quantity</div>
-            <Select value={quantity} onValueChange={setQuantity}>
-              <SelectTrigger className="w-24">
-                <SelectValue placeholder="Quantity" />
-              </SelectTrigger>
-              <SelectContent>
-                {Array.from({ length: 10 }).map((_, i) => (
-                  <SelectItem key={i + 1} value={(i + 1).toString()}>
-                    {i + 1}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex items-center gap-3">
+              <Select
+                value={quantity}
+                onValueChange={(value) => setQuantity(value as string)}
+              >
+                <SelectTrigger className="w-24">
+                  <SelectValue placeholder="Quantity" />
+                </SelectTrigger>
+                <SelectPositioner>
+                  <SelectContent>
+                    {Array.from({ length: 10 }).map((_, i) => (
+                      <SelectItem key={i + 1} value={(i + 1).toString()}>
+                        {i + 1}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </SelectPositioner>
+              </Select>
+              {product.inStock ? (
+                <span className="text-green-600">In Stock</span>
+              ) : (
+                <span className="text-red-600">Out of Stock</span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -213,19 +233,23 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
               </>
             )}
           </Button>
-          <Button size="lg" variant="outline" onClick={handleAddToWishlist}>
-            <Heart className="mr-2 h-5 w-5" />
-            Wishlist
-          </Button>
         </div>
 
         <div className="text-sm text-muted-foreground">
-          {product.inStock ? (
-            <span className="text-green-600">In Stock</span>
-          ) : (
-            <span className="text-red-600">Out of Stock</span>
-          )}
-          {product.freeShipping && <span className="ml-4">Free Shipping</span>}
+          <div className="grid grid-cols-3 gap-4">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Truck className="w-4 h-4 text-black" />
+              Free Shipping
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Shield className="w-4 h-4 text-black" />
+              Secure Payment
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <RotateCcw className="w-4 h-4 text-black" />
+              Easy Returns
+            </div>
+          </div>
         </div>
       </div>
     </>

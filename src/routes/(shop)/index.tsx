@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Categories } from "@/components/shop/home/categories";
 import {
   FeaturedCategories,
   FeaturedCategoriesLoading,
@@ -7,7 +8,9 @@ import {
   FeaturedProducts,
   FeaturedProductsLoading,
 } from "@/components/shop/home/featured-products";
+import { Hero } from "@/components/shop/home/hero";
 import HeroSection from "@/components/shop/home/hero-section";
+import { Newsletter } from "@/components/shop/home/newsletter";
 import { getCategories } from "@/server/categories.server";
 import { getFeaturedProducts } from "@/server/get-featured-products.server";
 
@@ -32,7 +35,7 @@ export const Route = createFileRoute("/(shop)/")({
 function HomePendingComponent() {
   return (
     <div>
-      <HeroSection />
+      <Hero />
       <div className="mx-auto px-4 py-12">
         <FeaturedProductsLoading />
         <FeaturedCategoriesLoading />
@@ -46,11 +49,11 @@ function RouteComponent() {
 
   return (
     <div>
-      <HeroSection />
-      <div className="mx-auto px-4 py-12">
-        <FeaturedProducts initialData={featuredProducts} />
-        <FeaturedCategories initialData={categories} />
-      </div>
+      <Hero />
+      <Categories />
+
+      <FeaturedProducts initialData={featuredProducts} />
+      <Newsletter />
     </div>
   );
 }

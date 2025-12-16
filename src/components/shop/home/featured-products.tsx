@@ -23,25 +23,35 @@ export function FeaturedProducts({ initialData }: FeaturedProductsProps = {}) {
       <div className="container px-4 mx-auto">
         <div className="flex flex-col gap-8">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <h2 className="text-3xl font-bold tracking-tight">
                 Featured Products
               </h2>
               <p className="text-muted-foreground max-w-3xl">
                 Explore our carefully selected products
               </p>
+            </div> */}
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl md:text-5xl font-bold text-black mb-4">
+                  Featured Products
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  Handpicked items from our collection
+                </p>
+              </div>
             </div>
-            <Link
+            {/*  <Link
               to="/products"
               search={{ featured: true }}
               className="hidden md:inline-flex items-center gap-1 self-start h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
             >
               View All
               <ChevronRight className="h-4 w-4" />
-            </Link>
+            </Link> */}
           </div>
           <ProductGrid products={products || []} />
-          <div className="flex justify-center md:hidden mt-4">
+          <div className="flex justify-center  mt-4">
             <Link
               to="/products"
               search={{ featured: true }}

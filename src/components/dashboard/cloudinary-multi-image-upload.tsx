@@ -1,10 +1,11 @@
 import { X } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
+  loadCloudinaryScript,
 } from "@/lib/cloudinary";
 import type {
   CloudinaryUploadError,
@@ -24,85 +25,98 @@ export function CloudinaryMultiImageUpload({
   disabled,
 }: CloudinaryMultiImageUploadProps) {
   const uploadWidgetRef = useRef<CloudinaryUploadWidget | null>(null);
-  const uploadButtonRef = useRef<HTMLButtonElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   const onRemove = (url: string) => {
     onChange(value.filter((current) => current !== url));
   };
 
+  // Initialize widget only after script is loaded
   useEffect(() => {
-    const initializeUploadWidget = () => {
-      if (window.cloudinary && uploadButtonRef.current) {
-        // Calculate how many more images can be uploaded
-        const remainingSlots = 4 - value.length;
+    if (isScriptLoaded && window.cloudinary) {
+      // Calculate how many more images can be uploaded
+      const remainingSlots = 4 - value.length;
 
-        // Create upload widget
-        uploadWidgetRef.current = window.cloudinary.createUploadWidget(
-          {
-            cloudName: CLOUDINARY_CLOUD_NAME,
-            uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-            sources: ["local", "url", "camera"],
-            multiple: true,
-            maxFiles: remainingSlots > 0 ? remainingSlots : 1,
-            maxFileSize: 5000000, // 5MB in bytes
-            clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
-            resourceType: "image",
-          },
-          (
-            error: CloudinaryUploadError | null,
-            result: CloudinaryUploadResult,
-          ) => {
-            if (error) {
-              console.error("Upload error:", error);
-              toast.error(`Upload failed: ${error.message || "Unknown error"}`);
-              return;
-            }
-
-            if (result && result.event === "success" && result.info) {
-              console.log("Upload successful:", result.info);
-              // Add newly uploaded URL to existing value
-              const newUrl = result.info.secure_url;
-              if (value.length < 4) {
-                onChange([...value, newUrl]);
-              }
-            }
-
-            // Show success message when all uploads are complete
-            if (result && result.event === "close") {
-              if (
-                result.info &&
-                result.info.files &&
-                result.info.files.length > 0
-              ) {
-                toast.success("Images uploaded successfully");
-              }
-            }
-          },
-        );
-
-        // Add click event to open widget
-        const handleUploadClick = () => {
-          if (uploadWidgetRef.current && !disabled) {
-            if (value.length >= 4) {
-              toast.error("Maximum 4 images allowed");
-              return;
-            }
-            uploadWidgetRef.current.open();
+      // Recreate widget when value changes to update maxFiles
+      uploadWidgetRef.current = window.cloudinary.createUploadWidget(
+        {
+          cloudName: CLOUDINARY_CLOUD_NAME,
+          uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+          sources: ["local", "url", "camera"],
+          multiple: true,
+          maxFiles: remainingSlots > 0 ? remainingSlots : 1,
+          maxFileSize: 5000000, // 5MB in bytes
+          clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
+          resourceType: "image",
+        },
+        (
+          error: CloudinaryUploadError | null,
+          result: CloudinaryUploadResult
+        ) => {
+          if (error) {
+            console.error("Upload error:", error);
+            toast.error(`Upload failed: ${error.message || "Unknown error"}`);
+            return;
           }
-        };
 
-        const buttonElement = uploadButtonRef.current;
-        buttonElement.addEventListener("click", handleUploadClick);
+          if (result && result.event === "success" && result.info) {
+            console.log("Upload successful:", result.info);
+            // Add newly uploaded URL to existing value
+            const newUrl = result.info.secure_url;
+            if (value.length < 4) {
+              onChange([...value, newUrl]);
+            }
+          }
 
-        // Cleanup
-        return () => {
-          buttonElement.removeEventListener("click", handleUploadClick);
-        };
+          // Show success message when all uploads are complete
+          if (result && result.event === "close") {
+            if (
+              result.info &&
+              result.info.files &&
+              result.info.files.length > 0
+            ) {
+              toast.success("Images uploaded successfully");
+            }
+          }
+        }
+      );
+    }
+  }, [isScriptLoaded, onChange, value]);
+
+  const handleUploadClick = async () => {
+    if (disabled || value.length >= 4) {
+      if (value.length >= 4) {
+        toast.error("Maximum 4 images allowed");
       }
-    };
+      return;
+    }
 
-    initializeUploadWidget();
-  }, [disabled, onChange, value]);
+    // If script is already loaded and widget is ready, open it
+    if (isScriptLoaded && uploadWidgetRef.current) {
+      uploadWidgetRef.current.open();
+      return;
+    }
+
+    // Load the script first
+    try {
+      setIsLoading(true);
+      await loadCloudinaryScript();
+      setIsScriptLoaded(true);
+
+      // Wait a tick for the widget to be initialized
+      setTimeout(() => {
+        if (uploadWidgetRef.current) {
+          uploadWidgetRef.current.open();
+        }
+      }, 100);
+    } catch (error) {
+      console.error("Failed to load Cloudinary script:", error);
+      toast.error("Failed to initialize upload widget. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -133,12 +147,14 @@ export function CloudinaryMultiImageUpload({
       {/* Upload button area */}
       <div>
         <button
-          ref={uploadButtonRef}
           type="button"
-          disabled={disabled || value.length >= 4}
+          onClick={handleUploadClick}
+          disabled={disabled || value.length >= 4 || isLoading}
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {value.length >= 4
+          {isLoading
+            ? "Initializing..."
+            : value.length >= 4
             ? "Maximum images reached"
             : `Upload Images (${4 - value.length} remaining)`}
         </button>

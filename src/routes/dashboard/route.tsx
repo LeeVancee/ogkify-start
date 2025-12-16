@@ -9,15 +9,6 @@ import {
 } from "@/components/ui/sidebar";
 import { getSession } from "@/server/getSession.server";
 export const Route = createFileRoute("/dashboard")({
-  head: () => ({
-    scripts: [
-      {
-        src: "https://upload-widget.cloudinary.com/latest/global/all.js",
-        type: "text/javascript",
-      },
-    ],
-  }),
-
   loader: async () => {
     const session = await getSession();
 

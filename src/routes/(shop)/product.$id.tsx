@@ -43,7 +43,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="container px-4 py-8 md:px-6 md:py-12">
+    <div className="container px-4 py-8 md:px-6 md:py-12 mx-auto">
       <div className="grid md:grid-cols-2 gap-8 lg:gap-16">
         <ProductInfo product={product} addToCartAction={addToCartAdapter} />
       </div>

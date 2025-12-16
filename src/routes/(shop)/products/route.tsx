@@ -23,7 +23,7 @@ export const Route = createFileRoute("/(shop)/products")({
 function RouteComponent() {
   const { categories, allColors, allSizes } = Route.useLoaderData();
   return (
-    <div className="container px-4 py-8 md:px-6 md:py-12">
+    <div className="container px-4 py-8 md:px-6 md:py-12 mx-auto">
       <div className="grid grid-cols-1 min-h-[800px] gap-8 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
         <aside className="sticky top-8 h-fit">
           <ProductFilters
@@ -49,7 +49,7 @@ function RouteComponent() {
 
 function ProductsPageLoading() {
   return (
-    <div className="container px-4 py-8 md:px-6 md:py-12">
+    <div className="container px-4 py-8 md:px-6 md:py-12 mx-auto">
       <div className="grid grid-cols-1 min-h-[800px] gap-8 md:grid-cols-[240px_1fr] lg:grid-cols-[280px_1fr]">
         {/* Sidebar skeleton */}
         <aside className="sticky top-8 h-fit">

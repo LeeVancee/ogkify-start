@@ -1,98 +1,149 @@
-import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, Twitter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Mail, MapPin, Phone } from "lucide-react";
 
 export default function Footer() {
+  // Get dynamic store name for footer branding
+  const storeName = "OGKIFY";
+
   return (
-    <footer className="border-t bg-background mt-auto">
-      <div className="container mx-auto px-4 py-8">
-        <div className=" p-8 md:px-6">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <Link to="/" className="flex items-center space-x-2">
-                <span className="text-xl font-bold">OGKIFY</span>
-              </Link>
-              <p className="mt-4 text-sm text-muted-foreground">
-                Your modern e-commerce solution for all your shopping needs.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="font-medium">Shop</div>
-              <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <Link to="/products" className="hover:underline">
-                  All Products
-                </Link>
-                <Link to="/products" className="hover:underline">
-                  Categories
-                </Link>
-              </nav>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="font-medium">Company</div>
-              <nav className="flex flex-col gap-2 text-sm text-muted-foreground">
-                <Link to="/" className="hover:underline">
+    <footer className="bg-white border-t border-gray-200 py-16">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div>
+            {/* Dynamic store name in footer */}
+            <h3 className="text-2xl font-bold mb-6 text-black">{storeName}</h3>
+            <p className="text-gray-600 mb-6">
+              Your destination for innovative products that shape tomorrow.
+              Quality, style, and innovation in every purchase.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-6 text-black">
+              Quick Links
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
                   About Us
-                </Link>
-                <Link to="/" className="hover:underline">
-                  Contact
-                </Link>
-                <Link to="/" className="hover:underline">
-                  Terms & Conditions
-                </Link>
-                <Link to="/" className="hover:underline">
-                  Privacy Policy
-                </Link>
-              </nav>
-            </div>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="font-medium">Newsletter</div>
-              <p className="text-sm text-muted-foreground">
-                Subscribe to our newsletter for updates and promotions.
-              </p>
-              <form className="mt-2 flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="max-w-[220px]"
-                  required
-                />
-                <Button type="submit">Subscribe</Button>
-              </form>
-              <div className="mt-4 flex gap-4">
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
-                >
-                  <Facebook className="h-5 w-5" />
-                  <span className="sr-only">Facebook</span>
                 </a>
+              </li>
+              <li>
                 <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
                 >
-                  <Instagram className="h-5 w-5" />
-                  <span className="sr-only">Instagram</span>
+                  Products
                 </a>
+              </li>
+              <li>
                 <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
                 >
-                  <Twitter className="h-5 w-5" />
-                  <span className="sr-only">Twitter</span>
+                  Categories
                 </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Sale
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Blog
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-6 text-black">
+              Customer Service
+            </h4>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Shipping Info
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Returns
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  Size Guide
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#"
+                  className="text-gray-600 hover:text-black transition-colors"
+                >
+                  FAQ
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-lg font-semibold mb-6 text-black">
+              Contact Info
+            </h4>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <MapPin className="w-5 h-5 text-black" />
+                <span className="text-gray-600">
+                  123 Future Street, Tech City, TC 12345
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="w-5 h-5 text-black" />
+                <span className="text-gray-600">+1 (555) 123-4567</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail className="w-5 h-5 text-black" />
+                <span className="text-gray-600">
+                  hello@{storeName.toLowerCase().replace(/\s+/g, "")}.com
+                </span>
               </div>
             </div>
           </div>
-          <div className="mt-12 border-t pt-6 text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} OGKIFY. All rights reserved.
-          </div>
+        </div>
+
+        <div className="border-t border-gray-200 mt-12 pt-8 text-center">
+          {/* Dynamic copyright with store name */}
+          <p className="text-gray-600">
+            © 2025 {storeName}. All rights reserved. | Privacy Policy | Terms of
+            Service
+          </p>
         </div>
       </div>
     </footer>

@@ -85,7 +85,7 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
       />
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <DropdownMenuLabel className="font-normal">
+          <DropdownMenuLabel className="font-normal text-black">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
                 {currentSession.user.name}
