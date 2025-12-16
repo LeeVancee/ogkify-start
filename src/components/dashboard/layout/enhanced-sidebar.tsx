@@ -36,61 +36,25 @@ const emsNavigation = [
     title: "Categories",
     url: "/dashboard/categories",
     icon: Grid,
-    items: [
-      {
-        title: "All Categories",
-        url: "/dashboard/categories",
-      },
-      {
-        title: "Add Category",
-        url: "/dashboard/categories/new",
-      },
-    ],
+    items: [],
   },
   {
     title: "Colors",
     url: "/dashboard/colors",
     icon: Palette,
-    items: [
-      {
-        title: "All Colors",
-        url: "/dashboard/colors",
-      },
-      {
-        title: "Add Color",
-        url: "/dashboard/colors/new",
-      },
-    ],
+    items: [],
   },
   {
     title: "Sizes",
     url: "/dashboard/sizes",
     icon: Ruler,
-    items: [
-      {
-        title: "All Sizes",
-        url: "/dashboard/sizes",
-      },
-      {
-        title: "Add Size",
-        url: "/dashboard/sizes/new",
-      },
-    ],
+    items: [],
   },
   {
     title: "Products",
     url: "/dashboard/products",
     icon: Package,
-    items: [
-      {
-        title: "All Products",
-        url: "/dashboard/products",
-      },
-      {
-        title: "Add Product",
-        url: "/dashboard/products/new",
-      },
-    ],
+    items: [],
   },
 
   {
