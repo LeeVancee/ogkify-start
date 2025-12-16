@@ -4,6 +4,7 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectPositioner,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -27,7 +28,8 @@ export function ProductSort() {
     return newParams;
   };
 
-  const handleSortChange = (value: string) => {
+  const handleSortChange = (value: string | null) => {
+    if (!value) return;
     navigate({
       to: "/products",
       search: createQueryParams(value),
@@ -44,13 +46,16 @@ export function ProductSort() {
         <SelectTrigger id="sort-select" className="w-[180px]">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
-        <SelectContent>
-          {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
-        </SelectContent>
+
+        <SelectPositioner>
+          <SelectContent>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </SelectPositioner>
       </Select>
     </div>
   );

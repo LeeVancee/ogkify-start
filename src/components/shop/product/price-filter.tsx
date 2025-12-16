@@ -20,7 +20,8 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
   const currentMinPrice = Number(search.minPrice || "0");
   const currentMaxPrice = Number(search.maxPrice || maxPrice.toString());
 
-  const handleChange = (values: Array<number>) => {
+  const handleChange = (value: number | readonly number[]) => {
+    const values = Array.isArray(value) ? [...value] : [value];
     if (values.length === 2) {
       const [min, max] = values;
       startTransition(() => {
@@ -42,11 +43,11 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
       <AccordionContent>
         <div className="pt-2 space-y-6">
           <Slider
-            defaultValue={[currentMinPrice, currentMaxPrice]}
+            value={[currentMinPrice, currentMaxPrice]}
             min={0}
             max={maxPrice}
             step={50}
-            onValueCommit={handleChange}
+            onValueChange={handleChange}
           />
           <div className="flex items-center justify-between">
             <p className="text-sm">￥{currentMinPrice}</p>
