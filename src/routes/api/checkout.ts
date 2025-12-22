@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { json } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { format } from "date-fns";
 import { eq } from "drizzle-orm";
@@ -31,7 +30,7 @@ export const Route = createFileRoute("/api/checkout")({
           });
           // Check if user is logged in
           if (!session?.user.id) {
-            return json(
+            return Response.json(
               { error: "Must be logged in to checkout" },
               { status: 401 },
             );
@@ -56,7 +55,7 @@ export const Route = createFileRoute("/api/checkout")({
           });
 
           if (!cart || cart.items.length === 0) {
-            return json({ error: "Cart is empty" }, { status: 400 });
+            return Response.json({ error: "Cart is empty" }, { status: 400 });
           }
 
           // Calculate total amount
@@ -157,20 +156,20 @@ export const Route = createFileRoute("/api/checkout")({
             })
             .where(eq(orders.id, order.id));
 
-          return json({
+          return Response.json({
             sessionId: checkoutSession.id,
             sessionUrl: checkoutSession.url,
           });
         } catch (error) {
           console.error("Checkout error:", error);
-          return json(
+          return Response.json(
             { error: "Failed to create checkout session" },
             { status: 500 },
           );
         }
       },
       GET: () => {
-        return json({
+        return Response.json({
           message: "Please use POST method to access this endpoint",
         });
       },

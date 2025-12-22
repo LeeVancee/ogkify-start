@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { json } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
 import { db } from "@/db";
@@ -17,7 +16,7 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
 
           if (!signature) {
             console.error("Missing Stripe signature header");
-            return json(
+            return Response.json(
               { error: "Missing Stripe signature header" },
               { status: 400 },
             );
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
           // Ensure Webhook secret is configured
           if (!env.STRIPE_WEBHOOK_SECRET) {
             console.error("Missing STRIPE_WEBHOOK_SECRET environment variable");
-            return json(
+            return Response.json(
               { error: "Webhook configuration error" },
               { status: 500 },
             );
@@ -46,7 +45,7 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
             console.error(
               `Webhook signature verification failed: ${errorMessage}`,
             );
-            return json(
+            return Response.json(
               {
                 error: `Webhook signature verification failed: ${errorMessage}`,
               },
@@ -73,10 +72,13 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
               console.log(`Unhandled event type: ${event.type}`);
           }
 
-          return json({ received: true });
+          return Response.json({ received: true });
         } catch (error) {
           console.error("Webhook error:", error);
-          return json({ error: "Error processing webhook" }, { status: 500 });
+          return Response.json(
+            { error: "Error processing webhook" },
+            { status: 500 },
+          );
         }
       },
     },
