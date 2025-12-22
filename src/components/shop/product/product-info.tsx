@@ -46,20 +46,20 @@ interface Product {
 interface ProductInfoProps {
   product: Product;
   addToCartAction: (
-    formData: FormData
+    formData: FormData,
   ) => Promise<{ success: boolean; error?: string; message?: string }>;
 }
 
 export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
   const [quantity, setQuantity] = useState("1");
   const [mainImage, setMainImage] = useState(
-    product.images[0] || "/placeholder.svg"
+    product.images[0] || "/placeholder.svg",
   );
   const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    product.colors.length > 0 ? product.colors[0].id : undefined
+    product.colors.length > 0 ? product.colors[0].id : undefined,
   );
   const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    product.sizes.length > 0 ? product.sizes[0].id : undefined
+    product.sizes.length > 0 ? product.sizes[0].id : undefined,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -153,7 +153,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                       "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
                       selectedColor === color.id
                         ? "border-blue-600 bg-muted text-blue-600"
-                        : "border-gray-200 hover:border-gray-300"
+                        : "border-gray-200 hover:border-gray-300",
                     )}
                     title={color.name}
                     onClick={() => setSelectedColor(color.id)}
@@ -177,7 +177,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                       "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
                       selectedSize === size.id
                         ? "border-blue-600 bg-muted text-blue-600"
-                        : "border-gray-200 hover:border-gray-300"
+                        : "border-gray-200 hover:border-gray-300",
                     )}
                     onClick={() => setSelectedSize(size.id)}
                   >

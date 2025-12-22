@@ -7,14 +7,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { getSession } from "@/server/getSession.server";
 import { authMiddleware } from "@/lib/ middleware";
 export const Route = createFileRoute("/dashboard")({
   server: {
     middleware: [authMiddleware],
   },
-  staleTime: 1000 * 60 * 5,
-  gcTime: 1000 * 60 * 15,
   component: RouteComponent,
 });
 

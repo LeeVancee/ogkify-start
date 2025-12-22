@@ -80,7 +80,7 @@ export function CloudinarySingleImageUpload({
       setIsLoading(true);
       await loadCloudinaryScript();
       setIsScriptLoaded(true);
-      
+
       // Wait a tick for the widget to be initialized
       setTimeout(() => {
         if (uploadWidgetRef.current) {

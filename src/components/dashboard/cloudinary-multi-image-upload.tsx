@@ -52,7 +52,7 @@ export function CloudinaryMultiImageUpload({
         },
         (
           error: CloudinaryUploadError | null,
-          result: CloudinaryUploadResult
+          result: CloudinaryUploadResult,
         ) => {
           if (error) {
             console.error("Upload error:", error);
@@ -79,7 +79,7 @@ export function CloudinaryMultiImageUpload({
               toast.success("Images uploaded successfully");
             }
           }
-        }
+        },
       );
     }
   }, [isScriptLoaded, onChange, value]);
@@ -155,8 +155,8 @@ export function CloudinaryMultiImageUpload({
           {isLoading
             ? "Initializing..."
             : value.length >= 4
-            ? "Maximum images reached"
-            : `Upload Images (${4 - value.length} remaining)`}
+              ? "Maximum images reached"
+              : `Upload Images (${4 - value.length} remaining)`}
         </button>
       </div>
     </div>
