@@ -8,21 +8,11 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getSession } from "@/server/getSession.server";
+import { authMiddleware } from "@/lib/ middleware";
 export const Route = createFileRoute("/dashboard")({
-  loader: async () => {
-    const session = await getSession();
-
-    // Check if user is logged in
-    if (!session) {
-      throw redirect({ to: "/login" });
-    }
-    if (session.user.role !== "admin") {
-      throw redirect({ to: "/" });
-    }
-
-    return { session };
+  server: {
+    middleware: [authMiddleware],
   },
-
   staleTime: 1000 * 60 * 5,
   gcTime: 1000 * 60 * 15,
   component: RouteComponent,
