@@ -7,7 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { authMiddleware } from "@/lib/ middleware";
+import { authMiddleware } from "@/lib/middleware";
 export const Route = createFileRoute("/dashboard")({
   server: {
     middleware: [authMiddleware],
