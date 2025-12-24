@@ -2,20 +2,15 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import Footer from "@/components/shop/home/footer";
 import Header from "@/components/shop/home/header";
 import { getUserCart } from "@/server/cart.server";
-import { getSession } from "@/server/getSession.server";
 
 export const Route = createFileRoute("/(shop)")({
   component: RouteComponent,
-  loader: async () => {
-    // Fetch all data needed for Header in parallel
-    const [cartData, session] = await Promise.all([
-      getUserCart(),
-      getSession(),
-    ]);
+  loader: async ({ context }) => {
+    const cartData = await getUserCart();
 
     return {
       initialCartData: cartData,
-      initialSession: session || undefined,
+      initialSession: context.session || undefined,
     };
   },
 });

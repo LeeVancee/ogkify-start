@@ -8,10 +8,12 @@ import {
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
 import { seo } from "@/lib/seo";
+import { getSession } from "@/server/getSession.server";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
+  session: Awaited<ReturnType<typeof getSession>> | undefined;
 }>()({
   head: () => ({
     meta: [
@@ -37,6 +39,13 @@ export const Route = createRootRouteWithContext<{
       { rel: "icon", href: "/favicon.ico" },
     ],
   }),
+
+  beforeLoad: async () => {
+    const session = await getSession();
+    return { session };
+  },
+
+  staleTime: 1000 * 60 * 5, // 5 minutes cache
 
   component: () => (
     <RootDocument>

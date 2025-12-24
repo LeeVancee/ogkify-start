@@ -28,16 +28,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
-import { getSession } from "@/server/getSession.server";
 
 export const Route = createFileRoute("/(shop)/profile")({
   component: ProfilePage,
-  beforeLoad: async () => {
-    const session = await getSession();
-    if (!session) {
+  beforeLoad: async ({ context }) => {
+    if (!context.session) {
       throw redirect({ to: "/login" });
     }
-    return { session };
   },
 });
 
@@ -71,13 +68,7 @@ type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 function ProfilePage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("profile");
-
-  // get session
-  const { data: session, isLoading: isLoadingSession } = useQuery({
-    queryKey: ["session"],
-    queryFn: getSession,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-  });
+  const { session } = Route.useRouteContext();
 
   // update user profile mutation
   const updateProfileMutation = useMutation({
@@ -148,13 +139,7 @@ function ProfilePage() {
     changePasswordMutation.mutate(values);
   };
 
-  if (isLoadingSession) {
-    return (
-      <div className="container flex items-center justify-center py-20">
-        <Loader2 className="h-10 w-10 animate-spin text-primary" />
-      </div>
-    );
-  }
+
 
   return (
     <div className="container max-w-4xl py-10">

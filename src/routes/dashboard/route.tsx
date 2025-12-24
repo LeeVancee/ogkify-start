@@ -7,10 +7,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { authMiddleware } from "@/lib/middleware";
+
 export const Route = createFileRoute("/dashboard")({
-  server: {
-    middleware: [authMiddleware],
+  beforeLoad: async ({ context }) => {
+    if (!context.session) {
+      throw redirect({ to: "/login" });
+    }
+    if (context.session.user.role !== "admin") {
+      throw redirect({ to: "/" });
+    }
   },
   component: RouteComponent,
 });
