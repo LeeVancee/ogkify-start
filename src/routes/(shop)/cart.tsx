@@ -132,8 +132,7 @@ function CartPage() {
     0,
   );
   const shipping = subtotal > 25 ? 0 : 10; // Free shipping over $25
-  const tax = subtotal * 0.08; // 8% tax
-  const total = subtotal + shipping + tax;
+  const total = subtotal + shipping;
 
   // Handle loading state
   if (isLoading) {
@@ -342,10 +341,6 @@ function CartPage() {
                       `$${shipping.toFixed(2)}`
                     )}
                   </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tax</span>
-                  <span>${tax.toFixed(2)}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between font-medium">
