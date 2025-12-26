@@ -139,8 +139,6 @@ function ProfilePage() {
     changePasswordMutation.mutate(values);
   };
 
-
-
   return (
     <div className="container max-w-4xl py-10">
       <h1 className="mb-8 text-3xl font-bold">Your Profile</h1>

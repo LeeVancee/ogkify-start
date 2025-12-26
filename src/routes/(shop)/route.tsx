@@ -2,15 +2,17 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 import Footer from "@/components/shop/home/footer";
 import Header from "@/components/shop/home/header";
 import { getUserCart } from "@/server/cart.server";
+import { authOptions } from "@/server/getSession.server";
 
 export const Route = createFileRoute("/(shop)")({
   component: RouteComponent,
   loader: async ({ context }) => {
     const cartData = await getUserCart();
+    const session = await context.queryClient.ensureQueryData(authOptions);
 
     return {
       initialCartData: cartData,
-      initialSession: context.session || undefined,
+      initialSession: session || undefined,
     };
   },
 });

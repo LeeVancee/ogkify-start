@@ -7,13 +7,15 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { authOptions } from "@/server/getSession.server";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async ({ context }) => {
-    if (!context.session) {
+    const session = await context.queryClient.ensureQueryData(authOptions);
+    if (!session) {
       throw redirect({ to: "/login" });
     }
-    if (context.session.user.role !== "admin") {
+    if (session.user.role !== "admin") {
       throw redirect({ to: "/" });
     }
   },

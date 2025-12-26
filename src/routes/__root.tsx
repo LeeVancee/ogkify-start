@@ -8,7 +8,7 @@ import {
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
 import { seo } from "@/lib/seo";
-import { getSession } from "@/server/getSession.server";
+import { authOptions, getSession } from "@/server/getSession.server";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
@@ -40,12 +40,9 @@ export const Route = createRootRouteWithContext<{
     ],
   }),
 
-  beforeLoad: async () => {
-    const session = await getSession();
-    return { session };
+  beforeLoad: ({ context }) => {
+    context.queryClient.prefetchQuery(authOptions);
   },
-
-  staleTime: 1000 * 60 * 5, // 5 minutes cache
 
   component: () => (
     <RootDocument>
