@@ -7,7 +7,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { authOptions } from "@/server/getSession.server";
+import { authOptions } from "@/lib/session-query";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async ({ context }) => {

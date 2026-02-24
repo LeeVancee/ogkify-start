@@ -28,7 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
-import { authOptions } from "@/server/getSession.server";
+import { authOptions } from "@/lib/session-query";
 
 export const Route = createFileRoute("/(shop)/profile")({
   component: ProfilePage,
