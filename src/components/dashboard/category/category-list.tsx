@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { deleteCategory, getCategories } from "@/server/categories.server";
+import { deleteCategory, getCategories } from "@/server/categories";
 import { CategoryCard } from "./category-card";
 
 type Category = {

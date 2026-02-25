@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { CategoryEditForm } from "@/components/dashboard/category/category-edit-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { getCategory } from "@/server/categories.server";
+import { getCategory } from "@/server/categories";
 
 export const Route = createFileRoute("/dashboard/categories/$id")({
   component: RouteComponent,

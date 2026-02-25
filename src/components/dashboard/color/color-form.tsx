@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createColor } from "@/server/colors.server";
+import { createColor } from "@/server/colors";
 
 const formSchema = z.object({
   name: z.string().min(1, "Please enter a color name"),

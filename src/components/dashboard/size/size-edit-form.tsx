@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { updateSize } from "@/server/sizes.server";
+import { updateSize } from "@/server/sizes";
 
 interface SizeEditFormProps {
   size: {

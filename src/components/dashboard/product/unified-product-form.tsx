@@ -45,7 +45,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { createProduct, updateProduct } from "@/server/products.server";
+import { createProduct, updateProduct } from "@/server/products";
 import { VariantsCardContent } from "./product-form-fields";
 import {
   type ProductFormProps,

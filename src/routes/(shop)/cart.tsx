@@ -12,7 +12,7 @@ import {
   getUserCart,
   removeFromCart,
   updateCartItemQuantity,
-} from "@/server/cart.server";
+} from "@/server/cart";
 
 export const Route = createFileRoute("/(shop)/cart")({
   component: CartPage,

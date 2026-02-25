@@ -9,7 +9,7 @@ import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
 import { seo } from "@/lib/seo";
 import { authOptions } from "@/lib/session-query";
-import { getSession } from "@/server/getSession.server";
+import { getSession } from "@/server/getSession";
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{

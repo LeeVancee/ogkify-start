@@ -7,7 +7,7 @@ import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { deleteProduct, getProducts } from "@/server/products.server";
+import { deleteProduct, getProducts } from "@/server/products";
 import { DeleteDialog } from "../delete-dialog";
 import { ProductGridView } from "./product-grid-view";
 import { ProductTableView } from "./product-table-view";

@@ -228,11 +228,11 @@ export interface FileRoutesByFullPath {
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
   '/products/': typeof shopProductsIndexRoute
-  '/dashboard/categories': typeof DashboardCategoriesIndexRoute
-  '/dashboard/colors': typeof DashboardColorsIndexRoute
-  '/dashboard/orders': typeof DashboardOrdersIndexRoute
-  '/dashboard/products': typeof DashboardProductsIndexRoute
-  '/dashboard/sizes': typeof DashboardSizesIndexRoute
+  '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
+  '/dashboard/colors/': typeof DashboardColorsIndexRoute
+  '/dashboard/orders/': typeof DashboardOrdersIndexRoute
+  '/dashboard/products/': typeof DashboardProductsIndexRoute
+  '/dashboard/sizes/': typeof DashboardSizesIndexRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof authLoginRoute
@@ -327,11 +327,11 @@ export interface FileRouteTypes {
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
     | '/products/'
-    | '/dashboard/categories'
-    | '/dashboard/colors'
-    | '/dashboard/orders'
-    | '/dashboard/products'
-    | '/dashboard/sizes'
+    | '/dashboard/categories/'
+    | '/dashboard/colors/'
+    | '/dashboard/orders/'
+    | '/dashboard/products/'
+    | '/dashboard/sizes/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -511,35 +511,35 @@ declare module '@tanstack/react-router' {
     '/dashboard/sizes/': {
       id: '/dashboard/sizes/'
       path: '/sizes'
-      fullPath: '/dashboard/sizes'
+      fullPath: '/dashboard/sizes/'
       preLoaderRoute: typeof DashboardSizesIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/products/': {
       id: '/dashboard/products/'
       path: '/products'
-      fullPath: '/dashboard/products'
+      fullPath: '/dashboard/products/'
       preLoaderRoute: typeof DashboardProductsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/orders/': {
       id: '/dashboard/orders/'
       path: '/orders'
-      fullPath: '/dashboard/orders'
+      fullPath: '/dashboard/orders/'
       preLoaderRoute: typeof DashboardOrdersIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/colors/': {
       id: '/dashboard/colors/'
       path: '/colors'
-      fullPath: '/dashboard/colors'
+      fullPath: '/dashboard/colors/'
       preLoaderRoute: typeof DashboardColorsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/categories/': {
       id: '/dashboard/categories/'
       path: '/categories'
-      fullPath: '/dashboard/categories'
+      fullPath: '/dashboard/categories/'
       preLoaderRoute: typeof DashboardCategoriesIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }

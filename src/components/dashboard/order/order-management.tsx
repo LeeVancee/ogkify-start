@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { getOrderDetails, getUserOrders } from "@/server/orders.server";
+import { getOrderDetails, getUserOrders } from "@/server/orders";
 import { OrderDetailsDialog } from "./order-details-dialog";
 import type { Order } from "./order-types";
 import { OrdersTable } from "./orders-table";

@@ -16,7 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createCategory } from "@/server/categories.server";
+import { createCategory } from "@/server/categories";
 import { CloudinarySingleImageUpload } from "../cloudinary-single-image-upload";
 
 const formSchema = z.object({

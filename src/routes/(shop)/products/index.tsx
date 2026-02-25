@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
-import { getFilteredProducts } from "@/server/get-filtered-products.server";
+import { getFilteredProducts } from "@/server/get-filtered-products";
 
 // Define search params schema
 const searchParamsSchema = z.object({

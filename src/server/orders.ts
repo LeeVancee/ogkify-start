@@ -5,7 +5,7 @@ import { orderItems, orders } from "@/db/schema";
 import { env } from "@/env/server";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { formatPrice } from "@/lib/utils";
-import { getSession } from "./getSession.server";
+import { getSession } from "./getSession";
 
 // Define order status type
 type OrderStatus = "PENDING" | "PAID" | "COMPLETED" | "CANCELLED";

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { deleteColor, getColors } from "@/server/colors.server";
+import { deleteColor, getColors } from "@/server/colors";
 import { ColorCard } from "./color-card";
 
 type Color = {

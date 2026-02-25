@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import Footer from "@/components/shop/home/footer";
 import Header from "@/components/shop/home/header";
-import { getUserCart } from "@/server/cart.server";
+import { getUserCart } from "@/server/cart";
 import { authOptions } from "@/lib/session-query";
 
 export const Route = createFileRoute("/(shop)")({

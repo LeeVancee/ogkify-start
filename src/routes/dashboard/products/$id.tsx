@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { getCategories } from "@/server/categories.server";
-import { getColors } from "@/server/colors.server";
-import { getProduct } from "@/server/products.server";
-import { getSizes } from "@/server/sizes.server";
+import { getCategories } from "@/server/categories";
+import { getColors } from "@/server/colors";
+import { getProduct } from "@/server/products";
+import { getSizes } from "@/server/sizes";
 
 export const Route = createFileRoute("/dashboard/products/$id")({
   component: RouteComponent,

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { SizeEditForm } from "@/components/dashboard/size/size-edit-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { getSize } from "@/server/sizes.server";
+import { getSize } from "@/server/sizes";
 
 export const Route = createFileRoute("/dashboard/sizes/$id")({
   component: RouteComponent,

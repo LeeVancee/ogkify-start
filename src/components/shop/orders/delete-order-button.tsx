@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteUnpaidOrder } from "@/server/orders.server";
+import { deleteUnpaidOrder } from "@/server/orders";
 
 interface DeleteOrderButtonProps {
   orderId: string;

@@ -1,11 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getCategoriesCount } from "@/server/categories.server";
+import { getCategoriesCount } from "@/server/categories";
 import {
   getMonthlySalesData,
   getOrdersStats,
   getRecentOrders,
-} from "@/server/orders.server";
-import { getProductsCount } from "@/server/products.server";
+} from "@/server/orders";
+import { getProductsCount } from "@/server/products";
 
 // Get all dashboard data in a single request for optimal performance
 export const getDashboardData = createServerFn().handler(async () => {

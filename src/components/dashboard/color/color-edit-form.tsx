@@ -4,7 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { updateColor } from "@/server/colors.server";
+import { updateColor } from "@/server/colors";
 
 interface ColorEditFormProps {
   color: {

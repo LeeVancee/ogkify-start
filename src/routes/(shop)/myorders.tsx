@@ -31,7 +31,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatPrice } from "@/lib/utils";
-import { getUnpaidOrders, getUserOrders } from "@/server/orders.server";
+import { getUnpaidOrders, getUserOrders } from "@/server/orders";
 
 // Define types
 interface OrderItem {

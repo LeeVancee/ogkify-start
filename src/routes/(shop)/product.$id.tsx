@@ -3,8 +3,8 @@ import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductInfo } from "@/components/shop/product/product-info";
 import { ProductInfoLoading } from "@/components/shop/product/product-info-loading";
 import { ProductTabs } from "@/components/shop/product/product-tabs";
-import { handleAddToCartFormAction } from "@/server/cart.server";
-import { getProduct, getRelatedProducts } from "@/server/product-shop.server";
+import { handleAddToCartFormAction } from "@/server/cart";
+import { getProduct, getRelatedProducts } from "@/server/product-shop";
 
 export const Route = createFileRoute("/(shop)/product/$id")({
   pendingComponent: () => <ProductInfoLoading />,

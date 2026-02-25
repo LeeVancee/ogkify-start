@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
-import { getProductFormData } from "@/server/products.server";
+import { getProductFormData } from "@/server/products";
 
 export const Route = createFileRoute("/dashboard/products/new")({
   component: RouteComponent,

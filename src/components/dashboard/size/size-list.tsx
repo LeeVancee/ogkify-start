@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { deleteSize, getSizes } from "@/server/sizes.server";
+import { deleteSize, getSizes } from "@/server/sizes";
 import { SizeCard } from "./size-card";
 
 type Size = {

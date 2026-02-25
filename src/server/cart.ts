@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { cartItems, carts } from "@/db/schema";
-import { getSession } from "./getSession.server";
+import { getSession } from "./getSession";
 
 export interface CartItemData {
   productId: string;

@@ -17,7 +17,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createSize } from "@/server/sizes.server";
+import { createSize } from "@/server/sizes";
 
 const formSchema = z.object({
   name: z.string().min(1, "Please enter a size name"),

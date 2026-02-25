@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
 import ProductCard from "@/components/shop/product/product-card";
-import { searchProducts } from "@/server/search.server";
+import { searchProducts } from "@/server/search";
 
 const searchParamsSchema = z.object({
   q: z.string().optional(),

@@ -11,8 +11,8 @@ import {
 import { Hero } from "@/components/shop/home/hero";
 import HeroSection from "@/components/shop/home/hero-section";
 import { Newsletter } from "@/components/shop/home/newsletter";
-import { getCategories } from "@/server/categories.server";
-import { getFeaturedProducts } from "@/server/get-featured-products.server";
+import { getCategories } from "@/server/categories";
+import { getFeaturedProducts } from "@/server/get-featured-products";
 
 export const Route = createFileRoute("/(shop)/")({
   component: RouteComponent,

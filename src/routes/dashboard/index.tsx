@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardClient } from "@/components/dashboard/dashboard-client";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { getDashboardData } from "@/server/dashboard.server";
+import { getDashboardData } from "@/server/dashboard";
 
 export const Route = createFileRoute("/dashboard/")({
   component: RouteComponent,
