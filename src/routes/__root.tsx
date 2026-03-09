@@ -41,8 +41,12 @@ export const Route = createRootRouteWithContext<{
     ],
   }),
 
-  beforeLoad: ({ context }) => {
-    context.queryClient.prefetchQuery(authOptions);
+  beforeLoad: async ({ context }) => {
+    const session = await context.queryClient.ensureQueryData(authOptions);
+
+    return {
+      session: session || undefined,
+    };
   },
 
   component: () => (

@@ -6,6 +6,7 @@ import { env } from "@/env/server";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { formatPrice } from "@/lib/utils";
 import { getSession } from "./getSession";
+import { requireAdminSession } from "./require-admin";
 
 // Define order status type
 type OrderStatus = "PENDING" | "PAID" | "COMPLETED" | "CANCELLED";
@@ -354,10 +355,9 @@ export const updateOrderStatus = createServerFn()
   .inputValidator((input: { orderId: string; status: string }) => input)
   .handler(async ({ data: { orderId, status } }) => {
     try {
-      const session = await getSession();
-
-      if (!session?.user.id) {
-        return { error: "Unauthorized", success: false };
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { error: adminSession.error, success: false };
       }
 
       // Convert string to OrderStatus type
@@ -408,6 +408,15 @@ export const updateOrderStatus = createServerFn()
 // Get order statistics
 export const getOrdersStats = createServerFn().handler(async () => {
   try {
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return {
+        pendingOrders: 0,
+        completedOrders: 0,
+        totalRevenue: 0,
+      };
+    }
+
     // Get pending order count
     const [pendingResult] = await db
       .select({ count: count() })
@@ -453,6 +462,11 @@ export const getRecentOrders = createServerFn()
   .inputValidator((limit: number = 5) => limit)
   .handler(async ({ data: limit }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return [];
+      }
+
       const recentOrdersList = await db.query.orders.findMany({
         limit,
         orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
@@ -494,6 +508,11 @@ export const getRecentOrders = createServerFn()
 // Get monthly sales data
 export const getMonthlySalesData = createServerFn().handler(async () => {
   try {
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return [];
+    }
+
     const currentYear = new Date().getFullYear();
     const monthlyData = [];
 

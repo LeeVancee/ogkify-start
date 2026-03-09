@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { colors } from "@/db/schema";
+import { requireAdminSession } from "./require-admin";
 
 // Get all colors
 export const getColors = createServerFn().handler(async () => {
@@ -55,6 +56,11 @@ export const createColor = createServerFn({ method: "POST" })
   .inputValidator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const [color] = await db
         .insert(colors)
         .values({
@@ -76,6 +82,11 @@ export const updateColor = createServerFn({ method: "POST" })
   )
   .handler(async ({ data: { id, data } }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const [color] = await db
         .update(colors)
         .set({
@@ -96,6 +107,11 @@ export const deleteColor = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       await db.delete(colors).where(eq(colors.id, id));
 
       return { success: true };

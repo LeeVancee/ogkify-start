@@ -8,6 +8,7 @@ import {
   productsToColors,
   productsToSizes,
 } from "@/db/schema";
+import { requireAdminSession } from "./require-admin";
 
 const productFormSchema = z.object({
   name: z.string().min(1, {
@@ -86,6 +87,11 @@ export const updateProduct = createServerFn({ method: "POST" })
   })
   .handler(async ({ data: { id, data } }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const {
         name,
         description,
@@ -231,6 +237,11 @@ export const createProduct = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const {
         name,
         description,
@@ -297,6 +308,11 @@ export const deleteProduct = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, message: adminSession.error };
+      }
+
       // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
       await db.delete(products).where(eq(products.id, id));
 
@@ -313,6 +329,11 @@ export const deleteProduct = createServerFn({ method: "POST" })
 // Get product count
 export const getProductsCount = createServerFn().handler(async () => {
   try {
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return 0;
+    }
+
     const [result] = await db.select({ count: count() }).from(products);
     return result.count;
   } catch (error) {
@@ -326,6 +347,11 @@ export const getPopularProducts = createServerFn()
   .inputValidator((limit?: number) => limit || 5)
   .handler(async ({ data: limit }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return [];
+      }
+
       // Use relational query to get popular products
       const productsList = await db.query.products.findMany({
         with: {
@@ -359,6 +385,15 @@ export const getPopularProducts = createServerFn()
 // Get all product form data in a single request for better performance
 export const getProductFormData = createServerFn().handler(async () => {
   try {
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return {
+        categories: [],
+        colors: [],
+        sizes: [],
+      };
+    }
+
     // Use Promise.all to fetch all data in parallel
     const [categories, colors, sizes] = await Promise.all([
       db.query.categories.findMany({

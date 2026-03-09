@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { sizes } from "@/db/schema";
+import { requireAdminSession } from "./require-admin";
 
 // Get all sizes
 export const getSizes = createServerFn().handler(async () => {
@@ -55,6 +56,11 @@ export const createSize = createServerFn({ method: "POST" })
   .inputValidator((data: { name: string; value: string }) => data)
   .handler(async ({ data }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const [size] = await db
         .insert(sizes)
         .values({
@@ -76,6 +82,11 @@ export const updateSize = createServerFn({ method: "POST" })
   )
   .handler(async ({ data: { id, data } }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const [size] = await db
         .update(sizes)
         .set({
@@ -96,6 +107,11 @@ export const deleteSize = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       await db.delete(sizes).where(eq(sizes.id, id));
 
       return { success: true };

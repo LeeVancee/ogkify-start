@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { count, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
+import { requireAdminSession } from "./require-admin";
 
 // Get all categories
 export const getCategories = createServerFn().handler(async () => {
@@ -55,6 +56,11 @@ export const createCategory = createServerFn({ method: "POST" })
   .inputValidator((input: CreateCategoryInput) => input)
   .handler(async ({ data: input }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const [category] = await db
         .insert(categories)
         .values({
@@ -77,6 +83,11 @@ export const updateCategory = createServerFn({ method: "POST" })
   )
   .handler(async ({ data: { id, name, imageUrl } }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       const [category] = await db
         .update(categories)
         .set({ name, imageUrl })
@@ -94,6 +105,11 @@ export const deleteCategory = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
     try {
+      const adminSession = await requireAdminSession();
+      if (!adminSession.ok) {
+        return { success: false, error: adminSession.error };
+      }
+
       await db.delete(categories).where(eq(categories.id, id));
 
       return { success: true };
@@ -105,6 +121,11 @@ export const deleteCategory = createServerFn({ method: "POST" })
 // Get category count
 export const getCategoriesCount = createServerFn().handler(async () => {
   try {
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return 0;
+    }
+
     const [result] = await db.select({ count: count() }).from(categories);
     return result.count;
   } catch (error) {
