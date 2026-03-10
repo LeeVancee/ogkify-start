@@ -22,7 +22,11 @@ interface ResourceListProps<TItem> {
   getItemId: (item: TItem) => string;
   getDeleteSuccessMessage: (id: string) => string;
   getDeleteErrorMessage: (id: string) => string;
-  renderCard: (item: TItem, isDeleting: boolean, onDelete: (id: string) => void) => React.ReactNode;
+  renderCard: (
+    item: TItem,
+    isDeleting: boolean,
+    onDelete: (id: string) => void,
+  ) => React.ReactNode;
 }
 
 export function ResourceList<TItem>({
@@ -84,7 +88,9 @@ export function ResourceList<TItem>({
     return (
       <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
         <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">{errorTitle}</h3>
+          <h3 className="mt-4 text-lg font-semibold text-red-500">
+            {errorTitle}
+          </h3>
           <p className="mb-4 mt-2 text-sm text-muted-foreground">
             {errorDescription}
           </p>

@@ -1,0 +1,66 @@
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+
+interface CheckboxFilterOption {
+  id: string;
+  label: string;
+  checked: boolean;
+  swatchColor?: string;
+}
+
+interface CheckboxFilterSectionProps {
+  value: string;
+  title: string;
+  options: CheckboxFilterOption[];
+  emptyState?: boolean;
+  columnsClassName?: string;
+  onToggle: (optionId: string) => void;
+}
+
+export function CheckboxFilterSection({
+  value,
+  title,
+  options,
+  emptyState = false,
+  columnsClassName = "grid gap-2",
+  onToggle,
+}: CheckboxFilterSectionProps) {
+  if (emptyState) {
+    return null;
+  }
+
+  return (
+    <AccordionItem value={value}>
+      <AccordionTrigger>{title}</AccordionTrigger>
+      <AccordionContent>
+        <div className={columnsClassName}>
+          {options.map((option) => (
+            <div key={option.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={option.id}
+                checked={option.checked}
+                onCheckedChange={() => onToggle(option.id)}
+              />
+              <div className="flex items-center gap-1.5">
+                {option.swatchColor ? (
+                  <div
+                    className="h-4 w-4 rounded-full border"
+                    style={{ backgroundColor: option.swatchColor }}
+                  />
+                ) : null}
+                <Label htmlFor={option.id} className="text-sm font-normal">
+                  {option.label}
+                </Label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </AccordionContent>
+    </AccordionItem>
+  );
+}

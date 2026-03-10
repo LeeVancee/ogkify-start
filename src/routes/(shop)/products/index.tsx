@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 // src/routes/categories.tsx
 import { z } from "zod";
+import { normalizeArray } from "@/components/shop/product/filter-types";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
 import { getFilteredProducts } from "@/server/get-filtered-products";
@@ -43,17 +44,8 @@ export const Route = createFileRoute("/(shop)/products/")({
     const maxPrice = deps.maxPrice ? parseFloat(deps.maxPrice) : undefined;
 
     // Colors and sizes
-    const colors = Array.isArray(deps.color)
-      ? deps.color
-      : deps.color
-        ? [deps.color]
-        : [];
-
-    const sizes = Array.isArray(deps.size)
-      ? deps.size
-      : deps.size
-        ? [deps.size]
-        : [];
+    const colors = normalizeArray(deps.color);
+    const sizes = normalizeArray(deps.size);
 
     // Pagination
     const page = parseInt(deps.page || "1");

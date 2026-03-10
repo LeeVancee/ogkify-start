@@ -1,23 +1,13 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useTransition } from "react";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { createQueryParams, normalizeArray } from "./filter-types";
+import { CheckboxFilterSection } from "./checkbox-filter-section";
+import { normalizeArray } from "./filter-types";
+import { useProductFilterNavigation } from "./use-product-filter-navigation";
 
 interface ColorFilterProps {
   colors: Array<{ id: string; name: string; value: string }>;
 }
 
 export function ColorFilter({ colors }: ColorFilterProps) {
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
-  const [, startTransition] = useTransition();
-
+  const { search, updateSearch } = useProductFilterNavigation();
   const currentColorNames = normalizeArray(search.color);
 
   const handleChange = (color: { id: string; name: string; value: string }) => {
@@ -26,47 +16,32 @@ export function ColorFilter({ colors }: ColorFilterProps) {
       ? currentColorNames.filter((name: string) => name !== colorName)
       : [...currentColorNames, colorName];
 
-    startTransition(() => {
-      navigate({
-        to: "/products",
-        search: createQueryParams(search, {
-          color: newColors.length ? newColors : undefined,
-        }),
-        replace: true,
-      });
+    updateSearch({
+      color: newColors.length ? newColors.join(",") : undefined,
     });
   };
 
-  if (colors.length === 0) return null;
-
   return (
-    <AccordionItem value="colors">
-      <AccordionTrigger>Colors</AccordionTrigger>
-      <AccordionContent>
-        <div className="grid grid-cols-2 gap-2">
-          {colors.map((color) => (
-            <div key={color.id} className="flex items-center space-x-2">
-              <Checkbox
-                id={`color-${color.id}`}
-                checked={currentColorNames.includes(color.name)}
-                onCheckedChange={() => handleChange(color)}
-              />
-              <div className="flex items-center gap-1.5">
-                <div
-                  className="h-4 w-4 rounded-full border"
-                  style={{ backgroundColor: color.value }}
-                />
-                <Label
-                  htmlFor={`color-${color.id}`}
-                  className="text-sm font-normal"
-                >
-                  {color.name}
-                </Label>
-              </div>
-            </div>
-          ))}
-        </div>
-      </AccordionContent>
-    </AccordionItem>
+    <CheckboxFilterSection
+      value="colors"
+      title="Colors"
+      options={colors.map((color) => ({
+        id: `color-${color.id}`,
+        label: color.name,
+        checked: currentColorNames.includes(color.name),
+        swatchColor: color.value,
+      }))}
+      emptyState={colors.length === 0}
+      columnsClassName="grid grid-cols-2 gap-2"
+      onToggle={(optionId) => {
+        const color = colors.find(
+          (item) => item.id === optionId.replace("color-", ""),
+        );
+
+        if (color) {
+          handleChange(color);
+        }
+      }}
+    />
   );
 }

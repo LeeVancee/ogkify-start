@@ -38,5 +38,25 @@ export function createQueryParams(
 export function normalizeArray(
   value: string | Array<string> | undefined,
 ): Array<string> {
-  return Array.isArray(value) ? value : value ? [value] : [];
+  if (Array.isArray(value)) {
+    return value;
+  }
+
+  if (!value) {
+    return [];
+  }
+
+  if (value.startsWith("[") && value.endsWith("]")) {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.filter(Boolean) : [value];
+    } catch {
+      return [value];
+    }
+  }
+
+  return value
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
 }

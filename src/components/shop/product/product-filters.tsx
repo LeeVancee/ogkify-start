@@ -1,5 +1,3 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useTransition } from "react";
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { CategoryFilter } from "./category-filter";
@@ -9,17 +7,15 @@ import type { FilterProps } from "./filter-types";
 import { normalizeArray } from "./filter-types";
 import { PriceFilter } from "./price-filter";
 import { SizeFilter } from "./size-filter";
+import { useProductFilterNavigation } from "./use-product-filter-navigation";
 
-function ProductFiltersContent({
+export function ProductFilters({
   categories,
   colors = [],
   sizes = [],
   maxPrice = 5000,
 }: FilterProps) {
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
-  const [, startTransition] = useTransition();
-
+  const { search, resetSearch } = useProductFilterNavigation();
   const currentCategory = search.category;
   const currentSort = search.sort || "featured";
   const isFeatured = search.featured === true;
@@ -27,16 +23,6 @@ function ProductFiltersContent({
   const currentMaxPrice = Number(search.maxPrice || maxPrice.toString());
   const currentColorNames = normalizeArray(search.color);
   const currentSizeNames = normalizeArray(search.size);
-
-  const handleResetFilters = () => {
-    startTransition(() => {
-      navigate({
-        to: "/products",
-        search: {},
-        replace: true,
-      });
-    });
-  };
 
   const hasActiveFilters =
     currentCategory ||
@@ -60,15 +46,11 @@ function ProductFiltersContent({
       <Button
         variant="outline"
         className="w-full"
-        onClick={handleResetFilters}
+        onClick={resetSearch}
         disabled={!hasActiveFilters}
       >
         Reset Filters
       </Button>
     </div>
   );
-}
-
-export function ProductFilters(props: FilterProps) {
-  return <ProductFiltersContent {...props} />;
 }

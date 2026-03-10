@@ -72,7 +72,10 @@ export function SizeForm({ size }: SizeFormProps = {}) {
     redirectTo: "/dashboard/sizes",
   });
 
-  const handleQuickSelect = (selectedSize: { label: string; value: string }) => {
+  const handleQuickSelect = (selectedSize: {
+    label: string;
+    value: string;
+  }) => {
     form.setValue("name", selectedSize.label);
     form.setValue("value", selectedSize.value);
   };

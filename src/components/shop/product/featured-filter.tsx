@@ -1,5 +1,3 @@
-import { useNavigate, useSearch } from "@tanstack/react-router";
-import { useTransition } from "react";
 import {
   AccordionContent,
   AccordionItem,
@@ -7,24 +5,15 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { createQueryParams } from "./filter-types";
+import { useProductFilterNavigation } from "./use-product-filter-navigation";
 
 export function FeaturedFilter() {
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
-  const [, startTransition] = useTransition();
-
+  const { search, updateSearch } = useProductFilterNavigation();
   const isFeatured = search.featured === true;
 
   const handleChange = (value: boolean) => {
-    startTransition(() => {
-      navigate({
-        to: "/products",
-        search: createQueryParams(search, {
-          featured: value || undefined,
-        }),
-        replace: true,
-      });
+    updateSearch({
+      featured: value || undefined,
     });
   };
 

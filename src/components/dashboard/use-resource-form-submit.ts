@@ -2,7 +2,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-interface UseResourceFormSubmitOptions<TValues, TResult extends { success: boolean; error?: string }> {
+interface UseResourceFormSubmitOptions<
+  TValues,
+  TResult extends { success: boolean; error?: string },
+> {
   mutationFn: (values: TValues) => Promise<TResult>;
   queryKey: string[];
   successMessage: string;
