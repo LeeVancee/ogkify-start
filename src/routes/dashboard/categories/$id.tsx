@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { CategoryEditForm } from "@/components/dashboard/category/category-edit-form";
+import { CategoryForm } from "@/components/dashboard/category/category-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getCategory } from "@/server/categories";
 
@@ -44,7 +44,7 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="rounded-lg border p-4">
             <h2 className="mb-4 text-lg font-semibold">Category Details</h2>
-            <CategoryEditForm category={response.category!} />
+            <CategoryForm category={response.category!} />
           </div>
         </div>
       </div>

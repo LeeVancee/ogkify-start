@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { SizeEditForm } from "@/components/dashboard/size/size-edit-form";
+import { SizeForm } from "@/components/dashboard/size/size-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getSize } from "@/server/sizes";
 
@@ -44,7 +44,7 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="rounded-lg border p-4">
             <h2 className="mb-4 text-lg font-semibold">Size Details</h2>
-            <SizeEditForm size={response.size!} />
+            <SizeForm size={response.size!} />
           </div>
         </div>
       </div>

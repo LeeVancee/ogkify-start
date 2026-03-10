@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ColorEditForm } from "@/components/dashboard/color/color-edit-form";
+import { ColorForm } from "@/components/dashboard/color/color-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getColor } from "@/server/colors";
 
@@ -43,7 +43,7 @@ function RouteComponent() {
         <div className="space-y-4">
           <div className="rounded-lg border p-4">
             <h2 className="mb-4 text-lg font-semibold">Color Details</h2>
-            <ColorEditForm color={response.color!} />
+            <ColorForm color={response.color!} />
           </div>
         </div>
       </div>

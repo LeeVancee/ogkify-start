@@ -1,9 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import { Ruler } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import * as z from "zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,7 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createSize } from "@/server/sizes";
+import { createSize, updateSize } from "@/server/sizes";
+import { useResourceFormSubmit } from "../use-resource-form-submit";
 
 const formSchema = z.object({
   name: z.string().min(1, "Please enter a size name"),
@@ -35,40 +33,48 @@ const commonSizes = [
   { label: "XXL", value: "XXL" },
 ];
 
-export function SizeForm() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
+interface SizeFormProps {
+  size?: {
+    id: string;
+    name: string;
+    value: string;
+  };
+}
 
+export function SizeForm({ size }: SizeFormProps = {}) {
+  const isEditMode = Boolean(size);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      value: "",
+      name: size?.name || "",
+      value: size?.value || "",
     },
   });
 
   const isSubmitting = form.formState.isSubmitting;
+  const onSubmit = useResourceFormSubmit<
+    FormValues,
+    { success: boolean; error?: string }
+  >({
+    mutationFn: (values) =>
+      isEditMode
+        ? updateSize({
+            data: {
+              id: size!.id,
+              data: values,
+            },
+          })
+        : createSize({ data: values }),
+    queryKey: ["sizes"],
+    successMessage: isEditMode
+      ? "Size updated successfully"
+      : "Size created successfully",
+    redirectTo: "/dashboard/sizes",
+  });
 
-  async function onSubmit(values: FormValues) {
-    try {
-      const result = await createSize({ data: values });
-      if (result.success) {
-        toast.success("Size created successfully");
-        // Invalidate queries to refresh the list
-        queryClient.invalidateQueries({ queryKey: ["sizes"] });
-        // Navigate back to the sizes list
-        router.navigate({ to: "/dashboard/sizes" });
-      } else {
-        toast.error(result.error);
-      }
-    } catch (error) {
-      toast.error("Operation failed");
-    }
-  }
-
-  const handleQuickSelect = (size: { label: string; value: string }) => {
-    form.setValue("name", size.label);
-    form.setValue("value", size.value);
+  const handleQuickSelect = (selectedSize: { label: string; value: string }) => {
+    form.setValue("name", selectedSize.label);
+    form.setValue("value", selectedSize.value);
   };
 
   return (
@@ -125,14 +131,14 @@ export function SizeForm() {
             Quick Select Common Sizes:
           </p>
           <div className="flex flex-wrap gap-2">
-            {commonSizes.map((size) => (
+            {commonSizes.map((selectedSize) => (
               <Badge
-                key={size.value}
+                key={selectedSize.value}
                 variant="outline"
                 className="cursor-pointer px-4 py-2 text-sm transition-all hover:bg-primary hover:text-primary-foreground"
-                onClick={() => handleQuickSelect(size)}
+                onClick={() => handleQuickSelect(selectedSize)}
               >
-                {size.label} ({size.value})
+                {selectedSize.label} ({selectedSize.value})
               </Badge>
             ))}
           </div>
@@ -140,18 +146,18 @@ export function SizeForm() {
 
         <Button
           type="submit"
-          className="w-full h-11 text-base font-semibold"
+          className="h-11 w-full text-base font-semibold"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Creating Size...
+              {isEditMode ? "Updating Size..." : "Creating Size..."}
             </>
           ) : (
             <>
               <Ruler className="mr-2 h-5 w-5" />
-              Create Size
+              {isEditMode ? "Update Size" : "Create Size"}
             </>
           )}
         </Button>

@@ -1,12 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
-import { Plus, Search, X } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { deleteSize, getSizes } from "@/server/sizes";
+import { ResourceList } from "../resource-list";
 import { SizeCard } from "./size-card";
 
 type Size = {
@@ -16,127 +9,34 @@ type Size = {
 };
 
 export function SizeList() {
-  const queryClient = useQueryClient();
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Use TanStack Query to get size data
-  const {
-    data: sizes = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["sizes"],
-    queryFn: () => getSizes(),
-    staleTime: 1000 * 60 * 5, // 5 minutes cache
-  });
-
-  // Delete size mutation
-  const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteSize({ data: id }),
-    onSuccess: () => {
-      toast.success("Size deleted successfully");
-      // Auto refresh data
-      queryClient.invalidateQueries({ queryKey: ["sizes"] });
-    },
-    onError: (error) => {
-      toast.error("Failed to delete size");
-    },
-  });
-
-  const filteredSizes = sizes.filter(
-    (size) =>
-      size.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      size.value.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
-
-  const handleDelete = (id: string) => {
-    deleteMutation.mutate(id);
-  };
-
-  // Handle loading state
-  if (isLoading) {
-    return <SpinnerLoading />;
-  }
-
-  // Handle error state
-  if (isError) {
-    return (
-      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">
-            Failed to load sizes
-          </h3>
-          <p className="mb-4 mt-2 text-sm text-muted-foreground">
-            There was an error loading the sizes. Please try again.
-          </p>
-          <Button
-            onClick={() =>
-              queryClient.invalidateQueries({ queryKey: ["sizes"] })
-            }
-            variant="outline"
-          >
-            Try Again
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search for sizes..."
-            className="pl-8"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-0 h-9 w-9"
-              onClick={() => setSearchQuery("")}
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Clear search</span>
-            </Button>
-          )}
-        </div>
-        <Link
-          to="/dashboard/sizes/new"
-          className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          Add Size
-        </Link>
-      </div>
-
-      {filteredSizes.length === 0 ? (
-        <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-          <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-            <h3 className="mt-4 text-lg font-semibold">No sizes found</h3>
-            <p className="mb-4 mt-2 text-sm text-muted-foreground">
-              {searchQuery
-                ? "No sizes match your search criteria. Please try using different search terms."
-                : "You have not added any sizes yet. Click the button above to add a size."}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredSizes.map((size) => (
-            <SizeCard
-              key={size.id}
-              size={size}
-              onDelete={handleDelete}
-              isDeleting={deleteMutation.isPending}
-            />
-          ))}
-        </div>
+    <ResourceList
+      queryKey={["sizes"]}
+      queryFn={() => getSizes()}
+      deleteFn={(id) => deleteSize({ data: id })}
+      searchPlaceholder="Search for sizes..."
+      addHref="/dashboard/sizes/new"
+      addLabel="Add Size"
+      emptyTitle="No sizes found"
+      emptyDescription="No sizes match your search criteria or you have not added any sizes yet."
+      errorTitle="Failed to load sizes"
+      errorDescription="There was an error loading the sizes. Please try again."
+      matchesSearch={(size, query) =>
+        !query ||
+        size.name.toLowerCase().includes(query) ||
+        size.value.toLowerCase().includes(query)
+      }
+      getItemId={(size) => size.id}
+      getDeleteSuccessMessage={() => "Size deleted successfully"}
+      getDeleteErrorMessage={() => "Failed to delete size"}
+      renderCard={(size, isDeleting, onDelete) => (
+        <SizeCard
+          key={size.id}
+          size={size}
+          onDelete={onDelete}
+          isDeleting={isDeleting}
+        />
       )}
-    </div>
+    />
   );
 }

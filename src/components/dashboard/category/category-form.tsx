@@ -1,9 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import { FolderTree } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createCategory } from "@/server/categories";
+import { createCategory, updateCategory } from "@/server/categories";
+import { useResourceFormSubmit } from "../use-resource-form-submit";
 import { CloudinarySingleImageUpload } from "../cloudinary-single-image-upload";
 
 const formSchema = z.object({
@@ -29,36 +27,45 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function CategoryForm() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
+interface CategoryFormProps {
+  category?: {
+    id: string;
+    name: string;
+    imageUrl: string | null;
+  };
+}
 
+export function CategoryForm({ category }: CategoryFormProps = {}) {
+  const isEditMode = Boolean(category);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      imageUrl: "",
+      name: category?.name || "",
+      imageUrl: category?.imageUrl || "",
     },
   });
 
   const isSubmitting = form.formState.isSubmitting;
-
-  async function onSubmit(values: FormValues) {
-    try {
-      const result = await createCategory({ data: values });
-      if (result.success) {
-        toast.success("Category created successfully");
-        // Invalidate queries to refresh the list
-        queryClient.invalidateQueries({ queryKey: ["categories"] });
-        // Navigate back to the categories list
-        router.navigate({ to: "/dashboard/categories" });
-      } else {
-        toast.error(result.error);
-      }
-    } catch (error) {
-      toast.error("Operation failed");
-    }
-  }
+  const onSubmit = useResourceFormSubmit<
+    FormValues,
+    { success: boolean; error?: string }
+  >({
+    mutationFn: (values) =>
+      isEditMode
+        ? updateCategory({
+            data: {
+              id: category!.id,
+              name: values.name,
+              imageUrl: values.imageUrl,
+            },
+          })
+        : createCategory({ data: values }),
+    queryKey: ["categories"],
+    successMessage: isEditMode
+      ? "Category updated successfully"
+      : "Category created successfully",
+    redirectTo: "/dashboard/categories",
+  });
 
   return (
     <Form {...form}>
@@ -96,7 +103,7 @@ export function CategoryForm() {
                 (recommended: 800x800px)
               </FormDescription>
               <FormControl>
-                <div className="rounded-lg border-2 border-dashed p-6 transition-colors  bg-muted/30">
+                <div className="rounded-lg border-2 border-dashed bg-muted/30 p-6 transition-colors">
                   <CloudinarySingleImageUpload
                     value={field.value}
                     onChange={field.onChange}
@@ -111,18 +118,18 @@ export function CategoryForm() {
 
         <Button
           type="submit"
-          className="w-full h-11 text-base font-semibold"
+          className="h-11 w-full text-base font-semibold"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Creating Category...
+              {isEditMode ? "Updating Category..." : "Creating Category..."}
             </>
           ) : (
             <>
               <FolderTree className="mr-2 h-5 w-5" />
-              Create Category
+              {isEditMode ? "Update Category" : "Create Category"}
             </>
           )}
         </Button>

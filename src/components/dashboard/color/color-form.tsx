@@ -1,9 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "@tanstack/react-router";
 import { Palette } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,7 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createColor } from "@/server/colors";
+import { createColor, updateColor } from "@/server/colors";
+import { useResourceFormSubmit } from "../use-resource-form-submit";
 
 const formSchema = z.object({
   name: z.string().min(1, "Please enter a color name"),
@@ -30,37 +28,45 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-export function ColorForm() {
-  const router = useRouter();
-  const queryClient = useQueryClient();
+interface ColorFormProps {
+  color?: {
+    id: string;
+    name: string;
+    value: string;
+  };
+}
 
+export function ColorForm({ color }: ColorFormProps = {}) {
+  const isEditMode = Boolean(color);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      value: "#000000",
+      name: color?.name || "",
+      value: color?.value || "#000000",
     },
   });
 
   const isSubmitting = form.formState.isSubmitting;
   const colorValue = form.watch("value");
-
-  async function onSubmit(values: FormValues) {
-    try {
-      const result = await createColor({ data: values });
-      if (result.success) {
-        toast.success("Color created successfully");
-        // Invalidate queries to refresh the list
-        queryClient.invalidateQueries({ queryKey: ["colors"] });
-        // Navigate back to the colors list
-        router.navigate({ to: "/dashboard/colors" });
-      } else {
-        toast.error(result.error);
-      }
-    } catch (error) {
-      toast.error("Operation failed");
-    }
-  }
+  const onSubmit = useResourceFormSubmit<
+    FormValues,
+    { success: boolean; error?: string }
+  >({
+    mutationFn: (values) =>
+      isEditMode
+        ? updateColor({
+            data: {
+              id: color!.id,
+              data: values,
+            },
+          })
+        : createColor({ data: values }),
+    queryKey: ["colors"],
+    successMessage: isEditMode
+      ? "Color updated successfully"
+      : "Color created successfully",
+    redirectTo: "/dashboard/colors",
+  });
 
   return (
     <Form {...form}>
@@ -97,7 +103,7 @@ export function ColorForm() {
               <FormDescription>
                 Choose a color or enter a hex value
               </FormDescription>
-              <div className="flex gap-3 items-start">
+              <div className="flex items-start gap-3">
                 <FormControl>
                   <div className="relative">
                     <Input
@@ -118,11 +124,9 @@ export function ColorForm() {
                       disabled={isSubmitting}
                       onChange={(e) => {
                         const value = e.target.value;
-                        if (value.startsWith("#")) {
-                          field.onChange(value);
-                        } else {
-                          field.onChange(`#${value}`);
-                        }
+                        field.onChange(
+                          value.startsWith("#") ? value : `#${value}`,
+                        );
                       }}
                       autoComplete="off"
                     />
@@ -134,7 +138,7 @@ export function ColorForm() {
                     />
                     <div className="flex-1">
                       <p className="text-sm font-medium">Preview</p>
-                      <p className="text-xs text-muted-foreground font-mono">
+                      <p className="font-mono text-xs text-muted-foreground">
                         {colorValue}
                       </p>
                     </div>
@@ -148,18 +152,18 @@ export function ColorForm() {
 
         <Button
           type="submit"
-          className="w-full h-11 text-base font-semibold"
+          className="h-11 w-full text-base font-semibold"
           disabled={isSubmitting}
         >
           {isSubmitting ? (
             <>
               <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-              Creating Color...
+              {isEditMode ? "Updating Color..." : "Creating Color..."}
             </>
           ) : (
             <>
               <Palette className="mr-2 h-5 w-5" />
-              Create Color
+              {isEditMode ? "Update Color" : "Create Color"}
             </>
           )}
         </Button>
