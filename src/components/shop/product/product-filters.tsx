@@ -49,10 +49,7 @@ function ProductFiltersContent({
 
   return (
     <div className="grid gap-6">
-      <Accordion
-        type="multiple"
-        defaultValue={["categories", "featured", "price"]}
-      >
+      <Accordion multiple defaultValue={["categories", "featured", "price"]}>
         <CategoryFilter categories={categories} />
         <FeaturedFilter />
         <ColorFilter colors={colors} />

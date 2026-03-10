@@ -32,7 +32,7 @@ export function PaymentMethodSection({
       <CardContent className="grid gap-6">
         <RadioGroup
           value={formData.paymentMethod}
-          onValueChange={onRadioChange}
+          onValueChange={(value) => onRadioChange(String(value))}
           className="grid gap-4"
         >
           <div className="flex items-center space-x-2 rounded-lg border p-4">

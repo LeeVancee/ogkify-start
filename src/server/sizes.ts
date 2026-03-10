@@ -1,8 +1,19 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { sizes } from "@/db/schema";
 import { requireAdminSession } from "./require-admin";
+
+const sizeIdSchema = z.uuid();
+const sizeDataSchema = z.object({
+  name: z.string().trim().min(1).max(50),
+  value: z.string().trim().min(1).max(50),
+});
+const updateSizeSchema = z.object({
+  id: z.uuid(),
+  data: sizeDataSchema,
+});
 
 // Get all sizes
 export const getSizes = createServerFn().handler(async () => {
@@ -25,7 +36,7 @@ export const getSizes = createServerFn().handler(async () => {
 
 // Get single size
 export const getSize = createServerFn()
-  .inputValidator((id: string) => id)
+  .inputValidator((id: string) => sizeIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     try {
       const size = await db.query.sizes.findFirst({
@@ -53,7 +64,9 @@ export const getSize = createServerFn()
 
 // Create size
 export const createSize = createServerFn({ method: "POST" })
-  .inputValidator((data: { name: string; value: string }) => data)
+  .inputValidator((data: { name: string; value: string }) =>
+    sizeDataSchema.parse(data),
+  )
   .handler(async ({ data }) => {
     try {
       const adminSession = await requireAdminSession();
@@ -78,7 +91,8 @@ export const createSize = createServerFn({ method: "POST" })
 // Update size
 export const updateSize = createServerFn({ method: "POST" })
   .inputValidator(
-    (params: { id: string; data: { name: string; value: string } }) => params,
+    (params: { id: string; data: { name: string; value: string } }) =>
+      updateSizeSchema.parse(params),
   )
   .handler(async ({ data: { id, data } }) => {
     try {
@@ -104,7 +118,7 @@ export const updateSize = createServerFn({ method: "POST" })
 
 // Delete size
 export const deleteSize = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => id)
+  .inputValidator((id: string) => sizeIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     try {
       const adminSession = await requireAdminSession();

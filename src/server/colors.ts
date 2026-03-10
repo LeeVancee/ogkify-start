@@ -1,8 +1,22 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { colors } from "@/db/schema";
 import { requireAdminSession } from "./require-admin";
+
+const colorIdSchema = z.uuid();
+const colorDataSchema = z.object({
+  name: z.string().trim().min(1).max(50),
+  value: z
+    .string()
+    .trim()
+    .regex(/^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/),
+});
+const updateColorSchema = z.object({
+  id: z.uuid(),
+  data: colorDataSchema,
+});
 
 // Get all colors
 export const getColors = createServerFn().handler(async () => {
@@ -25,7 +39,7 @@ export const getColors = createServerFn().handler(async () => {
 
 // Get single color
 export const getColor = createServerFn()
-  .inputValidator((id: string) => id)
+  .inputValidator((id: string) => colorIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     try {
       const color = await db.query.colors.findFirst({
@@ -53,7 +67,9 @@ export const getColor = createServerFn()
 
 // Create color
 export const createColor = createServerFn({ method: "POST" })
-  .inputValidator((data: { name: string; value: string }) => data)
+  .inputValidator((data: { name: string; value: string }) =>
+    colorDataSchema.parse(data),
+  )
   .handler(async ({ data }) => {
     try {
       const adminSession = await requireAdminSession();
@@ -78,7 +94,8 @@ export const createColor = createServerFn({ method: "POST" })
 // Update color
 export const updateColor = createServerFn({ method: "POST" })
   .inputValidator(
-    (params: { id: string; data: { name: string; value: string } }) => params,
+    (params: { id: string; data: { name: string; value: string } }) =>
+      updateColorSchema.parse(params),
   )
   .handler(async ({ data: { id, data } }) => {
     try {
@@ -104,7 +121,7 @@ export const updateColor = createServerFn({ method: "POST" })
 
 // Delete color
 export const deleteColor = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => id)
+  .inputValidator((id: string) => colorIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     try {
       const adminSession = await requireAdminSession();

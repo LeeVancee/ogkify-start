@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { cartItems, carts } from "@/db/schema";
 import { getSession } from "./getSession";
@@ -11,9 +12,22 @@ export interface CartItemData {
   sizeId?: string;
 }
 
+const MAX_CART_ITEM_QUANTITY = 99;
+const cartItemInputSchema = z.object({
+  productId: z.uuid(),
+  quantity: z.number().int().min(1).max(MAX_CART_ITEM_QUANTITY),
+  colorId: z.uuid().optional(),
+  sizeId: z.uuid().optional(),
+});
+const cartItemIdSchema = z.uuid();
+const updateCartQuantitySchema = z.object({
+  cartItemId: z.uuid(),
+  quantity: z.number().int().min(1).max(MAX_CART_ITEM_QUANTITY),
+});
+
 // Add product to cart
 export const addToCart = createServerFn({ method: "POST" })
-  .inputValidator((data: CartItemData) => data)
+  .inputValidator((data: CartItemData) => cartItemInputSchema.parse(data))
   .handler(async ({ data }) => {
     try {
       const session = await getSession();
@@ -74,10 +88,17 @@ export const addToCart = createServerFn({ method: "POST" })
 
       if (existingItem) {
         console.log("cart already has this product, update quantity");
+        const nextQuantity = existingItem.quantity + data.quantity;
+        if (nextQuantity > MAX_CART_ITEM_QUANTITY) {
+          return {
+            error: `quantity cannot exceed ${MAX_CART_ITEM_QUANTITY}`,
+            success: false,
+          };
+        }
         // Update existing product quantity
         await db
           .update(cartItems)
-          .set({ quantity: existingItem.quantity + data.quantity })
+          .set({ quantity: nextQuantity })
           .where(eq(cartItems.id, existingItem.id));
       } else {
         console.log("add new product to cart");
@@ -110,12 +131,12 @@ export const handleAddToCartFormAction = createServerFn({ method: "POST" })
     const colorId = (formData.get("colorId") as string) || undefined;
     const sizeId = (formData.get("sizeId") as string) || undefined;
 
-    return {
+    return cartItemInputSchema.parse({
       productId,
       quantity,
       colorId,
       sizeId,
-    };
+    });
   })
   .handler(async ({ data }) => {
     return addToCart({ data: data });
@@ -182,7 +203,7 @@ export const getUserCart = createServerFn().handler(async () => {
 
 // Remove product from cart
 export const removeFromCart = createServerFn({ method: "POST" })
-  .inputValidator((cartItemId: string) => cartItemId)
+  .inputValidator((cartItemId: string) => cartItemIdSchema.parse(cartItemId))
   .handler(async ({ data: cartItemId }) => {
     try {
       const session = await getSession();
@@ -218,17 +239,15 @@ export const removeFromCart = createServerFn({ method: "POST" })
 
 // Update cart item quantity
 export const updateCartItemQuantity = createServerFn({ method: "POST" })
-  .inputValidator((params: { cartItemId: string; quantity: number }) => params)
+  .inputValidator((params: { cartItemId: string; quantity: number }) =>
+    updateCartQuantitySchema.parse(params),
+  )
   .handler(async ({ data: { cartItemId, quantity } }) => {
     try {
       const session = await getSession();
 
       if (!session?.user.id) {
         return { error: "user not logged in", success: false };
-      }
-
-      if (quantity <= 0) {
-        return removeFromCart({ data: cartItemId });
       }
 
       // Verify this cart item belongs to current user

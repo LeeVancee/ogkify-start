@@ -44,7 +44,8 @@ export function ProductSort() {
       </Label>
       <Select value={currentSort} onValueChange={handleSortChange}>
         <SelectTrigger id="sort-select" className="w-[180px]">
-          {sortOptions.find((opt) => opt.value === currentSort)?.label || "Sort by"}
+          {sortOptions.find((opt) => opt.value === currentSort)?.label ||
+            "Sort by"}
         </SelectTrigger>
 
         <SelectPositioner>

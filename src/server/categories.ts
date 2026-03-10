@@ -1,8 +1,20 @@
 import { createServerFn } from "@tanstack/react-start";
 import { count, eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { categories } from "@/db/schema";
 import { requireAdminSession } from "./require-admin";
+
+const categoryIdSchema = z.uuid();
+const categoryInputSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  imageUrl: z.string().trim().url(),
+});
+const updateCategoryInputSchema = z.object({
+  id: z.uuid(),
+  name: z.string().trim().min(1).max(100),
+  imageUrl: z.string().trim().url().optional(),
+});
 
 // Get all categories
 export const getCategories = createServerFn().handler(async () => {
@@ -23,7 +35,7 @@ export const getCategories = createServerFn().handler(async () => {
 
 // Get single category
 export const getCategory = createServerFn()
-  .inputValidator((id: string) => id)
+  .inputValidator((id: string) => categoryIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     try {
       const category = await db.query.categories.findFirst({
@@ -53,7 +65,9 @@ interface CreateCategoryInput {
 
 // Create category
 export const createCategory = createServerFn({ method: "POST" })
-  .inputValidator((input: CreateCategoryInput) => input)
+  .inputValidator((input: CreateCategoryInput) =>
+    categoryInputSchema.parse(input),
+  )
   .handler(async ({ data: input }) => {
     try {
       const adminSession = await requireAdminSession();
@@ -78,8 +92,8 @@ export const createCategory = createServerFn({ method: "POST" })
 
 // Update category
 export const updateCategory = createServerFn({ method: "POST" })
-  .inputValidator(
-    (params: { id: string; name: string; imageUrl?: string }) => params,
+  .inputValidator((params: { id: string; name: string; imageUrl?: string }) =>
+    updateCategoryInputSchema.parse(params),
   )
   .handler(async ({ data: { id, name, imageUrl } }) => {
     try {
@@ -102,7 +116,7 @@ export const updateCategory = createServerFn({ method: "POST" })
 
 // Delete category
 export const deleteCategory = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => id)
+  .inputValidator((id: string) => categoryIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     try {
       const adminSession = await requireAdminSession();

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { getRequest } from "@tanstack/react-start/server";
 import { format } from "date-fns";
 import { eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
 import { auth } from "@/lib/auth";
@@ -18,10 +19,20 @@ function generateOrderNumber(): string {
   return `${datePart}${randomPart}`;
 }
 
+const checkoutLineItemSchema = z.object({
+  productId: z.uuid(),
+  quantity: z.number().int().positive().max(99),
+  price: z.number().nonnegative(),
+  colorId: z.uuid().nullable(),
+  sizeId: z.uuid().nullable(),
+});
+
 export const Route = createFileRoute("/api/checkout")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
+        let createdOrderId: string | null = null;
+
         try {
           const { headers } = getRequest();
 
@@ -64,6 +75,16 @@ export const Route = createFileRoute("/api/checkout")({
             0,
           );
 
+          const validatedCartItems = cart.items.map((item) =>
+            checkoutLineItemSchema.parse({
+              productId: item.productId,
+              quantity: item.quantity,
+              price: item.product.price,
+              colorId: item.colorId,
+              sizeId: item.sizeId,
+            }),
+          );
+
           // Build line items
           const lineItems = cart.items.map((item) => {
             const productName = item.product.name;
@@ -93,29 +114,33 @@ export const Route = createFileRoute("/api/checkout")({
             };
           });
 
-          // Create order
-          const [order] = await db
-            .insert(orders)
-            .values({
-              userId: session.user.id,
-              orderNumber: generateOrderNumber(),
-              totalAmount: amount,
-              status: "PENDING",
-              paymentStatus: "UNPAID",
-            })
-            .returning();
+          const order = await db.transaction(async (tx) => {
+            const [createdOrder] = await tx
+              .insert(orders)
+              .values({
+                userId: session.user.id,
+                orderNumber: generateOrderNumber(),
+                totalAmount: amount,
+                status: "PENDING",
+                paymentStatus: "UNPAID",
+              })
+              .returning();
 
-          // Create order items
-          await db.insert(orderItems).values(
-            cart.items.map((item) => ({
-              orderId: order.id,
-              productId: item.productId,
-              quantity: item.quantity,
-              price: item.product.price,
-              colorId: item.colorId,
-              sizeId: item.sizeId,
-            })),
-          );
+            await tx.insert(orderItems).values(
+              validatedCartItems.map((item) => ({
+                orderId: createdOrder.id,
+                productId: item.productId,
+                quantity: item.quantity,
+                price: item.price,
+                colorId: item.colorId,
+                sizeId: item.sizeId,
+              })),
+            );
+
+            return createdOrder;
+          });
+
+          createdOrderId = order.id;
 
           const origin = new URL(request.url).origin;
 
@@ -168,6 +193,15 @@ export const Route = createFileRoute("/api/checkout")({
           });
         } catch (error) {
           console.error("Checkout error:", error);
+
+          if (createdOrderId) {
+            try {
+              await db.delete(orders).where(eq(orders.id, createdOrderId));
+            } catch (rollbackError) {
+              console.error("Checkout rollback error:", rollbackError);
+            }
+          }
+
           return Response.json(
             { error: "Failed to create checkout session" },
             { status: 500 },

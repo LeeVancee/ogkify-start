@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { count, eq } from "drizzle-orm";
+import { z } from "zod";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
 import { env } from "@/env/server";
@@ -10,6 +11,11 @@ import { requireAdminSession } from "./require-admin";
 
 // Define order status type
 type OrderStatus = "PENDING" | "PAID" | "COMPLETED" | "CANCELLED";
+const orderIdSchema = z.uuid();
+const updateOrderStatusSchema = z.object({
+  orderId: z.uuid(),
+  status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]),
+});
 // Get all user orders
 export const getUserOrders = createServerFn().handler(async () => {
   try {
@@ -249,8 +255,8 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
 });
 
 // Create new payment session for unpaid order
-export const createPaymentSession = createServerFn()
-  .inputValidator((orderId: string) => orderId)
+export const createPaymentSession = createServerFn({ method: "POST" })
+  .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
   .handler(async ({ data: orderId }) => {
     try {
       const session = await getSession();
@@ -357,8 +363,10 @@ export const createPaymentSession = createServerFn()
   });
 
 // Update order status
-export const updateOrderStatus = createServerFn()
-  .inputValidator((input: { orderId: string; status: string }) => input)
+export const updateOrderStatus = createServerFn({ method: "POST" })
+  .inputValidator((input: { orderId: string; status: string }) =>
+    updateOrderStatusSchema.parse(input),
+  )
   .handler(async ({ data: { orderId, status } }) => {
     try {
       const adminSession = await requireAdminSession();
