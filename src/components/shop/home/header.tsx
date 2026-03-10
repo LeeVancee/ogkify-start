@@ -35,17 +35,14 @@ interface Session {
 }
 
 interface HeaderProps {
-  initialCartData?: {
+  initialCartData: {
     items: Array<CartItem>;
     totalItems: number;
   };
   initialSession?: Session;
 }
 
-export default function Header({
-  initialCartData,
-  initialSession,
-}: HeaderProps = {}) {
+export default function Header({ initialCartData, initialSession }: HeaderProps) {
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,8 +57,6 @@ export default function Header({
     }
   };
 
-  // Use server-side preloaded data directly
-  const cartData = initialCartData || { items: [], totalItems: 0 };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -146,9 +141,9 @@ export default function Header({
 
           <Link to="/cart" className="relative">
             <ShoppingCart className="h-5 w-5" />
-            {cartData?.totalItems ? (
+            {initialCartData.totalItems ? (
               <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                {cartData.totalItems}
+                {initialCartData.totalItems}
               </span>
             ) : null}
             <span className="sr-only">Open Cart</span>

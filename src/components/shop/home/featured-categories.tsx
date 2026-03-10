@@ -8,18 +8,11 @@ interface CategoryWithImage {
 }
 
 interface FeaturedCategoriesProps {
-  initialData?: Array<CategoryWithImage>;
+  initialData: Array<CategoryWithImage>;
 }
 
-export function FeaturedCategories({
-  initialData,
-}: FeaturedCategoriesProps = {}) {
-  const categories = initialData || [];
-  const isLoading = !initialData;
-
-  if (isLoading) {
-    return <FeaturedCategoriesLoading />;
-  }
+export function FeaturedCategories({ initialData }: FeaturedCategoriesProps) {
+  const categories = initialData;
 
   return (
     <section className="py-12">
@@ -34,7 +27,7 @@ export function FeaturedCategories({
 
         {/* category grid */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {categories?.map((category) => (
+          {categories.map((category) => (
             <Link
               key={category.id}
               to="/products"

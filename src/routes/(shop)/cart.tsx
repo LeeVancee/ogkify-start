@@ -125,15 +125,6 @@ function CartPage() {
     }
   };
 
-  // Calculate totals
-  const items = cartData?.items || [];
-  const subtotal = items.reduce(
-    (sum: number, item: CartItem) => sum + item.price * item.quantity,
-    0,
-  );
-  const shipping = subtotal > 25 ? 0 : 10; // Free shipping over $25
-  const total = subtotal + shipping;
-
   // Handle loading state
   if (isLoading) {
     return <SpinnerLoading />;
@@ -164,6 +155,14 @@ function CartPage() {
       </div>
     );
   }
+
+  const items = cartData!.items;
+  const subtotal = items.reduce(
+    (sum: number, item: CartItem) => sum + item.price * item.quantity,
+    0,
+  );
+  const shipping = subtotal > 25 ? 0 : 10;
+  const total = subtotal + shipping;
 
   // Empty cart state
   if (!items.length) {

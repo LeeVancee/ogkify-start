@@ -7,17 +7,10 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface FeaturedProductsProps {
-  initialData?: Array<SimpleProduct>;
+  initialData: Array<SimpleProduct>;
 }
 
-export function FeaturedProducts({ initialData }: FeaturedProductsProps = {}) {
-  const products = initialData || [];
-  const isLoading = !initialData;
-
-  if (isLoading) {
-    return <FeaturedProductsLoading />;
-  }
-
+export function FeaturedProducts({ initialData }: FeaturedProductsProps) {
   return (
     <section className="py-12">
       <div className="container px-4 mx-auto">
@@ -50,7 +43,7 @@ export function FeaturedProducts({ initialData }: FeaturedProductsProps = {}) {
               <ChevronRight className="h-4 w-4" />
             </Link> */}
           </div>
-          <ProductGrid products={products || []} />
+          <ProductGrid products={initialData} />
           <div className="flex justify-center  mt-4">
             <Link
               to="/products"
