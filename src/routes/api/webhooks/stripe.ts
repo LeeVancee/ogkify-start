@@ -88,116 +88,136 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
 ) {
-  try {
-    console.log("Processing checkout session completed:", session.id);
+  console.log("Processing checkout session completed:", session.id);
 
-    // Get order ID from metadata
-    const orderId = session.metadata?.orderId;
-    const userId = session.metadata?.userId;
+  const orderId = session.metadata?.orderId;
+  const userId = session.metadata?.userId;
 
-    if (!orderId) {
-      console.error("Order ID not found");
-      return;
-    }
-
-    // Get address information
-    const address = session.customer_details?.address;
-    const addressComponents = [
-      address?.line1,
-      address?.line2,
-      address?.city,
-      address?.state,
-      address?.postal_code,
-      address?.country,
-    ];
-    const addressString = addressComponents
-      .filter((c) => c !== null)
-      .join(", ");
-
-    // Update order status and address information
-    await db
-      .update(orders)
-      .set({
-        status: "PAID",
-        paymentStatus: "PAID",
-        paymentIntent: session.payment_intent as string,
-        phone: session.customer_details?.phone || null,
-        shippingAddress: addressString || null,
-        updatedAt: new Date(),
-      })
-      .where(eq(orders.id, orderId));
-
-    // Clear user's shopping cart
-    if (userId) {
-      const userCart = await db.query.carts.findFirst({
-        where: (carts, { eq }) => eq(carts.userId, userId),
-      });
-
-      if (userCart) {
-        // Delete cart items
-        await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
-        console.log(`Cart cleared for user ${userId}`);
-      }
-    }
-
-    console.log(`Order ${orderId} marked as paid`);
-  } catch (error) {
-    console.error("Error processing checkout session completed:", error);
+  if (!orderId) {
+    throw new Error("Order ID not found in checkout session metadata");
   }
+
+  const existingOrder = await db.query.orders.findFirst({
+    where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
+    columns: {
+      id: true,
+      paymentIntent: true,
+    },
+  });
+
+  if (!existingOrder) {
+    throw new Error(`Order ${orderId} not found for checkout completion`);
+  }
+
+  if (
+    existingOrder.paymentIntent &&
+    existingOrder.paymentIntent !== session.id
+  ) {
+    throw new Error(`Checkout session mismatch for order ${orderId}`);
+  }
+
+  const address = session.customer_details?.address;
+  const addressComponents = [
+    address?.line1,
+    address?.line2,
+    address?.city,
+    address?.state,
+    address?.postal_code,
+    address?.country,
+  ];
+  const addressString = addressComponents.filter((c) => c).join(", ");
+
+  const [updatedOrder] = await db
+    .update(orders)
+    .set({
+      status: "PAID",
+      paymentStatus: "PAID",
+      paymentIntent: session.payment_intent as string,
+      phone: session.customer_details?.phone || null,
+      shippingAddress: addressString || null,
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId))
+    .returning({
+      id: orders.id,
+    });
+
+  if (!updatedOrder) {
+    throw new Error(`Failed to update paid order ${orderId}`);
+  }
+
+  if (userId) {
+    const userCart = await db.query.carts.findFirst({
+      where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
+    });
+
+    if (userCart) {
+      await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
+      console.log(`Cart cleared for user ${userId}`);
+    }
+  }
+
+  console.log(`Order ${orderId} marked as paid`);
 }
 
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
-  try {
-    console.log("Processing payment intent failed:", paymentIntent.id);
+  console.log("Processing payment intent failed:", paymentIntent.id);
 
-    // Try to get order ID from metadata
-    const orderId = paymentIntent.metadata?.orderId;
+  const orderId = paymentIntent.metadata?.orderId;
 
-    if (orderId) {
-      // Update order status
-      await db
-        .update(orders)
-        .set({
-          status: "CANCELLED",
-          paymentStatus: "FAILED",
-          updatedAt: new Date(),
-        })
-        .where(eq(orders.id, orderId));
-
-      console.log(`Order ${orderId} payment failed, status updated`);
-    } else {
-      console.log("Unable to get order ID from metadata");
-    }
-  } catch (error) {
-    console.error("Error processing payment intent failed:", error);
+  if (!orderId) {
+    throw new Error("Order ID not found in payment intent metadata");
   }
+
+  const [updatedOrder] = await db
+    .update(orders)
+    .set({
+      status: "CANCELLED",
+      paymentStatus: "FAILED",
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId))
+    .returning({
+      id: orders.id,
+    });
+
+  if (!updatedOrder) {
+    throw new Error(`Failed to update failed payment for order ${orderId}`);
+  }
+
+  console.log(`Order ${orderId} payment failed, status updated`);
 }
 
 async function handleChargeRefunded(charge: Stripe.Charge) {
-  try {
-    console.log("Processing refund event:", charge.id);
+  console.log("Processing refund event:", charge.id);
 
-    // Try to get associated payment intent
-    const paymentIntentId = charge.payment_intent as string;
+  const paymentIntentId = charge.payment_intent as string | null;
 
-    if (paymentIntentId) {
-      const paymentIntent =
-        await stripe.paymentIntents.retrieve(paymentIntentId);
-      const orderId = paymentIntent.metadata?.orderId;
-
-      if (orderId) {
-        await db
-          .update(orders)
-          .set({
-            paymentStatus: "REFUNDED",
-            updatedAt: new Date(),
-          })
-          .where(eq(orders.id, orderId));
-
-        console.log(`Order ${orderId} refunded`);
-      }
-    }
-  } catch (error) {
-    console.error("Error processing refund event:", error);
+  if (!paymentIntentId) {
+    throw new Error("Payment intent not found for refunded charge");
   }
+
+  const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+  const orderId = paymentIntent.metadata?.orderId;
+
+  if (!orderId) {
+    throw new Error("Order ID not found in refunded payment intent metadata");
+  }
+
+  const [updatedOrder] = await db
+    .update(orders)
+    .set({
+      paymentStatus: "REFUNDED",
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId))
+    .returning({
+      id: orders.id,
+    });
+
+  if (!updatedOrder) {
+    throw new Error(`Failed to update refunded order ${orderId}`);
+  }
+
+  console.log(`Order ${orderId} refunded`);
 }

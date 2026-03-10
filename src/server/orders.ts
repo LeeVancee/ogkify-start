@@ -321,6 +321,12 @@ export const createPaymentSession = createServerFn()
           orderId: order.id,
           userId: session.user.id,
         },
+        payment_intent_data: {
+          metadata: {
+            orderId: order.id,
+            userId: session.user.id,
+          },
+        },
         billing_address_collection: "required",
         shipping_address_collection: {
           allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],

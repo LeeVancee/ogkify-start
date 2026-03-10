@@ -129,6 +129,12 @@ export const Route = createFileRoute("/api/checkout")({
               orderId: order.id,
               userId: session.user.id,
             },
+            payment_intent_data: {
+              metadata: {
+                orderId: order.id,
+                userId: session.user.id,
+              },
+            },
             billing_address_collection: "required",
             shipping_address_collection: {
               allowed_countries: [
