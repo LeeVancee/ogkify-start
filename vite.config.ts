@@ -1,25 +1,22 @@
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
 import { defineConfig } from 'vite'
-import tsConfigPaths from 'vite-tsconfig-paths'
 import { nitro } from "nitro/vite";
+
 export default defineConfig({
   server: {
     port: 3000,
   },
+  resolve: {
+      tsconfigPaths: true,
+  },
   plugins: [
-    tsConfigPaths({
-      projects: ['./tsconfig.json'],
-    }),
     tanstackStart(),
-    viteReact({
-      babel: {
-        plugins: ['babel-plugin-react-compiler'],
-      },
-    }),
+    react(),
+ //   babel({ presets: [reactCompilerPreset()]}),
     tailwindcss(),
-   nitro(),
+    nitro(),
   ],
-
 })
