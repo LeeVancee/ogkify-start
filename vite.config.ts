@@ -15,7 +15,7 @@ export default defineConfig({
   plugins: [
     tanstackStart(),
     react(),
- //   babel({ presets: [reactCompilerPreset()]}),
+    babel({ presets: [reactCompilerPreset()]}),
     tailwindcss(),
     nitro(),
   ],
