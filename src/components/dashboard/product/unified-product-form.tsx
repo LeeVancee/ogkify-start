@@ -38,7 +38,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectPositioner,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -293,18 +292,13 @@ export function UnifiedProductForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectPositioner>
-                            <SelectContent>
-                              {categories.map((category) => (
-                                <SelectItem
-                                  key={category.id}
-                                  value={category.id}
-                                >
-                                  {category.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </SelectPositioner>
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.id} value={category.id}>
+                                {category.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                         <FormDescription className="text-xs">
                           Choose the most relevant category

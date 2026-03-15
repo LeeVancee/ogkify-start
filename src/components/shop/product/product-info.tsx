@@ -13,7 +13,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectPositioner,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -198,15 +197,13 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                 <SelectTrigger className="w-24">
                   <SelectValue placeholder="Quantity" />
                 </SelectTrigger>
-                <SelectPositioner>
-                  <SelectContent>
-                    {Array.from({ length: 10 }).map((_, i) => (
-                      <SelectItem key={i + 1} value={(i + 1).toString()}>
-                        {i + 1}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </SelectPositioner>
+                <SelectContent>
+                  {Array.from({ length: 10 }).map((_, i) => (
+                    <SelectItem key={i + 1} value={(i + 1).toString()}>
+                      {i + 1}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
               </Select>
               {product.inStock ? (
                 <span className="text-green-600">In Stock</span>
