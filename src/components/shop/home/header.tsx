@@ -42,7 +42,10 @@ interface HeaderProps {
   initialSession?: Session;
 }
 
-export default function Header({ initialCartData, initialSession }: HeaderProps) {
+export default function Header({
+  initialCartData,
+  initialSession,
+}: HeaderProps) {
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,7 +59,6 @@ export default function Header({ initialCartData, initialSession }: HeaderProps)
       });
     }
   };
-
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
