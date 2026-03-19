@@ -8,7 +8,6 @@ import {
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
 import { seo } from "@/lib/seo";
-import { authOptions } from "@/lib/session-query";
 import { getSession } from "@/server/getSession";
 import appCss from "../styles.css?url";
 
@@ -41,8 +40,8 @@ export const Route = createRootRouteWithContext<{
     ],
   }),
 
-  beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(authOptions);
+  beforeLoad: async () => {
+    const session = await getSession();
 
     return {
       session: session || undefined,

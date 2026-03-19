@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Loader2, User } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -28,12 +28,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
-import { authOptions } from "@/lib/session-query";
+import { getSession } from "@/server/getSession";
 
 export const Route = createFileRoute("/(shop)/profile")({
   component: ProfilePage,
-  beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(authOptions);
+  beforeLoad: async () => {
+    const session = await getSession();
     if (!session) {
       throw redirect({ to: "/login" });
     }
@@ -68,7 +68,7 @@ type ProfileFormValues = z.infer<typeof profileFormSchema>;
 type PasswordFormValues = z.infer<typeof passwordFormSchema>;
 
 function ProfilePage() {
-  const queryClient = useQueryClient();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
   const { session } = Route.useRouteContext();
 
@@ -79,7 +79,7 @@ function ProfilePage() {
     },
     onSuccess: () => {
       toast.success("Profile updated successfully");
-      queryClient.invalidateQueries({ queryKey: ["session"] });
+      router.invalidate();
     },
     onError: (error) => {
       toast.error(

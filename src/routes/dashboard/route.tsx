@@ -7,11 +7,11 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { authOptions } from "@/lib/session-query";
+import { getSession } from "@/server/getSession";
 
 export const Route = createFileRoute("/dashboard")({
-  beforeLoad: async ({ context }) => {
-    const session = await context.queryClient.ensureQueryData(authOptions);
+  beforeLoad: async () => {
+    const session = await getSession();
     if (!session) {
       throw redirect({ to: "/login" });
     }
