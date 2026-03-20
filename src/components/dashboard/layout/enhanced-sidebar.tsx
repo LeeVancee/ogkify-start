@@ -1,11 +1,6 @@
+import { Link } from "@tanstack/react-router";
 import {
-  Grid,
-  LayoutDashboard,
-  Package,
-  Palette,
-  Ruler,
   ShoppingBag,
-  ShoppingCart,
 } from "lucide-react";
 import type * as React from "react";
 import {
@@ -17,53 +12,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { ActiveLink } from "../active-link";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
-
-// Navigation item type definition
-
-// EMS navigation data
-const emsNavigation = [
-  {
-    title: "Dashboard",
-    url: "/dashboard",
-    icon: LayoutDashboard,
-    items: [],
-  },
-
-  {
-    title: "Categories",
-    url: "/dashboard/categories",
-    icon: Grid,
-    items: [],
-  },
-  {
-    title: "Colors",
-    url: "/dashboard/colors",
-    icon: Palette,
-    items: [],
-  },
-  {
-    title: "Sizes",
-    url: "/dashboard/sizes",
-    icon: Ruler,
-    items: [],
-  },
-  {
-    title: "Products",
-    url: "/dashboard/products",
-    icon: Package,
-    items: [],
-  },
-
-  {
-    title: "Orders",
-    url: "/dashboard/orders",
-    icon: ShoppingCart,
-    items: [],
-  },
-];
+import { sidebarData } from "./sidebar-data";
 
 export function EnhancedSidebar({
   ...props
@@ -76,22 +27,26 @@ export function EnhancedSidebar({
             <SidebarMenuButton
               size="lg"
               render={
-                <ActiveLink href="/dashboard" exact>
-                  <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <Link to="/dashboard">
+                  <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
                     <ShoppingBag className="size-4" />
                   </div>
-                  <div className="flex flex-col gap-0.5 leading-none">
-                    <span className="font-semibold">OGKIFY</span>
-                    <span className="">v1.0.0</span>
+                  <div className="grid flex-1 text-left text-sm leading-tight">
+                    <span className="truncate font-semibold">
+                      {sidebarData.brand.title}
+                    </span>
+                    <span className="truncate text-xs text-sidebar-foreground/70">
+                      {sidebarData.brand.subtitle}
+                    </span>
                   </div>
-                </ActiveLink>
+                </Link>
               }
             ></SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={emsNavigation} />
+        <NavMain groups={sidebarData.navGroups} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
