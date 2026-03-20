@@ -15,7 +15,7 @@ interface SalesData {
   total: number;
 }
 
-interface DashboardClientProps {
+interface DashboardViewProps {
   productsCount: number;
   categoriesCount: number;
   pendingOrders: number;
@@ -26,7 +26,7 @@ interface DashboardClientProps {
   monthlySalesData?: Array<SalesData>;
 }
 
-export function DashboardClient({
+export function DashboardView({
   productsCount,
   categoriesCount,
   pendingOrders,
@@ -34,21 +34,23 @@ export function DashboardClient({
   totalRevenue,
   recentOrders,
   monthlySalesData,
-}: DashboardClientProps) {
+}: DashboardViewProps) {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+      <div className="mb-2 flex items-center justify-between space-y-2">
+        <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
       </div>
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList>
+        <div className="w-full overflow-x-auto pb-2">
+          <TabsList>
           <TabsTrigger value="overview">Overview </TabsTrigger>
           <TabsTrigger value="analytics" disabled>
             Analytics
           </TabsTrigger>
-        </TabsList>
+          </TabsList>
+        </div>
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -106,23 +108,23 @@ export function DashboardClient({
               </CardContent>
             </Card>
           </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="col-span-4">
-              <CardHeader>
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
+            <Card className="col-span-1 lg:col-span-4">
+              <CardHeader className="pb-0">
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
-              <CardContent className="pl-2">
-                <Overview data={monthlySalesData} />
+              <CardContent className="ps-2 pt-2">
+                <Overview data={monthlySalesData ?? []} />
               </CardContent>
             </Card>
-            <Card className="col-span-3">
-              <CardHeader>
+            <Card className="col-span-1 lg:col-span-3">
+              <CardHeader className="pb-0">
                 <CardTitle>Recent Sales</CardTitle>
                 <CardDescription>
                   Total {completedOrders} completed orders
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="pt-2">
                 <RecentSales recentOrders={recentOrders} />
               </CardContent>
             </Card>

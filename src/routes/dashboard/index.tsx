@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardClient } from "@/components/dashboard/dashboard-client";
+import { DashboardView } from "@/components/dashboard/dashboard-view";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getDashboardData } from "@/server/dashboard";
 
@@ -30,7 +30,7 @@ function RouteComponent() {
   } = data || {};
 
   return (
-    <DashboardClient
+    <DashboardView
       productsCount={productsCount}
       categoriesCount={categoriesCount}
       pendingOrders={pendingOrders}
