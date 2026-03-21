@@ -68,7 +68,7 @@ export function Hero() {
           </div>
 
           {/* Bottom stats - show real or placeholder data */}
-          <div className="mt-20 pt-8 border-t border-gray-200">
+          {/*    <div className="mt-20 pt-8 border-t border-gray-200">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               <div>
                 <p className="text-2xl font-bold text-black">10K+</p>
@@ -87,7 +87,7 @@ export function Hero() {
                 <p className="text-gray-600 text-sm">Support</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
