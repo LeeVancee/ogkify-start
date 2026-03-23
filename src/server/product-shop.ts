@@ -46,7 +46,7 @@ export const getProduct = createServerFn()
       })),
       images: product.images.map((image) => image.url),
       inStock: true, // This can be set based on actual conditions
-      freeShipping: product.price > 25, // Assume free shipping for prices above 25
+      freeShipping: true,
     };
   });
 

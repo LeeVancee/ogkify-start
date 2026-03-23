@@ -107,7 +107,7 @@ function CartPage() {
 
   const items = cartData.items as Array<CartItem>;
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const shippingFee = subtotal >= 1500 ? 0 : 60;
+  const shippingFee = 0;
   const total = subtotal + shippingFee;
 
   if (items.length === 0) {
@@ -216,15 +216,8 @@ function CartPage() {
             </div>
             <div className="flex justify-between text-muted-foreground">
               <span>Shipping</span>
-              <span className="tabular-nums">
-                {shippingFee === 0 ? "Free" : formatPrice(shippingFee)}
-              </span>
+              <span className="tabular-nums">Free</span>
             </div>
-            {subtotal < 1500 ? (
-              <p className="text-xs text-muted-foreground">
-                Spend {formatPrice(1500 - subtotal)} more for free shipping
-              </p>
-            ) : null}
             <div className="flex justify-between border-t border-border pt-2.5 font-medium text-foreground">
               <span>Total</span>
               <span className="tabular-nums">{formatPrice(total)}</span>
