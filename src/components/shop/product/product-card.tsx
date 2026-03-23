@@ -6,47 +6,24 @@ interface Product {
   name: string;
   price: number;
   image: string | null;
-  discount?: number;
 }
 
 export default function ProductCard({ product }: { product: Product }) {
+  if (!product.image) {
+    throw new Error(`Product image is missing for product ${product.id}`);
+  }
+
   return (
-    <div
-      key={product.id}
-      className="group border rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow"
-    >
-      <Link
-        to="/product/$id"
-        params={{ id: product.id }}
-        className="block relative aspect-square overflow-hidden bg-muted"
-      >
-        {product.image ? (
-          <img
-            src={product.image}
-            alt={product.name}
-            className="object-cover transition-transform group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-muted">
-            <span className="text-muted-foreground">No Image</span>
-          </div>
-        )}
-      </Link>
-      <div className="p-4 bg-muted">
-        <Link to="/product/$id" params={{ id: product.id }} className="block">
-          <h3 className="font-medium text-lg mb-1 group-hover:text-primary transition-colors">
-            {product.name}
-          </h3>
-          <div className="flex items-center justify-between">
-            <p className="font-semibold">{formatPrice(product.price)}</p>
-            {product.discount ? (
-              <span className="text-xs font-medium text-green-600">
-                {product.discount}% Off
-              </span>
-            ) : null}
-          </div>
-        </Link>
+    <Link to="/product/$id" params={{ id: product.id }} className="group">
+      <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-xl bg-muted/40">
+        <img
+          src={product.image}
+          alt={product.name}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
       </div>
-    </div>
+      <h3 className="truncate text-sm font-medium text-foreground">{product.name}</h3>
+      <div className="mt-1 text-sm text-foreground">{formatPrice(product.price)}</div>
+    </Link>
   );
 }

@@ -1,21 +1,13 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingCart } from "lucide-react";
+import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { DropDown } from "../DropDown";
 
 const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Products", href: "/products" },
-  { name: "Categories", href: "/products" },
+  { name: "All Products", href: "/products", search: {} },
+  { name: "Search", href: "/search", search: {} },
 ];
 
 interface CartItem {
@@ -48,75 +40,49 @@ export default function Header({
 }: HeaderProps) {
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && searchQuery.trim()) {
-      navigate({
-        to: "/search",
-        search: { q: searchQuery.trim() },
-      });
+    if (e.key !== "Enter") return;
+    if (!searchQuery.trim()) {
+      throw new Error("Search query is required");
     }
+
+    navigate({
+      to: "/search",
+      search: { q: searchQuery.trim() },
+    });
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="container mx-auto px-4 flex h-16 items-center justify-between">
-        <div className="flex items-center">
-          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger
-              render={
-                <Button variant="ghost" size="icon" className="md:hidden">
-                  <Menu className="h-6 w-6" />
-                  <span className="sr-only">Toggle menu</span>
-                </Button>
-              }
-            />
-            <SheetContent side="left" className="w-[300px] sm:w-[400px]">
-              <nav className="flex flex-col gap-6">
-                <Link
-                  to="/"
-                  className="text-xl font-bold text-primary"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  OGKIFY
-                </Link>
-                <div className="grid gap-4">
-                  {navigation.map((item) => (
-                    <SheetClose
-                      key={item.name}
-                      render={
-                        <Link
-                          to={item.href}
-                          className={cn(
-                            "text-lg font-medium",
-                            pathname === item.href ? "text-primary" : "",
-                          )}
-                        >
-                          {item.name}
-                        </Link>
-                      }
-                    />
-                  ))}
-                </div>
-              </nav>
-            </SheetContent>
-          </Sheet>
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+      <div className="shop-shell">
+        <div className="flex h-16 items-center justify-between">
+          <button
+            type="button"
+            className="sm:hidden p-2 -ml-2 text-foreground/70 transition-colors hover:text-foreground"
+            onClick={() => setIsMenuOpen((open) => !open)}
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
 
-          <Link to="/" className="ml-4 md:ml-0 text-xl font-bold text-primary">
-            OGKIFY
+          <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
+            OGKI<span className="font-light">FY</span>
           </Link>
 
-          <nav className="hidden md:flex ml-10 gap-6">
+          <nav className="hidden sm:flex items-center gap-8">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
+                search={item.search}
                 className={cn(
-                  "font-medium hover:text-primary transition-colors",
+                  "text-sm tracking-wide transition-colors hover:text-foreground",
                   pathname === item.href
-                    ? "text-primary"
+                    ? "font-medium text-foreground"
                     : "text-muted-foreground",
                 )}
               >
@@ -124,33 +90,91 @@ export default function Header({
               </Link>
             ))}
           </nav>
-        </div>
 
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex relative w-full max-w-[200px]">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search..."
-              className="pl-8 w-full"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleSearch}
-            />
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setSearchOpen((open) => !open)}
+              className="p-2 text-foreground/70 transition-colors hover:text-foreground"
+              aria-label="Search"
+            >
+              <Search className="h-5 w-5" />
+            </button>
+
+            {initialSession ? (
+              <DropDown initialSession={initialSession} />
+            ) : (
+              <Link
+                to="/login"
+                className="p-2 text-foreground/70 transition-colors hover:text-foreground"
+                aria-label="Account"
+              >
+                <User className="h-5 w-5" />
+              </Link>
+            )}
+
+            <Link
+              to="/cart"
+              className="relative p-2 text-foreground/70 transition-colors hover:text-foreground"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="h-5 w-5" />
+              {initialCartData.totalItems ? (
+                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-foreground text-[10px] font-medium text-background">
+                  {initialCartData.totalItems}
+                </span>
+              ) : null}
+            </Link>
           </div>
-
-          <DropDown initialSession={initialSession} />
-
-          <Link to="/cart" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {initialCartData.totalItems ? (
-              <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
-                {initialCartData.totalItems}
-              </span>
-            ) : null}
-            <span className="sr-only">Open Cart</span>
-          </Link>
         </div>
+
+        {searchOpen ? (
+          <div className="pb-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                type="search"
+                placeholder="Search products..."
+                className="w-full rounded-lg border-0 bg-muted/50 py-2.5 pl-10 pr-4 text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchOpen(false);
+                  setSearchQuery("");
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                aria-label="Close search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {isMenuOpen ? (
+          <nav className="space-y-1 border-t border-border bg-background px-1 py-4 sm:hidden">
+            {navigation.map((item) => (
+              <Link
+                key={item.name}
+                to={item.href}
+                search={item.search}
+                onClick={() => setIsMenuOpen(false)}
+                className={cn(
+                  "block py-2.5 text-sm tracking-wide transition-colors",
+                  pathname === item.href
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground",
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+        ) : null}
       </div>
     </header>
   );

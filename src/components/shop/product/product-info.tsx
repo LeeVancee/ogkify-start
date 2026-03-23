@@ -1,22 +1,7 @@
-import {
-  Divide,
-  Heart,
-  RotateCcw,
-  Shield,
-  ShoppingCart,
-  Truck,
-} from "lucide-react";
+import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
+import { formatPrice } from "@/lib/utils";
 
 interface ProductColor {
   id: string;
@@ -34,12 +19,11 @@ interface Product {
   id: string;
   name: string;
   description: string;
+  category: string;
   price: number;
   colors: Array<ProductColor>;
   sizes: Array<ProductSize>;
   images: Array<string>;
-  inStock?: boolean;
-  freeShipping?: boolean;
 }
 
 interface ProductInfoProps {
@@ -50,24 +34,24 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
-  const [quantity, setQuantity] = useState("1");
-  const [mainImage, setMainImage] = useState(
-    product.images[0] || "/placeholder.svg",
+  if (product.images.length === 0) {
+    throw new Error(`Product images are missing for product ${product.id}`);
+  }
+
+  const [activeImage, setActiveImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedColor, setSelectedColor] = useState<string>(
+    product.colors[0] ? product.colors[0].id : "",
   );
-  const [selectedColor, setSelectedColor] = useState<string | undefined>(
-    product.colors.length > 0 ? product.colors[0].id : undefined,
-  );
-  const [selectedSize, setSelectedSize] = useState<string | undefined>(
-    product.sizes.length > 0 ? product.sizes[0].id : undefined,
+  const [selectedSize, setSelectedSize] = useState<string>(
+    product.sizes[0] ? product.sizes[0].id : "",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleAddToCart = async () => {
-    setIsSubmitting(true);
-
     const formData = new FormData();
     formData.append("productId", product.id);
-    formData.append("quantity", quantity);
+    formData.append("quantity", quantity.toString());
 
     if (selectedColor) {
       formData.append("colorId", selectedColor);
@@ -77,176 +61,136 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
       formData.append("sizeId", selectedSize);
     }
 
+    setIsSubmitting(true);
+
     try {
       const result = await addToCartAction(formData);
 
-      if (result.success) {
-        toast.success(result.message || `${product.name} added to cart`);
-      } else {
-        toast.error(result.error || "Failed to add to cart");
+      if (!result.success) {
+        throw new Error(result.error ? result.error : "Failed to add to cart");
       }
+
+      toast.success(result.message ? result.message : "Added to cart");
     } catch (error) {
-      toast.error("Failed to add to cart");
-      console.error(error);
+      toast.error(error instanceof Error ? error.message : "Failed to add to cart");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleAddToWishlist = () => {
-    toast.success(`${product.name} added to wishlist`);
-  };
-
-  const formatPrice = (price: number) => {
-    return `$ ${price.toFixed(2)}`;
-  };
-
   return (
     <>
-      <div className="space-y-4">
-        <div className="relative aspect-square overflow-hidden rounded-lg border bg-muted">
+      <div className="space-y-3">
+        <div className="aspect-[3/4] overflow-hidden rounded-xl bg-muted/40">
           <img
-            src={mainImage}
-            alt="Product image"
-            className="object-cover w-full h-full"
+            src={product.images[activeImage]}
+            alt={product.name}
+            className="h-full w-full object-cover"
           />
         </div>
-
-        <div className="grid grid-cols-4 gap-4">
-          {product.images.map((image, index) => (
-            <div
-              key={index}
-              className="relative aspect-square overflow-hidden rounded-lg border bg-muted cursor-pointer"
-              onClick={() => setMainImage(image)}
-            >
-              <img
-                src={image}
-                alt={`Product image ${index + 1}`}
-                className="object-cover w-full h-full"
-              />
-            </div>
-          ))}
-        </div>
+        {product.images.length > 1 ? (
+          <div className="flex gap-3">
+            {product.images.map((image, index) => (
+              <button
+                key={image}
+                type="button"
+                onClick={() => setActiveImage(index)}
+                className={
+                  activeImage === index
+                    ? "h-20 w-20 overflow-hidden rounded-lg border-2 border-foreground"
+                    : "h-20 w-20 overflow-hidden rounded-lg border-2 border-transparent"
+                }
+              >
+                <img src={image} alt={product.name} className="h-full w-full object-cover" />
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold">{product.name}</h1>
-          <div className="text-3xl font-bold">{formatPrice(product.price)}</div>
+      <div className="flex flex-col">
+        <span className="mb-2 text-xs uppercase tracking-[0.15em] text-muted-foreground">
+          {product.category}
+        </span>
+        <h1 className="text-2xl font-light leading-tight tracking-tight text-foreground sm:text-3xl">
+          {product.name}
+        </h1>
+        <div className="mt-3 text-xl font-medium text-foreground sm:text-2xl">
+          {formatPrice(product.price)}
         </div>
-        <div className="space-y-2">
-          <h3 className="font-medium">Description</h3>
-          <p className="text-sm text-muted-foreground">{product.description}</p>
-        </div>
+        <p className="mt-6 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
 
-        <div className="space-y-6">
-          {product.colors.length > 0 && (
-            <div className="grid gap-2">
-              <div className="font-medium">Colors</div>
-              <div className="flex flex-wrap gap-2">
-                {product.colors.map((color) => (
-                  <Button
-                    key={color.id}
-                    variant="outline"
-                    className={cn(
-                      "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
-                      selectedColor === color.id
-                        ? "border-blue-600 bg-muted text-blue-600"
-                        : "border-gray-200 hover:border-gray-300",
-                    )}
-                    title={color.name}
-                    onClick={() => setSelectedColor(color.id)}
-                  >
-                    {color.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {product.sizes.length > 0 && (
-            <div className="grid gap-2">
-              <div className="font-medium">Sizes</div>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map((size) => (
-                  <Button
-                    key={size.id}
-                    variant="outline"
-                    className={cn(
-                      "flex h-10 items-center justify-center rounded-md border-2 text-sm transition-all",
-                      selectedSize === size.id
-                        ? "border-blue-600 bg-muted text-blue-600"
-                        : "border-gray-200 hover:border-gray-300",
-                    )}
-                    onClick={() => setSelectedSize(size.id)}
-                  >
-                    {size.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="grid gap-2">
-            <div className="font-medium">Quantity</div>
-            <div className="flex items-center gap-3">
-              <Select
-                value={quantity}
-                onValueChange={(value) => setQuantity(value as string)}
-              >
-                <SelectTrigger className="w-24">
-                  <SelectValue placeholder="Quantity" />
-                </SelectTrigger>
-                <SelectContent>
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <SelectItem key={i + 1} value={(i + 1).toString()}>
-                      {i + 1}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {product.inStock ? (
-                <span className="text-green-600">In Stock</span>
-              ) : (
-                <span className="text-red-600">Out of Stock</span>
-              )}
+        {product.colors.length > 0 ? (
+          <div className="mt-8">
+            <h3 className="mb-3 text-sm font-medium text-foreground">Color</h3>
+            <div className="flex flex-wrap gap-2">
+              {product.colors.map((color) => (
+                <button
+                  key={color.id}
+                  type="button"
+                  onClick={() => setSelectedColor(color.id)}
+                  className={
+                    selectedColor === color.id
+                      ? "rounded-full border border-foreground bg-foreground px-4 py-2 text-sm text-background"
+                      : "rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-foreground/50"
+                  }
+                >
+                  {color.name}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
+        ) : null}
 
-        <div className="flex flex-col gap-4 sm:flex-row">
-          <Button
-            size="lg"
-            className="sm:flex-1"
+        {product.sizes.length > 0 ? (
+          <div className="mt-6">
+            <h3 className="mb-3 text-sm font-medium text-foreground">Size</h3>
+            <div className="flex flex-wrap gap-2">
+              {product.sizes.map((size) => (
+                <button
+                  key={size.id}
+                  type="button"
+                  onClick={() => setSelectedSize(size.id)}
+                  className={
+                    selectedSize === size.id
+                      ? "h-10 w-12 rounded-lg border border-foreground bg-foreground text-sm text-background"
+                      : "h-10 w-12 rounded-lg border border-border text-sm text-foreground transition-colors hover:border-foreground/50"
+                  }
+                >
+                  {size.value}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        <div className="mt-8 flex items-center gap-4">
+          <div className="flex items-center rounded-lg border border-border">
+            <button
+              type="button"
+              onClick={() => setQuantity((value) => Math.max(1, value - 1))}
+              className="p-2.5 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Minus className="h-4 w-4" />
+            </button>
+            <span className="w-10 text-center text-sm tabular-nums">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((value) => value + 1)}
+              className="p-2.5 text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          </div>
+
+          <button
+            type="button"
             onClick={handleAddToCart}
             disabled={isSubmitting}
+            className="shop-pill-button flex-1 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? (
-              "Adding..."
-            ) : (
-              <>
-                <ShoppingCart className="mr-2 h-5 w-5" />
-                Add to Cart
-              </>
-            )}
-          </Button>
-        </div>
-
-        <div className="text-sm text-muted-foreground">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Truck className="w-4 h-4 text-black" />
-              Free Shipping
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <Shield className="w-4 h-4 text-black" />
-              Secure Payment
-            </div>
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <RotateCcw className="w-4 h-4 text-black" />
-              Easy Returns
-            </div>
-          </div>
+            {isSubmitting ? "Adding..." : "Add to Cart"}
+          </button>
         </div>
       </div>
     </>

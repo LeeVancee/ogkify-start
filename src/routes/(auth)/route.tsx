@@ -11,9 +11,11 @@ export const Route = createFileRoute("/(auth)")({
 
 function RouteComponent() {
   return (
-    <div className="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-      <div className="w-full max-w-sm">
-        <Outlet />
+    <div className="min-h-svh bg-background px-4 py-16 sm:py-24">
+      <div className="mx-auto max-w-sm">
+        <div className="rounded-3xl border border-border bg-card p-8 shadow-sm sm:p-10">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

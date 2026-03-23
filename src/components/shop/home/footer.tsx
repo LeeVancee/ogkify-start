@@ -1,149 +1,70 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+
+const footerLinks = [
+  { label: "All Products", to: "/products", search: {} },
+  { label: "Featured", to: "/products", search: { featured: true } },
+  { label: "Login", to: "/login" },
+  { label: "My Orders", to: "/myorders" },
+];
 
 export default function Footer() {
-  // Get dynamic store name for footer branding
-  const storeName = "OGKIFY";
-
   return (
-    <footer className="bg-white border-t border-gray-200 py-16">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          <div>
-            {/* Dynamic store name in footer */}
-            <h3 className="text-2xl font-bold mb-6 text-black">{storeName}</h3>
-            <p className="text-gray-600 mb-6">
-              Your destination for innovative products that shape tomorrow.
-              Quality, style, and innovation in every purchase.
+    <footer className="mt-auto border-t border-border bg-muted/30">
+      <div className="shop-shell py-12 sm:py-16">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
+              OGKIFY
+            </Link>
+            <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Curated essentials for a refined, minimal lifestyle with a sharp
+              editorial feel.
             </p>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-6 text-black">
-              Quick Links
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Products
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Categories
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Sale
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Blog
-                </a>
-              </li>
+            <h4 className="mb-4 text-sm font-medium text-foreground">Quick Links</h4>
+            <ul className="space-y-2.5">
+              {footerLinks.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    to={link.to}
+                    search={link.search}
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-6 text-black">
-              Customer Service
-            </h4>
-            <ul className="space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Shipping Info
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Returns
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  Size Guide
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-600 hover:text-black transition-colors"
-                >
-                  FAQ
-                </a>
-              </li>
+            <h4 className="mb-4 text-sm font-medium text-foreground">Customer Care</h4>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <li>Shipping Information</li>
+              <li>Returns Policy</li>
+              <li>FAQ</li>
+              <li>Contact Us</li>
             </ul>
           </div>
 
           <div>
-            <h4 className="text-lg font-semibold mb-6 text-black">
-              Contact Info
-            </h4>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-black" />
-                <span className="text-gray-600">
-                  123 Future Street, Tech City, TC 12345
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-black" />
-                <span className="text-gray-600">+1 (555) 123-4567</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-black" />
-                <span className="text-gray-600">
-                  hello@{storeName.toLowerCase().replace(/\s+/g, "")}.com
-                </span>
-              </div>
-            </div>
+            <h4 className="mb-4 text-sm font-medium text-foreground">Contact</h4>
+            <ul className="space-y-2.5 text-sm text-muted-foreground">
+              <li>service@monostore.com</li>
+              <li>+886 2 2345 6789</li>
+              <li>Mon - Fri, 10:00 - 18:00</li>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-200 mt-12 pt-8 text-center">
-          {/* Dynamic copyright with store name */}
-          <p className="text-gray-600">
-            © 2025 {storeName}. All rights reserved. | Privacy Policy | Terms of
-            Service
-          </p>
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>© 2026 OGKIFY. All rights reserved.</p>
+          <div className="flex items-center gap-6">
+            <span className="cursor-pointer transition-colors hover:text-foreground">Privacy Policy</span>
+            <span className="cursor-pointer transition-colors hover:text-foreground">Terms of Service</span>
+          </div>
         </div>
       </div>
     </footer>
