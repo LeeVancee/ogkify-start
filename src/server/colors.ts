@@ -20,9 +20,24 @@ const updateColorSchema = z.object({
 
 // Get all colors
 export const getColors = createServerFn().handler(async () => {
-  try {
-    const colorsList = await db.query.colors.findMany({
-      orderBy: (colors, { asc }) => [asc(colors.name)],
+  const colorsList = await db.query.colors.findMany({
+    orderBy: (colors, { asc }) => [asc(colors.name)],
+    columns: {
+      id: true,
+      name: true,
+      value: true,
+    },
+  });
+
+  return colorsList;
+});
+
+// Get single color
+export const getColor = createServerFn()
+  .inputValidator((id: string) => colorIdSchema.parse(id))
+  .handler(async ({ data: id }) => {
+    const color = await db.query.colors.findFirst({
+      where: (colors, { eq }) => eq(colors.id, id),
       columns: {
         id: true,
         name: true,
@@ -30,39 +45,14 @@ export const getColors = createServerFn().handler(async () => {
       },
     });
 
-    return colorsList;
-  } catch (error) {
-    console.error("Failed to get colors:", error);
-    return [];
-  }
-});
-
-// Get single color
-export const getColor = createServerFn()
-  .inputValidator((id: string) => colorIdSchema.parse(id))
-  .handler(async ({ data: id }) => {
-    try {
-      const color = await db.query.colors.findFirst({
-        where: (colors, { eq }) => eq(colors.id, id),
-        columns: {
-          id: true,
-          name: true,
-          value: true,
-        },
-      });
-
-      if (!color) {
-        return { success: false, error: "Color not found" };
-      }
-
-      return {
-        success: true,
-        color,
-      };
-    } catch (error) {
-      console.error("Failed to get color:", error);
-      return { success: false, error: "Failed to get color" };
+    if (!color) {
+      return { success: false, error: "Color not found" };
     }
+
+    return {
+      success: true,
+      color,
+    };
   });
 
 // Create color
@@ -71,24 +61,20 @@ export const createColor = createServerFn({ method: "POST" })
     colorDataSchema.parse(data),
   )
   .handler(async ({ data }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return { success: false, error: adminSession.error };
-      }
-
-      const [color] = await db
-        .insert(colors)
-        .values({
-          name: data.name,
-          value: data.value,
-        })
-        .returning();
-
-      return { success: true, data: color };
-    } catch (error) {
-      return { success: false, error: "Failed to create color" };
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return { success: false, error: adminSession.error };
     }
+
+    const [color] = await db
+      .insert(colors)
+      .values({
+        name: data.name,
+        value: data.value,
+      })
+      .returning();
+
+    return { success: true, data: color };
   });
 
 // Update color
@@ -98,41 +84,33 @@ export const updateColor = createServerFn({ method: "POST" })
       updateColorSchema.parse(params),
   )
   .handler(async ({ data: { id, data } }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return { success: false, error: adminSession.error };
-      }
-
-      const [color] = await db
-        .update(colors)
-        .set({
-          name: data.name,
-          value: data.value,
-        })
-        .where(eq(colors.id, id))
-        .returning();
-
-      return { success: true, data: color };
-    } catch (error) {
-      return { success: false, error: "Failed to update color" };
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return { success: false, error: adminSession.error };
     }
+
+    const [color] = await db
+      .update(colors)
+      .set({
+        name: data.name,
+        value: data.value,
+      })
+      .where(eq(colors.id, id))
+      .returning();
+
+    return { success: true, data: color };
   });
 
 // Delete color
 export const deleteColor = createServerFn({ method: "POST" })
   .inputValidator((id: string) => colorIdSchema.parse(id))
   .handler(async ({ data: id }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return { success: false, error: adminSession.error };
-      }
-
-      await db.delete(colors).where(eq(colors.id, id));
-
-      return { success: true };
-    } catch (error) {
-      return { success: false, error: "Failed to delete color" };
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return { success: false, error: adminSession.error };
     }
+
+    await db.delete(colors).where(eq(colors.id, id));
+
+    return { success: true };
   });

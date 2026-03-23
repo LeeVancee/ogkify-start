@@ -38,42 +38,37 @@ export type ProductFormType = z.infer<typeof productFormSchema>;
 export const getProduct = createServerFn()
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
-    try {
-      const product = await db.query.products.findFirst({
-        where: (productsTable, { eq }) => eq(productsTable.id, id),
-        with: {
-          category: true,
-          images: true,
-          colors: {
-            with: {
-              color: true,
-            },
-          },
-          sizes: {
-            with: {
-              size: true,
-            },
+    const product = await db.query.products.findFirst({
+      where: (productsTable, { eq }) => eq(productsTable.id, id),
+      with: {
+        category: true,
+        images: true,
+        colors: {
+          with: {
+            color: true,
           },
         },
-      });
+        sizes: {
+          with: {
+            size: true,
+          },
+        },
+      },
+    });
 
-      if (!product) {
-        return null;
-      }
-
-      return {
-        ...product,
-        price: product.price,
-        colorIds: product.colors.map((pc) => pc.color.id),
-        sizeIds: product.sizes.map((ps) => ps.size.id),
-        images: product.images.map((image) => image.url),
-        colors: product.colors.map((pc) => pc.color),
-        sizes: product.sizes.map((ps) => ps.size),
-      };
-    } catch (error) {
-      console.error("Failed to get product:", error);
+    if (!product) {
       return null;
     }
+
+    return {
+      ...product,
+      price: product.price,
+      colorIds: product.colors.map((pc) => pc.color.id),
+      sizeIds: product.sizes.map((ps) => ps.size.id),
+      images: product.images.map((image) => image.url),
+      colors: product.colors.map((pc) => pc.color),
+      sizes: product.sizes.map((ps) => ps.size),
+    };
   });
 
 // Update product
@@ -86,23 +81,22 @@ export const updateProduct = createServerFn({ method: "POST" })
     return params;
   })
   .handler(async ({ data: { id, data } }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return { success: false, error: adminSession.error };
-      }
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return { success: false, error: adminSession.error };
+    }
 
-      const {
-        name,
-        description,
-        price,
-        categoryId,
-        colorIds,
-        sizeIds,
-        images: imageUrls,
-        isFeatured,
-        isArchived,
-      } = data;
+    const {
+      name,
+      description,
+      price,
+      categoryId,
+      colorIds,
+      sizeIds,
+      images: imageUrls,
+      isFeatured,
+      isArchived,
+    } = data;
 
       // Find existing images
       const existingImages = await db.query.images.findMany({
@@ -175,55 +169,44 @@ export const updateProduct = createServerFn({ method: "POST" })
         );
       }
 
-      return { success: true, data: updatedProduct };
-    } catch (error) {
-      return {
-        success: false,
-        error: "Failed to update product. Please try again later.",
-      };
-    }
+    return { success: true, data: updatedProduct };
   });
 
 // Get all products
 export const getProducts = createServerFn().handler(async () => {
-  try {
-    const productsList = await db.query.products.findMany({
-      with: {
-        category: true,
-        images: true,
-        colors: {
-          with: {
-            color: true,
-          },
-        },
-        sizes: {
-          with: {
-            size: true,
-          },
+  const productsList = await db.query.products.findMany({
+    with: {
+      category: true,
+      images: true,
+      colors: {
+        with: {
+          color: true,
         },
       },
-      orderBy: (productsTable, { desc }) => [desc(productsTable.createdAt)],
-    });
+      sizes: {
+        with: {
+          size: true,
+        },
+      },
+    },
+    orderBy: (productsTable, { desc }) => [desc(productsTable.createdAt)],
+  });
 
-    // Format return data, only return necessary fields
-    return productsList.map((product) => ({
-      id: product.id,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      category: product.category,
-      colors: product.colors.map((pc) => pc.color),
-      sizes: product.sizes.map((ps) => ps.size),
-      images: product.images,
-      isFeatured: product.isFeatured,
-      isArchived: product.isArchived,
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
-    }));
-  } catch (error) {
-    console.error("Failed to get products list:", error);
-    return [];
-  }
+  // Format return data, only return necessary fields
+  return productsList.map((product) => ({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    category: product.category,
+    colors: product.colors.map((pc) => pc.color),
+    sizes: product.sizes.map((ps) => ps.size),
+    images: product.images,
+    isFeatured: product.isFeatured,
+    isArchived: product.isArchived,
+    createdAt: product.createdAt,
+    updatedAt: product.updatedAt,
+  }));
 });
 
 // Create product
@@ -236,11 +219,10 @@ export const createProduct = createServerFn({ method: "POST" })
     return data;
   })
   .handler(async ({ data }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return { success: false, error: adminSession.error };
-      }
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return { success: false, error: adminSession.error };
+    }
 
       const {
         name,
@@ -297,60 +279,43 @@ export const createProduct = createServerFn({ method: "POST" })
         );
       }
 
-      return { success: true, data: product };
-    } catch (error) {
-      return { success: false, error: "Failed to create product" };
-    }
+    return { success: true, data: product };
   });
 
 // Delete product
 export const deleteProduct = createServerFn({ method: "POST" })
   .inputValidator((id: string) => id)
   .handler(async ({ data: id }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return { success: false, message: adminSession.error };
-      }
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return { success: false, message: adminSession.error };
+    }
 
       // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
       await db.delete(products).where(eq(products.id, id));
 
-      return { success: true, message: "Product deleted successfully" };
-    } catch (error) {
-      console.error("Failed to delete product:", error);
-      return {
-        success: false,
-        message: "Failed to delete product, please try again later",
-      };
-    }
+    return { success: true, message: "Product deleted successfully" };
   });
 
 // Get product count
 export const getProductsCount = createServerFn().handler(async () => {
-  try {
-    const adminSession = await requireAdminSession();
-    if (!adminSession.ok) {
-      return 0;
-    }
-
-    const [result] = await db.select({ count: count() }).from(products);
-    return result.count;
-  } catch (error) {
-    console.error("Failed to get product count:", error);
+  const adminSession = await requireAdminSession();
+  if (!adminSession.ok) {
     return 0;
   }
+
+  const [result] = await db.select({ count: count() }).from(products);
+  return result.count;
 });
 
 // Get popular products
 export const getPopularProducts = createServerFn()
   .inputValidator((limit?: number) => limit || 5)
   .handler(async ({ data: limit }) => {
-    try {
-      const adminSession = await requireAdminSession();
-      if (!adminSession.ok) {
-        return [];
-      }
+    const adminSession = await requireAdminSession();
+    if (!adminSession.ok) {
+      return [];
+    }
 
       // Use relational query to get popular products
       const productsList = await db.query.products.findMany({
@@ -375,24 +340,19 @@ export const getPopularProducts = createServerFn()
         .sort((a, b) => b.orderCount - a.orderCount)
         .slice(0, limit);
 
-      return sortedProducts;
-    } catch (error) {
-      console.error("Failed to get popular products:", error);
-      return [];
-    }
+    return sortedProducts;
   });
 
 // Get all product form data in a single request for better performance
 export const getProductFormData = createServerFn().handler(async () => {
-  try {
-    const adminSession = await requireAdminSession();
-    if (!adminSession.ok) {
-      return {
-        categories: [],
-        colors: [],
-        sizes: [],
-      };
-    }
+  const adminSession = await requireAdminSession();
+  if (!adminSession.ok) {
+    return {
+      categories: [],
+      colors: [],
+      sizes: [],
+    };
+  }
 
     // Use Promise.all to fetch all data in parallel
     const [categories, colors, sizes] = await Promise.all([
@@ -422,17 +382,9 @@ export const getProductFormData = createServerFn().handler(async () => {
       }),
     ]);
 
-    return {
-      categories,
-      colors,
-      sizes,
-    };
-  } catch (error) {
-    console.error("Failed to get product form data:", error);
-    return {
-      categories: [],
-      colors: [],
-      sizes: [],
-    };
-  }
+  return {
+    categories,
+    colors,
+    sizes,
+  };
 });

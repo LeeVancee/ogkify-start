@@ -11,31 +11,26 @@ export const searchProducts = createServerFn()
       return [];
     }
 
-    try {
-      const productsList = await db.query.products.findMany({
-        where: (products, { or, ilike }) =>
-          or(
-            ilike(products.name, `%${query}%`),
-            ilike(products.description, `%${query}%`),
-          ),
-        with: {
-          images: true,
-          category: true,
-        },
-      });
+    const productsList = await db.query.products.findMany({
+      where: (products, { or, ilike }) =>
+        or(
+          ilike(products.name, `%${query}%`),
+          ilike(products.description, `%${query}%`),
+        ),
+      with: {
+        images: true,
+        category: true,
+      },
+    });
 
-      // Format return results
-      return productsList.map((product) => ({
-        id: product.id,
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        image:
-          product.images[0]?.url || "/placeholder.svg?height=300&width=300",
-        category: product.category.name || "",
-      }));
-    } catch (error) {
-      console.error("Error searching products:", error);
-      return [];
-    }
+    // Format return results
+    return productsList.map((product) => ({
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image:
+        product.images[0]?.url || "/placeholder.svg?height=300&width=300",
+      category: product.category.name || "",
+    }));
   });
