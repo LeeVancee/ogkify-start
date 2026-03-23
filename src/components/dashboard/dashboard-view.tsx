@@ -43,10 +43,10 @@ export function DashboardView({
       <Tabs defaultValue="overview" className="space-y-4">
         <div className="w-full overflow-x-auto pb-2">
           <TabsList>
-          <TabsTrigger value="overview">Overview </TabsTrigger>
-          <TabsTrigger value="analytics" disabled>
-            Analytics
-          </TabsTrigger>
+            <TabsTrigger value="overview">Overview </TabsTrigger>
+            <TabsTrigger value="analytics" disabled>
+              Analytics
+            </TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="overview" className="space-y-4">

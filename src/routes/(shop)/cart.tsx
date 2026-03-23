@@ -29,7 +29,11 @@ function CartPage() {
   const queryClient = useQueryClient();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const { data: cartData, isLoading, isError } = useQuery({
+  const {
+    data: cartData,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["cart"],
     queryFn: () => getUserCart(),
     staleTime: 1000 * 60 * 2,
@@ -89,7 +93,9 @@ function CartPage() {
 
       window.location.href = data.sessionUrl;
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Checkout process failed");
+      toast.error(
+        error instanceof Error ? error.message : "Checkout process failed",
+      );
     } finally {
       setIsCheckingOut(false);
     }
@@ -97,7 +103,9 @@ function CartPage() {
 
   if (isLoading) {
     return (
-      <div className="shop-shell py-20 text-center text-muted-foreground">Loading cart...</div>
+      <div className="shop-shell py-20 text-center text-muted-foreground">
+        Loading cart...
+      </div>
     );
   }
 
@@ -106,14 +114,19 @@ function CartPage() {
   }
 
   const items = cartData.items as Array<CartItem>;
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const subtotal = items.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
   const shippingFee = 0;
   const total = subtotal + shippingFee;
 
   if (items.length === 0) {
     return (
       <div className="shop-shell py-20 text-center">
-        <h1 className="mb-3 text-2xl font-light tracking-tight text-foreground">Cart</h1>
+        <h1 className="mb-3 text-2xl font-light tracking-tight text-foreground">
+          Cart
+        </h1>
         <p className="text-muted-foreground">Your cart is empty</p>
         <Link to="/products" className="shop-pill-button mt-6">
           Continue Shopping
@@ -131,7 +144,10 @@ function CartPage() {
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <div className="space-y-4 lg:col-span-2">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-4 rounded-xl border border-border p-4">
+            <div
+              key={item.id}
+              className="flex gap-4 rounded-xl border border-border p-4"
+            >
               <Link to="/product/$id" params={{ id: item.productId }}>
                 <img
                   src={item.image}
@@ -183,7 +199,9 @@ function CartPage() {
                     >
                       <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="w-8 text-center text-sm tabular-nums">{item.quantity}</span>
+                    <span className="w-8 text-center text-sm tabular-nums">
+                      {item.quantity}
+                    </span>
                     <button
                       type="button"
                       onClick={() =>
@@ -208,7 +226,9 @@ function CartPage() {
         </div>
 
         <div className="h-fit rounded-xl bg-muted/40 p-6 lg:sticky lg:top-24">
-          <h2 className="mb-4 text-sm font-medium text-foreground">Order Summary</h2>
+          <h2 className="mb-4 text-sm font-medium text-foreground">
+            Order Summary
+          </h2>
           <div className="space-y-2.5 text-sm">
             <div className="flex justify-between text-muted-foreground">
               <span>Subtotal</span>

@@ -32,13 +32,14 @@ function RouteComponent() {
         <div className="shop-shell flex flex-col items-center gap-8 py-16 sm:py-24 lg:flex-row lg:gap-16 lg:py-32">
           <div className="flex-1 text-center lg:text-left">
             <p className="mb-4 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-              Spring Summer 2026
+              Curated Selection
             </p>
             <h1 className="text-4xl font-light leading-[1.05] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Less is More
+              Built for Everyday Play
             </h1>
             <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg lg:mx-0">
-              A return to essentials, where clean silhouettes meet quiet confidence.
+              Discover standout gear, clean visuals, and a lineup picked for
+              your next session.
             </p>
             <Link to="/products" className="shop-pill-button mt-8">
               Explore Collection <ArrowRight className="h-4 w-4" />
@@ -62,7 +63,9 @@ function RouteComponent() {
         <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {categories.map((category) => {
             if (!category.imageUrl) {
-              throw new Error(`Category image is missing for category ${category.id}`);
+              throw new Error(
+                `Category image is missing for category ${category.id}`,
+              );
             }
 
             return (
@@ -89,7 +92,9 @@ function RouteComponent() {
 
       <section className="shop-shell pb-16 sm:pb-20">
         <div className="mb-8 flex items-center justify-between">
-          <h2 className="text-2xl font-light tracking-tight text-foreground">Featured Picks</h2>
+          <h2 className="text-2xl font-light tracking-tight text-foreground">
+            Featured Picks
+          </h2>
           <Link
             to="/products"
             className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -99,7 +104,12 @@ function RouteComponent() {
         </div>
         <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
           {featured.map((product) => (
-            <Link key={product.id} to="/product/$id" params={{ id: product.id }} className="group">
+            <Link
+              key={product.id}
+              to="/product/$id"
+              params={{ id: product.id }}
+              className="group"
+            >
               <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-xl bg-muted/40">
                 <img
                   src={product.images[0]}
@@ -107,8 +117,12 @@ function RouteComponent() {
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <h3 className="truncate text-sm font-medium text-foreground">{product.name}</h3>
-              <div className="mt-1 text-sm text-foreground">{formatPrice(product.price)}</div>
+              <h3 className="truncate text-sm font-medium text-foreground">
+                {product.name}
+              </h3>
+              <div className="mt-1 text-sm text-foreground">
+                {formatPrice(product.price)}
+              </div>
             </Link>
           ))}
         </div>
@@ -118,7 +132,9 @@ function RouteComponent() {
         <section className="bg-muted/40">
           <div className="shop-shell py-16 sm:py-20">
             <div className="mb-8 flex items-center justify-between">
-              <h2 className="text-2xl font-light tracking-tight text-foreground">New Arrivals</h2>
+              <h2 className="text-2xl font-light tracking-tight text-foreground">
+                New Arrivals
+              </h2>
               <Link
                 to="/products"
                 className="flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
@@ -141,7 +157,9 @@ function RouteComponent() {
                     className="h-24 w-24 flex-shrink-0 rounded-lg object-cover"
                   />
                   <div className="min-w-0 flex-1">
-                    <h3 className="truncate text-sm font-medium text-foreground">{product.name}</h3>
+                    <h3 className="truncate text-sm font-medium text-foreground">
+                      {product.name}
+                    </h3>
                     <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                       {product.description}
                     </p>

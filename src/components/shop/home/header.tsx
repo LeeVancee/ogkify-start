@@ -66,10 +66,17 @@ export default function Header({
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-label="Toggle menu"
           >
-            {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {isMenuOpen ? (
+              <X className="h-5 w-5" />
+            ) : (
+              <Menu className="h-5 w-5" />
+            )}
           </button>
 
-          <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
+          <Link
+            to="/"
+            className="text-lg font-semibold tracking-tight text-foreground"
+          >
             OGKI<span className="font-light">FY</span>
           </Link>
 

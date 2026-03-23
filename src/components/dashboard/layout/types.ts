@@ -32,4 +32,11 @@ type SidebarBrand = {
   subtitle: string;
 };
 
-export type { BaseNavItem, NavLink, NavCollapsible, NavItem, NavGroup, SidebarBrand };
+export type {
+  BaseNavItem,
+  NavCollapsible,
+  NavGroup,
+  NavItem,
+  NavLink,
+  SidebarBrand,
+};

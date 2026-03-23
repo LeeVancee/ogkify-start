@@ -61,7 +61,9 @@ function MyOrdersPage() {
 
   if (isLoadingAll || isLoadingUnpaid) {
     return (
-      <div className="shop-shell py-20 text-center text-muted-foreground">Loading orders...</div>
+      <div className="shop-shell py-20 text-center text-muted-foreground">
+        Loading orders...
+      </div>
     );
   }
 
@@ -103,21 +105,28 @@ function MyOrdersPage() {
           const expanded = expandedId === order.id;
 
           return (
-            <div key={order.id} className="overflow-hidden rounded-xl border border-border">
+            <div
+              key={order.id}
+              className="overflow-hidden rounded-xl border border-border"
+            >
               <button
                 type="button"
                 onClick={() => setExpandedId(expanded ? null : order.id)}
                 className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-muted/30 sm:p-5"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-foreground">{order.orderNumber}</p>
+                  <p className="truncate text-sm font-medium text-foreground">
+                    {order.orderNumber}
+                  </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {new Date(order.createdAt).toLocaleDateString("zh-TW")}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-3">
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusClass(order.paymentStatus)}`}>
+                  <span
+                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusClass(order.paymentStatus)}`}
+                  >
                     {statusLabel(order.paymentStatus)}
                   </span>
                   <span className="hidden text-sm font-medium text-foreground tabular-nums sm:inline">
@@ -135,7 +144,9 @@ function MyOrdersPage() {
                 <div className="space-y-4 border-t border-border bg-muted/20 p-4 sm:p-5">
                   {order.items.map((item) => {
                     if (!item.imageUrl) {
-                      throw new Error(`Order item image is missing for item ${item.id}`);
+                      throw new Error(
+                        `Order item image is missing for item ${item.id}`,
+                      );
                     }
 
                     return (
@@ -146,9 +157,12 @@ function MyOrdersPage() {
                           className="h-14 w-14 rounded-lg object-cover"
                         />
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm text-foreground">{item.productName}</p>
+                          <p className="truncate text-sm text-foreground">
+                            {item.productName}
+                          </p>
                           <p className="text-xs text-muted-foreground">
-                            {item.color ? item.color.name : ""} {item.size ? `/ ${item.size.name}` : ""} ×{" "}
+                            {item.color ? item.color.name : ""}{" "}
+                            {item.size ? `/ ${item.size.name}` : ""} ×{" "}
                             {item.quantity}
                           </p>
                         </div>
@@ -160,20 +174,26 @@ function MyOrdersPage() {
                   })}
 
                   <div className="flex flex-wrap gap-2 border-t border-border pt-3">
-                    {unpaidOrderIds.has(order.id) ? <PayOrderButton orderId={order.id} /> : null}
+                    {unpaidOrderIds.has(order.id) ? (
+                      <PayOrderButton orderId={order.id} />
+                    ) : null}
                     {unpaidOrderIds.has(order.id) ? (
                       <DeleteOrderButton
                         orderId={order.id}
                         orderNumber={order.orderNumber}
                         onDeleted={() =>
-                          queryClient.invalidateQueries({ queryKey: ["orders"] })
+                          queryClient.invalidateQueries({
+                            queryKey: ["orders"],
+                          })
                         }
                       />
                     ) : null}
                   </div>
 
                   <div className="border-t border-border pt-3 text-right">
-                    <div className="text-sm text-muted-foreground">Order Total</div>
+                    <div className="text-sm text-muted-foreground">
+                      Order Total
+                    </div>
                     <div className="text-xl font-medium text-foreground">
                       {formatPrice(order.totalAmount)}
                     </div>

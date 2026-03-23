@@ -22,7 +22,12 @@ export function ProductGrid({ products }: ProductGridProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-3">
       {products.map((product) => (
-        <Link key={product.id} to="/product/$id" params={{ id: product.id }} className="group">
+        <Link
+          key={product.id}
+          to="/product/$id"
+          params={{ id: product.id }}
+          className="group"
+        >
           <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-xl bg-muted/40">
             <img
               src={product.images[0]}
@@ -41,9 +46,13 @@ export function ProductGrid({ products }: ProductGridProps) {
             ) : null}
           </div>
 
-          <h3 className="truncate text-sm font-medium text-foreground">{product.name}</h3>
+          <h3 className="truncate text-sm font-medium text-foreground">
+            {product.name}
+          </h3>
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-sm text-foreground">{formatPrice(product.price)}</span>
+            <span className="text-sm text-foreground">
+              {formatPrice(product.price)}
+            </span>
             {product.originalPrice ? (
               <span className="text-xs text-muted-foreground line-through">
                 {formatPrice(product.originalPrice)}
@@ -51,7 +60,8 @@ export function ProductGrid({ products }: ProductGridProps) {
             ) : null}
           </div>
 
-          {typeof product.rating === "number" && typeof product.reviewCount === "number" ? (
+          {typeof product.rating === "number" &&
+          typeof product.reviewCount === "number" ? (
             <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <span>★ {product.rating}</span>
               <span>({product.reviewCount})</span>

@@ -23,58 +23,58 @@ export const getUserOrders = createServerFn().handler(async () => {
     return { success: false, orders: [] };
   }
 
-    const ordersList = await db.query.orders.findMany({
-      where: (ordersTable, { eq }) => eq(ordersTable.userId, session.user.id),
-      with: {
-        items: {
-          with: {
-            product: {
-              with: {
-                images: true,
-              },
+  const ordersList = await db.query.orders.findMany({
+    where: (ordersTable, { eq }) => eq(ordersTable.userId, session.user.id),
+    with: {
+      items: {
+        with: {
+          product: {
+            with: {
+              images: true,
             },
-            color: true,
-            size: true,
           },
+          color: true,
+          size: true,
         },
-        user: true,
       },
-      orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
-    });
+      user: true,
+    },
+    orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
+  });
 
-    // Convert to frontend-friendly format
-    const formattedOrders = ordersList.map((order) => ({
-      id: order.id,
-      orderNumber: order.orderNumber,
-      customer: order.user.name,
-      email: order.user.email,
-      createdAt: order.createdAt.toISOString(),
-      status: order.status,
-      paymentStatus: order.paymentStatus,
-      totalAmount: order.totalAmount,
-      totalItems: order.items.reduce((sum, item) => sum + item.quantity, 0),
-      firstItemImage: order.items[0]?.product?.images[0]?.url || null,
-      items: order.items.map((item) => ({
-        id: item.id,
-        productId: item.productId,
-        productName: item.product.name,
-        quantity: item.quantity,
-        price: item.price,
-        imageUrl: item.product.images[0]?.url || null,
-        color: item.color
-          ? {
-              name: item.color.name,
-              value: item.color.value,
-            }
-          : null,
-        size: item.size
-          ? {
-              name: item.size.name,
-              value: item.size.value,
-            }
-          : null,
-      })),
-    }));
+  // Convert to frontend-friendly format
+  const formattedOrders = ordersList.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    customer: order.user.name,
+    email: order.user.email,
+    createdAt: order.createdAt.toISOString(),
+    status: order.status,
+    paymentStatus: order.paymentStatus,
+    totalAmount: order.totalAmount,
+    totalItems: order.items.reduce((sum, item) => sum + item.quantity, 0),
+    firstItemImage: order.items[0]?.product?.images[0]?.url || null,
+    items: order.items.map((item) => ({
+      id: item.id,
+      productId: item.productId,
+      productName: item.product.name,
+      quantity: item.quantity,
+      price: item.price,
+      imageUrl: item.product.images[0]?.url || null,
+      color: item.color
+        ? {
+            name: item.color.name,
+            value: item.color.value,
+          }
+        : null,
+      size: item.size
+        ? {
+            name: item.size.name,
+            value: item.size.value,
+          }
+        : null,
+    })),
+  }));
 
   return { success: true, orders: formattedOrders };
 });
@@ -89,87 +89,87 @@ export const getOrderDetails = createServerFn()
       return { error: "Unauthorized", success: false };
     }
 
-      // Query order, ensure order belongs to current logged-in user
-      const order = await db.query.orders.findFirst({
-        where: (ordersTable, { eq, and }) =>
-          and(
-            eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id),
-          ),
-        with: {
-          items: {
-            with: {
-              product: {
-                with: {
-                  images: true,
-                },
+    // Query order, ensure order belongs to current logged-in user
+    const order = await db.query.orders.findFirst({
+      where: (ordersTable, { eq, and }) =>
+        and(
+          eq(ordersTable.id, orderId),
+          eq(ordersTable.userId, session.user.id),
+        ),
+      with: {
+        items: {
+          with: {
+            product: {
+              with: {
+                images: true,
               },
-              color: true,
-              size: true,
             },
+            color: true,
+            size: true,
           },
         },
-      });
+      },
+    });
 
-      if (!order) {
-        return { error: "Order not found", success: false };
-      }
+    if (!order) {
+      return { error: "Order not found", success: false };
+    }
 
-      // Format order details
-      const totalItems = order.items.reduce(
-        (sum, item) => sum + item.quantity,
-        0,
-      );
+    // Format order details
+    const totalItems = order.items.reduce(
+      (sum, item) => sum + item.quantity,
+      0,
+    );
 
-      const formattedOrder = {
-        id: order.id,
-        orderNumber: order.orderNumber,
-        createdAt: order.createdAt.toISOString(),
-        createdAtFormatted: new Date(order.createdAt).toLocaleDateString(
-          "zh-CN",
-          {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          },
-        ),
-        status: order.status,
-        statusText: getOrderStatusText(order.status),
-        paymentStatus: order.paymentStatus,
-        paymentStatusText: getPaymentStatusText(order.paymentStatus),
-        totalAmount: order.totalAmount,
-        totalAmountFormatted: formatPrice(order.totalAmount),
-        totalItems,
-        shippingAddress: order.shippingAddress,
-        phone: order.phone,
-        paymentMethod: order.paymentMethod,
-        items: order.items.map((item) => ({
-          id: item.id,
-          productId: item.productId,
-          productName: item.product.name,
-          productDescription: item.product.description,
-          quantity: item.quantity,
-          price: item.price,
-          priceFormatted: formatPrice(item.price),
-          totalPrice: item.price * item.quantity,
-          totalPriceFormatted: formatPrice(item.price * item.quantity),
-          imageUrl: item.product.images[0]?.url || null,
-          color: item.color
-            ? {
-                name: item.color.name,
-                value: item.color.value,
-              }
-            : null,
-          size: item.size
-            ? {
-                name: item.size.name,
-                value: item.size.value,
-              }
-            : null,
-        })),
-      };
+    const formattedOrder = {
+      id: order.id,
+      orderNumber: order.orderNumber,
+      createdAt: order.createdAt.toISOString(),
+      createdAtFormatted: new Date(order.createdAt).toLocaleDateString(
+        "zh-CN",
+        {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        },
+      ),
+      status: order.status,
+      statusText: getOrderStatusText(order.status),
+      paymentStatus: order.paymentStatus,
+      paymentStatusText: getPaymentStatusText(order.paymentStatus),
+      totalAmount: order.totalAmount,
+      totalAmountFormatted: formatPrice(order.totalAmount),
+      totalItems,
+      shippingAddress: order.shippingAddress,
+      phone: order.phone,
+      paymentMethod: order.paymentMethod,
+      items: order.items.map((item) => ({
+        id: item.id,
+        productId: item.productId,
+        productName: item.product.name,
+        productDescription: item.product.description,
+        quantity: item.quantity,
+        price: item.price,
+        priceFormatted: formatPrice(item.price),
+        totalPrice: item.price * item.quantity,
+        totalPriceFormatted: formatPrice(item.price * item.quantity),
+        imageUrl: item.product.images[0]?.url || null,
+        color: item.color
+          ? {
+              name: item.color.name,
+              value: item.color.value,
+            }
+          : null,
+        size: item.size
+          ? {
+              name: item.size.name,
+              value: item.size.value,
+            }
+          : null,
+      })),
+    };
 
     return {
       success: true,
@@ -184,9 +184,76 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
     return { success: false, orders: [] };
   }
 
-    const ordersList = await db.query.orders.findMany({
+  const ordersList = await db.query.orders.findMany({
+    where: (ordersTable, { eq, and }) =>
+      and(
+        eq(ordersTable.userId, session.user.id),
+        eq(ordersTable.paymentStatus, "UNPAID"),
+      ),
+    with: {
+      items: {
+        with: {
+          product: {
+            with: {
+              images: true,
+            },
+          },
+          color: true,
+          size: true,
+        },
+      },
+    },
+    orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
+  });
+
+  const formattedOrders = ordersList.map((order) => ({
+    id: order.id,
+    orderNumber: order.orderNumber,
+    createdAt: order.createdAt.toISOString(),
+    status: order.status,
+    paymentStatus: order.paymentStatus,
+    totalAmount: order.totalAmount,
+    firstItemImage: order.items[0]?.product?.images[0]?.url || null,
+    items: order.items.map((item) => ({
+      id: item.id,
+      productId: item.productId,
+      productName: item.product.name,
+      quantity: item.quantity,
+      price: item.price,
+      imageUrl: item.product.images[0]?.url || null,
+      color: item.color
+        ? {
+            name: item.color.name,
+            value: item.color.value,
+          }
+        : null,
+      size: item.size
+        ? {
+            name: item.size.name,
+            value: item.size.value,
+          }
+        : null,
+    })),
+  }));
+
+  return { success: true, orders: formattedOrders };
+});
+
+// Create new payment session for unpaid order
+export const createPaymentSession = createServerFn({ method: "POST" })
+  .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
+  .handler(async ({ data: orderId }) => {
+    const session = await getSession();
+
+    if (!session?.user.id) {
+      return { error: "Unauthorized", success: false };
+    }
+
+    // Get order information
+    const order = await db.query.orders.findFirst({
       where: (ordersTable, { eq, and }) =>
         and(
+          eq(ordersTable.id, orderId),
           eq(ordersTable.userId, session.user.id),
           eq(ordersTable.paymentStatus, "UNPAID"),
         ),
@@ -203,137 +270,70 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
           },
         },
       },
-      orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
     });
 
-    const formattedOrders = ordersList.map((order) => ({
-      id: order.id,
-      orderNumber: order.orderNumber,
-      createdAt: order.createdAt.toISOString(),
-      status: order.status,
-      paymentStatus: order.paymentStatus,
-      totalAmount: order.totalAmount,
-      firstItemImage: order.items[0]?.product?.images[0]?.url || null,
-      items: order.items.map((item) => ({
-        id: item.id,
-        productId: item.productId,
-        productName: item.product.name,
-        quantity: item.quantity,
-        price: item.price,
-        imageUrl: item.product.images[0]?.url || null,
-        color: item.color
-          ? {
-              name: item.color.name,
-              value: item.color.value,
-            }
-          : null,
-        size: item.size
-          ? {
-              name: item.size.name,
-              value: item.size.value,
-            }
-          : null,
-      })),
-    }));
-
-  return { success: true, orders: formattedOrders };
-});
-
-// Create new payment session for unpaid order
-export const createPaymentSession = createServerFn({ method: "POST" })
-  .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
-  .handler(async ({ data: orderId }) => {
-    const session = await getSession();
-
-    if (!session?.user.id) {
-      return { error: "Unauthorized", success: false };
+    if (!order) {
+      return { error: "Order not found", success: false };
     }
 
-      // Get order information
-      const order = await db.query.orders.findFirst({
-        where: (ordersTable, { eq, and }) =>
-          and(
-            eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id),
-            eq(ordersTable.paymentStatus, "UNPAID"),
-          ),
-        with: {
-          items: {
-            with: {
-              product: {
-                with: {
-                  images: true,
-                },
-              },
-              color: true,
-              size: true,
-            },
+    // Build line items
+    const lineItems = order.items.map((item) => {
+      const productName = item.product.name;
+      const colorName = item.color?.name || "";
+      const sizeName = item.size?.name || "";
+      const variantInfo = [colorName, sizeName].filter(Boolean).join(", ");
+
+      return {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: productName,
+            description: variantInfo ? `${variantInfo}` : undefined,
+            images: item.product.images[0]?.url
+              ? [item.product.images[0].url]
+              : undefined,
           },
+          unit_amount: formatAmountForStripe(item.price),
         },
-      });
+        quantity: item.quantity,
+      };
+    });
 
-      if (!order) {
-        return { error: "Order not found", success: false };
-      }
-
-      // Build line items
-      const lineItems = order.items.map((item) => {
-        const productName = item.product.name;
-        const colorName = item.color?.name || "";
-        const sizeName = item.size?.name || "";
-        const variantInfo = [colorName, sizeName].filter(Boolean).join(", ");
-
-        return {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: productName,
-              description: variantInfo ? `${variantInfo}` : undefined,
-              images: item.product.images[0]?.url
-                ? [item.product.images[0].url]
-                : undefined,
-            },
-            unit_amount: formatAmountForStripe(item.price),
-          },
-          quantity: item.quantity,
-        };
-      });
-
-      // Use absolute URL
-      const baseUrl = env.VITE_BASE_URL;
-      // Create Stripe checkout session
-      const checkoutSession = await stripe.checkout.sessions.create({
-        mode: "payment",
-        line_items: lineItems,
-        success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-        cancel_url: `${baseUrl}/checkout/cancel?order_id=${order.id}`,
+    // Use absolute URL
+    const baseUrl = env.VITE_BASE_URL;
+    // Create Stripe checkout session
+    const checkoutSession = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: lineItems,
+      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: `${baseUrl}/checkout/cancel?order_id=${order.id}`,
+      metadata: {
+        orderId: order.id,
+        userId: session.user.id,
+      },
+      payment_intent_data: {
         metadata: {
           orderId: order.id,
           userId: session.user.id,
         },
-        payment_intent_data: {
-          metadata: {
-            orderId: order.id,
-            userId: session.user.id,
-          },
-        },
-        billing_address_collection: "required",
-        shipping_address_collection: {
-          allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],
-        },
-        phone_number_collection: {
-          enabled: true,
-        },
-      });
+      },
+      billing_address_collection: "required",
+      shipping_address_collection: {
+        allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],
+      },
+      phone_number_collection: {
+        enabled: true,
+      },
+    });
 
-      // Update order payment intent ID
-      await db
-        .update(orders)
-        .set({
-          paymentMethod: "Stripe",
-          paymentIntent: checkoutSession.id,
-        })
-        .where(eq(orders.id, order.id));
+    // Update order payment intent ID
+    await db
+      .update(orders)
+      .set({
+        paymentMethod: "Stripe",
+        paymentIntent: checkoutSession.id,
+      })
+      .where(eq(orders.id, order.id));
 
     return {
       success: true,
@@ -353,40 +353,40 @@ export const updateOrderStatus = createServerFn({ method: "POST" })
       return { error: adminSession.error, success: false };
     }
 
-      // Convert string to OrderStatus type
-      let orderStatus: OrderStatus;
+    // Convert string to OrderStatus type
+    let orderStatus: OrderStatus;
 
-      switch (status) {
-        case "PENDING":
-          orderStatus = "PENDING";
-          break;
-        case "PROCESSING":
-          orderStatus = "PAID"; // In the model, PAID corresponds to processing status
-          break;
-        case "COMPLETED":
-          orderStatus = "COMPLETED";
-          break;
-        case "CANCELLED":
-          orderStatus = "CANCELLED";
-          break;
-        default:
-          return { error: "Invalid order status", success: false };
-      }
+    switch (status) {
+      case "PENDING":
+        orderStatus = "PENDING";
+        break;
+      case "PROCESSING":
+        orderStatus = "PAID"; // In the model, PAID corresponds to processing status
+        break;
+      case "COMPLETED":
+        orderStatus = "COMPLETED";
+        break;
+      case "CANCELLED":
+        orderStatus = "CANCELLED";
+        break;
+      default:
+        return { error: "Invalid order status", success: false };
+    }
 
-      // Query order to ensure it exists
-      const order = await db.query.orders.findFirst({
-        where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
-      });
+    // Query order to ensure it exists
+    const order = await db.query.orders.findFirst({
+      where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
+    });
 
-      if (!order) {
-        return { error: "Order not found", success: false };
-      }
+    if (!order) {
+      return { error: "Order not found", success: false };
+    }
 
-      // Update order status - now using enum type
-      await db
-        .update(orders)
-        .set({ status: orderStatus })
-        .where(eq(orders.id, orderId));
+    // Update order status - now using enum type
+    await db
+      .update(orders)
+      .set({ status: orderStatus })
+      .where(eq(orders.id, orderId));
 
     return {
       success: true,
@@ -405,30 +405,30 @@ export const getOrdersStats = createServerFn().handler(async () => {
     };
   }
 
-    // Get pending order count
-    const [pendingResult] = await db
-      .select({ count: count() })
-      .from(orders)
-      .where(eq(orders.status, "PENDING"));
+  // Get pending order count
+  const [pendingResult] = await db
+    .select({ count: count() })
+    .from(orders)
+    .where(eq(orders.status, "PENDING"));
 
-    // Get completed order count
-    const [completedResult] = await db
-      .select({ count: count() })
-      .from(orders)
-      .where(eq(orders.status, "COMPLETED"));
+  // Get completed order count
+  const [completedResult] = await db
+    .select({ count: count() })
+    .from(orders)
+    .where(eq(orders.status, "COMPLETED"));
 
-    // Get total revenue (only for paid orders)
-    const paidOrdersList = await db.query.orders.findMany({
-      where: (ordersTable, { eq }) => eq(ordersTable.paymentStatus, "PAID"),
-      columns: {
-        totalAmount: true,
-      },
-    });
+  // Get total revenue (only for paid orders)
+  const paidOrdersList = await db.query.orders.findMany({
+    where: (ordersTable, { eq }) => eq(ordersTable.paymentStatus, "PAID"),
+    columns: {
+      totalAmount: true,
+    },
+  });
 
-    const totalRevenue = paidOrdersList.reduce(
-      (total, order) => total + order.totalAmount,
-      0,
-    );
+  const totalRevenue = paidOrdersList.reduce(
+    (total, order) => total + order.totalAmount,
+    0,
+  );
 
   return {
     pendingOrders: pendingResult.count,
@@ -446,27 +446,27 @@ export const getRecentOrders = createServerFn()
       return [];
     }
 
-      const recentOrdersList = await db.query.orders.findMany({
-        limit,
-        orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
-        with: {
-          user: {
-            columns: {
-              name: true,
-              email: true,
-            },
+    const recentOrdersList = await db.query.orders.findMany({
+      limit,
+      orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
+      with: {
+        user: {
+          columns: {
+            name: true,
+            email: true,
           },
-          items: {
-            with: {
-              product: {
-                columns: {
-                  name: true,
-                },
+        },
+        items: {
+          with: {
+            product: {
+              columns: {
+                name: true,
               },
             },
           },
         },
-      });
+      },
+    });
 
     return recentOrdersList.map((order) => ({
       id: order.id,
@@ -487,47 +487,47 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
     return [];
   }
 
-    const currentYear = new Date().getFullYear();
-    const monthlyData = [];
+  const currentYear = new Date().getFullYear();
+  const monthlyData = [];
 
-    // Get sales data for each month
-    for (let month = 0; month < 12; month++) {
-      const startDate = new Date(currentYear, month, 1);
-      let endDate;
+  // Get sales data for each month
+  for (let month = 0; month < 12; month++) {
+    const startDate = new Date(currentYear, month, 1);
+    let endDate;
 
-      if (month === 11) {
-        endDate = new Date(currentYear + 1, 0, 1);
-      } else {
-        endDate = new Date(currentYear, month + 1, 1);
-      }
-
-      // Query orders for this month
-      const monthlyOrdersList = await db.query.orders.findMany({
-        where: (ordersTable, { gte, lt, and, eq }) =>
-          and(
-            gte(ordersTable.createdAt, startDate),
-            lt(ordersTable.createdAt, endDate),
-            eq(ordersTable.paymentStatus, "PAID"),
-          ),
-        columns: {
-          totalAmount: true,
-        },
-      });
-
-      // Calculate monthly total revenue
-      const total = monthlyOrdersList.reduce(
-        (sum, order) => sum + order.totalAmount,
-        0,
-      );
-
-      // Get month name
-      const monthName = `${month + 1}`;
-
-      monthlyData.push({
-        name: monthName,
-        total: total,
-      });
+    if (month === 11) {
+      endDate = new Date(currentYear + 1, 0, 1);
+    } else {
+      endDate = new Date(currentYear, month + 1, 1);
     }
+
+    // Query orders for this month
+    const monthlyOrdersList = await db.query.orders.findMany({
+      where: (ordersTable, { gte, lt, and, eq }) =>
+        and(
+          gte(ordersTable.createdAt, startDate),
+          lt(ordersTable.createdAt, endDate),
+          eq(ordersTable.paymentStatus, "PAID"),
+        ),
+      columns: {
+        totalAmount: true,
+      },
+    });
+
+    // Calculate monthly total revenue
+    const total = monthlyOrdersList.reduce(
+      (sum, order) => sum + order.totalAmount,
+      0,
+    );
+
+    // Get month name
+    const monthName = `${month + 1}`;
+
+    monthlyData.push({
+      name: monthName,
+      total: total,
+    });
+  }
 
   return monthlyData;
 });
@@ -542,31 +542,31 @@ export const getOrderById = createServerFn()
       return { success: false, error: "Unauthorized" };
     }
 
-      // Get order with all related data
-      const order = await db.query.orders.findFirst({
-        where: (ordersTable, { eq, and }) =>
-          and(
-            eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id),
-          ),
-        with: {
-          items: {
-            with: {
-              product: {
-                with: {
-                  images: true,
-                },
+    // Get order with all related data
+    const order = await db.query.orders.findFirst({
+      where: (ordersTable, { eq, and }) =>
+        and(
+          eq(ordersTable.id, orderId),
+          eq(ordersTable.userId, session.user.id),
+        ),
+      with: {
+        items: {
+          with: {
+            product: {
+              with: {
+                images: true,
               },
-              color: true,
-              size: true,
             },
+            color: true,
+            size: true,
           },
         },
-      });
+      },
+    });
 
-      if (!order) {
-        return { success: false, error: "Order not found" };
-      }
+    if (!order) {
+      return { success: false, error: "Order not found" };
+    }
 
     return { success: true, order };
   });
@@ -581,28 +581,28 @@ export const deleteUnpaidOrder = createServerFn()
       return { success: false, error: "Unauthorized" };
     }
 
-      // Get order information, ensure it is the user's unpaid order
-      const order = await db.query.orders.findFirst({
-        where: (ordersTable, { eq, and }) =>
-          and(
-            eq(ordersTable.id, orderId),
-            eq(ordersTable.userId, session.user.id),
-            eq(ordersTable.paymentStatus, "UNPAID"),
-          ),
-      });
+    // Get order information, ensure it is the user's unpaid order
+    const order = await db.query.orders.findFirst({
+      where: (ordersTable, { eq, and }) =>
+        and(
+          eq(ordersTable.id, orderId),
+          eq(ordersTable.userId, session.user.id),
+          eq(ordersTable.paymentStatus, "UNPAID"),
+        ),
+    });
 
-      if (!order) {
-        return {
-          success: false,
-          error: "Order not found or not eligible for deletion",
-        };
-      }
+    if (!order) {
+      return {
+        success: false,
+        error: "Order not found or not eligible for deletion",
+      };
+    }
 
-      // First delete all associated order items
-      await db.delete(orderItems).where(eq(orderItems.orderId, orderId));
+    // First delete all associated order items
+    await db.delete(orderItems).where(eq(orderItems.orderId, orderId));
 
-      // Then delete the order itself
-      await db.delete(orders).where(eq(orders.id, orderId));
+    // Then delete the order itself
+    await db.delete(orders).where(eq(orders.id, orderId));
 
     return { success: true, message: "Order deleted successfully" };
   });

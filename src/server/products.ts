@@ -98,76 +98,74 @@ export const updateProduct = createServerFn({ method: "POST" })
       isArchived,
     } = data;
 
-      // Find existing images
-      const existingImages = await db.query.images.findMany({
-        where: (imagesTable, { eq }) => eq(imagesTable.productId, id),
-      });
+    // Find existing images
+    const existingImages = await db.query.images.findMany({
+      where: (imagesTable, { eq }) => eq(imagesTable.productId, id),
+    });
 
-      // Delete unused images
-      const imagesToDelete = existingImages.filter(
-        (image) => !imageUrls.includes(image.url),
+    // Delete unused images
+    const imagesToDelete = existingImages.filter(
+      (image) => !imageUrls.includes(image.url),
+    );
+
+    if (imagesToDelete.length > 0) {
+      await db.delete(images).where(
+        inArray(
+          images.id,
+          imagesToDelete.map((img) => img.id),
+        ),
       );
+    }
 
-      if (imagesToDelete.length > 0) {
-        await db.delete(images).where(
-          inArray(
-            images.id,
-            imagesToDelete.map((img) => img.id),
-          ),
-        );
-      }
+    // Add new images
+    const existingUrls = existingImages.map((image) => image.url);
+    const newImages = imageUrls.filter((url) => !existingUrls.includes(url));
 
-      // Add new images
-      const existingUrls = existingImages.map((image) => image.url);
-      const newImages = imageUrls.filter((url) => !existingUrls.includes(url));
+    // Update product basic information
+    const [updatedProduct] = await db
+      .update(products)
+      .set({
+        name,
+        description,
+        price: parseFloat(price),
+        categoryId,
+        isFeatured,
+        isArchived,
+      })
+      .where(eq(products.id, id))
+      .returning();
 
-      // Update product basic information
-      const [updatedProduct] = await db
-        .update(products)
-        .set({
-          name,
-          description,
-          price: parseFloat(price),
-          categoryId,
-          isFeatured,
-          isArchived,
-        })
-        .where(eq(products.id, id))
-        .returning();
+    // Update color associations
+    await db.delete(productsToColors).where(eq(productsToColors.productId, id));
+    if (colorIds.length > 0) {
+      await db.insert(productsToColors).values(
+        colorIds.map((colorId) => ({
+          productId: id,
+          colorId,
+        })),
+      );
+    }
 
-      // Update color associations
-      await db
-        .delete(productsToColors)
-        .where(eq(productsToColors.productId, id));
-      if (colorIds.length > 0) {
-        await db.insert(productsToColors).values(
-          colorIds.map((colorId) => ({
-            productId: id,
-            colorId,
-          })),
-        );
-      }
+    // Update size associations
+    await db.delete(productsToSizes).where(eq(productsToSizes.productId, id));
+    if (sizeIds.length > 0) {
+      await db.insert(productsToSizes).values(
+        sizeIds.map((sizeId) => ({
+          productId: id,
+          sizeId,
+        })),
+      );
+    }
 
-      // Update size associations
-      await db.delete(productsToSizes).where(eq(productsToSizes.productId, id));
-      if (sizeIds.length > 0) {
-        await db.insert(productsToSizes).values(
-          sizeIds.map((sizeId) => ({
-            productId: id,
-            sizeId,
-          })),
-        );
-      }
-
-      // Add new images
-      if (newImages.length > 0) {
-        await db.insert(images).values(
-          newImages.map((url) => ({
-            productId: id,
-            url,
-          })),
-        );
-      }
+    // Add new images
+    if (newImages.length > 0) {
+      await db.insert(images).values(
+        newImages.map((url) => ({
+          productId: id,
+          url,
+        })),
+      );
+    }
 
     return { success: true, data: updatedProduct };
   });
@@ -224,60 +222,60 @@ export const createProduct = createServerFn({ method: "POST" })
       return { success: false, error: adminSession.error };
     }
 
-      const {
+    const {
+      name,
+      description,
+      price,
+      categoryId,
+      colorIds,
+      sizeIds,
+      images: imageUrls,
+      isFeatured,
+      isArchived,
+    } = data;
+
+    // Create product
+    const [product] = await db
+      .insert(products)
+      .values({
         name,
         description,
-        price,
+        price: parseFloat(price),
         categoryId,
-        colorIds,
-        sizeIds,
-        images: imageUrls,
         isFeatured,
         isArchived,
-      } = data;
+      })
+      .returning();
 
-      // Create product
-      const [product] = await db
-        .insert(products)
-        .values({
-          name,
-          description,
-          price: parseFloat(price),
-          categoryId,
-          isFeatured,
-          isArchived,
-        })
-        .returning();
+    // Create color associations
+    if (colorIds.length > 0) {
+      await db.insert(productsToColors).values(
+        colorIds.map((colorId) => ({
+          productId: product.id,
+          colorId,
+        })),
+      );
+    }
 
-      // Create color associations
-      if (colorIds.length > 0) {
-        await db.insert(productsToColors).values(
-          colorIds.map((colorId) => ({
-            productId: product.id,
-            colorId,
-          })),
-        );
-      }
+    // Create size associations
+    if (sizeIds.length > 0) {
+      await db.insert(productsToSizes).values(
+        sizeIds.map((sizeId) => ({
+          productId: product.id,
+          sizeId,
+        })),
+      );
+    }
 
-      // Create size associations
-      if (sizeIds.length > 0) {
-        await db.insert(productsToSizes).values(
-          sizeIds.map((sizeId) => ({
-            productId: product.id,
-            sizeId,
-          })),
-        );
-      }
-
-      // Create images
-      if (imageUrls.length > 0) {
-        await db.insert(images).values(
-          imageUrls.map((url) => ({
-            productId: product.id,
-            url,
-          })),
-        );
-      }
+    // Create images
+    if (imageUrls.length > 0) {
+      await db.insert(images).values(
+        imageUrls.map((url) => ({
+          productId: product.id,
+          url,
+        })),
+      );
+    }
 
     return { success: true, data: product };
   });
@@ -291,8 +289,8 @@ export const deleteProduct = createServerFn({ method: "POST" })
       return { success: false, message: adminSession.error };
     }
 
-      // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
-      await db.delete(products).where(eq(products.id, id));
+    // Delete product (associated images, colors, sizes will be cascade deleted via foreign keys)
+    await db.delete(products).where(eq(products.id, id));
 
     return { success: true, message: "Product deleted successfully" };
   });
@@ -317,28 +315,28 @@ export const getPopularProducts = createServerFn()
       return [];
     }
 
-      // Use relational query to get popular products
-      const productsList = await db.query.products.findMany({
-        with: {
-          images: true,
-          category: true,
-          orderItems: true,
-        },
-        limit,
-      });
+    // Use relational query to get popular products
+    const productsList = await db.query.products.findMany({
+      with: {
+        images: true,
+        category: true,
+        orderItems: true,
+      },
+      limit,
+    });
 
-      // Sort by order count and format return data
-      const sortedProducts = productsList
-        .map((product) => ({
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          imageUrl: product.images[0]?.url || null,
-          category: product.category.name || "",
-          orderCount: product.orderItems.length,
-        }))
-        .sort((a, b) => b.orderCount - a.orderCount)
-        .slice(0, limit);
+    // Sort by order count and format return data
+    const sortedProducts = productsList
+      .map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.images[0]?.url || null,
+        category: product.category.name || "",
+        orderCount: product.orderItems.length,
+      }))
+      .sort((a, b) => b.orderCount - a.orderCount)
+      .slice(0, limit);
 
     return sortedProducts;
   });
@@ -354,33 +352,33 @@ export const getProductFormData = createServerFn().handler(async () => {
     };
   }
 
-    // Use Promise.all to fetch all data in parallel
-    const [categories, colors, sizes] = await Promise.all([
-      db.query.categories.findMany({
-        orderBy: (categories, { desc }) => [desc(categories.createdAt)],
-        columns: {
-          id: true,
-          name: true,
-          imageUrl: true,
-        },
-      }),
-      db.query.colors.findMany({
-        orderBy: (colors, { asc }) => [asc(colors.name)],
-        columns: {
-          id: true,
-          name: true,
-          value: true,
-        },
-      }),
-      db.query.sizes.findMany({
-        orderBy: (sizes, { asc }) => [asc(sizes.name)],
-        columns: {
-          id: true,
-          name: true,
-          value: true,
-        },
-      }),
-    ]);
+  // Use Promise.all to fetch all data in parallel
+  const [categories, colors, sizes] = await Promise.all([
+    db.query.categories.findMany({
+      orderBy: (categories, { desc }) => [desc(categories.createdAt)],
+      columns: {
+        id: true,
+        name: true,
+        imageUrl: true,
+      },
+    }),
+    db.query.colors.findMany({
+      orderBy: (colors, { asc }) => [asc(colors.name)],
+      columns: {
+        id: true,
+        name: true,
+        value: true,
+      },
+    }),
+    db.query.sizes.findMany({
+      orderBy: (sizes, { asc }) => [asc(sizes.name)],
+      columns: {
+        id: true,
+        name: true,
+        value: true,
+      },
+    }),
+  ]);
 
   return {
     categories,

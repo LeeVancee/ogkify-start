@@ -89,7 +89,9 @@ function RouteComponent() {
                 onBlur={field.handleBlur}
               />
               {field.state.meta.errors.length > 0 ? (
-                <p className="mt-2 text-sm text-destructive">{field.state.meta.errors[0]}</p>
+                <p className="mt-2 text-sm text-destructive">
+                  {field.state.meta.errors[0]}
+                </p>
               ) : null}
             </div>
           )}
@@ -100,7 +102,8 @@ function RouteComponent() {
           validators={{
             onChange: ({ value }) => {
               if (!value) return "Email is required";
-              if (!/^\S+@\S+$/i.test(value)) return "Please enter a valid email address";
+              if (!/^\S+@\S+$/i.test(value))
+                return "Please enter a valid email address";
               return undefined;
             },
           }}
@@ -118,7 +121,9 @@ function RouteComponent() {
                 onBlur={field.handleBlur}
               />
               {field.state.meta.errors.length > 0 ? (
-                <p className="mt-2 text-sm text-destructive">{field.state.meta.errors[0]}</p>
+                <p className="mt-2 text-sm text-destructive">
+                  {field.state.meta.errors[0]}
+                </p>
               ) : null}
             </div>
           )}
@@ -129,7 +134,8 @@ function RouteComponent() {
           validators={{
             onChange: ({ value }) => {
               if (!value) return "Password is required";
-              if (value.length < 6) return "Password must be at least 6 characters";
+              if (value.length < 6)
+                return "Password must be at least 6 characters";
               return undefined;
             },
           }}
@@ -147,7 +153,9 @@ function RouteComponent() {
                 onBlur={field.handleBlur}
               />
               {field.state.meta.errors.length > 0 ? (
-                <p className="mt-2 text-sm text-destructive">{field.state.meta.errors[0]}</p>
+                <p className="mt-2 text-sm text-destructive">
+                  {field.state.meta.errors[0]}
+                </p>
               ) : null}
             </div>
           )}
@@ -169,11 +177,16 @@ function RouteComponent() {
         </button>
       </form>
 
-      {error ? <p className="mt-4 text-center text-sm text-destructive">{error}</p> : null}
+      {error ? (
+        <p className="mt-4 text-center text-sm text-destructive">{error}</p>
+      ) : null}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link to="/login" className="text-foreground underline underline-offset-4">
+        <Link
+          to="/login"
+          className="text-foreground underline underline-offset-4"
+        >
           Sign In
         </Link>
       </p>

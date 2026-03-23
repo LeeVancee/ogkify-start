@@ -74,13 +74,16 @@ function RouteComponent() {
           Search Results
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {products.length} result{products.length === 1 ? "" : "s"} for "{query}"
+          {products.length} result{products.length === 1 ? "" : "s"} for "
+          {query}"
         </p>
       </div>
 
       {products.length === 0 ? (
         <div className="py-20 text-center">
-          <h2 className="text-xl font-medium text-foreground">No products found</h2>
+          <h2 className="text-xl font-medium text-foreground">
+            No products found
+          </h2>
           <p className="mt-2 text-muted-foreground">
             Try a different keyword or browse the collection instead.
           </p>

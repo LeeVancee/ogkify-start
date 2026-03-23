@@ -188,7 +188,9 @@ function CategoriesPage() {
       </div>
 
       <div>
-        <h3 className="mb-3 text-sm font-medium text-foreground">Price Range</h3>
+        <h3 className="mb-3 text-sm font-medium text-foreground">
+          Price Range
+        </h3>
         <Slider
           min={0}
           max={5000}
@@ -243,7 +245,9 @@ function CategoriesPage() {
       </div>
 
       <div className="flex gap-8">
-        <aside className="hidden w-56 flex-shrink-0 sm:block">{filterSidebar}</aside>
+        <aside className="hidden w-56 flex-shrink-0 sm:block">
+          {filterSidebar}
+        </aside>
 
         {filterOpen ? (
           <div className="fixed inset-0 z-50 sm:hidden">
@@ -266,7 +270,9 @@ function CategoriesPage() {
         <div className="flex-1">
           {products.length === 0 ? (
             <div className="py-20 text-center text-muted-foreground">
-              <p className="text-lg">No products matched your current filters.</p>
+              <p className="text-lg">
+                No products matched your current filters.
+              </p>
               <button
                 type="button"
                 onClick={resetFilters}

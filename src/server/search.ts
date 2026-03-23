@@ -29,8 +29,7 @@ export const searchProducts = createServerFn()
       name: product.name,
       description: product.description,
       price: product.price,
-      image:
-        product.images[0]?.url || "/placeholder.svg?height=300&width=300",
+      image: product.images[0]?.url || "/placeholder.svg?height=300&width=300",
       category: product.category.name || "",
     }));
   });

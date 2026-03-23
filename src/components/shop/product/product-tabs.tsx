@@ -34,7 +34,9 @@ export function ProductTabs({ product }: ProductTabsProps) {
       <TabsContent value="notes" className="pt-5">
         <div className="space-y-3 text-sm text-muted-foreground">
           <p>Category: {product.category}</p>
-          <p>Available sizes and colors depend on the current product options.</p>
+          <p>
+            Available sizes and colors depend on the current product options.
+          </p>
           <p>Orders follow the existing checkout and fulfillment flow.</p>
         </div>
       </TabsContent>

@@ -49,7 +49,11 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
           <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
           <SidebarMenu>
             {group.items.map((item) => {
-              if (!("items" in item) || !item.items || item.items.length === 0) {
+              if (
+                !("items" in item) ||
+                !item.items ||
+                item.items.length === 0
+              ) {
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton

@@ -13,7 +13,10 @@ export default function Footer() {
       <div className="shop-shell py-12 sm:py-16">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link to="/" className="text-lg font-semibold tracking-tight text-foreground">
+            <Link
+              to="/"
+              className="text-lg font-semibold tracking-tight text-foreground"
+            >
               OGKIFY
             </Link>
             <p className="mt-3 max-w-xs text-sm leading-relaxed text-muted-foreground">
@@ -23,7 +26,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-medium text-foreground">Quick Links</h4>
+            <h4 className="mb-4 text-sm font-medium text-foreground">
+              Quick Links
+            </h4>
             <ul className="space-y-2.5">
               {footerLinks.map((link) => (
                 <li key={link.label}>
@@ -40,7 +45,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-medium text-foreground">Customer Care</h4>
+            <h4 className="mb-4 text-sm font-medium text-foreground">
+              Customer Care
+            </h4>
             <ul className="space-y-2.5 text-sm text-muted-foreground">
               <li>Shipping Information</li>
               <li>Returns Policy</li>
@@ -50,7 +57,9 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-sm font-medium text-foreground">Contact</h4>
+            <h4 className="mb-4 text-sm font-medium text-foreground">
+              Contact
+            </h4>
             <ul className="space-y-2.5 text-sm text-muted-foreground">
               <li>service@monostore.com</li>
               <li>+886 2 2345 6789</li>
@@ -62,8 +71,12 @@ export default function Footer() {
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
           <p>© 2026 OGKIFY. All rights reserved.</p>
           <div className="flex items-center gap-6">
-            <span className="cursor-pointer transition-colors hover:text-foreground">Privacy Policy</span>
-            <span className="cursor-pointer transition-colors hover:text-foreground">Terms of Service</span>
+            <span className="cursor-pointer transition-colors hover:text-foreground">
+              Privacy Policy
+            </span>
+            <span className="cursor-pointer transition-colors hover:text-foreground">
+              Terms of Service
+            </span>
           </div>
         </div>
       </div>

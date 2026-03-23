@@ -22,8 +22,12 @@ export default function ProductCard({ product }: { product: Product }) {
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
-      <h3 className="truncate text-sm font-medium text-foreground">{product.name}</h3>
-      <div className="mt-1 text-sm text-foreground">{formatPrice(product.price)}</div>
+      <h3 className="truncate text-sm font-medium text-foreground">
+        {product.name}
+      </h3>
+      <div className="mt-1 text-sm text-foreground">
+        {formatPrice(product.price)}
+      </div>
     </Link>
   );
 }

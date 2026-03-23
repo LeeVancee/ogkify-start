@@ -72,7 +72,9 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
       toast.success(result.message ? result.message : "Added to cart");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to add to cart");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add to cart",
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -101,7 +103,11 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                     : "h-20 w-20 overflow-hidden rounded-lg border-2 border-transparent"
                 }
               >
-                <img src={image} alt={product.name} className="h-full w-full object-cover" />
+                <img
+                  src={image}
+                  alt={product.name}
+                  className="h-full w-full object-cover"
+                />
               </button>
             ))}
           </div>
@@ -118,7 +124,9 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         <div className="mt-3 text-xl font-medium text-foreground sm:text-2xl">
           {formatPrice(product.price)}
         </div>
-        <p className="mt-6 text-sm leading-relaxed text-muted-foreground">{product.description}</p>
+        <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+          {product.description}
+        </p>
 
         {product.colors.length > 0 ? (
           <div className="mt-8">
@@ -173,7 +181,9 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
             >
               <Minus className="h-4 w-4" />
             </button>
-            <span className="w-10 text-center text-sm tabular-nums">{quantity}</span>
+            <span className="w-10 text-center text-sm tabular-nums">
+              {quantity}
+            </span>
             <button
               type="button"
               onClick={() => setQuantity((value) => value + 1)}
