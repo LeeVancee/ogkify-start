@@ -40,10 +40,15 @@ export function ColorForm({ color }: ColorFormProps = {}) {
   const isEditMode = Boolean(color);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: color?.name || "",
-      value: color?.value || "#000000",
-    },
+    defaultValues: isEditMode
+      ? {
+          name: color.name,
+          value: color.value,
+        }
+      : {
+          name: "",
+          value: "#000000",
+        },
   });
 
   const isSubmitting = form.formState.isSubmitting;

@@ -24,7 +24,7 @@ export const getProduct = createServerFn()
     });
 
     if (!product) {
-      return null;
+      throw new Error(`Product not found: ${id}`);
     }
 
     return {

@@ -16,7 +16,11 @@ export const Route = createFileRoute("/(shop)/search")({
   }),
   component: RouteComponent,
   loader: async ({ deps }) => {
-    const query = deps.q || "";
+    if (!deps.q) {
+      throw new Error("Search query is required");
+    }
+
+    const query = deps.q;
     const products = await searchProducts({ data: query });
     return { products, query };
   },

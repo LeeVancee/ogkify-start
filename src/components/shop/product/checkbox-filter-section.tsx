@@ -31,7 +31,14 @@ export function CheckboxFilterSection({
   onToggle,
 }: CheckboxFilterSectionProps) {
   if (emptyState) {
-    return null;
+    return (
+      <AccordionItem value={value}>
+        <AccordionTrigger>{title}</AccordionTrigger>
+        <AccordionContent>
+          <p className="text-sm text-muted-foreground">No options available.</p>
+        </AccordionContent>
+      </AccordionItem>
+    );
   }
 
   return (
@@ -52,7 +59,9 @@ export function CheckboxFilterSection({
                     className="h-4 w-4 rounded-full border"
                     style={{ backgroundColor: option.swatchColor }}
                   />
-                ) : null}
+                ) : (
+                  <></>
+                )}
                 <Label htmlFor={option.id} className="text-sm font-normal">
                   {option.label}
                 </Label>

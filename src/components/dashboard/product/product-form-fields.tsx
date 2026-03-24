@@ -26,6 +26,8 @@ export function ColorSelector<T extends FieldValues>({
   colors,
   watchValue = [],
 }: ColorSelectorProps<T>) {
+  const selectedColorCount = watchValue ? watchValue.length : 0;
+
   return (
     <FormField
       control={control}
@@ -38,7 +40,7 @@ export function ColorSelector<T extends FieldValues>({
               Available Colors
             </FormLabel>
             <Badge variant="secondary" className="ml-auto">
-              {watchValue?.length || 0} selected
+              {selectedColorCount} selected
             </Badge>
           </div>
           <FormDescription className="text-xs mb-3">
@@ -112,6 +114,8 @@ export function SizeSelector<T extends FieldValues>({
   sizes,
   watchValue = [],
 }: SizeSelectorProps<T>) {
+  const selectedSizeCount = watchValue ? watchValue.length : 0;
+
   return (
     <FormField
       control={control}
@@ -124,7 +128,7 @@ export function SizeSelector<T extends FieldValues>({
               Available Sizes
             </FormLabel>
             <Badge variant="secondary" className="ml-auto">
-              {watchValue?.length || 0} selected
+              {selectedSizeCount} selected
             </Badge>
           </div>
           <FormDescription className="text-xs mb-3">

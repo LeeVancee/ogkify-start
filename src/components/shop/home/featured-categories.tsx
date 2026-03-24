@@ -37,7 +37,10 @@ export function FeaturedCategories({ initialData }: FeaturedCategoriesProps) {
               {/* image container */}
               <div className="aspect-square w-full overflow-hidden">
                 <img
-                  src={category.imageUrl || "/placeholder.svg"}
+                  src={getRequiredFeaturedCategoryImage(
+                    category.imageUrl,
+                    category.name,
+                  )}
                   alt={category.name}
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                 />
@@ -57,6 +60,17 @@ export function FeaturedCategories({ initialData }: FeaturedCategoriesProps) {
       </div>
     </section>
   );
+}
+
+function getRequiredFeaturedCategoryImage(
+  imageUrl: string | null,
+  categoryName: string,
+) {
+  if (!imageUrl) {
+    throw new Error(`Featured category image is required for ${categoryName}`);
+  }
+
+  return imageUrl;
 }
 
 export function FeaturedCategoriesLoading() {

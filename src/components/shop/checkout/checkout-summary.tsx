@@ -35,7 +35,7 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
             <div key={item.id} className="flex items-center gap-4">
               <div className="h-16 w-16 overflow-hidden rounded-md border">
                 <img
-                  src={item.image || "/placeholder.svg?height=64&width=64"}
+                  src={getRequiredCheckoutItemImage(item.image, item.productId)}
                   alt={item.name}
                   width={64}
                   height={64}
@@ -83,4 +83,15 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
       </CardFooter>
     </Card>
   );
+}
+
+function getRequiredCheckoutItemImage(
+  imageUrl: string | undefined,
+  productId: string,
+) {
+  if (!imageUrl) {
+    throw new Error(`Checkout item image is required for product ${productId}`);
+  }
+
+  return imageUrl;
 }

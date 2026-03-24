@@ -39,7 +39,9 @@ function CheckoutSuccessContent() {
     queryKey: ["order", order_id, session_id],
     queryFn: async () => {
       if (!session_id || !order_id) {
-        return null;
+        throw new Error(
+          "Checkout success page requires session_id and order_id",
+        );
       }
 
       // wait for a short time to ensure webhook is processed
@@ -49,7 +51,11 @@ function CheckoutSuccessContent() {
       const result = await getOrderById({ data: order_id });
 
       if (!result.success) {
-        throw new Error(result.error || "Failed to get order information");
+        if (!result.error) {
+          throw new Error("Order request failed without an error message");
+        }
+
+        throw new Error(result.error);
       }
 
       return result;
@@ -82,7 +88,7 @@ function CheckoutSuccessContent() {
         <p className="mb-8 text-center text-muted-foreground">
           {error instanceof Error
             ? error.message
-            : "Unable to get order details, but your payment may have been processed. Please check your email or contact customer support."}
+            : "Unable to get order details."}
         </p>
         <Link
           to="/"

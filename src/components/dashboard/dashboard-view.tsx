@@ -35,6 +35,10 @@ export function DashboardView({
   recentOrders,
   monthlySalesData,
 }: DashboardViewProps) {
+  if (!monthlySalesData) {
+    throw new Error("Monthly sales data is required");
+  }
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="mb-2 flex items-center justify-between space-y-2">
@@ -114,7 +118,7 @@ export function DashboardView({
                 <CardTitle>Overview</CardTitle>
               </CardHeader>
               <CardContent className="ps-2 pt-2">
-                <Overview data={monthlySalesData ?? []} />
+                <Overview data={monthlySalesData} />
               </CardContent>
             </Card>
             <Card className="col-span-1 lg:col-span-3">

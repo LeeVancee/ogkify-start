@@ -19,15 +19,19 @@ function RouteComponent() {
     return <SpinnerLoading />;
   }
 
+  if (!data) {
+    throw new Error("Dashboard data is missing");
+  }
+
   const {
-    productsCount = 0,
-    categoriesCount = 0,
-    pendingOrders = 0,
-    completedOrders = 0,
-    totalRevenue = 0,
-    recentOrders = [],
-    monthlySalesData = [],
-  } = data || {};
+    productsCount,
+    categoriesCount,
+    pendingOrders,
+    completedOrders,
+    totalRevenue,
+    recentOrders,
+    monthlySalesData,
+  } = data;
 
   return (
     <DashboardView

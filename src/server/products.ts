@@ -57,7 +57,7 @@ export const getProduct = createServerFn()
     });
 
     if (!product) {
-      return null;
+      throw new Error(`Product not found: ${id}`);
     }
 
     return {
@@ -299,7 +299,7 @@ export const deleteProduct = createServerFn({ method: "POST" })
 export const getProductsCount = createServerFn().handler(async () => {
   const adminSession = await requireAdminSession();
   if (!adminSession.ok) {
-    return 0;
+    throw new Error(adminSession.error);
   }
 
   const [result] = await db.select({ count: count() }).from(products);
@@ -312,7 +312,7 @@ export const getPopularProducts = createServerFn()
   .handler(async ({ data: limit }) => {
     const adminSession = await requireAdminSession();
     if (!adminSession.ok) {
-      return [];
+      throw new Error(adminSession.error);
     }
 
     // Use relational query to get popular products
@@ -331,8 +331,11 @@ export const getPopularProducts = createServerFn()
         id: product.id,
         name: product.name,
         price: product.price,
-        imageUrl: product.images[0]?.url || null,
-        category: product.category.name || "",
+        imageUrl: getRequiredPopularProductImage(
+          product.images[0]?.url,
+          product.id,
+        ),
+        category: product.category.name,
         orderCount: product.orderItems.length,
       }))
       .sort((a, b) => b.orderCount - a.orderCount)
@@ -341,15 +344,24 @@ export const getPopularProducts = createServerFn()
     return sortedProducts;
   });
 
+function getRequiredPopularProductImage(
+  imageUrl: string | undefined,
+  productId: string,
+) {
+  if (!imageUrl) {
+    throw new Error(
+      `Popular product image is missing for product ${productId}`,
+    );
+  }
+
+  return imageUrl;
+}
+
 // Get all product form data in a single request for better performance
 export const getProductFormData = createServerFn().handler(async () => {
   const adminSession = await requireAdminSession();
   if (!adminSession.ok) {
-    return {
-      categories: [],
-      colors: [],
-      sizes: [],
-    };
+    throw new Error(adminSession.error);
   }
 
   // Use Promise.all to fetch all data in parallel

@@ -16,6 +16,7 @@ const updateOrderStatusSchema = z.object({
   orderId: z.uuid(),
   status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]),
 });
+
 // Get all user orders
 export const getUserOrders = createServerFn().handler(async () => {
   const session = await getSession();
@@ -53,14 +54,20 @@ export const getUserOrders = createServerFn().handler(async () => {
     paymentStatus: order.paymentStatus,
     totalAmount: order.totalAmount,
     totalItems: order.items.reduce((sum, item) => sum + item.quantity, 0),
-    firstItemImage: order.items[0]?.product?.images[0]?.url || null,
+    firstItemImage: getRequiredOrderItemImageUrl(
+      order.orderNumber,
+      order.items[0]?.product?.images[0]?.url,
+    ),
     items: order.items.map((item) => ({
       id: item.id,
       productId: item.productId,
       productName: item.product.name,
       quantity: item.quantity,
       price: item.price,
-      imageUrl: item.product.images[0]?.url || null,
+      imageUrl: getRequiredOrderItemImageUrl(
+        order.orderNumber,
+        item.product.images[0]?.url,
+      ),
       color: item.color
         ? {
             name: item.color.name,
@@ -155,7 +162,10 @@ export const getOrderDetails = createServerFn()
         priceFormatted: formatPrice(item.price),
         totalPrice: item.price * item.quantity,
         totalPriceFormatted: formatPrice(item.price * item.quantity),
-        imageUrl: item.product.images[0]?.url || null,
+        imageUrl: getRequiredOrderItemImageUrl(
+          order.orderNumber,
+          item.product.images[0]?.url,
+        ),
         color: item.color
           ? {
               name: item.color.name,
@@ -213,14 +223,20 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
     status: order.status,
     paymentStatus: order.paymentStatus,
     totalAmount: order.totalAmount,
-    firstItemImage: order.items[0]?.product?.images[0]?.url || null,
+    firstItemImage: getRequiredOrderItemImageUrl(
+      order.orderNumber,
+      order.items[0]?.product?.images[0]?.url,
+    ),
     items: order.items.map((item) => ({
       id: item.id,
       productId: item.productId,
       productName: item.product.name,
       quantity: item.quantity,
       price: item.price,
-      imageUrl: item.product.images[0]?.url || null,
+      imageUrl: getRequiredOrderItemImageUrl(
+        order.orderNumber,
+        item.product.images[0]?.url,
+      ),
       color: item.color
         ? {
             name: item.color.name,
@@ -279,9 +295,17 @@ export const createPaymentSession = createServerFn({ method: "POST" })
     // Build line items
     const lineItems = order.items.map((item) => {
       const productName = item.product.name;
-      const colorName = item.color?.name || "";
-      const sizeName = item.size?.name || "";
-      const variantInfo = [colorName, sizeName].filter(Boolean).join(", ");
+      const variantInfoParts = [];
+
+      if (item.color) {
+        variantInfoParts.push(item.color.name);
+      }
+
+      if (item.size) {
+        variantInfoParts.push(item.size.name);
+      }
+
+      const variantInfo = variantInfoParts.join(", ");
 
       return {
         price_data: {
@@ -289,9 +313,12 @@ export const createPaymentSession = createServerFn({ method: "POST" })
           product_data: {
             name: productName,
             description: variantInfo ? `${variantInfo}` : undefined,
-            images: item.product.images[0]?.url
-              ? [item.product.images[0].url]
-              : undefined,
+            images: [
+              getRequiredOrderItemImageUrl(
+                order.orderNumber,
+                item.product.images[0]?.url,
+              ),
+            ],
           },
           unit_amount: formatAmountForStripe(item.price),
         },
@@ -443,7 +470,7 @@ export const getRecentOrders = createServerFn()
   .handler(async ({ data: limit }) => {
     const adminSession = await requireAdminSession();
     if (!adminSession.ok) {
-      return [];
+      throw new Error(adminSession.error);
     }
 
     const recentOrdersList = await db.query.orders.findMany({
@@ -472,7 +499,7 @@ export const getRecentOrders = createServerFn()
       id: order.id,
       orderNumber: order.orderNumber,
       date: order.createdAt,
-      customerName: order.user.name || "Guest",
+      customerName: getRequiredCustomerName(order.user.name, order.orderNumber),
       status: order.status,
       paymentStatus: order.paymentStatus,
       amount: order.totalAmount,
@@ -484,7 +511,7 @@ export const getRecentOrders = createServerFn()
 export const getMonthlySalesData = createServerFn().handler(async () => {
   const adminSession = await requireAdminSession();
   if (!adminSession.ok) {
-    return [];
+    throw new Error(adminSession.error);
   }
 
   const currentYear = new Date().getFullYear();
@@ -611,22 +638,56 @@ export const deleteUnpaidOrder = createServerFn()
 
 // Get order status description
 function getOrderStatusText(status: string): string {
-  const statusMap: Record<string, string> = {
-    PENDING: "Pending",
-    PAID: "Paid",
-    COMPLETED: "Completed",
-    CANCELLED: "Cancelled",
-  };
-  return statusMap[status] || status;
+  switch (status) {
+    case "PENDING":
+      return "Pending";
+    case "PAID":
+      return "Paid";
+    case "COMPLETED":
+      return "Completed";
+    case "CANCELLED":
+      return "Cancelled";
+    default:
+      throw new Error(`Unknown order status: ${status}`);
+  }
 }
 
 // Get payment status description
 function getPaymentStatusText(status: string): string {
-  const statusMap: Record<string, string> = {
-    UNPAID: "Unpaid",
-    PAID: "Paid",
-    REFUNDED: "Refunded",
-    FAILED: "Failed",
-  };
-  return statusMap[status] || status;
+  switch (status) {
+    case "UNPAID":
+      return "Unpaid";
+    case "PAID":
+      return "Paid";
+    case "REFUNDED":
+      return "Refunded";
+    case "FAILED":
+      return "Failed";
+    default:
+      throw new Error(`Unknown payment status: ${status}`);
+  }
+}
+
+function getRequiredOrderItemImageUrl(
+  orderNumber: string,
+  imageUrl: string | undefined,
+) {
+  if (!imageUrl) {
+    throw new Error(
+      `Primary product image is required for order ${orderNumber}`,
+    );
+  }
+
+  return imageUrl;
+}
+
+function getRequiredCustomerName(
+  customerName: string | null,
+  orderNumber: string,
+) {
+  if (!customerName) {
+    throw new Error(`Customer name is required for order ${orderNumber}`);
+  }
+
+  return customerName;
 }

@@ -8,7 +8,7 @@ export const searchProducts = createServerFn()
   .inputValidator((query: string = "") => query)
   .handler(async ({ data: query }) => {
     if (!query || query.trim() === "") {
-      return [];
+      throw new Error("Search query is required");
     }
 
     const productsList = await db.query.products.findMany({
@@ -29,7 +29,18 @@ export const searchProducts = createServerFn()
       name: product.name,
       description: product.description,
       price: product.price,
-      image: product.images[0]?.url || "/placeholder.svg?height=300&width=300",
-      category: product.category.name || "",
+      image: getRequiredSearchProductImage(product.images[0]?.url, product.id),
+      category: product.category.name,
     }));
   });
+
+function getRequiredSearchProductImage(
+  imageUrl: string | undefined,
+  productId: string,
+) {
+  if (!imageUrl) {
+    throw new Error(`Product image is missing for product ${productId}`);
+  }
+
+  return imageUrl;
+}

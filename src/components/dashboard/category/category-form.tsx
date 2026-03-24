@@ -39,10 +39,15 @@ export function CategoryForm({ category }: CategoryFormProps = {}) {
   const isEditMode = Boolean(category);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: category?.name || "",
-      imageUrl: category?.imageUrl || "",
-    },
+    defaultValues: isEditMode
+      ? {
+          name: category.name,
+          imageUrl: getRequiredCategoryImageUrl(category.imageUrl),
+        }
+      : {
+          name: "",
+          imageUrl: "",
+        },
   });
 
   const isSubmitting = form.formState.isSubmitting;
@@ -136,4 +141,12 @@ export function CategoryForm({ category }: CategoryFormProps = {}) {
       </form>
     </Form>
   );
+}
+
+function getRequiredCategoryImageUrl(imageUrl: string | null) {
+  if (!imageUrl) {
+    throw new Error("Category image URL is required in edit mode");
+  }
+
+  return imageUrl;
 }

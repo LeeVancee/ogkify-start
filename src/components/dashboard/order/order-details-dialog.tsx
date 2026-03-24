@@ -37,7 +37,15 @@ export function OrderDetailsDialog({
   order,
   onUpdateStatus,
 }: OrderDetailsDialogProps) {
-  if (!order) return null;
+  if (!open && !order) {
+    return <></>;
+  }
+
+  if (!order) {
+    throw new Error(
+      "Selected order is required when order details dialog is open",
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

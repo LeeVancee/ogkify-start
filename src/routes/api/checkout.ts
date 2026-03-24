@@ -31,182 +31,151 @@ export const Route = createFileRoute("/api/checkout")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        let createdOrderId: string | null = null;
+        const { headers } = getRequest();
 
-        try {
-          const { headers } = getRequest();
+        const session = await auth.api.getSession({
+          headers,
+        });
+        // Check if user is logged in
+        if (!session?.user.id) {
+          return Response.json(
+            { error: "Must be logged in to checkout" },
+            { status: 401 },
+          );
+        }
 
-          const session = await auth.api.getSession({
-            headers,
-          });
-          // Check if user is logged in
-          if (!session?.user.id) {
-            return Response.json(
-              { error: "Must be logged in to checkout" },
-              { status: 401 },
-            );
-          }
-
-          // Get user's cart
-          const cart = await db.query.carts.findFirst({
-            where: (carts, { eq }) => eq(carts.userId, session.user.id),
-            with: {
-              items: {
-                with: {
-                  product: {
-                    with: {
-                      images: true,
-                    },
+        // Get user's cart
+        const cart = await db.query.carts.findFirst({
+          where: (carts, { eq }) => eq(carts.userId, session.user.id),
+          with: {
+            items: {
+              with: {
+                product: {
+                  with: {
+                    images: true,
                   },
-                  color: true,
-                  size: true,
                 },
+                color: true,
+                size: true,
               },
             },
-          });
+          },
+        });
 
-          if (!cart || cart.items.length === 0) {
-            return Response.json({ error: "Cart is empty" }, { status: 400 });
-          }
+        if (!cart || cart.items.length === 0) {
+          return Response.json({ error: "Cart is empty" }, { status: 400 });
+        }
 
-          // Calculate total amount
-          const amount = cart.items.reduce(
-            (total, item) => total + item.product.price * item.quantity,
-            0,
+        // Calculate total amount
+        const amount = cart.items.reduce(
+          (total, item) => total + item.product.price * item.quantity,
+          0,
+        );
+
+        const validatedCartItems = cart.items.map((item) =>
+          checkoutLineItemSchema.parse({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: item.product.price,
+            colorId: item.colorId,
+            sizeId: item.sizeId,
+          }),
+        );
+
+        // Build line items
+        const lineItems = cart.items.map((item) => {
+          const productName = item.product.name;
+          const colorName = item.color?.name;
+          const sizeName = item.size?.name;
+
+          // Build variant info string (only include non-empty values)
+          const variantParts = [colorName, sizeName].filter(
+            (part) => part && part.trim().length > 0,
           );
+          const variantInfo =
+            variantParts.length > 0 ? variantParts.join(", ") : null;
+          const primaryImage = item.product.images[0]?.url;
 
-          const validatedCartItems = cart.items.map((item) =>
-            checkoutLineItemSchema.parse({
+          return {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: productName,
+                description: variantInfo !== null ? variantInfo : undefined,
+                images: primaryImage ? [primaryImage] : undefined,
+              },
+              unit_amount: formatAmountForStripe(item.product.price),
+            },
+            quantity: item.quantity,
+          };
+        });
+
+        const order = await db.transaction(async (tx) => {
+          const [createdOrder] = await tx
+            .insert(orders)
+            .values({
+              userId: session.user.id,
+              orderNumber: generateOrderNumber(),
+              totalAmount: amount,
+              status: "PENDING",
+              paymentStatus: "UNPAID",
+            })
+            .returning();
+
+          await tx.insert(orderItems).values(
+            validatedCartItems.map((item) => ({
+              orderId: createdOrder.id,
               productId: item.productId,
               quantity: item.quantity,
-              price: item.product.price,
+              price: item.price,
               colorId: item.colorId,
               sizeId: item.sizeId,
-            }),
+            })),
           );
 
-          // Build line items
-          const lineItems = cart.items.map((item) => {
-            const productName = item.product.name;
-            const colorName = item.color?.name;
-            const sizeName = item.size?.name;
+          return createdOrder;
+        });
 
-            // Build variant info string (only include non-empty values)
-            const variantParts = [colorName, sizeName].filter(
-              (part) => part && part.trim().length > 0,
-            );
-            const variantInfo =
-              variantParts.length > 0 ? variantParts.join(", ") : null;
+        const origin = new URL(request.url).origin;
 
-            return {
-              price_data: {
-                currency: "usd",
-                product_data: {
-                  name: productName,
-                  description: variantInfo || undefined,
-                  images: item.product.images[0]?.url
-                    ? [item.product.images[0].url]
-                    : undefined,
-                },
-                unit_amount: formatAmountForStripe(item.product.price),
-              },
-              quantity: item.quantity,
-            };
-          });
-
-          const order = await db.transaction(async (tx) => {
-            const [createdOrder] = await tx
-              .insert(orders)
-              .values({
-                userId: session.user.id,
-                orderNumber: generateOrderNumber(),
-                totalAmount: amount,
-                status: "PENDING",
-                paymentStatus: "UNPAID",
-              })
-              .returning();
-
-            await tx.insert(orderItems).values(
-              validatedCartItems.map((item) => ({
-                orderId: createdOrder.id,
-                productId: item.productId,
-                quantity: item.quantity,
-                price: item.price,
-                colorId: item.colorId,
-                sizeId: item.sizeId,
-              })),
-            );
-
-            return createdOrder;
-          });
-
-          createdOrderId = order.id;
-
-          const origin = new URL(request.url).origin;
-
-          // Create Stripe checkout session
-          const checkoutSession = await stripe.checkout.sessions.create({
-            mode: "payment",
-            line_items: lineItems,
-            success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-            cancel_url: `${origin}/checkout/cancel?order_id=${order.id}`,
+        // Create Stripe checkout session
+        const checkoutSession = await stripe.checkout.sessions.create({
+          mode: "payment",
+          line_items: lineItems,
+          success_url: `${origin}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+          cancel_url: `${origin}/checkout/cancel?order_id=${order.id}`,
+          metadata: {
+            orderId: order.id,
+            userId: session.user.id,
+          },
+          payment_intent_data: {
             metadata: {
               orderId: order.id,
               userId: session.user.id,
             },
-            payment_intent_data: {
-              metadata: {
-                orderId: order.id,
-                userId: session.user.id,
-              },
-            },
-            billing_address_collection: "required",
-            shipping_address_collection: {
-              allowed_countries: [
-                "CN",
-                "US",
-                "CA",
-                "JP",
-                "SG",
-                "HK",
-                "TW",
-                "MO",
-              ],
-            },
-            phone_number_collection: {
-              enabled: true,
-            },
-          });
+          },
+          billing_address_collection: "required",
+          shipping_address_collection: {
+            allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],
+          },
+          phone_number_collection: {
+            enabled: true,
+          },
+        });
 
-          // Update order with Stripe session ID
-          await db
-            .update(orders)
-            .set({
-              paymentMethod: "Stripe",
-              paymentIntent: checkoutSession.id,
-            })
-            .where(eq(orders.id, order.id));
+        // Update order with Stripe session ID
+        await db
+          .update(orders)
+          .set({
+            paymentMethod: "Stripe",
+            paymentIntent: checkoutSession.id,
+          })
+          .where(eq(orders.id, order.id));
 
-          return Response.json({
-            sessionId: checkoutSession.id,
-            sessionUrl: checkoutSession.url,
-          });
-        } catch (error) {
-          console.error("Checkout error:", error);
-
-          if (createdOrderId) {
-            try {
-              await db.delete(orders).where(eq(orders.id, createdOrderId));
-            } catch (rollbackError) {
-              console.error("Checkout rollback error:", rollbackError);
-            }
-          }
-
-          return Response.json(
-            { error: "Failed to create checkout session" },
-            { status: 500 },
-          );
-        }
+        return Response.json({
+          sessionId: checkoutSession.id,
+          sessionUrl: checkoutSession.url,
+        });
       },
       GET: () => {
         return Response.json({

@@ -102,8 +102,8 @@ export const addToCart = createServerFn({ method: "POST" })
         cartId: cart.id,
         productId: data.productId,
         quantity: data.quantity,
-        colorId: data.colorId || null,
-        sizeId: data.sizeId || null,
+        colorId: data.colorId !== undefined ? data.colorId : null,
+        sizeId: data.sizeId !== undefined ? data.sizeId : null,
       });
     }
 
@@ -117,10 +117,33 @@ export const handleAddToCartFormAction = createServerFn({ method: "POST" })
       throw new Error("Invalid form data");
     }
 
-    const productId = formData.get("productId") as string;
-    const quantity = parseInt(formData.get("quantity") as string) || 1;
-    const colorId = (formData.get("colorId") as string) || undefined;
-    const sizeId = (formData.get("sizeId") as string) || undefined;
+    const productId = formData.get("productId");
+    const quantityValue = formData.get("quantity");
+    const colorIdValue = formData.get("colorId");
+    const sizeIdValue = formData.get("sizeId");
+
+    if (typeof productId !== "string" || productId.length === 0) {
+      throw new Error("Product ID is required");
+    }
+
+    if (typeof quantityValue !== "string" || quantityValue.length === 0) {
+      throw new Error("Quantity is required");
+    }
+
+    const quantity = Number.parseInt(quantityValue, 10);
+
+    if (Number.isNaN(quantity)) {
+      throw new Error("Quantity must be a valid integer");
+    }
+
+    const colorId =
+      typeof colorIdValue === "string" && colorIdValue.length > 0
+        ? colorIdValue
+        : undefined;
+    const sizeId =
+      typeof sizeIdValue === "string" && sizeIdValue.length > 0
+        ? sizeIdValue
+        : undefined;
 
     return cartItemInputSchema.parse({
       productId,
@@ -171,13 +194,13 @@ export const getUserCart = createServerFn().handler(async () => {
       name: item.product.name,
       price: item.product.price,
       quantity: item.quantity,
-      image: item.product.images[0]?.url || "/placeholder.svg",
+      image: getRequiredCartImage(item.product.images[0]?.url, item.productId),
       colorId: item.colorId,
-      colorName: item.color?.name || null,
-      colorValue: item.color?.value || null,
+      colorName: item.color ? item.color.name : null,
+      colorValue: item.color ? item.color.value : null,
       sizeId: item.sizeId,
-      sizeName: item.size?.name || null,
-      sizeValue: item.size?.value || null,
+      sizeName: item.size ? item.size.name : null,
+      sizeValue: item.size ? item.size.value : null,
     };
   });
 
@@ -186,6 +209,14 @@ export const getUserCart = createServerFn().handler(async () => {
     totalItems: formattedItems.length,
   };
 });
+
+function getRequiredCartImage(imageUrl: string | undefined, productId: string) {
+  if (!imageUrl) {
+    throw new Error(`Cart item image is missing for product ${productId}`);
+  }
+
+  return imageUrl;
+}
 
 // Remove product from cart
 export const removeFromCart = createServerFn({ method: "POST" })

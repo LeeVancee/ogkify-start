@@ -45,10 +45,15 @@ export function SizeForm({ size }: SizeFormProps = {}) {
   const isEditMode = Boolean(size);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: size?.name || "",
-      value: size?.value || "",
-    },
+    defaultValues: isEditMode
+      ? {
+          name: size.name,
+          value: size.value,
+        }
+      : {
+          name: "",
+          value: "",
+        },
   });
 
   const isSubmitting = form.formState.isSubmitting;

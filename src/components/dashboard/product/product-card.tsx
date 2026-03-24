@@ -43,7 +43,7 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
     <Card className="overflow-hidden group hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/50">
       <div className="aspect-[4/3] w-full overflow-hidden relative bg-gradient-to-br from-gray-50 to-gray-100">
         <img
-          src={product.images[0] || "/placeholder.svg"}
+          src={getRequiredProductCardImage(product.images[0], product.id)}
           alt={product.name}
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
         />
@@ -224,4 +224,15 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
       </CardFooter>
     </Card>
   );
+}
+
+function getRequiredProductCardImage(
+  imageUrl: string | undefined,
+  productId: string,
+) {
+  if (!imageUrl) {
+    throw new Error(`Primary image is required for product ${productId}`);
+  }
+
+  return imageUrl;
 }

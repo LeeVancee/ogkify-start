@@ -66,18 +66,28 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
     );
   }
 
+  if (!currentSession.user.name) {
+    throw new Error("Authenticated user name is required");
+  }
+
+  if (!currentSession.user.email) {
+    throw new Error("Authenticated user email is required");
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" className="relative h-8 w-8 rounded-full">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={currentSession.user.image || ""}
-                alt={currentSession.user.name || ""}
-              />
+              {currentSession.user.image ? (
+                <AvatarImage
+                  src={currentSession.user.image}
+                  alt={currentSession.user.name}
+                />
+              ) : null}
               <AvatarFallback>
-                {currentSession.user.name?.[0]?.toUpperCase()}
+                {currentSession.user.name[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </Button>

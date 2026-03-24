@@ -43,16 +43,17 @@ export function normalizeArray(
   }
 
   if (!value) {
-    return [];
+    return Array<string>();
   }
 
   if (value.startsWith("[") && value.endsWith("]")) {
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed) ? parsed.filter(Boolean) : [value];
-    } catch {
-      return [value];
+    const parsed = JSON.parse(value);
+
+    if (!Array.isArray(parsed)) {
+      throw new Error("Expected array-style search parameter value");
     }
+
+    return parsed.filter(Boolean);
   }
 
   return value

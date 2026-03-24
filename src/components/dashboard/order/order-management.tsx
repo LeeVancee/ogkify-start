@@ -63,10 +63,9 @@ export function OrderManagement() {
     staleTime: 1000 * 60 * 2, // 2-minute cache
   });
 
-  // Extract order array from response
-  const orders = ordersResponse?.success ? ordersResponse.orders : [];
-
-  // Use react-hook-form to manage filter form
+  if (ordersResponse && !ordersResponse.success) {
+    throw new Error("Failed to load user orders");
+  }
   const { register, watch, setValue, handleSubmit } = useForm<FilterForm>({
     defaultValues: {
       searchQuery: "",
@@ -123,10 +122,8 @@ export function OrderManagement() {
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (order.customer.toLowerCase() || "").includes(
-        searchQuery.toLowerCase(),
-      ) ||
-      (order.email.toLowerCase() || "").includes(searchQuery.toLowerCase());
+      order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.email.toLowerCase().includes(searchQuery.toLowerCase());
 
     const matchesStatus =
       statusFilter === "all" ||
@@ -160,6 +157,12 @@ export function OrderManagement() {
       </div>
     );
   }
+
+  if (!ordersResponse) {
+    throw new Error("Orders response is required");
+  }
+
+  const orders = ordersResponse.orders;
 
   // Handle form submission
   const onSubmit = (data: FilterForm) => {

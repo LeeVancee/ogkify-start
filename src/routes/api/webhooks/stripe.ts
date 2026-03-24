@@ -10,76 +10,43 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
   server: {
     handlers: {
       POST: async ({ request }: { request: Request }) => {
-        try {
-          const body = await request.text();
-          const signature = request.headers.get("stripe-signature");
+        const body = await request.text();
+        const signature = request.headers.get("stripe-signature");
 
-          if (!signature) {
-            console.error("Missing Stripe signature header");
-            return Response.json(
-              { error: "Missing Stripe signature header" },
-              { status: 400 },
-            );
-          }
-
-          // Ensure Webhook secret is configured
-          if (!env.STRIPE_WEBHOOK_SECRET) {
-            console.error("Missing STRIPE_WEBHOOK_SECRET environment variable");
-            return Response.json(
-              { error: "Webhook configuration error" },
-              { status: 500 },
-            );
-          }
-
-          // Verify Webhook signature
-          let event: Stripe.Event;
-          try {
-            event = stripe.webhooks.constructEvent(
-              body,
-              signature,
-              env.STRIPE_WEBHOOK_SECRET,
-            );
-          } catch (err) {
-            const errorMessage =
-              err instanceof Error ? err.message : "Unknown error";
-            console.error(
-              `Webhook signature verification failed: ${errorMessage}`,
-            );
-            return Response.json(
-              {
-                error: `Webhook signature verification failed: ${errorMessage}`,
-              },
-              { status: 400 },
-            );
-          }
-
-          // Handle based on event type
-          switch (event.type) {
-            case "checkout.session.completed":
-              await handleCheckoutSessionCompleted(
-                event.data.object as Stripe.Checkout.Session,
-              );
-              break;
-            case "payment_intent.payment_failed":
-              await handlePaymentIntentFailed(
-                event.data.object as Stripe.PaymentIntent,
-              );
-              break;
-            case "charge.refunded":
-              await handleChargeRefunded(event.data.object as Stripe.Charge);
-              break;
-            default:
-              console.log(`Unhandled event type: ${event.type}`);
-          }
-
-          return Response.json({ received: true });
-        } catch (error) {
-          console.error("Webhook error:", error);
-          return Response.json(
-            { error: "Error processing webhook" },
-            { status: 500 },
-          );
+        if (!signature) {
+          throw new Error("Missing Stripe signature header");
         }
+
+        if (!env.STRIPE_WEBHOOK_SECRET) {
+          throw new Error("Missing STRIPE_WEBHOOK_SECRET environment variable");
+        }
+
+        const event = stripe.webhooks.constructEvent(
+          body,
+          signature,
+          env.STRIPE_WEBHOOK_SECRET,
+        );
+
+        // Handle based on event type
+        switch (event.type) {
+          case "checkout.session.completed":
+            await handleCheckoutSessionCompleted(
+              event.data.object as Stripe.Checkout.Session,
+            );
+            break;
+          case "payment_intent.payment_failed":
+            await handlePaymentIntentFailed(
+              event.data.object as Stripe.PaymentIntent,
+            );
+            break;
+          case "charge.refunded":
+            await handleChargeRefunded(event.data.object as Stripe.Charge);
+            break;
+          default:
+            console.log(`Unhandled event type: ${event.type}`);
+        }
+
+        return Response.json({ received: true });
       },
     },
   },
@@ -133,8 +100,8 @@ async function handleCheckoutSessionCompleted(
       status: "PAID",
       paymentStatus: "PAID",
       paymentIntent: session.payment_intent as string,
-      phone: session.customer_details?.phone || null,
-      shippingAddress: addressString || null,
+      phone: session.customer_details?.phone,
+      shippingAddress: addressString.length > 0 ? addressString : null,
       updatedAt: new Date(),
     })
     .where(eq(orders.id, orderId))

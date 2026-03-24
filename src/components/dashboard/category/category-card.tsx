@@ -27,7 +27,7 @@ export function CategoryCard({
     >
       <div className="aspect-[4/3] overflow-hidden relative bg-gradient-to-br from-gray-50 to-gray-100">
         <img
-          src={category.imageUrl || "/placeholder.svg"}
+          src={getRequiredCategoryImage(category.imageUrl, category.name)}
           alt={category.name}
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
         />
@@ -61,4 +61,15 @@ export function CategoryCard({
       </div>
     </ManagementCard>
   );
+}
+
+function getRequiredCategoryImage(
+  imageUrl: string | null | undefined,
+  categoryName: string,
+) {
+  if (!imageUrl) {
+    throw new Error(`Category image is required for ${categoryName}`);
+  }
+
+  return imageUrl;
 }

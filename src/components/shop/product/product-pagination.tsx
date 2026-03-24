@@ -12,7 +12,9 @@ function ProductPaginationContent({
 }: ProductPaginationProps) {
   const navigate = useNavigate();
 
-  if (totalPages <= 1) return null;
+  if (totalPages <= 1) {
+    return <></>;
+  }
 
   return (
     <div className="mt-12 flex items-center justify-center gap-2">
@@ -46,7 +48,7 @@ function ProductPaginationContent({
 
 export function ProductPagination(props: ProductPaginationProps) {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<></>}>
       <ProductPaginationContent {...props} />
     </Suspense>
   );

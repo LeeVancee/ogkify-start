@@ -268,9 +268,6 @@ export function UnifiedProductForm({
                   control={form.control}
                   name="categoryId"
                   render={({ field }) => {
-                    const selectedCategory = categories.find(
-                      (cat) => cat.id === field.value,
-                    );
                     return (
                       <FormItem>
                         <FormLabel className="text-base">Category</FormLabel>
@@ -281,15 +278,7 @@ export function UnifiedProductForm({
                         >
                           <FormControl>
                             <SelectTrigger className="h-11 text-base">
-                              <SelectValue
-                                placeholder="Select a category"
-                                render={() => (
-                                  <span>
-                                    {selectedCategory?.name ||
-                                      "Select a category"}
-                                  </span>
-                                )}
-                              />
+                              <SelectValue placeholder="Select a category" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>

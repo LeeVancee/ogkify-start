@@ -37,6 +37,8 @@ export const Route = createFileRoute("/(shop)/profile")({
     if (!session) {
       throw redirect({ to: "/login" });
     }
+
+    return { session };
   },
 });
 
@@ -71,6 +73,14 @@ function ProfilePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
   const { session } = Route.useRouteContext();
+
+  if (!session.user.name) {
+    throw new Error("Authenticated user name is required");
+  }
+
+  if (!session.user.email) {
+    throw new Error("Authenticated user email is required");
+  }
 
   // update user profile mutation
   const updateProfileMutation = useMutation({
@@ -112,12 +122,12 @@ function ProfilePage() {
   const profileForm = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues: {
-      name: session?.user.name || "",
-      image: session?.user.image || "",
+      name: session.user.name,
+      image: session.user.image,
     },
     values: {
-      name: session?.user.name || "",
-      image: session?.user.image || "",
+      name: session.user.name,
+      image: session.user.image,
     },
   });
 
@@ -170,16 +180,14 @@ function ProfilePage() {
                   {/* user avatar */}
                   <div className="flex flex-col items-center space-y-4 sm:flex-row sm:items-start sm:space-x-6 sm:space-y-0">
                     <Avatar className="h-24 w-24">
-                      <AvatarImage
-                        src={session?.user.image || ""}
-                        alt={session?.user.name || "User"}
-                      />
+                      {session.user.image ? (
+                        <AvatarImage
+                          src={session.user.image}
+                          alt={session.user.name}
+                        />
+                      ) : null}
                       <AvatarFallback className="text-2xl">
-                        {session?.user.name ? (
-                          session.user.name.charAt(0).toUpperCase()
-                        ) : (
-                          <User />
-                        )}
+                        {session.user.name.charAt(0).toUpperCase() || <User />}
                       </AvatarFallback>
                     </Avatar>
                     <div className="space-y-2">
@@ -193,7 +201,6 @@ function ProfilePage() {
                               <Input
                                 placeholder="https://example.com/avatar.jpg"
                                 {...field}
-                                value={field.value || ""}
                               />
                             </FormControl>
                             <FormDescription>
@@ -227,11 +234,7 @@ function ProfilePage() {
                   {/* email (read only) */}
                   <div className="space-y-2">
                     <FormLabel>Email</FormLabel>
-                    <Input
-                      value={session?.user.email || ""}
-                      disabled
-                      readOnly
-                    />
+                    <Input value={session.user.email} disabled readOnly />
                     <p className="text-sm text-muted-foreground">
                       Your email address is verified and cannot be changed.
                     </p>

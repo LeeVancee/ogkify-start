@@ -44,7 +44,10 @@ export function ProductTableView({
               <TableCell>
                 <div className="h-12 w-12 overflow-hidden rounded-md border">
                   <img
-                    src={product.images[0]?.url || "/placeholder.svg"}
+                    src={getRequiredProductTableImage(
+                      product.images[0]?.url,
+                      product.id,
+                    )}
                     alt={product.name}
                     className="h-full w-full object-cover"
                   />
@@ -110,4 +113,15 @@ export function ProductTableView({
       </Table>
     </div>
   );
+}
+
+function getRequiredProductTableImage(
+  imageUrl: string | undefined,
+  productId: string,
+) {
+  if (!imageUrl) {
+    throw new Error(`Primary image is required for product ${productId}`);
+  }
+
+  return imageUrl;
 }

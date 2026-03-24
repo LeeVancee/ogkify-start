@@ -21,7 +21,11 @@ function RouteComponent() {
     return <SpinnerLoading />;
   }
 
-  const { categories = [], colors = [], sizes = [] } = data || {};
+  if (!data) {
+    throw new Error("Product form data is missing");
+  }
+
+  const { categories, colors, sizes } = data;
 
   return (
     <div className="flex flex-1 flex-col">
