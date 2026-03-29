@@ -7,6 +7,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { getSession } from "@/server/getSession";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 
 export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {

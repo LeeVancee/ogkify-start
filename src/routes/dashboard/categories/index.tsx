@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { CategoryList } from "@/components/dashboard/category/category-list";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 
 export const Route = createFileRoute("/dashboard/categories/")({
   component: RouteComponent,
+  pendingComponent: () => <SpinnerLoading />,
 });
 
 function RouteComponent() {

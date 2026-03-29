@@ -118,22 +118,6 @@ export function OrderManagement() {
     queryClient.invalidateQueries({ queryKey: ["orders"] });
   }
 
-  // Filter orders
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      order.email.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "paid" && order.paymentStatus === "PAID") ||
-      (statusFilter === "unpaid" && order.paymentStatus === "UNPAID") ||
-      (statusFilter === "processing" && order.status === "PAID");
-
-    return matchesSearch && matchesStatus;
-  });
-
   // Handle loading state
   if (isLoading) {
     return <SpinnerLoading />;
@@ -163,6 +147,22 @@ export function OrderManagement() {
   }
 
   const orders = ordersResponse.orders;
+
+  // Filter orders
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch =
+      order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.customer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.email.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "paid" && order.paymentStatus === "PAID") ||
+      (statusFilter === "unpaid" && order.paymentStatus === "UNPAID") ||
+      (statusFilter === "processing" && order.status === "PAID");
+
+    return matchesSearch && matchesStatus;
+  });
 
   // Handle form submission
   const onSubmit = (data: FilterForm) => {

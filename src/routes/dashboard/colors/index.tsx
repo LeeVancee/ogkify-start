@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ColorList } from "@/components/dashboard/color/color-list";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 
 export const Route = createFileRoute("/dashboard/colors/")({
   component: RouteComponent,
+  pendingComponent: () => <SpinnerLoading />,
 });
 
 function RouteComponent() {
