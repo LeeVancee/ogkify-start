@@ -201,6 +201,7 @@ function ProfilePage() {
                               <Input
                                 placeholder="https://example.com/avatar.jpg"
                                 {...field}
+                                value={field.value ?? ""}
                               />
                             </FormControl>
                             <FormDescription>
