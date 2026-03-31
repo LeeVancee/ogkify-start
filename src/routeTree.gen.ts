@@ -14,7 +14,6 @@ import { Route as shopRouteRouteImport } from './routes/(shop)/route'
 import { Route as authRouteRouteImport } from './routes/(auth)/route'
 import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
 import { Route as shopIndexRouteImport } from './routes/(shop)/index'
-import { Route as ApiCheckoutRouteImport } from './routes/api/checkout'
 import { Route as shopSearchRouteImport } from './routes/(shop)/search'
 import { Route as shopProfileRouteImport } from './routes/(shop)/profile'
 import { Route as shopMyordersRouteImport } from './routes/(shop)/myorders'
@@ -63,11 +62,6 @@ const shopIndexRoute = shopIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => shopRouteRoute,
-} as any)
-const ApiCheckoutRoute = ApiCheckoutRouteImport.update({
-  id: '/api/checkout',
-  path: '/api/checkout',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const shopSearchRoute = shopSearchRouteImport.update({
   id: '/search',
@@ -205,7 +199,6 @@ export interface FileRoutesByFullPath {
   '/myorders': typeof shopMyordersRoute
   '/profile': typeof shopProfileRoute
   '/search': typeof shopSearchRoute
-  '/api/checkout': typeof ApiCheckoutRoute
   '/': typeof shopIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/checkout/success': typeof shopCheckoutSuccessRoute
@@ -234,7 +227,6 @@ export interface FileRoutesByTo {
   '/myorders': typeof shopMyordersRoute
   '/profile': typeof shopProfileRoute
   '/search': typeof shopSearchRoute
-  '/api/checkout': typeof ApiCheckoutRoute
   '/': typeof shopIndexRoute
   '/dashboard': typeof DashboardIndexRoute
   '/checkout/success': typeof shopCheckoutSuccessRoute
@@ -268,7 +260,6 @@ export interface FileRoutesById {
   '/(shop)/myorders': typeof shopMyordersRoute
   '/(shop)/profile': typeof shopProfileRoute
   '/(shop)/search': typeof shopSearchRoute
-  '/api/checkout': typeof ApiCheckoutRoute
   '/(shop)/': typeof shopIndexRoute
   '/dashboard/': typeof DashboardIndexRoute
   '/(shop)/checkout/success': typeof shopCheckoutSuccessRoute
@@ -301,7 +292,6 @@ export interface FileRouteTypes {
     | '/myorders'
     | '/profile'
     | '/search'
-    | '/api/checkout'
     | '/'
     | '/dashboard/'
     | '/checkout/success'
@@ -330,7 +320,6 @@ export interface FileRouteTypes {
     | '/myorders'
     | '/profile'
     | '/search'
-    | '/api/checkout'
     | '/'
     | '/dashboard'
     | '/checkout/success'
@@ -363,7 +352,6 @@ export interface FileRouteTypes {
     | '/(shop)/myorders'
     | '/(shop)/profile'
     | '/(shop)/search'
-    | '/api/checkout'
     | '/(shop)/'
     | '/dashboard/'
     | '/(shop)/checkout/success'
@@ -390,7 +378,6 @@ export interface RootRouteChildren {
   authRouteRoute: typeof authRouteRouteWithChildren
   shopRouteRoute: typeof shopRouteRouteWithChildren
   DashboardRouteRoute: typeof DashboardRouteRouteWithChildren
-  ApiCheckoutRoute: typeof ApiCheckoutRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiWebhooksStripeRoute: typeof ApiWebhooksStripeRoute
 }
@@ -431,13 +418,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof shopIndexRouteImport
       parentRoute: typeof shopRouteRoute
-    }
-    '/api/checkout': {
-      id: '/api/checkout'
-      path: '/api/checkout'
-      fullPath: '/api/checkout'
-      preLoaderRoute: typeof ApiCheckoutRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/(shop)/search': {
       id: '/(shop)/search'
@@ -710,7 +690,6 @@ const rootRouteChildren: RootRouteChildren = {
   authRouteRoute: authRouteRouteWithChildren,
   shopRouteRoute: shopRouteRouteWithChildren,
   DashboardRouteRoute: DashboardRouteRouteWithChildren,
-  ApiCheckoutRoute: ApiCheckoutRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiWebhooksStripeRoute: ApiWebhooksStripeRoute,
 }

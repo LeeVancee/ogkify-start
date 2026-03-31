@@ -1,8 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { format } from "date-fns";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
-import { cartItems, carts } from "@/db/schema";
+import { cartItems, carts, orderItems, orders } from "@/db/schema";
+import { env } from "@/env/server";
+import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { getSession } from "./getSession";
 
 export interface CartItemData {
@@ -309,3 +312,170 @@ export const clearCart = createServerFn({ method: "POST" }).handler(
     return { success: true, message: "cart cleared" };
   },
 );
+
+// Generate order number: YYYYMMDDHHMMSS + 6-digit random number
+function generateOrderNumber(): string {
+  const now = new Date();
+  const datePart = format(now, "yyyyMMddHHmmss");
+  const randomPart = String(Math.floor(Math.random() * 1000000)).padStart(
+    6,
+    "0",
+  );
+  return `${datePart}${randomPart}`;
+}
+
+const checkoutLineItemSchema = z.object({
+  productId: z.uuid(),
+  quantity: z.number().int().positive().max(99),
+  price: z.number().nonnegative(),
+  colorId: z.uuid().nullable(),
+  sizeId: z.uuid().nullable(),
+});
+
+// Create checkout session from cart
+export const createCheckoutSession = createServerFn({
+  method: "POST",
+}).handler(async () => {
+  const session = await getSession();
+
+  if (!session?.user.id) {
+    throw new Error("Must be logged in to checkout");
+  }
+
+  // Get user's cart
+  const cart = await db.query.carts.findFirst({
+    where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
+    with: {
+      items: {
+        with: {
+          product: {
+            with: {
+              images: true,
+            },
+          },
+          color: true,
+          size: true,
+        },
+      },
+    },
+  });
+
+  if (!cart || cart.items.length === 0) {
+    throw new Error("Cart is empty");
+  }
+
+  // Calculate total amount
+  const amount = cart.items.reduce(
+    (total, item) => total + item.product.price * item.quantity,
+    0,
+  );
+
+  const validatedCartItems = cart.items.map((item) =>
+    checkoutLineItemSchema.parse({
+      productId: item.productId,
+      quantity: item.quantity,
+      price: item.product.price,
+      colorId: item.colorId,
+      sizeId: item.sizeId,
+    }),
+  );
+
+  // Build line items
+  const lineItems = cart.items.map((item) => {
+    const productName = item.product.name;
+    const colorName = item.color?.name;
+    const sizeName = item.size?.name;
+
+    // Build variant info string (only include non-empty values)
+    const variantParts = [colorName, sizeName].filter(
+      (part) => part && part.trim().length > 0,
+    );
+    const variantInfo =
+      variantParts.length > 0 ? variantParts.join(", ") : null;
+    const primaryImage = item.product.images[0]?.url;
+
+    return {
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: productName,
+          description: variantInfo !== null ? variantInfo : undefined,
+          images: primaryImage ? [primaryImage] : undefined,
+        },
+        unit_amount: formatAmountForStripe(item.product.price),
+      },
+      quantity: item.quantity,
+    };
+  });
+
+  const order = await db.transaction(async (tx) => {
+    const [createdOrder] = await tx
+      .insert(orders)
+      .values({
+        userId: session.user.id,
+        orderNumber: generateOrderNumber(),
+        totalAmount: amount,
+        status: "PENDING",
+        paymentStatus: "UNPAID",
+      })
+      .returning();
+
+    await tx.insert(orderItems).values(
+      validatedCartItems.map((item) => ({
+        orderId: createdOrder.id,
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+        colorId: item.colorId,
+        sizeId: item.sizeId,
+      })),
+    );
+
+    return createdOrder;
+  });
+
+  const baseUrl = env.VITE_BASE_URL;
+
+  // Create Stripe checkout session
+  const checkoutSession = await stripe.checkout.sessions.create({
+    mode: "payment",
+    line_items: lineItems,
+    success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+    cancel_url: `${baseUrl}/checkout/cancel?order_id=${order.id}`,
+    metadata: {
+      orderId: order.id,
+      userId: session.user.id,
+    },
+    payment_intent_data: {
+      metadata: {
+        orderId: order.id,
+        userId: session.user.id,
+      },
+    },
+    billing_address_collection: "required",
+    shipping_address_collection: {
+      allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],
+    },
+    phone_number_collection: {
+      enabled: true,
+    },
+  });
+
+  if (!checkoutSession.url) {
+    throw new Error("Stripe checkout session URL is missing");
+  }
+
+  // Update order with Stripe session ID
+  await db
+    .update(orders)
+    .set({
+      paymentMethod: "Stripe",
+      paymentIntent: checkoutSession.id,
+    })
+    .where(eq(orders.id, order.id));
+
+  return {
+    sessionId: checkoutSession.id,
+    sessionUrl: checkoutSession.url,
+  };
+});

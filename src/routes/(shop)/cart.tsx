@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2 } from "lucide-react";
-import { useState } from "react";
 import { toast } from "sonner";
+import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { formatPrice } from "@/lib/utils";
 import {
+  createCheckoutSession,
   getUserCart,
   removeFromCart,
   updateCartItemQuantity,
@@ -27,7 +28,6 @@ interface CartItem {
 
 function CartPage() {
   const queryClient = useQueryClient();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   const {
     data: cartData,
@@ -66,47 +66,20 @@ function CartPage() {
     },
   });
 
-  const handleCheckout = async () => {
-    setIsCheckingOut(true);
-
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (data.error) {
-          throw new Error(data.error);
-        }
-
-        throw new Error("Failed to create checkout session");
-      }
-
-      if (!data.sessionUrl) {
-        throw new Error("Checkout session URL is missing");
-      }
-
+  const checkoutMutation = useMutation({
+    mutationFn: () => createCheckoutSession(),
+    onSuccess: (data) => {
       window.location.href = data.sessionUrl;
-    } catch (error) {
+    },
+    onError: (error) => {
       toast.error(
         error instanceof Error ? error.message : "Checkout process failed",
       );
-    } finally {
-      setIsCheckingOut(false);
-    }
-  };
+    },
+  });
 
   if (isLoading) {
-    return (
-      <div className="shop-shell py-20 text-center text-muted-foreground">
-        Loading cart...
-      </div>
-    );
+    return <SpinnerLoading text="Loading cart..." />;
   }
 
   if (isError || !cartData) {
@@ -246,11 +219,13 @@ function CartPage() {
 
           <button
             type="button"
-            onClick={handleCheckout}
-            disabled={isCheckingOut}
+            onClick={() => checkoutMutation.mutate()}
+            disabled={checkoutMutation.isPending}
             className="shop-pill-button mt-5 w-full disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isCheckingOut ? "Processing..." : "Proceed to Checkout"}
+            {checkoutMutation.isPending
+              ? "Processing..."
+              : "Proceed to Checkout"}
           </button>
         </div>
       </div>
