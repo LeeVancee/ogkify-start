@@ -157,15 +157,15 @@ function CategoriesPage() {
   const filterSidebar = (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-3 text-sm font-medium text-foreground">Category</h3>
-        <div className="space-y-1.5">
+        <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">Category</h3>
+        <div className="space-y-0.5">
           <button
             type="button"
             onClick={() => updateSearch({ category: "", page: 1 })}
             className={
               !selectedCategory
-                ? "block w-full rounded px-2 py-1.5 text-left text-sm font-medium text-foreground bg-muted"
-                : "block w-full rounded px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
+                ? "block w-full border-l-2 border-slate-900 pl-3 py-1.5 text-left text-sm font-semibold text-slate-900"
+                : "block w-full border-l-2 border-transparent pl-3 py-1.5 text-left text-sm text-slate-500 transition-colors hover:text-slate-900 hover:border-slate-300 cursor-pointer"
             }
           >
             All
@@ -177,8 +177,8 @@ function CategoriesPage() {
               onClick={() => updateSearch({ category: category.name, page: 1 })}
               className={
                 selectedCategory === category.name
-                  ? "block w-full rounded px-2 py-1.5 text-left text-sm font-medium text-foreground bg-muted"
-                  : "block w-full rounded px-2 py-1.5 text-left text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  ? "block w-full border-l-2 border-slate-900 pl-3 py-1.5 text-left text-sm font-semibold text-slate-900"
+                  : "block w-full border-l-2 border-transparent pl-3 py-1.5 text-left text-sm text-slate-500 transition-colors hover:text-slate-900 hover:border-slate-300 cursor-pointer"
               }
             >
               {category.name}
@@ -188,7 +188,7 @@ function CategoriesPage() {
       </div>
 
       <div>
-        <h3 className="mb-3 text-sm font-medium text-foreground">
+        <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
           Price Range
         </h3>
         <Slider
@@ -203,80 +203,98 @@ function CategoriesPage() {
           }}
           className="mb-3"
         />
-        <div className="flex justify-between text-xs text-muted-foreground">
+        <div className="flex justify-between text-xs text-slate-500">
           <span>{formatPrice(priceRange[0])}</span>
           <span>{formatPrice(priceRange[1])}</span>
         </div>
-      </div>
-
-      <div>
-        <h3 className="mb-3 text-sm font-medium text-foreground">Sort By</h3>
-        <select
-          value={selectedSort}
-          onChange={(e) => updateSearch({ sort: e.target.value, page: 1 })}
-          className="w-full rounded-lg border-0 bg-muted/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-        >
-          <option value="featured">Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="newest">Newest</option>
-        </select>
       </div>
     </div>
   );
 
   return (
-    <div className="shop-shell py-8 sm:py-12">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="shop-shell py-10 sm:py-14">
+      <div className="mb-8 flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-light tracking-tight text-foreground sm:text-3xl">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
+            {total} products
+          </p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900 sm:text-4xl">
             {categoryLabel}
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">{total} products</p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => setFilterOpen((open) => !open)}
-          className="flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground sm:hidden"
-        >
-          <SlidersHorizontal className="h-4 w-4" /> Filters
-        </button>
+        <div className="flex items-center gap-3">
+          <select
+            value={selectedSort}
+            onChange={(e) => updateSearch({ sort: e.target.value, page: 1 })}
+            className="hidden sm:block rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
+          >
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="newest">Newest</option>
+          </select>
+
+          <button
+            type="button"
+            onClick={() => setFilterOpen((open) => !open)}
+            className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 transition-colors hover:text-slate-900 sm:hidden cursor-pointer"
+          >
+            <SlidersHorizontal className="h-4 w-4" /> Filters
+          </button>
+        </div>
       </div>
 
-      <div className="flex gap-8">
-        <aside className="hidden w-56 flex-shrink-0 sm:block">
+      <div className="flex gap-10">
+        <aside className="hidden w-52 shrink-0 sm:block">
           {filterSidebar}
         </aside>
 
         {filterOpen ? (
           <div className="fixed inset-0 z-50 sm:hidden">
             <div
-              className="absolute inset-0 bg-foreground/20"
+              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
               onClick={() => setFilterOpen(false)}
             />
-            <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-background p-6 shadow-xl">
+            <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-white p-6 shadow-2xl">
               <div className="mb-6 flex items-center justify-between">
-                <span className="text-sm font-medium">Filters</span>
-                <button type="button" onClick={() => setFilterOpen(false)}>
+                <span className="text-sm font-semibold text-slate-900">Filters</span>
+                <button
+                  type="button"
+                  onClick={() => setFilterOpen(false)}
+                  className="p-1 text-slate-400 hover:text-slate-700 cursor-pointer"
+                >
                   <X className="h-5 w-5" />
                 </button>
               </div>
               {filterSidebar}
+              <div className="mt-8">
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">Sort By</h3>
+                <select
+                  value={selectedSort}
+                  onChange={(e) => updateSearch({ sort: e.target.value, page: 1 })}
+                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </div>
             </div>
           </div>
         ) : null}
 
         <div className="flex-1">
           {products.length === 0 ? (
-            <div className="py-20 text-center text-muted-foreground">
-              <p className="text-lg">
+            <div className="py-24 text-center">
+              <p className="text-lg font-light text-slate-500">
                 No products matched your current filters.
               </p>
               <button
                 type="button"
                 onClick={resetFilters}
-                className="mt-3 text-sm text-foreground underline underline-offset-4"
+                className="mt-4 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 cursor-pointer"
               >
                 Clear Filters
               </button>

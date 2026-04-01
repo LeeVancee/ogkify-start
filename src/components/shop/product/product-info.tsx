@@ -83,7 +83,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
   return (
     <>
       <div className="space-y-3">
-        <div className="aspect-[3/4] overflow-hidden rounded-xl bg-muted/40">
+        <div className="aspect-square overflow-hidden rounded-2xl bg-slate-100">
           <img
             src={product.images[activeImage]}
             alt={product.name}
@@ -91,7 +91,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
           />
         </div>
         {product.images.length > 1 ? (
-          <div className="flex gap-3">
+          <div className="flex gap-2.5">
             {product.images.map((image, index) => (
               <button
                 key={image}
@@ -99,8 +99,8 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                 onClick={() => setActiveImage(index)}
                 className={
                   activeImage === index
-                    ? "h-20 w-20 overflow-hidden rounded-lg border-2 border-foreground"
-                    : "h-20 w-20 overflow-hidden rounded-lg border-2 border-transparent"
+                    ? "h-20 w-20 overflow-hidden rounded-xl border-2 border-slate-900 cursor-pointer"
+                    : "h-20 w-20 overflow-hidden rounded-xl border-2 border-transparent opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
                 }
               >
                 <img
@@ -115,22 +115,22 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
       </div>
 
       <div className="flex flex-col">
-        <span className="mb-2 text-xs uppercase tracking-[0.15em] text-muted-foreground">
+        <span className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
           {product.category}
         </span>
-        <h1 className="text-2xl font-light leading-tight tracking-tight text-foreground sm:text-3xl">
+        <h1 className="text-2xl font-light leading-tight tracking-tight text-slate-900 sm:text-3xl">
           {product.name}
         </h1>
-        <div className="mt-3 text-xl font-medium text-foreground sm:text-2xl">
+        <div className="mt-3 text-2xl font-semibold text-slate-900">
           {formatPrice(product.price)}
         </div>
-        <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+        <p className="mt-5 text-sm leading-relaxed text-slate-500">
           {product.description}
         </p>
 
         {product.colors.length > 0 ? (
           <div className="mt-8">
-            <h3 className="mb-3 text-sm font-medium text-foreground">Color</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Color</h3>
             <div className="flex flex-wrap gap-2">
               {product.colors.map((color) => (
                 <button
@@ -139,8 +139,8 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                   onClick={() => setSelectedColor(color.id)}
                   className={
                     selectedColor === color.id
-                      ? "rounded-full border border-foreground bg-foreground px-4 py-2 text-sm text-background"
-                      : "rounded-full border border-border px-4 py-2 text-sm text-foreground transition-colors hover:border-foreground/50"
+                      ? "rounded-lg border-2 border-slate-900 bg-slate-900 px-4 py-2 text-sm font-medium text-white cursor-pointer"
+                      : "rounded-lg border-2 border-slate-200 px-4 py-2 text-sm text-slate-700 transition-colors hover:border-slate-400 cursor-pointer"
                   }
                 >
                   {color.name}
@@ -152,7 +152,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
         {product.sizes.length > 0 ? (
           <div className="mt-6">
-            <h3 className="mb-3 text-sm font-medium text-foreground">Size</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Size</h3>
             <div className="flex flex-wrap gap-2">
               {product.sizes.map((size) => (
                 <button
@@ -161,8 +161,8 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
                   onClick={() => setSelectedSize(size.id)}
                   className={
                     selectedSize === size.id
-                      ? "h-10 w-12 rounded-lg border border-foreground bg-foreground text-sm text-background"
-                      : "h-10 w-12 rounded-lg border border-border text-sm text-foreground transition-colors hover:border-foreground/50"
+                      ? "h-10 min-w-12 rounded-lg border-2 border-slate-900 bg-slate-900 px-3 text-sm font-medium text-white cursor-pointer"
+                      : "h-10 min-w-12 rounded-lg border-2 border-slate-200 px-3 text-sm text-slate-700 transition-colors hover:border-slate-400 cursor-pointer"
                   }
                 >
                   {size.value}
@@ -173,23 +173,23 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         ) : null}
 
         <div className="mt-8 flex items-center gap-4">
-          <div className="flex items-center rounded-lg border border-border">
+          <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setQuantity((value) => Math.max(1, value - 1))}
-              className="p-2.5 text-muted-foreground transition-colors hover:text-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 cursor-pointer"
             >
-              <Minus className="h-4 w-4" />
+              <Minus className="h-3.5 w-3.5" />
             </button>
-            <span className="w-10 text-center text-sm tabular-nums">
+            <span className="w-8 text-center text-sm font-semibold tabular-nums text-slate-900">
               {quantity}
             </span>
             <button
               type="button"
               onClick={() => setQuantity((value) => value + 1)}
-              className="p-2.5 text-muted-foreground transition-colors hover:text-foreground"
+              className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 cursor-pointer"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-3.5 w-3.5" />
             </button>
           </div>
 
@@ -197,7 +197,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
             type="button"
             onClick={handleAddToCart}
             disabled={isSubmitting}
-            className="shop-pill-button flex-1 disabled:cursor-not-allowed disabled:opacity-70"
+            className="flex-1 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {isSubmitting ? "Adding..." : "Add to Cart"}
           </button>

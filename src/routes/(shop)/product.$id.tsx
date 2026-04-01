@@ -39,25 +39,28 @@ function RouteComponent() {
   };
 
   return (
-    <div className="shop-shell py-6 sm:py-10">
+    <div className="shop-shell py-8 sm:py-12">
       <Link
         to="/products"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+        className="mb-8 inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-slate-900"
       >
         <ChevronLeft className="h-4 w-4" /> Back to Products
       </Link>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-16">
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
         <ProductInfo product={product} addToCartAction={addToCartAdapter} />
       </div>
 
       <ProductTabs product={product} />
 
       {relatedProducts.length > 0 ? (
-        <div className="mt-16">
-          <h2 className="mb-8 text-2xl font-light tracking-tight text-foreground">
-            Related Products
-          </h2>
+        <div className="mt-20 border-t border-slate-100 pt-16">
+          <div className="mb-10">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">You May Also Like</p>
+            <h2 className="text-3xl font-light tracking-tight text-slate-900">
+              Related Products
+            </h2>
+          </div>
           <ProductGrid products={relatedProducts} />
         </div>
       ) : null}

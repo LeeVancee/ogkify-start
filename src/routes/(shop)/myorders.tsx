@@ -1,6 +1,13 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
-import { CheckCircle, ChevronDown, ChevronUp, Package } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  CheckCircle,
+  ChevronDown,
+  ChevronUp,
+  Clock,
+  Package,
+  ShoppingBag,
+} from "lucide-react";
 import { useState } from "react";
 import { DeleteOrderButton } from "@/components/shop/orders/delete-order-button";
 import { PayOrderButton } from "@/components/shop/orders/pay-order-button";
@@ -31,16 +38,28 @@ interface Order {
   items: Array<OrderItem>;
 }
 
-function statusLabel(paymentStatus: string) {
-  if (paymentStatus === "PAID") return "Paid";
-  if (paymentStatus === "UNPAID") return "Unpaid";
-  return paymentStatus;
-}
-
-function statusClass(paymentStatus: string) {
-  if (paymentStatus === "PAID") return "bg-green-100 text-green-800";
-  if (paymentStatus === "UNPAID") return "bg-yellow-100 text-yellow-800";
-  return "bg-muted text-foreground";
+function StatusBadge({ status }: { status: string }) {
+  if (status === "PAID") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-200">
+        <CheckCircle className="h-3 w-3" />
+        Paid
+      </span>
+    );
+  }
+  if (status === "UNPAID") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700 ring-1 ring-amber-200">
+        <Clock className="h-3 w-3" />
+        Unpaid
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+      {status}
+    </span>
+  );
 }
 
 function MyOrdersPage() {
@@ -61,8 +80,16 @@ function MyOrdersPage() {
 
   if (isLoadingAll || isLoadingUnpaid) {
     return (
-      <div className="shop-shell py-20 text-center text-muted-foreground">
-        Loading orders...
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mb-10">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Account</p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900">My Orders</h1>
+        </div>
+        <div className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-20 animate-pulse rounded-2xl bg-slate-100" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -82,127 +109,187 @@ function MyOrdersPage() {
 
   if (allOrders.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-        <h1 className="mb-8 text-2xl font-light tracking-tight text-foreground sm:text-3xl">
-          My Orders
-        </h1>
-        <div className="py-20 text-center">
-          <Package className="mx-auto mb-4 h-12 w-12 text-muted-foreground/40" />
-          <p className="text-muted-foreground">You don't have any orders yet</p>
+      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+        <div className="mb-10">
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Account</p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900">My Orders</h1>
+        </div>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-24 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+            <Package className="h-8 w-8 text-slate-400" />
+          </div>
+          <p className="text-base font-medium text-slate-700">No orders yet</p>
+          <p className="mt-1 text-sm text-slate-400">Your order history will appear here</p>
+          <Link
+            to="/products"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+          >
+            <ShoppingBag className="h-4 w-4" />
+            Start Shopping
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12">
-      <h1 className="mb-8 text-2xl font-light tracking-tight text-foreground sm:text-3xl">
-        My Orders
-      </h1>
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mb-10 flex items-end justify-between">
+        <div>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Account</p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900">My Orders</h1>
+        </div>
+        <span className="text-sm text-slate-400">{allOrders.length} order{allOrders.length === 1 ? "" : "s"}</span>
+      </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {allOrders.map((order) => {
           const expanded = expandedId === order.id;
+          const isUnpaid = unpaidOrderIds.has(order.id);
+          const previewImages = order.items.slice(0, 3).map((item) => item.imageUrl).filter(Boolean);
 
           return (
             <div
               key={order.id}
-              className="overflow-hidden rounded-xl border border-border"
+              className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition-shadow hover:shadow-sm"
             >
+              {/* Order header row */}
               <button
                 type="button"
                 onClick={() => setExpandedId(expanded ? null : order.id)}
-                className="flex w-full items-center justify-between p-4 text-left transition-colors hover:bg-muted/30 sm:p-5"
+                className="flex w-full items-center gap-4 p-4 text-left sm:p-5 cursor-pointer"
               >
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-medium text-foreground">
-                    {order.orderNumber}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {new Date(order.createdAt).toLocaleDateString("zh-TW")}
+                {/* Product image previews */}
+                <div className="hidden shrink-0 sm:flex -space-x-2">
+                  {previewImages.length > 0 ? (
+                    previewImages.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img!}
+                        alt=""
+                        className="h-12 w-12 rounded-xl border-2 border-white object-cover"
+                        style={{ zIndex: previewImages.length - idx }}
+                      />
+                    ))
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-100">
+                      <Package className="h-5 w-5 text-slate-400" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Order info */}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-semibold text-slate-900">
+                      {order.orderNumber}
+                    </p>
+                    <StatusBadge status={order.paymentStatus} />
+                  </div>
+                  <p className="mt-0.5 text-xs text-slate-400">
+                    {new Date(order.createdAt).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                    {" · "}
+                    {order.items.length} item{order.items.length === 1 ? "" : "s"}
                   </p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-medium ${statusClass(order.paymentStatus)}`}
-                  >
-                    {statusLabel(order.paymentStatus)}
-                  </span>
-                  <span className="hidden text-sm font-medium text-foreground tabular-nums sm:inline">
+                {/* Total + chevron */}
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="text-sm font-semibold text-slate-900 tabular-nums">
                     {formatPrice(order.totalAmount)}
                   </span>
-                  {expanded ? (
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  )}
+                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                    {expanded ? (
+                      <ChevronUp className="h-3.5 w-3.5" />
+                    ) : (
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    )}
+                  </div>
                 </div>
               </button>
 
+              {/* Expanded detail */}
               {expanded ? (
-                <div className="space-y-4 border-t border-border bg-muted/20 p-4 sm:p-5">
-                  {order.items.map((item) => {
-                    if (!item.imageUrl) {
-                      throw new Error(
-                        `Order item image is missing for item ${item.id}`,
-                      );
-                    }
+                <div className="border-t border-slate-100 bg-slate-50/70 px-4 pb-5 pt-4 sm:px-5">
+                  {/* Items list */}
+                  <div className="space-y-3">
+                    {order.items.map((item) => {
+                      if (!item.imageUrl) {
+                        throw new Error(
+                          `Order item image is missing for item ${item.id}`,
+                        );
+                      }
 
-                    return (
-                      <div key={item.id} className="flex gap-3">
-                        <img
-                          src={item.imageUrl}
-                          alt={item.productName}
-                          className="h-14 w-14 rounded-lg object-cover"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm text-foreground">
-                            {item.productName}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {item.color ? item.color.name : ""}{" "}
-                            {item.size ? `/ ${item.size.name}` : ""} ×{" "}
-                            {item.quantity}
-                          </p>
+                      return (
+                        <div key={item.id} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
+                          <img
+                            src={item.imageUrl}
+                            alt={item.productName}
+                            className="h-16 w-16 shrink-0 rounded-lg object-cover"
+                          />
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm font-semibold text-slate-900">
+                              {item.productName}
+                            </p>
+                            <div className="mt-0.5 flex flex-wrap gap-1.5">
+                              {item.color ? (
+                                <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                                  {item.color.name}
+                                </span>
+                              ) : null}
+                              {item.size ? (
+                                <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                                  {item.size.name}
+                                </span>
+                              ) : null}
+                              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                                × {item.quantity}
+                              </span>
+                            </div>
+                          </div>
+                          <span className="shrink-0 text-sm font-semibold text-slate-900 tabular-nums">
+                            {formatPrice(item.price * item.quantity)}
+                          </span>
                         </div>
-                        <span className="text-sm text-foreground tabular-nums">
-                          {formatPrice(item.price * item.quantity)}
-                        </span>
-                      </div>
-                    );
-                  })}
-
-                  <div className="flex flex-wrap gap-2 border-t border-border pt-3">
-                    {unpaidOrderIds.has(order.id) ? (
-                      <PayOrderButton orderId={order.id} />
-                    ) : null}
-                    {unpaidOrderIds.has(order.id) ? (
-                      <DeleteOrderButton
-                        orderId={order.id}
-                        orderNumber={order.orderNumber}
-                        onDeleted={() =>
-                          queryClient.invalidateQueries({
-                            queryKey: ["orders"],
-                          })
-                        }
-                      />
-                    ) : null}
+                      );
+                    })}
                   </div>
 
-                  <div className="border-t border-border pt-3 text-right">
-                    <div className="text-sm text-muted-foreground">
-                      Order Total
+                  {/* Footer: total + actions */}
+                  <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-wrap gap-2">
+                      {isUnpaid ? (
+                        <>
+                          <PayOrderButton orderId={order.id} />
+                          <DeleteOrderButton
+                            orderId={order.id}
+                            orderNumber={order.orderNumber}
+                            onDeleted={() =>
+                              queryClient.invalidateQueries({
+                                queryKey: ["orders"],
+                              })
+                            }
+                          />
+                        </>
+                      ) : null}
                     </div>
-                    <div className="text-xl font-medium text-foreground">
-                      {formatPrice(order.totalAmount)}
+
+                    <div className="text-right">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Order Total</p>
+                      <p className="mt-0.5 text-2xl font-light tracking-tight text-slate-900">
+                        {formatPrice(order.totalAmount)}
+                      </p>
+                      {order.paymentStatus === "PAID" ? (
+                        <div className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-medium text-green-600">
+                          <CheckCircle className="h-3.5 w-3.5" />
+                          Payment completed
+                        </div>
+                      ) : null}
                     </div>
-                    {order.paymentStatus === "PAID" ? (
-                      <div className="mt-2 inline-flex items-center gap-2 text-sm text-green-600">
-                        <CheckCircle className="h-4 w-4" />
-                        Payment completed
-                      </div>
-                    ) : null}
                   </div>
                 </div>
               ) : null}

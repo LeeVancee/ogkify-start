@@ -46,9 +46,7 @@ export default function Header({
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
-    if (!searchQuery.trim()) {
-      throw new Error("Search query is required");
-    }
+    if (!searchQuery.trim()) return;
 
     navigate({
       to: "/search",
@@ -57,12 +55,12 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
       <div className="shop-shell">
         <div className="flex h-16 items-center justify-between">
           <button
             type="button"
-            className="sm:hidden p-2 -ml-2 text-foreground/70 transition-colors hover:text-foreground"
+            className="sm:hidden p-2 -ml-2 text-slate-500 transition-colors hover:text-slate-900"
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-label="Toggle menu"
           >
@@ -75,22 +73,22 @@ export default function Header({
 
           <Link
             to="/"
-            className="text-lg font-semibold tracking-tight text-foreground"
+            className="text-base font-bold tracking-widest text-slate-900 uppercase"
           >
-            OGKI<span className="font-light">FY</span>
+            OGKIFY
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-8">
+          <nav className="hidden sm:flex items-center gap-10">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 search={item.search}
                 className={cn(
-                  "text-sm tracking-wide transition-colors hover:text-foreground",
+                  "relative text-sm tracking-wide transition-colors hover:text-slate-900 pb-0.5",
                   pathname === item.href
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground",
+                    ? "font-medium text-slate-900 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-slate-900 after:rounded-full"
+                    : "text-slate-500",
                 )}
               >
                 {item.name}
@@ -98,11 +96,11 @@ export default function Header({
             ))}
           </nav>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setSearchOpen((open) => !open)}
-              className="p-2 text-foreground/70 transition-colors hover:text-foreground"
+              className="p-2 text-slate-500 transition-colors hover:text-slate-900 cursor-pointer"
               aria-label="Search"
             >
               <Search className="h-5 w-5" />
@@ -113,7 +111,7 @@ export default function Header({
             ) : (
               <Link
                 to="/login"
-                className="p-2 text-foreground/70 transition-colors hover:text-foreground"
+                className="p-2 text-slate-500 transition-colors hover:text-slate-900"
                 aria-label="Account"
               >
                 <User className="h-5 w-5" />
@@ -122,12 +120,12 @@ export default function Header({
 
             <Link
               to="/cart"
-              className="relative p-2 text-foreground/70 transition-colors hover:text-foreground"
+              className="relative p-2 text-slate-500 transition-colors hover:text-slate-900"
               aria-label="Cart"
             >
               <ShoppingBag className="h-5 w-5" />
               {initialCartData.totalItems ? (
-                <span className="absolute -right-0.5 -top-0.5 flex h-[18px] w-[18px] items-center justify-center rounded-full bg-foreground text-[10px] font-medium text-background">
+                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-semibold text-white">
                   {initialCartData.totalItems}
                 </span>
               ) : null}
@@ -138,14 +136,15 @@ export default function Header({
         {searchOpen ? (
           <div className="pb-4">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 type="search"
                 placeholder="Search products..."
-                className="w-full rounded-lg border-0 bg-muted/50 py-2.5 pl-10 pr-4 text-sm"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 text-sm focus-visible:ring-slate-900"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={handleSearch}
+                autoFocus
               />
               <button
                 type="button"
@@ -153,7 +152,7 @@ export default function Header({
                   setSearchOpen(false);
                   setSearchQuery("");
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
                 aria-label="Close search"
               >
                 <X className="h-4 w-4" />
@@ -163,7 +162,7 @@ export default function Header({
         ) : null}
 
         {isMenuOpen ? (
-          <nav className="space-y-1 border-t border-border bg-background px-1 py-4 sm:hidden">
+          <nav className="space-y-0.5 border-t border-slate-100 bg-white px-1 py-3 sm:hidden">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -171,10 +170,10 @@ export default function Header({
                 search={item.search}
                 onClick={() => setIsMenuOpen(false)}
                 className={cn(
-                  "block py-2.5 text-sm tracking-wide transition-colors",
+                  "block rounded-lg px-3 py-2.5 text-sm tracking-wide transition-colors",
                   pathname === item.href
-                    ? "font-medium text-foreground"
-                    : "text-muted-foreground",
+                    ? "font-medium text-slate-900 bg-slate-50"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50",
                 )}
               >
                 {item.name}

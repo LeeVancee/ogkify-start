@@ -96,12 +96,15 @@ function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="shop-shell py-20 text-center">
-        <h1 className="mb-3 text-2xl font-light tracking-tight text-foreground">
-          Cart
+      <div className="shop-shell py-24 text-center">
+        <h1 className="mb-3 text-3xl font-light tracking-tight text-slate-900">
+          Your Cart
         </h1>
-        <p className="text-muted-foreground">Your cart is empty</p>
-        <Link to="/products" className="shop-pill-button mt-6">
+        <p className="text-slate-500">Your cart is empty</p>
+        <Link
+          to="/products"
+          className="mt-8 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+        >
           Continue Shopping
         </Link>
       </div>
@@ -109,23 +112,23 @@ function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 sm:py-12">
-      <h1 className="mb-8 text-2xl font-light tracking-tight text-foreground sm:text-3xl">
-        Cart
+    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
+      <h1 className="mb-10 text-3xl font-light tracking-tight text-slate-900">
+        Your Cart
       </h1>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="space-y-4 lg:col-span-2">
+        <div className="space-y-3 lg:col-span-2">
           {items.map((item) => (
             <div
               key={item.id}
-              className="flex gap-4 rounded-xl border border-border p-4"
+              className="flex gap-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5"
             >
               <Link to="/product/$id" params={{ id: item.productId }}>
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="h-20 w-20 flex-shrink-0 rounded-lg object-cover sm:h-24 sm:w-24"
+                  className="h-28 w-28 shrink-0 rounded-xl object-cover"
                 />
               </Link>
 
@@ -135,11 +138,11 @@ function CartPage() {
                     <Link
                       to="/product/$id"
                       params={{ id: item.productId }}
-                      className="block truncate text-sm font-medium text-foreground hover:underline"
+                      className="block truncate text-sm font-semibold text-slate-900 hover:text-slate-600 transition-colors"
                     >
                       {item.name}
                     </Link>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
+                    <p className="mt-1 text-xs text-slate-400">
                       {item.colorName ? item.colorName : ""}{" "}
                       {item.sizeValue ? `/ ${item.sizeValue}` : ""}
                     </p>
@@ -147,14 +150,14 @@ function CartPage() {
                   <button
                     type="button"
                     onClick={() => removeItemMutation.mutate(item.id)}
-                    className="p-1 text-muted-foreground transition-colors hover:text-destructive"
+                    className="p-1 text-slate-300 transition-colors hover:text-red-500 cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="flex items-center rounded-lg border border-border">
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
                     <button
                       type="button"
                       onClick={() => {
@@ -168,11 +171,11 @@ function CartPage() {
                           quantity: item.quantity - 1,
                         });
                       }}
-                      className="p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 cursor-pointer"
                     >
-                      <Minus className="h-3.5 w-3.5" />
+                      <Minus className="h-3 w-3" />
                     </button>
-                    <span className="w-8 text-center text-sm tabular-nums">
+                    <span className="w-7 text-center text-sm font-semibold tabular-nums text-slate-900">
                       {item.quantity}
                     </span>
                     <button
@@ -183,13 +186,13 @@ function CartPage() {
                           quantity: item.quantity + 1,
                         })
                       }
-                      className="p-1.5 text-muted-foreground transition-colors hover:text-foreground"
+                      className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 cursor-pointer"
                     >
-                      <Plus className="h-3.5 w-3.5" />
+                      <Plus className="h-3 w-3" />
                     </button>
                   </div>
 
-                  <span className="text-sm font-medium text-foreground tabular-nums">
+                  <span className="text-sm font-semibold text-slate-900 tabular-nums">
                     {formatPrice(item.price * item.quantity)}
                   </span>
                 </div>
@@ -198,22 +201,22 @@ function CartPage() {
           ))}
         </div>
 
-        <div className="h-fit rounded-xl bg-muted/40 p-6 lg:sticky lg:top-24">
-          <h2 className="mb-4 text-sm font-medium text-foreground">
+        <div className="h-fit rounded-2xl border border-slate-200 bg-white p-6 lg:sticky lg:top-24">
+          <h2 className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">
             Order Summary
           </h2>
-          <div className="space-y-2.5 text-sm">
-            <div className="flex justify-between text-muted-foreground">
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between text-slate-500">
               <span>Subtotal</span>
-              <span className="tabular-nums">{formatPrice(subtotal)}</span>
+              <span className="tabular-nums font-medium text-slate-900">{formatPrice(subtotal)}</span>
             </div>
-            <div className="flex justify-between text-muted-foreground">
+            <div className="flex justify-between text-slate-500">
               <span>Shipping</span>
-              <span className="tabular-nums">Free</span>
+              <span className="font-medium text-slate-900">Free</span>
             </div>
-            <div className="flex justify-between border-t border-border pt-2.5 font-medium text-foreground">
-              <span>Total</span>
-              <span className="tabular-nums">{formatPrice(total)}</span>
+            <div className="flex justify-between border-t border-slate-100 pt-3 text-slate-900">
+              <span className="font-semibold">Total</span>
+              <span className="tabular-nums font-semibold">{formatPrice(total)}</span>
             </div>
           </div>
 
@@ -221,7 +224,7 @@ function CartPage() {
             type="button"
             onClick={() => checkoutMutation.mutate()}
             disabled={checkoutMutation.isPending}
-            className="shop-pill-button mt-5 w-full disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 w-full rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {checkoutMutation.isPending
               ? "Processing..."
