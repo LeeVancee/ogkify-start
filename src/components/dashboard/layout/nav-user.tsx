@@ -21,7 +21,7 @@ import { authClient } from "@/lib/auth-client";
 export function NavUser() {
   const { isMobile } = useSidebar();
   const router = useRouter();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const handleLogout = () => {
     authClient.signOut({
@@ -32,16 +32,21 @@ export function NavUser() {
       },
     });
   };
-  if (!session) {
-    throw new Error("Authenticated admin session is required");
-  }
 
-  if (!session.user.name) {
-    throw new Error("Authenticated admin user name is required");
-  }
-
-  if (!session.user.email) {
-    throw new Error("Authenticated admin user email is required");
+  if (isPending || !session) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton size="lg" disabled>
+            <div className="h-8 w-8 rounded-lg bg-muted animate-pulse" />
+            <div className="flex-1 space-y-1.5">
+              <div className="h-3 w-24 rounded bg-muted animate-pulse" />
+              <div className="h-2.5 w-32 rounded bg-muted animate-pulse" />
+            </div>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
   }
 
   return (

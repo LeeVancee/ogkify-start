@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Plus, Search, X } from "lucide-react";
+import { AlertCircle, PackageOpen, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
@@ -86,33 +86,33 @@ export function ResourceList<TItem>({
 
   if (isError) {
     return (
-      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">
-            {errorTitle}
-          </h3>
-          <p className="mb-4 mt-2 text-sm text-muted-foreground">
-            {errorDescription}
-          </p>
-          <Button
-            onClick={() => queryClient.invalidateQueries({ queryKey })}
-            variant="outline"
-          >
-            Try Again
-          </Button>
-        </div>
+      <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-destructive/30 bg-destructive/5 p-8 text-center">
+        <AlertCircle className="h-10 w-10 text-destructive/60" />
+        <h3 className="mt-4 text-base font-semibold text-destructive">
+          {errorTitle}
+        </h3>
+        <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-sm">
+          {errorDescription}
+        </p>
+        <Button
+          onClick={() => queryClient.invalidateQueries({ queryKey })}
+          variant="outline"
+          size="sm"
+        >
+          Try Again
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
-            className="pl-8"
+            className="h-10 pl-9 pr-9"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -120,7 +120,7 @@ export function ResourceList<TItem>({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-9 w-9"
+              className="absolute right-0 top-0 h-10 w-10"
               onClick={() => setSearchQuery("")}
             >
               <X className="h-4 w-4" />
@@ -130,7 +130,7 @@ export function ResourceList<TItem>({
         </div>
         <Link
           to={addHref}
-          className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           {addLabel}
@@ -138,16 +138,17 @@ export function ResourceList<TItem>({
       </div>
 
       {filteredItems.length === 0 ? (
-        <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-          <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-            <h3 className="mt-4 text-lg font-semibold">{emptyTitle}</h3>
-            <p className="mb-4 mt-2 text-sm text-muted-foreground">
-              {emptyDescription}
-            </p>
-          </div>
+        <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 p-8 text-center">
+          <PackageOpen className="h-10 w-10 text-muted-foreground/50" />
+          <h3 className="mt-4 text-base font-semibold text-foreground">
+            {emptyTitle}
+          </h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-sm">
+            {emptyDescription}
+          </p>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredItems.map((item) =>
             renderCard(item, deleteMutation.isPending, (id) =>
               deleteMutation.mutate(id),

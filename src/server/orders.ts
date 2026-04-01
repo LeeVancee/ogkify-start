@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq, gte, lt, sum } from "drizzle-orm";
 import { z } from "zod";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
@@ -432,35 +432,16 @@ export const getOrdersStats = createServerFn().handler(async () => {
     };
   }
 
-  // Get pending order count
-  const [pendingResult] = await db
-    .select({ count: count() })
-    .from(orders)
-    .where(eq(orders.status, "PENDING"));
-
-  // Get completed order count
-  const [completedResult] = await db
-    .select({ count: count() })
-    .from(orders)
-    .where(eq(orders.status, "COMPLETED"));
-
-  // Get total revenue (only for paid orders)
-  const paidOrdersList = await db.query.orders.findMany({
-    where: (ordersTable, { eq }) => eq(ordersTable.paymentStatus, "PAID"),
-    columns: {
-      totalAmount: true,
-    },
-  });
-
-  const totalRevenue = paidOrdersList.reduce(
-    (total, order) => total + order.totalAmount,
-    0,
-  );
+  const [pendingResult, completedResult, revenueResult] = await Promise.all([
+    db.select({ count: count() }).from(orders).where(eq(orders.status, "PENDING")),
+    db.select({ count: count() }).from(orders).where(eq(orders.status, "COMPLETED")),
+    db.select({ total: sum(orders.totalAmount) }).from(orders).where(eq(orders.paymentStatus, "PAID")),
+  ]);
 
   return {
-    pendingOrders: pendingResult.count,
-    completedOrders: completedResult.count,
-    totalRevenue,
+    pendingOrders: pendingResult[0].count,
+    completedOrders: completedResult[0].count,
+    totalRevenue: Number(revenueResult[0].total ?? 0),
   };
 });
 
@@ -515,48 +496,32 @@ export const getMonthlySalesData = createServerFn().handler(async () => {
   }
 
   const currentYear = new Date().getFullYear();
-  const monthlyData = [];
 
-  // Get sales data for each month
-  for (let month = 0; month < 12; month++) {
-    const startDate = new Date(currentYear, month, 1);
-    let endDate;
+  const monthRanges = Array.from({ length: 12 }, (_, month) => ({
+    month,
+    startDate: new Date(currentYear, month, 1),
+    endDate: new Date(currentYear, month + 1, 1),
+  }));
 
-    if (month === 11) {
-      endDate = new Date(currentYear + 1, 0, 1);
-    } else {
-      endDate = new Date(currentYear, month + 1, 1);
-    }
-
-    // Query orders for this month
-    const monthlyOrdersList = await db.query.orders.findMany({
-      where: (ordersTable, { gte, lt, and, eq }) =>
-        and(
-          gte(ordersTable.createdAt, startDate),
-          lt(ordersTable.createdAt, endDate),
-          eq(ordersTable.paymentStatus, "PAID"),
+  const results = await Promise.all(
+    monthRanges.map(({ startDate, endDate }) =>
+      db
+        .select({ total: sum(orders.totalAmount) })
+        .from(orders)
+        .where(
+          and(
+            gte(orders.createdAt, startDate),
+            lt(orders.createdAt, endDate),
+            eq(orders.paymentStatus, "PAID"),
+          ),
         ),
-      columns: {
-        totalAmount: true,
-      },
-    });
+    ),
+  );
 
-    // Calculate monthly total revenue
-    const total = monthlyOrdersList.reduce(
-      (sum, order) => sum + order.totalAmount,
-      0,
-    );
-
-    // Get month name
-    const monthName = `${month + 1}`;
-
-    monthlyData.push({
-      name: monthName,
-      total: total,
-    });
-  }
-
-  return monthlyData;
+  return results.map((result, month) => ({
+    name: `${month + 1}`,
+    total: Number(result[0].total ?? 0),
+  }));
 });
 
 // Get single order by ID

@@ -25,24 +25,27 @@ export function ProductTableView({
   isDeleting,
 }: ProductTableViewProps) {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Image</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead className="hidden md:table-cell">Category</TableHead>
-            <TableHead className="hidden md:table-cell">Price</TableHead>
-            <TableHead className="hidden lg:table-cell">Color</TableHead>
-            <TableHead className="hidden lg:table-cell">Size</TableHead>
-            <TableHead className="w-[100px]">Action</TableHead>
+          <TableRow className="bg-muted/50 hover:bg-muted/50">
+            <TableHead className="font-semibold text-foreground">Image</TableHead>
+            <TableHead className="font-semibold text-foreground">Name</TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-foreground">Category</TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-foreground">Price</TableHead>
+            <TableHead className="hidden lg:table-cell font-semibold text-foreground">Colors</TableHead>
+            <TableHead className="hidden lg:table-cell font-semibold text-foreground">Sizes</TableHead>
+            <TableHead className="w-[120px] font-semibold text-foreground">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {products.map((product) => (
-            <TableRow key={product.id}>
+            <TableRow
+              key={product.id}
+              className="hover:bg-muted/30 transition-colors"
+            >
               <TableCell>
-                <div className="h-12 w-12 overflow-hidden rounded-md border">
+                <div className="h-10 w-10 overflow-hidden rounded-lg border border-border">
                   <img
                     src={getRequiredProductTableImage(
                       product.images[0]?.url,
@@ -54,23 +57,32 @@ export function ProductTableView({
                 </div>
               </TableCell>
               <TableCell>
-                <div className="font-medium">{product.name}</div>
-                <div className="hidden text-sm text-muted-foreground sm:block">
+                <div className="font-medium text-sm text-foreground">
+                  {product.name}
+                </div>
+                <div className="hidden text-xs text-muted-foreground sm:block mt-0.5">
                   {truncateText(product.description, 50)}
                 </div>
               </TableCell>
               <TableCell className="hidden md:table-cell">
-                {product.category.name}
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-primary/5 text-primary border-primary/20"
+                >
+                  {product.category.name}
+                </Badge>
               </TableCell>
               <TableCell className="hidden md:table-cell">
-                ￥{product.price}
+                <span className="font-semibold text-sm text-foreground">
+                  ￥{product.price}
+                </span>
               </TableCell>
               <TableCell className="hidden lg:table-cell">
                 <div className="flex flex-wrap gap-1">
                   {product.colors.map((color) => (
                     <div
                       key={color.id}
-                      className="h-4 w-4 rounded-full border"
+                      className="h-4 w-4 rounded-full ring-1 ring-border"
                       style={{ backgroundColor: color.value }}
                       title={color.name}
                     />
@@ -80,29 +92,34 @@ export function ProductTableView({
               <TableCell className="hidden lg:table-cell">
                 <div className="flex flex-wrap gap-1">
                   {product.sizes.map((size) => (
-                    <Badge key={size.id} variant="outline" className="text-xs">
+                    <Badge
+                      key={size.id}
+                      variant="outline"
+                      className="text-xs bg-muted/50"
+                    >
                       {size.value}
                     </Badge>
                   ))}
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1">
                   <Link
-                    to={`/dashboard/products/$id`}
+                    to="/dashboard/products/$id"
                     params={{ id: product.id }}
-                    className="inline-flex items-center justify-center h-8 w-8 rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors"
+                    className="inline-flex items-center gap-1 h-8 px-2.5 rounded-md text-xs font-medium text-foreground hover:bg-muted transition-colors"
                   >
-                    <Edit className="h-4 w-4" />
+                    <Edit className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Edit</span>
                   </Link>
                   <Button
                     variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive"
+                    size="sm"
+                    className="h-8 px-2.5 text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => onDelete(product.id)}
                     disabled={isDeleting}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3.5 w-3.5" />
                     <span className="sr-only">Delete</span>
                   </Button>
                 </div>

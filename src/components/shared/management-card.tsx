@@ -1,17 +1,10 @@
 import { Link } from "@tanstack/react-router";
-import { Edit, Eye, Loader2, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, Loader2, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
-import { cn } from "@/lib/utils";
 import { DeleteDialog } from "../dashboard/delete-dialog";
 import { Button, buttonVariants } from "../ui/button";
-import { Card, CardContent } from "../ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { Card } from "../ui/card";
 
 interface ManagementCardProps<T = any> {
   item: T & { id: string; name: string };
@@ -37,65 +30,35 @@ export function ManagementCard<T = any>({
 
   return (
     <>
-      <Card className="overflow-hidden group hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 border-0 shadow-sm bg-gradient-to-br from-white to-gray-50/50">
+      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-white">
         <div className="relative">
           {children}
+        </div>
 
-          {/* Action buttons */}
-          <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-            <Link
-              to={editRoute}
-              params={{ id: item.id }}
-              className={cn(
-                buttonVariants({ variant: "secondary", size: "icon" }),
-                "h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0",
-              )}
-            >
-              <Eye className="h-4 w-4" />
-            </Link>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    className="h-8 w-8 bg-white/90 hover:bg-white shadow-sm backdrop-blur-sm border-0"
-                    disabled={isDeleting}
-                  >
-                    {isDeleting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <MoreHorizontal className="h-4 w-4" />
-                    )}
-                    <span className="sr-only">More options</span>
-                  </Button>
-                }
-              />
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem
-                  render={
-                    <Link
-                      to={editRoute}
-                      params={{ id: item.id }}
-                      className="flex w-full cursor-pointer items-center"
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Edit {item.name}
-                    </Link>
-                  }
-                />
-                <DropdownMenuItem
-                  className="text-destructive focus:text-destructive"
-                  onClick={() => setShowDeleteDialog(true)}
-                  disabled={isDeleting}
-                >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete {item.name}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+        {/* Fixed bottom action bar */}
+        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5 bg-muted/30">
+          <Link
+            to={editRoute}
+            params={{ id: item.id }}
+            className={buttonVariants({ variant: "ghost", size: "sm" })}
+          >
+            <Edit className="mr-1.5 h-3.5 w-3.5" />
+            Edit
+          </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-destructive hover:text-destructive hover:bg-destructive/10"
+            onClick={() => setShowDeleteDialog(true)}
+            disabled={isDeleting}
+          >
+            {isDeleting ? (
+              <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+            )}
+            Delete
+          </Button>
         </div>
       </Card>
 
