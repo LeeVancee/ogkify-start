@@ -1,7 +1,14 @@
-import { ImagePlus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
@@ -27,12 +34,8 @@ export function CloudinarySingleImageUpload({
   const uploadWidgetRef = useRef<CloudinaryUploadWidget | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+  const [urlInput, setUrlInput] = useState("");
 
-  const onRemove = () => {
-    onChange("");
-  };
-
-  // Initialize widget only after script is loaded
   useEffect(() => {
     if (isScriptLoaded && window.cloudinary && !uploadWidgetRef.current) {
       uploadWidgetRef.current = window.cloudinary.createUploadWidget(
@@ -42,7 +45,7 @@ export function CloudinarySingleImageUpload({
           sources: ["local", "url", "camera"],
           multiple: false,
           maxFiles: 1,
-          maxFileSize: 4000000, // 4MB in bytes
+          maxFileSize: 4000000,
           clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
           resourceType: "image",
         },
@@ -57,7 +60,6 @@ export function CloudinarySingleImageUpload({
           }
 
           if (result && result.event === "success" && result.info) {
-            console.log("Upload successful:", result.info);
             onChange(result.info.secure_url);
             toast.success("Image uploaded successfully");
           }
@@ -69,19 +71,16 @@ export function CloudinarySingleImageUpload({
   const handleUploadClick = async () => {
     if (disabled) return;
 
-    // If script is already loaded and widget is ready, open it
     if (isScriptLoaded && uploadWidgetRef.current) {
       uploadWidgetRef.current.open();
       return;
     }
 
-    // Load the script first
     try {
       setIsLoading(true);
       await loadCloudinaryScript();
       setIsScriptLoaded(true);
 
-      // Wait a tick for the widget to be initialized
       setTimeout(() => {
         if (uploadWidgetRef.current) {
           uploadWidgetRef.current.open();
@@ -95,9 +94,20 @@ export function CloudinarySingleImageUpload({
     }
   };
 
+  const handleSetUrl = () => {
+    const trimmed = urlInput.trim();
+    if (!trimmed) return;
+    if (!/^https?:\/\/.+/.test(trimmed)) {
+      toast.error("Please enter a valid URL starting with http:// or https://");
+      return;
+    }
+    onChange(trimmed);
+    setUrlInput("");
+  };
+
   return (
     <div className="space-y-4">
-      {value ? (
+      {value && (
         <div className="relative h-[200px] w-[200px] rounded-md overflow-hidden">
           <div className="absolute top-2 right-2 z-10">
             <Button
@@ -105,16 +115,23 @@ export function CloudinarySingleImageUpload({
               variant="destructive"
               size="sm"
               className="flex h-7 w-7 items-center justify-center rounded-full p-0"
-              onClick={onRemove}
+              onClick={() => onChange("")}
               disabled={disabled}
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <img className="object-cover" alt="Category image" src={value} />
+          <img className="object-cover w-full h-full" alt="Category image" src={value} />
         </div>
-      ) : (
-        <div>
+      )}
+
+      <Tabs defaultValue="upload">
+        <TabsList>
+          <TabsTrigger value="upload">Upload</TabsTrigger>
+          <TabsTrigger value="url">External URL</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="upload" className="pt-3">
           <button
             type="button"
             onClick={handleUploadClick}
@@ -123,8 +140,34 @@ export function CloudinarySingleImageUpload({
           >
             {isLoading ? "Initializing..." : "Upload Image"}
           </button>
-        </div>
-      )}
+        </TabsContent>
+
+        <TabsContent value="url" className="pt-3">
+          <div className="flex gap-2">
+            <Input
+              type="url"
+              placeholder="https://example.com/image.png"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleSetUrl();
+                }
+              }}
+              disabled={disabled}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleSetUrl}
+              disabled={disabled || !urlInput.trim()}
+            >
+              Set
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
