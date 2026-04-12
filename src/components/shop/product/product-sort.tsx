@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -43,16 +44,17 @@ export function ProductSort() {
       </Label>
       <Select value={currentSort} onValueChange={handleSortChange}>
         <SelectTrigger id="sort-select" className="w-[180px]">
-          {sortOptions.find((opt) => opt.value === currentSort)?.label ||
-            "Sort by"}
+          <SelectValue placeholder="Sort by" />
         </SelectTrigger>
 
-        <SelectContent>
-          {sortOptions.map((option) => (
-            <SelectItem key={option.value} value={option.value}>
-              {option.label}
-            </SelectItem>
-          ))}
+        <SelectContent alignItemWithTrigger={false}>
+          <SelectGroup>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectGroup>
         </SelectContent>
       </Select>
     </div>

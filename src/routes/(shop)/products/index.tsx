@@ -4,6 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { formatPrice } from "@/lib/utils";
 import { getCategories } from "@/server/categories";
@@ -20,6 +28,48 @@ const searchParamsSchema = z.object({
   size: z.union([z.string(), z.array(z.string())]).optional(),
   page: z.number().optional(),
 });
+
+const sortOptions = [
+  { value: "featured", label: "Featured" },
+  { value: "price-asc", label: "Price: Low to High" },
+  { value: "price-desc", label: "Price: High to Low" },
+  { value: "newest", label: "Newest" },
+];
+
+function SortSelect({
+  value,
+  onValueChange,
+  triggerClassName,
+  contentClassName,
+  contentAlign = "center",
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  triggerClassName: string;
+  contentClassName?: string;
+  contentAlign?: "start" | "center" | "end";
+}) {
+  return (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger className={triggerClassName}>
+        <SelectValue placeholder="Sort by" />
+      </SelectTrigger>
+      <SelectContent
+        align={contentAlign}
+        alignItemWithTrigger={false}
+        className={contentClassName}
+      >
+        <SelectGroup>
+          {sortOptions.map((option) => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+  );
+}
 
 export const Route = createFileRoute("/(shop)/products/")({
   validateSearch: searchParamsSchema,
@@ -157,7 +207,9 @@ function CategoriesPage() {
   const filterSidebar = (
     <div className="space-y-8">
       <div>
-        <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">Category</h3>
+        <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+          Category
+        </h3>
         <div className="space-y-0.5">
           <button
             type="button"
@@ -224,16 +276,13 @@ function CategoriesPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <select
+          <SortSelect
             value={selectedSort}
-            onChange={(e) => updateSearch({ sort: e.target.value, page: 1 })}
-            className="hidden sm:block rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 cursor-pointer"
-          >
-            <option value="featured">Featured</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="newest">Newest</option>
-          </select>
+            onValueChange={(value) => updateSearch({ sort: value, page: 1 })}
+            triggerClassName="hidden h-11 w-[180px] rounded-full border-slate-300 bg-white px-5 text-sm text-slate-700 shadow-none sm:flex"
+            contentClassName="w-(--anchor-width)"
+            contentAlign="end"
+          />
 
           <button
             type="button"
@@ -246,9 +295,7 @@ function CategoriesPage() {
       </div>
 
       <div className="flex gap-10">
-        <aside className="hidden w-52 shrink-0 sm:block">
-          {filterSidebar}
-        </aside>
+        <aside className="hidden w-52 shrink-0 sm:block">{filterSidebar}</aside>
 
         {filterOpen ? (
           <div className="fixed inset-0 z-50 sm:hidden">
@@ -258,7 +305,9 @@ function CategoriesPage() {
             />
             <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-white p-6 shadow-2xl">
               <div className="mb-6 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-900">Filters</span>
+                <span className="text-sm font-semibold text-slate-900">
+                  Filters
+                </span>
                 <button
                   type="button"
                   onClick={() => setFilterOpen(false)}
@@ -269,17 +318,17 @@ function CategoriesPage() {
               </div>
               {filterSidebar}
               <div className="mt-8">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">Sort By</h3>
-                <select
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  Sort By
+                </h3>
+                <SortSelect
                   value={selectedSort}
-                  onChange={(e) => updateSearch({ sort: e.target.value, page: 1 })}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900"
-                >
-                  <option value="featured">Featured</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                  <option value="newest">Newest</option>
-                </select>
+                  onValueChange={(value) =>
+                    updateSearch({ sort: value, page: 1 })
+                  }
+                  triggerClassName="h-11 w-full rounded-xl border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none"
+                  contentClassName="w-(--anchor-width)"
+                />
               </div>
             </div>
           </div>

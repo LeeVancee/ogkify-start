@@ -125,7 +125,7 @@ export default function Header({
             >
               <ShoppingBag className="h-5 w-5" />
               {initialCartData.totalItems ? (
-                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-semibold text-white">
+                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[9px] font-semibold text-white">
                   {initialCartData.totalItems}
                 </span>
               ) : null}
