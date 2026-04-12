@@ -97,10 +97,6 @@ export function CloudinarySingleImageUpload({
   const handleSetUrl = () => {
     const trimmed = urlInput.trim();
     if (!trimmed) return;
-    if (!/^https?:\/\/.+/.test(trimmed)) {
-      toast.error("Please enter a valid URL starting with http:// or https://");
-      return;
-    }
     onChange(trimmed);
     setUrlInput("");
   };

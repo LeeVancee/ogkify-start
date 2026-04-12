@@ -120,10 +120,6 @@ export function CloudinaryMultiImageUpload({
   const handleAddUrl = () => {
     const trimmed = urlInput.trim();
     if (!trimmed || value.length >= 4) return;
-    if (!/^https?:\/\/.+/.test(trimmed)) {
-      toast.error("Please enter a valid URL starting with http:// or https://");
-      return;
-    }
     onChange([...value, trimmed]);
     setUrlInput("");
   };
