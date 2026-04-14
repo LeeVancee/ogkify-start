@@ -36,7 +36,9 @@ function RouteComponent() {
               Curated Selection
             </p>
             <h1 className="text-5xl font-light leading-[1.05] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Built for<br />Everyday Play
+              Built for
+              <br />
+              Everyday Play
             </h1>
             <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-slate-500 sm:text-lg lg:mx-0">
               Discover standout gear, clean visuals, and a lineup picked for
@@ -54,6 +56,7 @@ function RouteComponent() {
             <img
               src="/billboard.webp"
               alt="Spring Summer Collection"
+              fetchPriority="high"
               className="w-full object-contain"
             />
           </div>
@@ -64,7 +67,9 @@ function RouteComponent() {
       <section className="bg-slate-50">
         <div className="shop-shell py-20 sm:py-24">
           <div className="mb-12 text-center">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Browse</p>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+              Browse
+            </p>
             <h2 className="text-3xl font-light tracking-tight text-slate-900">
               Shop By Category
             </h2>
@@ -87,6 +92,7 @@ function RouteComponent() {
                   <img
                     src={category.imageUrl}
                     alt={category.name}
+                    loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
@@ -105,7 +111,9 @@ function RouteComponent() {
         <div className="shop-shell py-20 sm:py-24">
           <div className="mb-10 flex items-end justify-between">
             <div>
-              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Handpicked</p>
+              <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                Handpicked
+              </p>
               <h2 className="text-3xl font-light tracking-tight text-slate-900">
                 Featured Picks
               </h2>
@@ -129,6 +137,7 @@ function RouteComponent() {
                   <img
                     src={product.images[0]}
                     alt={product.name}
+                    loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 </div>
@@ -150,7 +159,9 @@ function RouteComponent() {
           <div className="shop-shell py-20 sm:py-24">
             <div className="mb-10 flex items-end justify-between">
               <div>
-                <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Just In</p>
+                <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                  Just In
+                </p>
                 <h2 className="text-3xl font-light tracking-tight text-slate-900">
                   New Arrivals
                 </h2>
@@ -174,6 +185,7 @@ function RouteComponent() {
                   <img
                     src={product.images[0]}
                     alt={product.name}
+                    loading="lazy"
                     className="h-20 w-20 shrink-0 rounded-xl object-cover"
                   />
                   <div className="min-w-0 flex-1">

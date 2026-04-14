@@ -15,6 +15,7 @@ export const Route = createFileRoute("/(shop)")({
       initialSession: session || undefined,
     };
   },
+  staleTime: 1000 * 60 * 5,
 });
 
 function RouteComponent() {
