@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatPrice } from "@/lib/utils";
+
 import type { Order } from "./order-types";
 import {
   getOrderStatusIcon,

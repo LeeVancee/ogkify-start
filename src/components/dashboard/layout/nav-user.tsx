@@ -1,5 +1,6 @@
 import { Link, useRouter } from "@tanstack/react-router";
 import { ChevronsUpDown, LogOut, Store } from "lucide-react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,

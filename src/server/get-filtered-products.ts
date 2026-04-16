@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { asc, desc, eq, gte, ilike, lte, or } from "drizzle-orm";
+
 import { db } from "@/db";
 import { products } from "@/db/schema";
 
@@ -91,21 +92,7 @@ export const getFilteredProducts = createServerFn()
           },
         },
       },
-      orderBy: (productsTable, { desc: descFn, asc: ascFn }) => {
-        if (options.sort === "price-asc") {
-          return [ascFn(productsTable.price)];
-        } else if (options.sort === "price-desc") {
-          return [descFn(productsTable.price)];
-        } else if (options.sort === "newest") {
-          return [descFn(productsTable.createdAt)];
-        } else {
-          // featured or default sorting
-          return [
-            descFn(productsTable.isFeatured),
-            descFn(productsTable.createdAt),
-          ];
-        }
-      },
+      orderBy,
     });
 
     // Additional filtering in memory (category, colors, sizes)

@@ -1,0 +1,21 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": true,
+  "singleQuote": false,
+  "sortImports": true,
+  "sortTailwindcssClasses": true,
+  "ignorePatterns": [
+    "node_modules",
+    ".output",
+    ".vercel",
+    ".tanstack",
+    "build",
+    "dist",
+    "*.config.js",
+    "*.config.ts",
+    "src/routeTree.gen.ts",
+    "src/styles.css"
+  ]
+}

@@ -9,6 +9,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useState } from "react";
+
 import { DeleteOrderButton } from "@/components/shop/orders/delete-order-button";
 import { PayOrderButton } from "@/components/shop/orders/pay-order-button";
 import { formatPrice } from "@/lib/utils";
@@ -82,12 +83,19 @@ function MyOrdersPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
         <div className="mb-10">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Account</p>
-          <h1 className="text-3xl font-light tracking-tight text-slate-900">My Orders</h1>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+            Account
+          </p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900">
+            My Orders
+          </h1>
         </div>
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 animate-pulse rounded-2xl bg-slate-100" />
+            <div
+              key={i}
+              className="h-20 animate-pulse rounded-2xl bg-slate-100"
+            />
           ))}
         </div>
       </div>
@@ -111,15 +119,21 @@ function MyOrdersPage() {
     return (
       <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
         <div className="mb-10">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Account</p>
-          <h1 className="text-3xl font-light tracking-tight text-slate-900">My Orders</h1>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+            Account
+          </p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900">
+            My Orders
+          </h1>
         </div>
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-24 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
             <Package className="h-8 w-8 text-slate-400" />
           </div>
           <p className="text-base font-medium text-slate-700">No orders yet</p>
-          <p className="mt-1 text-sm text-slate-400">Your order history will appear here</p>
+          <p className="mt-1 text-sm text-slate-400">
+            Your order history will appear here
+          </p>
           <Link
             to="/products"
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
@@ -136,17 +150,26 @@ function MyOrdersPage() {
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="mb-10 flex items-end justify-between">
         <div>
-          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Account</p>
-          <h1 className="text-3xl font-light tracking-tight text-slate-900">My Orders</h1>
+          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+            Account
+          </p>
+          <h1 className="text-3xl font-light tracking-tight text-slate-900">
+            My Orders
+          </h1>
         </div>
-        <span className="text-sm text-slate-400">{allOrders.length} order{allOrders.length === 1 ? "" : "s"}</span>
+        <span className="text-sm text-slate-400">
+          {allOrders.length} order{allOrders.length === 1 ? "" : "s"}
+        </span>
       </div>
 
       <div className="space-y-3">
         {allOrders.map((order) => {
           const expanded = expandedId === order.id;
           const isUnpaid = unpaidOrderIds.has(order.id);
-          const previewImages = order.items.slice(0, 3).map((item) => item.imageUrl).filter(Boolean);
+          const previewImages = order.items
+            .slice(0, 3)
+            .map((item) => item.imageUrl)
+            .filter(Boolean);
 
           return (
             <div
@@ -193,7 +216,8 @@ function MyOrdersPage() {
                       day: "numeric",
                     })}
                     {" · "}
-                    {order.items.length} item{order.items.length === 1 ? "" : "s"}
+                    {order.items.length} item
+                    {order.items.length === 1 ? "" : "s"}
                   </p>
                 </div>
 
@@ -225,7 +249,10 @@ function MyOrdersPage() {
                       }
 
                       return (
-                        <div key={item.id} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm">
+                        <div
+                          key={item.id}
+                          className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm"
+                        >
                           <img
                             src={item.imageUrl}
                             alt={item.productName}
@@ -279,7 +306,9 @@ function MyOrdersPage() {
                     </div>
 
                     <div className="text-right">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Order Total</p>
+                      <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">
+                        Order Total
+                      </p>
                       <p className="mt-0.5 text-2xl font-light tracking-tight text-slate-900">
                         {formatPrice(order.totalAmount)}
                       </p>

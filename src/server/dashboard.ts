@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+
 import { getCategoriesCount } from "@/server/categories";
 import {
   getMonthlySalesData,
@@ -6,6 +7,7 @@ import {
   getRecentOrders,
 } from "@/server/orders";
 import { getProductsCount } from "@/server/products";
+
 import { requireAdminSession } from "./require-admin";
 
 // Get all dashboard data in a single request for optimal performance

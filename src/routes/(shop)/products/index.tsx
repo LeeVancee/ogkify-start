@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { z } from "zod";
+
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
 import {

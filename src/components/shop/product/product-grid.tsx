@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+
 import { formatPrice } from "@/lib/utils";
 
 export interface SimpleProduct {

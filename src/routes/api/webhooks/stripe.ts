@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { eq } from "drizzle-orm";
 import type Stripe from "stripe";
+
 import { db } from "@/db";
-import { cartItems, carts, orders } from "@/db/schema";
+import { cartItems, orders } from "@/db/schema";
 import { env } from "@/env/server";
 import { stripe } from "@/lib/stripe";
 

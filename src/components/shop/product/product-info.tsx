@@ -1,6 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+
 import { formatPrice } from "@/lib/utils";
 
 interface ProductColor {
@@ -130,7 +131,9 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
         {product.colors.length > 0 ? (
           <div className="mt-8">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Color</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
+              Color
+            </h3>
             <div className="flex flex-wrap gap-2">
               {product.colors.map((color) => (
                 <button
@@ -152,7 +155,9 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
         {product.sizes.length > 0 ? (
           <div className="mt-6">
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">Size</h3>
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
+              Size
+            </h3>
             <div className="flex flex-wrap gap-2">
               {product.sizes.map((size) => (
                 <button

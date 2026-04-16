@@ -3,11 +3,13 @@ import { Link } from "@tanstack/react-router";
 import { Grid, List, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteProduct, getProducts } from "@/server/products";
+
 import { DeleteDialog } from "../delete-dialog";
 import { ProductGridView } from "./product-grid-view";
 import { ProductTableView } from "./product-table-view";

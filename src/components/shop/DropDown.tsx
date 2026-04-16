@@ -1,5 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, LogOut, ShoppingBag, User } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 

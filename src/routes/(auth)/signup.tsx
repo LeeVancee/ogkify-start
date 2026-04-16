@@ -3,6 +3,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/(auth)/signup")({

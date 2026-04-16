@@ -1,6 +1,7 @@
 import type { LinkProps } from "@tanstack/react-router";
 import { Link, useLocation } from "@tanstack/react-router";
 import type React from "react";
+
 import { cn } from "@/lib/utils";
 
 interface ActiveLinkProps extends LinkProps {

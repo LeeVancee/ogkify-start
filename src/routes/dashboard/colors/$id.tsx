@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+
 import { ColorForm } from "@/components/dashboard/color/color-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getColor } from "@/server/colors";

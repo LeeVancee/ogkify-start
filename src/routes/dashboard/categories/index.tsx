@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+
 import { CategoryList } from "@/components/dashboard/category/category-list";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 

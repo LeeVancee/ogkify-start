@@ -1,5 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useTransition } from "react";
+
 import { createQueryParams, type SearchParams } from "./filter-types";
 
 export function useProductFilterNavigation() {

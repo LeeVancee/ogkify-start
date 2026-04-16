@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Edit, Loader2, Trash2 } from "lucide-react";
 import type { ReactNode } from "react";
 import { useState } from "react";
+
 import { DeleteDialog } from "../dashboard/delete-dialog";
 import { Button, buttonVariants } from "../ui/button";
 import { Card } from "../ui/card";
@@ -31,9 +32,7 @@ export function ManagementCard<T = any>({
   return (
     <>
       <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-white">
-        <div className="relative">
-          {children}
-        </div>
+        <div className="relative">{children}</div>
 
         {/* Fixed bottom action bar */}
         <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5 bg-muted/30">

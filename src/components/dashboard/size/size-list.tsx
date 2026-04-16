@@ -1,12 +1,7 @@
 import { deleteSize, getSizes } from "@/server/sizes";
+
 import { ResourceList } from "../resource-list";
 import { SizeCard } from "./size-card";
-
-type Size = {
-  id: string;
-  name: string;
-  value: string;
-};
 
 export function SizeList() {
   return (

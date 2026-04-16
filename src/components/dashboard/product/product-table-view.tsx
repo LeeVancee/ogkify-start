@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Edit, Trash2 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+
 import type { Product } from "./product-types";
 import { truncateText } from "./product-types";
 
@@ -29,13 +31,27 @@ export function ProductTableView({
       <Table>
         <TableHeader>
           <TableRow className="bg-muted/50 hover:bg-muted/50">
-            <TableHead className="font-semibold text-foreground">Image</TableHead>
-            <TableHead className="font-semibold text-foreground">Name</TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-foreground">Category</TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-foreground">Price</TableHead>
-            <TableHead className="hidden lg:table-cell font-semibold text-foreground">Colors</TableHead>
-            <TableHead className="hidden lg:table-cell font-semibold text-foreground">Sizes</TableHead>
-            <TableHead className="w-[120px] font-semibold text-foreground">Actions</TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Image
+            </TableHead>
+            <TableHead className="font-semibold text-foreground">
+              Name
+            </TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-foreground">
+              Category
+            </TableHead>
+            <TableHead className="hidden md:table-cell font-semibold text-foreground">
+              Price
+            </TableHead>
+            <TableHead className="hidden lg:table-cell font-semibold text-foreground">
+              Colors
+            </TableHead>
+            <TableHead className="hidden lg:table-cell font-semibold text-foreground">
+              Sizes
+            </TableHead>
+            <TableHead className="w-[120px] font-semibold text-foreground">
+              Actions
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

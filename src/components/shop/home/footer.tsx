@@ -49,10 +49,18 @@ export default function Footer() {
               Customer Care
             </h4>
             <ul className="space-y-3 text-sm text-slate-500">
-              <li className="hover:text-slate-900 transition-colors cursor-default">Shipping Information</li>
-              <li className="hover:text-slate-900 transition-colors cursor-default">Returns Policy</li>
-              <li className="hover:text-slate-900 transition-colors cursor-default">FAQ</li>
-              <li className="hover:text-slate-900 transition-colors cursor-default">Contact Us</li>
+              <li className="hover:text-slate-900 transition-colors cursor-default">
+                Shipping Information
+              </li>
+              <li className="hover:text-slate-900 transition-colors cursor-default">
+                Returns Policy
+              </li>
+              <li className="hover:text-slate-900 transition-colors cursor-default">
+                FAQ
+              </li>
+              <li className="hover:text-slate-900 transition-colors cursor-default">
+                Contact Us
+              </li>
             </ul>
           </div>
 

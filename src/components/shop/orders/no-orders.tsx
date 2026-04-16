@@ -1,5 +1,6 @@
 import { ShoppingBasket } from "lucide-react";
 import type { ReactNode } from "react";
+
 import { EmptyState } from "@/components/shared/empty-state";
 
 interface NoOrdersProps {

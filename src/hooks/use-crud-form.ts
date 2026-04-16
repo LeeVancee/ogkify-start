@@ -67,7 +67,7 @@ export function useCrudForm<T extends Record<string, any>>({
       } else {
         toast.error(result.error || "Operation failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("Operation failed");
     } finally {
       setLoading(false);
@@ -86,7 +86,7 @@ export function useCrudForm<T extends Record<string, any>>({
       } else {
         toast.error(result.error || "Delete failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("Delete failed");
     } finally {
       setDeleting(false);

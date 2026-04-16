@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "import"],
+  "env": {
+    "browser": true
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react/no-array-index-key": "off"
+  },
+  "ignorePatterns": [
+    "node_modules",
+    ".output",
+    ".vercel",
+    ".tanstack",
+    "build",
+    "dist",
+    "*.config.js",
+    "*.config.ts",
+    "src/routeTree.gen.ts"
+  ]
+}

@@ -1,4 +1,5 @@
 import type { Category } from "@/lib/types";
+
 import { CheckboxFilterSection } from "./checkbox-filter-section";
 import { useProductFilterNavigation } from "./use-product-filter-navigation";
 

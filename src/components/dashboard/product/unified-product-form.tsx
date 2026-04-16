@@ -15,6 +15,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+
 import { CloudinaryMultiImageUpload } from "@/components/dashboard/cloudinary-multi-image-upload";
 import { Button } from "@/components/ui/button";
 import {
@@ -45,6 +46,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { createProduct, updateProduct } from "@/server/products";
+
 import { VariantsCardContent } from "./product-form-fields";
 import {
   type ProductFormProps,
@@ -125,7 +127,7 @@ export function UnifiedProductForm({
       );
       queryClient.invalidateQueries({ queryKey: ["products"] });
       router.navigate({ to: "/dashboard/products" });
-    } catch (error) {
+    } catch {
       toast.error(
         `${
           isEditMode ? "Update" : "Create"

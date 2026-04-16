@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+
 import { useProductFilterNavigation } from "./use-product-filter-navigation";
 
 export function FeaturedFilter() {

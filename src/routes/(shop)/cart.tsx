@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { formatPrice } from "@/lib/utils";
 import {
@@ -208,7 +209,9 @@ function CartPage() {
           <div className="space-y-3 text-sm">
             <div className="flex justify-between text-slate-500">
               <span>Subtotal</span>
-              <span className="tabular-nums font-medium text-slate-900">{formatPrice(subtotal)}</span>
+              <span className="tabular-nums font-medium text-slate-900">
+                {formatPrice(subtotal)}
+              </span>
             </div>
             <div className="flex justify-between text-slate-500">
               <span>Shipping</span>
@@ -216,7 +219,9 @@ function CartPage() {
             </div>
             <div className="flex justify-between border-t border-slate-100 pt-3 text-slate-900">
               <span className="font-semibold">Total</span>
-              <span className="tabular-nums font-semibold">{formatPrice(total)}</span>
+              <span className="tabular-nums font-semibold">
+                {formatPrice(total)}
+              </span>
             </div>
           </div>
 

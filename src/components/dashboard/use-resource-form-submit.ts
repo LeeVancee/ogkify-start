@@ -38,7 +38,7 @@ export function useResourceFormSubmit<
       toast.success(successMessage);
       queryClient.invalidateQueries({ queryKey });
       router.navigate({ to: redirectTo });
-    } catch (error) {
+    } catch {
       toast.error(errorMessage);
     }
   };

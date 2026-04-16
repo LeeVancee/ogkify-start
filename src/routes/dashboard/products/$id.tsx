@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+
 import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getCategories } from "@/server/categories";

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Palette } from "lucide-react";
+
 import { ColorForm } from "@/components/dashboard/color/color-form";
 import { Button } from "@/components/ui/button";
 

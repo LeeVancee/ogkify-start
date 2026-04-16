@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Edit, Palette, Package, Trash2 } from "lucide-react";
 import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+
 import { DeleteDialog } from "../delete-dialog";
 
 interface Product {

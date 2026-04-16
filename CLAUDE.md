@@ -88,9 +88,9 @@ Use TanStack Query for client-side state management:
 
 ```tsx
 const { data, isLoading } = useQuery({
-  queryKey: ['products'],
+  queryKey: ["products"],
   queryFn: fetchProducts,
-})
+});
 ```
 
 ### Authentication

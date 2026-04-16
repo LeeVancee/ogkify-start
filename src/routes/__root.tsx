@@ -5,10 +5,12 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
 import { seo } from "@/lib/seo";
 import { getSession } from "@/server/getSession";
+
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{

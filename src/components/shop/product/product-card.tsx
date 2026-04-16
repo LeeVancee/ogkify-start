@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+
 import { formatPrice } from "@/lib/utils";
 
 interface Product {
@@ -14,7 +15,11 @@ export default function ProductCard({ product }: { product: Product }) {
   }
 
   return (
-    <Link to="/product/$id" params={{ id: product.id }} className="group cursor-pointer">
+    <Link
+      to="/product/$id"
+      params={{ id: product.id }}
+      className="group cursor-pointer"
+    >
       <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-2xl bg-slate-100">
         <img
           src={product.image}

@@ -1,5 +1,6 @@
 import { Check, Palette, Ruler } from "lucide-react";
 import type { Control, FieldValues, Path } from "react-hook-form";
+
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -11,6 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
+
 import type { Color, Size } from "./product-form-schema";
 
 interface ColorSelectorProps<T extends FieldValues> {

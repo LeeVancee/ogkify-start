@@ -3,17 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { Suspense } from "react";
 import { z } from "zod";
-import { getOrderById } from "@/server/orders";
 
-// order type definition
-interface OrderData {
-  id: string;
-  orderNumber: string;
-  status: string;
-  totalAmount: number;
-  shippingAddress: string | null;
-  phone: string | null;
-}
+import { getOrderById } from "@/server/orders";
 
 // define search params schema
 const searchParamsSchema = z.object({

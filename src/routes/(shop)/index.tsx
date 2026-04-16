@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
+
 import { formatPrice } from "@/lib/utils";
 import { getCategories } from "@/server/categories";
 import { getFeaturedProducts } from "@/server/get-featured-products";

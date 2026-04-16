@@ -1,11 +1,13 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useTransition } from "react";
+
 import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Slider } from "@/components/ui/slider";
+
 import { createQueryParams } from "./filter-types";
 
 interface PriceFilterProps {

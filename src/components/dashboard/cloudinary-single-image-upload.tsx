@@ -1,14 +1,10 @@
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_UPLOAD_PRESET,
@@ -117,7 +113,11 @@ export function CloudinarySingleImageUpload({
               <X className="h-4 w-4" />
             </Button>
           </div>
-          <img className="object-cover w-full h-full" alt="Category image" src={value} />
+          <img
+            className="object-cover w-full h-full"
+            alt="Category image"
+            src={value}
+          />
         </div>
       )}
 

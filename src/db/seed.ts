@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+
 import * as schema from "./schema";
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -387,7 +388,9 @@ function buildCategoryImage(name: CategoryName) {
 
 function buildProductImages(product: CatalogProduct) {
   const theme = categoryThemeMap[product.category];
-  const { width, height } = getImageDimensions(product.imageLayout ?? "portrait");
+  const { width, height } = getImageDimensions(
+    product.imageLayout ?? "portrait",
+  );
   const imageLabels =
     product.imageCount === 3
       ? ["Front View", "Detail View", "Packaging"]

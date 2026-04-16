@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+
 import { ProductsView } from "@/components/dashboard/product/products-view";
-import { buttonVariants } from "@/components/ui/button";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
+import { buttonVariants } from "@/components/ui/button";
 
 export const Route = createFileRoute("/dashboard/products/")({
   component: RouteComponent,

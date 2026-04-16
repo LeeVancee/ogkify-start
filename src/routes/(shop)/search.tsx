@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
+
 import ProductCard from "@/components/shop/product/product-card";
 import { searchProducts } from "@/server/search";
 
@@ -46,7 +47,9 @@ function RouteComponent() {
     <div className="shop-shell py-10 sm:py-14">
       <div className="mx-auto max-w-2xl">
         <div className="mb-2 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">Search</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+            Search
+          </p>
           <h1 className="mt-1 text-3xl font-light tracking-tight text-slate-900">
             Find Products
           </h1>
@@ -90,14 +93,17 @@ function RouteComponent() {
                 Results for <span className="font-semibold">"{query}"</span>
               </h2>
               <p className="mt-0.5 text-sm text-slate-400">
-                {products.length} product{products.length === 1 ? "" : "s"} found
+                {products.length} product{products.length === 1 ? "" : "s"}{" "}
+                found
               </p>
             </div>
           </div>
 
           {products.length === 0 ? (
             <div className="py-20 text-center">
-              <p className="text-lg font-light text-slate-500">No products found for "{query}"</p>
+              <p className="text-lg font-light text-slate-500">
+                No products found for "{query}"
+              </p>
               <p className="mt-2 text-sm text-slate-400">
                 Try a different keyword or browse the collection instead.
               </p>

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
+
 import { CategoryForm } from "@/components/dashboard/category/category-form";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { getCategory } from "@/server/categories";

@@ -1,5 +1,6 @@
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+
 import { CategoryFilter } from "./category-filter";
 import { ColorFilter } from "./color-filter";
 import { FeaturedFilter } from "./featured-filter";

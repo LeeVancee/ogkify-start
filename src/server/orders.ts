@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, count, eq, gte, lt, sum } from "drizzle-orm";
 import { z } from "zod";
+
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
 import { env } from "@/env/server";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { formatPrice } from "@/lib/utils";
+
 import { getSession } from "./getSession";
 import { requireAdminSession } from "./require-admin";
 
@@ -433,9 +435,18 @@ export const getOrdersStats = createServerFn().handler(async () => {
   }
 
   const [pendingResult, completedResult, revenueResult] = await Promise.all([
-    db.select({ count: count() }).from(orders).where(eq(orders.status, "PENDING")),
-    db.select({ count: count() }).from(orders).where(eq(orders.status, "COMPLETED")),
-    db.select({ total: sum(orders.totalAmount) }).from(orders).where(eq(orders.paymentStatus, "PAID")),
+    db
+      .select({ count: count() })
+      .from(orders)
+      .where(eq(orders.status, "PENDING")),
+    db
+      .select({ count: count() })
+      .from(orders)
+      .where(eq(orders.status, "COMPLETED")),
+    db
+      .select({ total: sum(orders.totalAmount) })
+      .from(orders)
+      .where(eq(orders.paymentStatus, "PAID")),
   ]);
 
   return {

@@ -1,12 +1,7 @@
 import { deleteColor, getColors } from "@/server/colors";
+
 import { ResourceList } from "../resource-list";
 import { ColorCard } from "./color-card";
-
-type Color = {
-  id: string;
-  name: string;
-  value: string;
-};
 
 export function ColorList() {
   return (

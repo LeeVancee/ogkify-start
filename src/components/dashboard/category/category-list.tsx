@@ -1,12 +1,7 @@
 import { deleteCategory, getCategories } from "@/server/categories";
+
 import { ResourceList } from "../resource-list";
 import { CategoryCard } from "./category-card";
-
-type Category = {
-  id: string;
-  name: string;
-  imageUrl?: string | null;
-};
 
 export function CategoryList() {
   return (

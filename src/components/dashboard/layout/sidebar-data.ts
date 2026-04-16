@@ -6,6 +6,7 @@ import {
   Ruler,
   ShoppingCart,
 } from "lucide-react";
+
 import type { NavGroup, SidebarBrand } from "./types";
 
 const brand: SidebarBrand = {

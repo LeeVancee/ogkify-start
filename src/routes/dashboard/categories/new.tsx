@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, FolderTree } from "lucide-react";
+
 import { CategoryForm } from "@/components/dashboard/category/category-form";
 import { Button } from "@/components/ui/button";
 

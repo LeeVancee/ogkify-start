@@ -1,5 +1,6 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
+
 import {
   Collapsible,
   CollapsibleContent,
@@ -15,6 +16,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+
 import { ActiveLink } from "../active-link";
 import type { NavGroup, NavItem } from "./types";
 

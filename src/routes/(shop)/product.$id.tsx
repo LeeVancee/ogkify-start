@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
+
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductInfo } from "@/components/shop/product/product-info";
 import { ProductInfoLoading } from "@/components/shop/product/product-info-loading";
@@ -56,7 +57,9 @@ function RouteComponent() {
       {relatedProducts.length > 0 ? (
         <div className="mt-20 border-t border-slate-100 pt-16">
           <div className="mb-10">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">You May Also Like</p>
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+              You May Also Like
+            </p>
             <h2 className="text-3xl font-light tracking-tight text-slate-900">
               Related Products
             </h2>
