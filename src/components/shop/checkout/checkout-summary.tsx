@@ -35,7 +35,7 @@ export function CheckoutSummary({ items }: CheckoutSummaryProps) {
             <div key={item.id} className="flex items-center gap-4">
               <div className="h-16 w-16 overflow-hidden rounded-md border">
                 <img
-                  src={getRequiredCheckoutItemImage(item.image, item.productId)}
+                  src={getRequiredCheckoutItemImage(item.image, item.id)}
                   alt={item.name}
                   width={64}
                   height={64}

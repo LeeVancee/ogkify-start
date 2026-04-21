@@ -9,7 +9,10 @@ export function useProductFilterNavigation() {
   const [, startTransition] = useTransition();
 
   const updateSearch = (
-    params: Record<string, string | Array<string> | boolean | null | undefined>,
+    params: Record<
+      string,
+      string | number | Array<string> | boolean | null | undefined
+    >,
   ) => {
     startTransition(() => {
       navigate({

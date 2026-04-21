@@ -19,8 +19,8 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
   const search = useSearch({ strict: false });
   const [, startTransition] = useTransition();
 
-  const currentMinPrice = Number(search.minPrice || "0");
-  const currentMaxPrice = Number(search.maxPrice || maxPrice.toString());
+  const currentMinPrice = search.minPrice ?? 0;
+  const currentMaxPrice = search.maxPrice ?? maxPrice;
 
   const handleChange = (value: number | readonly number[]) => {
     const values = Array.isArray(value) ? [...value] : [value];
@@ -30,8 +30,8 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
         navigate({
           to: "/products",
           search: createQueryParams(search, {
-            minPrice: min > 0 ? min.toString() : undefined,
-            maxPrice: max < maxPrice ? max.toString() : undefined,
+            minPrice: min > 0 ? min : undefined,
+            maxPrice: max < maxPrice ? max : undefined,
           }),
           replace: true,
         });

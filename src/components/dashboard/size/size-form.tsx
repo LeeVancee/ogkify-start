@@ -47,7 +47,7 @@ export function SizeForm({ size }: SizeFormProps = {}) {
   const isEditMode = Boolean(size);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEditMode
+    defaultValues: size
       ? {
           name: size.name,
           value: size.value,
@@ -64,10 +64,10 @@ export function SizeForm({ size }: SizeFormProps = {}) {
     { success: boolean; error?: string }
   >({
     mutationFn: (values) =>
-      isEditMode
+      size
         ? updateSize({
             data: {
-              id: size!.id,
+              id: size.id,
               data: values,
             },
           })

@@ -4,11 +4,11 @@ export interface SearchParams {
   category?: string;
   sort?: string;
   featured?: boolean;
-  minPrice?: string;
-  maxPrice?: string;
+  minPrice?: number;
+  maxPrice?: number;
   color?: string | Array<string>;
   size?: string | Array<string>;
-  [key: string]: string | Array<string> | boolean | undefined;
+  [key: string]: string | number | Array<string> | boolean | undefined;
 }
 
 export interface FilterProps {
@@ -20,7 +20,10 @@ export interface FilterProps {
 
 export function createQueryParams(
   search: SearchParams,
-  params: Record<string, string | Array<string> | boolean | null | undefined>,
+  params: Record<
+    string,
+    string | number | Array<string> | boolean | null | undefined
+  >,
 ): SearchParams {
   const newParams = { ...search } as SearchParams;
 

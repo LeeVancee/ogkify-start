@@ -9,7 +9,7 @@ if (!env.STRIPE_SECRET_KEY) {
 
 // Create Stripe instance
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-12-15.clover", // Use API version supported by your Stripe library
+  apiVersion: "2026-02-25.clover", // Use API version supported by your Stripe library
   typescript: true,
 });
 

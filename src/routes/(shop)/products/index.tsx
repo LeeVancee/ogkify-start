@@ -45,7 +45,7 @@ function SortSelect({
   contentAlign = "center",
 }: {
   value: string;
-  onValueChange: (value: string) => void;
+  onValueChange: (value: string | null) => void;
   triggerClassName: string;
   contentClassName?: string;
   contentAlign?: "start" | "center" | "end";
@@ -279,7 +279,9 @@ function CategoriesPage() {
         <div className="flex items-center gap-3">
           <SortSelect
             value={selectedSort}
-            onValueChange={(value) => updateSearch({ sort: value, page: 1 })}
+            onValueChange={(value) =>
+              updateSearch({ sort: value ?? "featured", page: 1 })
+            }
             triggerClassName="hidden h-11 w-[180px] rounded-full border-slate-300 bg-white px-5 text-sm text-slate-700 shadow-none sm:flex"
             contentClassName="w-(--anchor-width)"
             contentAlign="end"
@@ -325,7 +327,7 @@ function CategoriesPage() {
                 <SortSelect
                   value={selectedSort}
                   onValueChange={(value) =>
-                    updateSearch({ sort: value, page: 1 })
+                    updateSearch({ sort: value ?? "featured", page: 1 })
                   }
                   triggerClassName="h-11 w-full rounded-xl border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none"
                   contentClassName="w-(--anchor-width)"

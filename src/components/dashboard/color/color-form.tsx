@@ -42,7 +42,7 @@ export function ColorForm({ color }: ColorFormProps = {}) {
   const isEditMode = Boolean(color);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEditMode
+    defaultValues: color
       ? {
           name: color.name,
           value: color.value,
@@ -60,10 +60,10 @@ export function ColorForm({ color }: ColorFormProps = {}) {
     { success: boolean; error?: string }
   >({
     mutationFn: (values) =>
-      isEditMode
+      color
         ? updateColor({
             data: {
-              id: color!.id,
+              id: color.id,
               data: values,
             },
           })

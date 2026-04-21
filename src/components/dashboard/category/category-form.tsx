@@ -41,7 +41,7 @@ export function CategoryForm({ category }: CategoryFormProps = {}) {
   const isEditMode = Boolean(category);
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: isEditMode
+    defaultValues: category
       ? {
           name: category.name,
           imageUrl: getRequiredCategoryImageUrl(category.imageUrl),
@@ -58,10 +58,10 @@ export function CategoryForm({ category }: CategoryFormProps = {}) {
     { success: boolean; error?: string }
   >({
     mutationFn: (values) =>
-      isEditMode
+      category
         ? updateCategory({
             data: {
-              id: category!.id,
+              id: category.id,
               name: values.name,
               imageUrl: values.imageUrl,
             },
