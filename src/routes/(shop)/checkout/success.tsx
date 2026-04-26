@@ -114,10 +114,10 @@ function CheckoutSuccessContent() {
 
   return (
     <CenteredCheckoutState>
-      <div className="w-full">
+      <div className="mx-auto flex w-full max-w-2xl flex-col items-center">
         <CheckCircle className="mb-4 h-16 w-16 text-green-500" />
         <h1 className="mb-2 text-2xl font-bold">Order Confirmation</h1>
-        <p className="mb-6 text-center text-muted-foreground">
+        <p className="mb-6 max-w-xl text-center text-muted-foreground">
           Thank you for your purchase! Your order has been successfully
           processed.
         </p>
@@ -152,7 +152,7 @@ function CheckoutSuccessContent() {
           </div>
         </div>
 
-        <div className="flex justify-center gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           <Link
             to="/"
             className="inline-flex items-center justify-center gap-2 h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
