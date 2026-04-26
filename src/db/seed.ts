@@ -23,11 +23,12 @@ const editionTypes: Array<{ name: string; value: EditionValue }> = [
 ];
 
 const catalogCategories = [
-  { name: "Figures & Collectibles", bg: "ede9fe", fg: "5b21b6" },
-  { name: "Plushies & Pillows", bg: "fce7f3", fg: "9d174d" },
-  { name: "Acrylic Stands & Charms", bg: "cffafe", fg: "155e75" },
-  { name: "Apparel & Bags", bg: "e2e8f0", fg: "1e293b" },
-  { name: "Desk Mats & Stationery", bg: "fef3c7", fg: "92400e" },
+  { name: "Apparel", imageSeed: "apparel showroom fashion rack" },
+  { name: "Toys", imageSeed: "colorful toys shelf" },
+  { name: "Merch", imageSeed: "merchandise gift table" },
+  { name: "Mobile & Tech", imageSeed: "mobile tech accessories desk" },
+  { name: "Sports", imageSeed: "sports gear training floor" },
+  { name: "Home & Lifestyle", imageSeed: "modern home lifestyle shelf" },
 ] as const;
 
 type CategoryName = (typeof catalogCategories)[number]["name"];
@@ -40,326 +41,421 @@ type CatalogProduct = {
   price: number;
   isFeatured: boolean;
   editions: EditionValue[];
+  imageSeed: string;
   imageLayout?: ImageLayout;
   imageCount?: 2 | 3;
 };
 
-const categoryThemeMap: Record<CategoryName, { bg: string; fg: string }> = {
-  "Figures & Collectibles": { bg: "ede9fe", fg: "5b21b6" },
-  "Plushies & Pillows": { bg: "fce7f3", fg: "9d174d" },
-  "Acrylic Stands & Charms": { bg: "cffafe", fg: "155e75" },
-  "Apparel & Bags": { bg: "e2e8f0", fg: "1e293b" },
-  "Desk Mats & Stationery": { bg: "fef3c7", fg: "92400e" },
-};
+const categoryImageSeedMap = Object.fromEntries(
+  catalogCategories.map((category) => [category.name, category.imageSeed]),
+) as Record<CategoryName, string>;
 
 const productsData: CatalogProduct[] = [
   {
-    category: "Figures & Collectibles",
-    name: "Collector Figure Deluxe Edition",
+    category: "Apparel",
+    name: "Everyday Fleece Hoodie",
     description:
-      "A premium scale figure with a sculpted display base, clean paint finish, and retail-style collector packaging for shelf presentation.",
-    price: 149.99,
-    isFeatured: true,
-    editions: ["STANDARD", "DELUXE", "LIMITED", "PREMIUM"],
-    imageCount: 3,
-  },
-  {
-    category: "Figures & Collectibles",
-    name: "Chibi Figure Box Set",
-    description:
-      "A boxed set of stylized chibi mini figures designed for desk display, casual collecting, and starter merchandise bundles.",
-    price: 54.99,
-    isFeatured: false,
-    editions: ["STANDARD", "DELUXE"],
-  },
-  {
-    category: "Figures & Collectibles",
-    name: "Articulated Hero Figure",
-    description:
-      "An articulated action figure with multiple pose options, swappable hands, and a compact stand for dynamic posing shots.",
-    price: 84.99,
+      "A soft midweight hoodie with a relaxed silhouette, brushed interior, and clean details for daily layering.",
+    price: 64.99,
     isFeatured: true,
     editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "black fleece hoodie fashion product",
     imageCount: 3,
   },
   {
-    category: "Figures & Collectibles",
-    name: "Premium Resin Bust",
+    category: "Apparel",
+    name: "Oversized Cotton Tee",
     description:
-      "A polished resin bust built for collector shelves, featuring a clean silhouette, display plinth, and limited-run style presentation.",
-    price: 129.99,
-    isFeatured: false,
-    editions: ["DELUXE", "LIMITED", "PREMIUM"],
-  },
-  {
-    category: "Figures & Collectibles",
-    name: "Blind Box Mini Figure Set",
-    description:
-      "A mini collectible figure assortment designed around blind-box style packaging, compact sizing, and impulse-purchase appeal.",
-    price: 39.99,
-    isFeatured: false,
-    editions: ["STANDARD", "DELUXE"],
-  },
-  {
-    category: "Figures & Collectibles",
-    name: "Display Statue Limited Edition",
-    description:
-      "A decorative display statue focused on silhouette and presentation, ideal for featured product slots and hero banner merchandising.",
-    price: 159.99,
-    isFeatured: true,
-    editions: ["DELUXE", "LIMITED", "PREMIUM"],
-    imageCount: 3,
-  },
-  {
-    category: "Plushies & Pillows",
-    name: "Character Plush Doll",
-    description:
-      "A soft plush doll with embroidered facial details, travel-friendly sizing, and an approachable gift-shop presentation.",
-    price: 28.99,
-    isFeatured: true,
-    editions: ["STANDARD", "DELUXE"],
-  },
-  {
-    category: "Plushies & Pillows",
-    name: "Mini Plush Keychain Set",
-    description:
-      "A set of mini plush mascots with keychain loops, made for bags, ita accessories, and add-on checkout merchandising.",
-    price: 18.99,
-    isFeatured: false,
-    editions: ["STANDARD"],
-    imageLayout: "square",
-  },
-  {
-    category: "Plushies & Pillows",
-    name: "Sleeping Cushion Pillow",
-    description:
-      "A soft cushion pillow designed for sofa or bed display, with a printed front panel and matching back panel layout.",
+      "A heavyweight cotton tee with dropped shoulders, breathable structure, and an easy oversized fit.",
     price: 32.99,
     isFeatured: false,
     editions: ["STANDARD", "DELUXE"],
+    imageSeed: "oversized cotton t shirt studio",
   },
   {
-    category: "Plushies & Pillows",
-    name: "Jumbo Hug Pillow Cover",
+    category: "Apparel",
+    name: "Varsity Jacket",
     description:
-      "A long-format pillow cover designed for display and collection pages, presented as a premium textile merchandise item.",
-    price: 59.99,
+      "A structured varsity jacket with contrast trims, snap closure, and a polished streetwear profile.",
+    price: 94.99,
     isFeatured: true,
-    editions: ["STANDARD", "LIMITED", "PREMIUM"],
+    editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "varsity jacket fashion studio",
     imageCount: 3,
   },
   {
-    category: "Plushies & Pillows",
-    name: "Plush Blanket Gift Bundle",
+    category: "Apparel",
+    name: "Utility Cargo Pants",
     description:
-      "A cozy merchandise bundle that combines a foldable plush throw with matching packaging designed for seasonal promotions.",
-    price: 44.99,
+      "Durable cargo pants with roomy pockets, tapered cuffs, and a practical everyday workwear finish.",
+    price: 58.99,
     isFeatured: false,
-    editions: ["STANDARD", "DELUXE", "PREMIUM"],
-  },
-  {
-    category: "Plushies & Pillows",
-    name: "Premium Bolster Pillow",
-    description:
-      "A cylindrical bolster-style pillow for bedroom styling, built around a clean printed pattern and soft premium fabric finish.",
-    price: 39.99,
-    isFeatured: false,
-    editions: ["DELUXE", "PREMIUM"],
-  },
-  {
-    category: "Acrylic Stands & Charms",
-    name: "Anime Acrylic Stand Set",
-    description:
-      "A tabletop acrylic stand bundle with layered cut pieces and a branded base, suited for desk display and event table layouts.",
-    price: 24.99,
-    isFeatured: true,
     editions: ["STANDARD", "DELUXE"],
-    imageLayout: "square",
+    imageSeed: "cargo pants apparel product",
   },
   {
-    category: "Acrylic Stands & Charms",
-    name: "Double Layer Acrylic Charm Pack",
+    category: "Apparel",
+    name: "Canvas Market Tote",
     description:
-      "A charm pack featuring double-layer acrylic pieces with printed backing cards and compact hook hardware for accessories.",
-    price: 19.99,
-    isFeatured: false,
-    editions: ["STANDARD", "DELUXE", "LIMITED"],
-    imageLayout: "square",
-  },
-  {
-    category: "Acrylic Stands & Charms",
-    name: "Holographic Character Stand",
-    description:
-      "A holographic acrylic stand designed for front-facing product shots, with a reflective finish and premium card insert.",
-    price: 29.99,
-    isFeatured: true,
-    editions: ["STANDARD", "DELUXE", "PREMIUM"],
-    imageLayout: "square",
-  },
-  {
-    category: "Acrylic Stands & Charms",
-    name: "Mini Acrylic Clip Collection",
-    description:
-      "A small-format acrylic clip assortment intended for blind assortments, display trays, and collector binder pages.",
-    price: 14.99,
-    isFeatured: false,
-    editions: ["STANDARD"],
-    imageLayout: "square",
-  },
-  {
-    category: "Acrylic Stands & Charms",
-    name: "Shaker Charm Blind Pack",
-    description:
-      "A novelty shaker charm pack with floating insert pieces, compact packaging, and easy add-to-cart gift appeal.",
-    price: 16.99,
+      "A sturdy canvas tote with generous capacity, reinforced handles, and a minimal retail-ready shape.",
+    price: 24.99,
     isFeatured: false,
     editions: ["STANDARD", "LIMITED"],
+    imageSeed: "canvas tote bag lifestyle",
     imageLayout: "square",
   },
   {
-    category: "Acrylic Stands & Charms",
-    name: "Desk Display Stand Bundle",
+    category: "Apparel",
+    name: "Classic Snapback Cap",
     description:
-      "A multi-piece desk display set combining standees and base parts for storefront showcases and featured grid layouts.",
-    price: 34.99,
+      "A structured snapback cap with a curved brim, adjustable strap, and crisp embroidered front panel.",
+    price: 22.99,
     isFeatured: true,
-    editions: ["DELUXE", "LIMITED", "PREMIUM"],
+    editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "snapback cap product photography",
     imageLayout: "square",
-    imageCount: 3,
   },
   {
-    category: "Apparel & Bags",
-    name: "Graphic Hoodie Premium Print",
+    category: "Toys",
+    name: "Creative Building Block Set",
     description:
-      "A heavyweight hoodie with a large front graphic, drawstring hood, and product photography that reads clearly in apparel grids.",
-    price: 69.99,
+      "A modular building set with colorful pieces, simple instructions, and open-ended play for display or gifting.",
+    price: 44.99,
     isFeatured: true,
-    editions: ["STANDARD", "DELUXE", "LIMITED", "PREMIUM"],
-    imageCount: 3,
-  },
-  {
-    category: "Apparel & Bags",
-    name: "Oversized Character Tee",
-    description:
-      "A relaxed-fit oversized tee styled as a core apparel SKU, ideal for seasonal drops and everyday casual merchandise pages.",
-    price: 34.99,
-    isFeatured: false,
     editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "building blocks colorful toy",
+    imageLayout: "square",
+    imageCount: 3,
   },
   {
-    category: "Apparel & Bags",
-    name: "Embroidered Canvas Tote Bag",
+    category: "Toys",
+    name: "Soft Plush Animal",
     description:
-      "A canvas tote bag with front embroidery and carry-friendly proportions, photographed as a simple lifestyle accessory item.",
-    price: 29.99,
+      "A cuddly plush companion made with soft fabric, embroidered details, and a friendly rounded shape.",
+    price: 27.99,
     isFeatured: false,
     editions: ["STANDARD", "DELUXE"],
+    imageSeed: "soft plush animal toy",
     imageLayout: "square",
   },
   {
-    category: "Apparel & Bags",
-    name: "Crossbody Utility Bag",
+    category: "Toys",
+    name: "Remote Racer Car",
     description:
-      "A compact crossbody bag with strap hardware, zipper compartments, and a neat product silhouette that works well in catalog pages.",
-    price: 46.99,
+      "A compact remote-control racer with responsive steering, durable wheels, and fast indoor play appeal.",
+    price: 39.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "remote control toy car",
+  },
+  {
+    category: "Toys",
+    name: "Woodland Puzzle Box",
+    description:
+      "A richly illustrated puzzle box with sturdy pieces, calm artwork, and a satisfying family table activity.",
+    price: 18.99,
+    isFeatured: false,
+    editions: ["STANDARD", "LIMITED"],
+    imageSeed: "jigsaw puzzle box toy",
+    imageLayout: "square",
+  },
+  {
+    category: "Toys",
+    name: "Wooden Train Set",
+    description:
+      "A timeless wooden train set with track pieces, small cars, and a warm natural finish for imaginative play.",
+    price: 49.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "wooden train toy set",
+    imageLayout: "landscape",
+  },
+  {
+    category: "Toys",
+    name: "Fidget Toy Pack",
+    description:
+      "A pocketable fidget assortment with tactile textures, bright colors, and easy add-on gift appeal.",
+    price: 14.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "fidget toy pack colorful",
+    imageLayout: "square",
+  },
+  {
+    category: "Merch",
+    name: "Enamel Pin Collector Set",
+    description:
+      "A polished enamel pin set with metal backing, themed artwork, and a display-ready backing card.",
+    price: 16.99,
+    isFeatured: true,
+    editions: ["STANDARD", "LIMITED", "PREMIUM"],
+    imageSeed: "enamel pins merchandise",
+    imageLayout: "square",
+  },
+  {
+    category: "Merch",
+    name: "Vinyl Sticker Pack",
+    description:
+      "A durable sticker pack with matte vinyl finish, assorted sizes, and a lightweight envelope presentation.",
+    price: 9.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "vinyl sticker pack merch",
+    imageLayout: "square",
+  },
+  {
+    category: "Merch",
+    name: "Acrylic Keychain Duo",
+    description:
+      "A pair of acrylic keychains with clear edges, metal clasps, and compact everyday carry styling.",
+    price: 12.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "acrylic keychain merchandise",
+    imageLayout: "square",
+  },
+  {
+    category: "Merch",
+    name: "Gallery Poster Bundle",
+    description:
+      "A rolled poster bundle printed on smooth stock, made for wall displays, dorm rooms, and gift boxes.",
+    price: 24.99,
     isFeatured: true,
     editions: ["STANDARD", "DELUXE", "PREMIUM"],
-    imageLayout: "square",
-  },
-  {
-    category: "Apparel & Bags",
-    name: "Embroidered Snapback Cap",
-    description:
-      "A structured snapback cap with front embroidery and clean shape retention, designed as a lightweight add-on merchandise item.",
-    price: 24.99,
-    isFeatured: false,
-    editions: ["STANDARD"],
-    imageLayout: "square",
-  },
-  {
-    category: "Apparel & Bags",
-    name: "Zip Jacket Signature Line",
-    description:
-      "A zip-front jacket presented as a premium outerwear SKU, with a clear folded view and close-up detail image for texture emphasis.",
-    price: 89.99,
-    isFeatured: true,
-    editions: ["DELUXE", "LIMITED", "PREMIUM"],
+    imageSeed: "poster bundle wall art",
     imageCount: 3,
   },
   {
-    category: "Desk Mats & Stationery",
-    name: "Character Desk Mat XL",
+    category: "Merch",
+    name: "Ceramic Logo Mug",
     description:
-      "An extra-wide desk mat built for keyboard and mouse setups, using a landscape image treatment that matches the product form factor.",
-    price: 32.99,
+      "A clean ceramic mug with a comfortable handle, glossy finish, and everyday desk-friendly capacity.",
+    price: 15.99,
+    isFeatured: false,
+    editions: ["STANDARD", "LIMITED"],
+    imageSeed: "ceramic mug merchandise",
+    imageLayout: "square",
+  },
+  {
+    category: "Merch",
+    name: "Badge Lanyard Kit",
+    description:
+      "A woven lanyard and badge holder kit designed for events, conventions, campuses, and office use.",
+    price: 11.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "lanyard badge holder merch",
+    imageLayout: "square",
+  },
+  {
+    category: "Mobile & Tech",
+    name: "MagSafe Phone Case",
+    description:
+      "A slim protective phone case with magnetic charging support, raised edges, and a soft-touch finish.",
+    price: 29.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "phone case mobile accessory",
+    imageLayout: "square",
+  },
+  {
+    category: "Mobile & Tech",
+    name: "Wireless Charging Pad",
+    description:
+      "A low-profile wireless charging pad with a non-slip surface, minimal cable routing, and desk-ready design.",
+    price: 36.99,
     isFeatured: true,
     editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "wireless charging pad tech",
+    imageLayout: "square",
+    imageCount: 3,
+  },
+  {
+    category: "Mobile & Tech",
+    name: "Padded Tablet Sleeve",
+    description:
+      "A protective tablet sleeve with soft lining, slim storage space, and a clean travel-friendly profile.",
+    price: 34.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "tablet sleeve tech accessory",
+  },
+  {
+    category: "Mobile & Tech",
+    name: "Earbuds Travel Case",
+    description:
+      "A compact earbuds case with durable shell protection, clip hardware, and pocket-friendly proportions.",
+    price: 18.99,
+    isFeatured: false,
+    editions: ["STANDARD", "LIMITED"],
+    imageSeed: "earbuds case tech accessory",
+    imageLayout: "square",
+  },
+  {
+    category: "Mobile & Tech",
+    name: "Cable Organizer Roll",
+    description:
+      "A tidy cable organizer roll with elastic loops, mesh pockets, and room for chargers, adapters, and cords.",
+    price: 21.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "cable organizer roll travel tech",
+  },
+  {
+    category: "Mobile & Tech",
+    name: "Adjustable Phone Stand",
+    description:
+      "A foldable phone stand with adjustable angle, stable base, and a compact footprint for desks and kitchens.",
+    price: 17.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "phone stand desk accessory",
+    imageLayout: "square",
+  },
+  {
+    category: "Sports",
+    name: "Non-Slip Yoga Mat",
+    description:
+      "A cushioned yoga mat with textured grip, easy roll-up storage, and balanced support for daily movement.",
+    price: 42.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "yoga mat fitness product",
     imageLayout: "landscape",
     imageCount: 3,
   },
   {
-    category: "Desk Mats & Stationery",
-    name: "Hardcover Art Notebook",
+    category: "Sports",
+    name: "Insulated Water Bottle",
     description:
-      "A hardcover notebook with printed cover artwork, ribbon marker, and stationery-focused details suitable for lifestyle display shots.",
-    price: 21.99,
+      "A stainless steel bottle with double-wall insulation, leak-resistant cap, and a clean gym bag profile.",
+    price: 26.99,
     isFeatured: false,
-    editions: ["STANDARD", "DELUXE"],
-  },
-  {
-    category: "Desk Mats & Stationery",
-    name: "Sticker Book Collection",
-    description:
-      "A collector sticker book with organized sheets and a compact retail presentation aimed at low-friction gift and add-on purchases.",
-    price: 14.99,
-    isFeatured: false,
-    editions: ["STANDARD", "LIMITED"],
+    editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "insulated sports water bottle",
     imageLayout: "square",
   },
   {
-    category: "Desk Mats & Stationery",
-    name: "Memo Pad Desk Set",
+    category: "Sports",
+    name: "Resistance Band Set",
     description:
-      "A desk-ready memo pad bundle with matching sheets and packaging, positioned as an accessible stationery pick in the catalog.",
-    price: 12.99,
-    isFeatured: false,
-    editions: ["STANDARD"],
-    imageLayout: "square",
-  },
-  {
-    category: "Desk Mats & Stationery",
-    name: "Monthly Desk Calendar",
-    description:
-      "A monthly desk calendar with a display stand and print-forward layout, designed to look consistent in hero cards and list views.",
+      "A portable band set with multiple resistance levels, storage pouch, and versatile training use cases.",
     price: 19.99,
     isFeatured: true,
-    editions: ["STANDARD", "LIMITED", "PREMIUM"],
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "resistance bands fitness set",
+    imageLayout: "square",
   },
   {
-    category: "Desk Mats & Stationery",
-    name: "Collector Art File Folder",
+    category: "Sports",
+    name: "Indoor Outdoor Basketball",
     description:
-      "A clear file folder set for prints and postcards, packaged as a collectible stationery item with a flat-lay friendly silhouette.",
-    price: 17.99,
+      "A durable basketball with reliable grip, consistent bounce, and a surface built for casual indoor or outdoor play.",
+    price: 31.99,
+    isFeatured: false,
+    editions: ["STANDARD", "PREMIUM"],
+    imageSeed: "basketball sports product",
+    imageLayout: "square",
+  },
+  {
+    category: "Sports",
+    name: "Running Waist Pack",
+    description:
+      "A lightweight waist pack with secure storage, adjustable strap, and low-bounce fit for runs and walks.",
+    price: 23.99,
     isFeatured: false,
     editions: ["STANDARD", "DELUXE"],
+    imageSeed: "running waist pack sports",
+  },
+  {
+    category: "Sports",
+    name: "Quick-Dry Training Towel",
+    description:
+      "A soft quick-dry towel with compact packing, absorbent weave, and reliable post-workout utility.",
+    price: 13.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE", "LIMITED"],
+    imageSeed: "training towel gym product",
+    imageLayout: "square",
+  },
+  {
+    category: "Home & Lifestyle",
+    name: "Adjustable Desk Lamp",
+    description:
+      "A modern desk lamp with adjustable arm, warm light output, and a clean workspace-friendly silhouette.",
+    price: 48.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "adjustable desk lamp home",
+    imageCount: 3,
+  },
+  {
+    category: "Home & Lifestyle",
+    name: "Matte Ceramic Vase",
+    description:
+      "A sculptural ceramic vase with a matte finish, simple proportions, and easy styling for shelves or tables.",
+    price: 35.99,
+    isFeatured: false,
+    editions: ["STANDARD", "LIMITED", "PREMIUM"],
+    imageSeed: "matte ceramic vase home decor",
+    imageLayout: "square",
+  },
+  {
+    category: "Home & Lifestyle",
+    name: "Woven Throw Blanket",
+    description:
+      "A cozy woven throw with soft texture, neutral styling, and enough weight for sofa or bedroom layering.",
+    price: 54.99,
+    isFeatured: true,
+    editions: ["STANDARD", "DELUXE", "PREMIUM"],
+    imageSeed: "woven throw blanket lifestyle",
+    imageLayout: "landscape",
+  },
+  {
+    category: "Home & Lifestyle",
+    name: "Cotton Storage Basket",
+    description:
+      "A flexible cotton basket for shelves, closets, and living spaces, with handles and a soft structured form.",
+    price: 28.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "cotton storage basket home",
+    imageLayout: "square",
+  },
+  {
+    category: "Home & Lifestyle",
+    name: "Scented Candle Trio",
+    description:
+      "A three-candle gift set with balanced scents, simple glass vessels, and a calm shelf-ready presentation.",
+    price: 29.99,
+    isFeatured: true,
+    editions: ["STANDARD", "LIMITED", "PREMIUM"],
+    imageSeed: "scented candles home lifestyle",
+    imageLayout: "square",
+  },
+  {
+    category: "Home & Lifestyle",
+    name: "Minimal Wall Clock",
+    description:
+      "A quiet wall clock with clean markers, slim profile, and neutral styling for kitchens, studios, and offices.",
+    price: 39.99,
+    isFeatured: false,
+    editions: ["STANDARD", "DELUXE"],
+    imageSeed: "minimal wall clock home",
+    imageLayout: "square",
   },
 ];
 
-function createPlaceholderImage({
-  label,
+function createDemoPhoto({
+  seed,
   width,
   height,
-  bg,
-  fg,
 }: {
-  label: string;
+  seed: string;
   width: number;
   height: number;
-  bg: string;
-  fg: string;
 }) {
-  return `https://placehold.co/${width}x${height}/${bg}/${fg}.png?text=${encodeURIComponent(label)}`;
+  return `https://picsum.photos/seed/${encodeURIComponent(seed)}/${width}/${height}`;
 }
 
 function getImageDimensions(layout: ImageLayout) {
@@ -375,34 +471,27 @@ function getImageDimensions(layout: ImageLayout) {
 }
 
 function buildCategoryImage(name: CategoryName) {
-  const theme = categoryThemeMap[name];
-
-  return createPlaceholderImage({
-    label: name,
+  return createDemoPhoto({
+    seed: `category-${categoryImageSeedMap[name]}`,
     width: 1200,
     height: 720,
-    bg: theme.bg,
-    fg: theme.fg,
   });
 }
 
 function buildProductImages(product: CatalogProduct) {
-  const theme = categoryThemeMap[product.category];
   const { width, height } = getImageDimensions(
     product.imageLayout ?? "portrait",
   );
   const imageLabels =
     product.imageCount === 3
-      ? ["Front View", "Detail View", "Packaging"]
-      : ["Front View", "Detail View"];
+      ? ["front", "detail", "lifestyle"]
+      : ["front", "detail"];
 
   return imageLabels.map((view) =>
-    createPlaceholderImage({
-      label: `${product.name} - ${view}`,
+    createDemoPhoto({
+      seed: `${product.imageSeed}-${view}`,
       width,
       height,
-      bg: theme.bg,
-      fg: theme.fg,
     }),
   );
 }
@@ -412,8 +501,9 @@ async function seed() {
 
   try {
     await db.delete(schema.cartItems);
-    await db.delete(schema.orderItems);
     await db.delete(schema.carts);
+    await db.delete(schema.orderItems);
+    await db.delete(schema.orders);
     await db.delete(schema.images);
     await db.delete(schema.productsToColors);
     await db.delete(schema.productsToSizes);
@@ -421,7 +511,7 @@ async function seed() {
     await db.delete(schema.categories);
     await db.delete(schema.colors);
     await db.delete(schema.sizes);
-    console.log("Cleared existing data");
+    console.log("Cleared existing demo commerce data");
 
     const insertedSizes = await db
       .insert(schema.sizes)
@@ -448,8 +538,8 @@ async function seed() {
     ) as Record<CategoryName, string>;
     console.log("Inserted categories");
 
-    if (productsData.length !== 30) {
-      throw new Error(`Expected 30 products, received ${productsData.length}.`);
+    if (productsData.length !== 36) {
+      throw new Error(`Expected 36 products, received ${productsData.length}.`);
     }
 
     for (const product of productsData) {
@@ -481,7 +571,7 @@ async function seed() {
     }
 
     console.log(
-      `Inserted ${productsData.length} products with matching image placeholders`,
+      `Inserted ${productsData.length} products with stable demo photos`,
     );
     console.log("Seed complete");
   } finally {
