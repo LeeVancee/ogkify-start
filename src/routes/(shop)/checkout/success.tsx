@@ -63,19 +63,19 @@ function CheckoutSuccessContent() {
 
   if (isLoading) {
     return (
-      <div className="container flex flex-col items-center justify-center py-16">
+      <CenteredCheckoutState>
         <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
         <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
         <p className="text-center text-muted-foreground">
           Please wait, we are processing your payment.
         </p>
-      </div>
+      </CenteredCheckoutState>
     );
   }
 
   if (orderData && orderData.paymentStatus !== "PAID") {
     return (
-      <div className="container flex flex-col items-center justify-center py-16">
+      <CenteredCheckoutState>
         <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
         <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
         <p className="mb-8 text-center text-muted-foreground">
@@ -87,13 +87,13 @@ function CheckoutSuccessContent() {
         >
           View My Orders
         </Link>
-      </div>
+      </CenteredCheckoutState>
     );
   }
 
   if (isError || !orderData) {
     return (
-      <div className="container flex flex-col items-center justify-center py-16">
+      <CenteredCheckoutState>
         <h1 className="mb-4 text-2xl font-bold">
           Unable to get order information
         </h1>
@@ -108,13 +108,13 @@ function CheckoutSuccessContent() {
         >
           Return to Home
         </Link>
-      </div>
+      </CenteredCheckoutState>
     );
   }
 
   return (
-    <>
-      <div className="container flex flex-col items-center justify-center py-16">
+    <CenteredCheckoutState>
+      <div className="w-full">
         <CheckCircle className="mb-4 h-16 w-16 text-green-500" />
         <h1 className="mb-2 text-2xl font-bold">Order Confirmation</h1>
         <p className="mb-6 text-center text-muted-foreground">
@@ -122,7 +122,7 @@ function CheckoutSuccessContent() {
           processed.
         </p>
 
-        <div className="mb-8 w-full max-w-md rounded-lg border bg-card p-6">
+        <div className="mx-auto mb-8 w-full max-w-md rounded-lg border bg-card p-6 text-left">
           <div className="mb-4">
             <p className="mb-1 text-sm text-muted-foreground">Order Number:</p>
             <p className="text-xl font-semibold">{orderData.orderNumber}</p>
@@ -152,7 +152,7 @@ function CheckoutSuccessContent() {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex justify-center gap-4">
           <Link
             to="/"
             className="inline-flex items-center justify-center gap-2 h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
@@ -167,7 +167,7 @@ function CheckoutSuccessContent() {
           </Link>
         </div>
       </div>
-    </>
+    </CenteredCheckoutState>
   );
 }
 
@@ -175,13 +175,21 @@ function CheckoutSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="container flex flex-col items-center justify-center py-16">
+        <CenteredCheckoutState>
           <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
           <h1 className="mb-2 text-2xl font-bold">Loading...</h1>
-        </div>
+        </CenteredCheckoutState>
       }
     >
       <CheckoutSuccessContent />
     </Suspense>
+  );
+}
+
+function CenteredCheckoutState({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
+      {children}
+    </div>
   );
 }
