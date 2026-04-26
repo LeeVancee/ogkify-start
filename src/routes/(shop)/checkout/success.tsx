@@ -20,7 +20,6 @@ export const Route = createFileRoute("/(shop)/checkout/success")({
 function CheckoutSuccessContent() {
   const { order_id } = Route.useSearch();
 
-  // use TanStack Query to get order data
   const {
     data: orderResult,
     isLoading,
@@ -33,10 +32,6 @@ function CheckoutSuccessContent() {
         throw new Error("Checkout success page requires order_id");
       }
 
-      // wait for a short time to ensure webhook is processed
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // get order information from server
       const result = await getOrderById({ data: order_id });
 
       if (!result.success) {
@@ -47,13 +42,19 @@ function CheckoutSuccessContent() {
         throw new Error(result.error);
       }
 
-      if (result.order.paymentStatus !== "PAID") {
-        throw new Error("Payment is still being confirmed");
-      }
-
       return result;
     },
-    retry: 2,
+    retry: 1,
+    refetchInterval: (query) => {
+      const order = query.state.data?.order;
+
+      if (!order_id) {
+        return false;
+      }
+
+      return order?.paymentStatus === "PAID" ? false : 2000;
+    },
+    refetchIntervalInBackground: true,
     staleTime: 1000 * 60 * 10, // 10 minutes cache, checkout success page is usually only visited once
     enabled: Boolean(order_id),
   });
@@ -68,6 +69,24 @@ function CheckoutSuccessContent() {
         <p className="text-center text-muted-foreground">
           Please wait, we are processing your payment.
         </p>
+      </div>
+    );
+  }
+
+  if (orderData && orderData.paymentStatus !== "PAID") {
+    return (
+      <div className="container flex flex-col items-center justify-center py-16">
+        <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
+        <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
+        <p className="mb-8 text-center text-muted-foreground">
+          Payment is still being confirmed. This page will update automatically.
+        </p>
+        <Link
+          to="/myorders"
+          className="inline-flex items-center justify-center gap-2 h-10 px-6 border border-input bg-background rounded-md text-sm font-medium hover:bg-muted hover:text-foreground transition-colors shadow-sm"
+        >
+          View My Orders
+        </Link>
       </div>
     );
   }

@@ -1,9 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, count, eq, gte, lt, sum } from "drizzle-orm";
+import type Stripe from "stripe";
 import { z } from "zod";
 
 import { db } from "@/db";
-import { orderItems, orders } from "@/db/schema";
+import { cartItems, orderItems, orders } from "@/db/schema";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { formatPrice } from "@/lib/utils";
 
@@ -665,7 +666,6 @@ export const getOrderById = createServerFn()
       return { success: false, error: "Unauthorized" };
     }
 
-    // Get order with all related data
     const order = await db.query.orders.findFirst({
       where: (ordersTable, { eq, and }) =>
         and(
@@ -691,7 +691,12 @@ export const getOrderById = createServerFn()
       return { success: false, error: "Order not found" };
     }
 
-    return { success: true, order };
+    const synchronizedOrder = await synchronizePaidOrderFromStripe(
+      order,
+      session.user.id,
+    );
+
+    return { success: true, order: synchronizedOrder };
   });
 
 // Delete unpaid order
@@ -786,4 +791,96 @@ function getRequiredCustomerName(
   }
 
   return customerName;
+}
+
+async function synchronizePaidOrderFromStripe(
+  order: Awaited<ReturnType<typeof db.query.orders.findFirst>>,
+  userId: string,
+) {
+  if (!order) {
+    throw new Error("Order is required for synchronization");
+  }
+
+  if (order.paymentStatus === "PAID") {
+    return order;
+  }
+
+  if (!order.paymentIntent || !order.paymentIntent.startsWith("pi_")) {
+    return order;
+  }
+
+  const paymentIntent = await stripe.paymentIntents.retrieve(
+    order.paymentIntent,
+  );
+
+  if (paymentIntent.status !== "succeeded") {
+    return order;
+  }
+
+  await markOrderAsPaidFromPaymentIntent(order.id, paymentIntent, userId);
+
+  const updatedOrder = await db.query.orders.findFirst({
+    where: (ordersTable, { eq }) => eq(ordersTable.id, order.id),
+    with: {
+      items: {
+        with: {
+          product: {
+            with: {
+              images: true,
+            },
+          },
+          color: true,
+          size: true,
+        },
+      },
+    },
+  });
+
+  if (!updatedOrder) {
+    throw new Error(`Order ${order.id} not found after payment sync`);
+  }
+
+  return updatedOrder;
+}
+
+async function markOrderAsPaidFromPaymentIntent(
+  orderId: string,
+  paymentIntent: Stripe.PaymentIntent,
+  userId: string,
+) {
+  const charge = paymentIntent.latest_charge
+    ? typeof paymentIntent.latest_charge === "string"
+      ? await stripe.charges.retrieve(paymentIntent.latest_charge)
+      : paymentIntent.latest_charge
+    : null;
+
+  const address = charge?.billing_details?.address;
+  const addressParts = [
+    address?.line1,
+    address?.line2,
+    address?.city,
+    address?.state,
+    address?.postal_code,
+    address?.country,
+  ].filter((part): part is string => Boolean(part));
+
+  await db
+    .update(orders)
+    .set({
+      status: "PAID",
+      paymentStatus: "PAID",
+      paymentIntent: paymentIntent.id,
+      phone: charge?.billing_details?.phone || null,
+      shippingAddress: addressParts.length > 0 ? addressParts.join(", ") : null,
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId));
+
+  const userCart = await db.query.carts.findFirst({
+    where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
+  });
+
+  if (userCart) {
+    await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
+  }
 }
