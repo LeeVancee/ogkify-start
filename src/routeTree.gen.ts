@@ -27,6 +27,7 @@ import { Route as DashboardOrdersIndexRouteImport } from './routes/dashboard/ord
 import { Route as DashboardColorsIndexRouteImport } from './routes/dashboard/colors/index'
 import { Route as DashboardCategoriesIndexRouteImport } from './routes/dashboard/categories/index'
 import { Route as shopProductsIndexRouteImport } from './routes/(shop)/products/index'
+import { Route as shopCheckoutIndexRouteImport } from './routes/(shop)/checkout/index'
 import { Route as DashboardSizesNewRouteImport } from './routes/dashboard/sizes/new'
 import { Route as DashboardSizesIdRouteImport } from './routes/dashboard/sizes/$id'
 import { Route as DashboardProductsNewRouteImport } from './routes/dashboard/products/new'
@@ -129,6 +130,11 @@ const shopProductsIndexRoute = shopProductsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => shopProductsRouteRoute,
 } as any)
+const shopCheckoutIndexRoute = shopCheckoutIndexRouteImport.update({
+  id: '/checkout/',
+  path: '/checkout/',
+  getParentRoute: () => shopRouteRoute,
+} as any)
 const DashboardSizesNewRoute = DashboardSizesNewRouteImport.update({
   id: '/sizes/new',
   path: '/sizes/new',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
+  '/checkout/': typeof shopCheckoutIndexRoute
   '/products/': typeof shopProductsIndexRoute
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors/': typeof DashboardColorsIndexRoute
@@ -241,6 +248,7 @@ export interface FileRoutesByTo {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
+  '/checkout': typeof shopCheckoutIndexRoute
   '/products': typeof shopProductsIndexRoute
   '/dashboard/categories': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors': typeof DashboardColorsIndexRoute
@@ -274,6 +282,7 @@ export interface FileRoutesById {
   '/dashboard/products/new': typeof DashboardProductsNewRoute
   '/dashboard/sizes/$id': typeof DashboardSizesIdRoute
   '/dashboard/sizes/new': typeof DashboardSizesNewRoute
+  '/(shop)/checkout/': typeof shopCheckoutIndexRoute
   '/(shop)/products/': typeof shopProductsIndexRoute
   '/dashboard/categories/': typeof DashboardCategoriesIndexRoute
   '/dashboard/colors/': typeof DashboardColorsIndexRoute
@@ -306,6 +315,7 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
+    | '/checkout/'
     | '/products/'
     | '/dashboard/categories/'
     | '/dashboard/colors/'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
+    | '/checkout'
     | '/products'
     | '/dashboard/categories'
     | '/dashboard/colors'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/dashboard/products/new'
     | '/dashboard/sizes/$id'
     | '/dashboard/sizes/new'
+    | '/(shop)/checkout/'
     | '/(shop)/products/'
     | '/dashboard/categories/'
     | '/dashboard/colors/'
@@ -510,6 +522,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof shopProductsIndexRouteImport
       parentRoute: typeof shopProductsRouteRoute
     }
+    '/(shop)/checkout/': {
+      id: '/(shop)/checkout/'
+      path: '/checkout'
+      fullPath: '/checkout/'
+      preLoaderRoute: typeof shopCheckoutIndexRouteImport
+      parentRoute: typeof shopRouteRoute
+    }
     '/dashboard/sizes/new': {
       id: '/dashboard/sizes/new'
       path: '/sizes/new'
@@ -631,6 +650,7 @@ interface shopRouteRouteChildren {
   shopIndexRoute: typeof shopIndexRoute
   shopCheckoutSuccessRoute: typeof shopCheckoutSuccessRoute
   shopProductIdRoute: typeof shopProductIdRoute
+  shopCheckoutIndexRoute: typeof shopCheckoutIndexRoute
 }
 
 const shopRouteRouteChildren: shopRouteRouteChildren = {
@@ -642,6 +662,7 @@ const shopRouteRouteChildren: shopRouteRouteChildren = {
   shopIndexRoute: shopIndexRoute,
   shopCheckoutSuccessRoute: shopCheckoutSuccessRoute,
   shopProductIdRoute: shopProductIdRoute,
+  shopCheckoutIndexRoute: shopCheckoutIndexRoute,
 }
 
 const shopRouteRouteWithChildren = shopRouteRoute._addFileChildren(

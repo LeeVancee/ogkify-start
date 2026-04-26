@@ -30,6 +30,11 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
 
         // Handle based on event type
         switch (event.type) {
+          case "payment_intent.succeeded":
+            await handlePaymentIntentSucceeded(
+              event.data.object as Stripe.PaymentIntent,
+            );
+            break;
           case "checkout.session.completed":
             await handleCheckoutSessionCompleted(
               event.data.object as Stripe.Checkout.Session,
@@ -52,6 +57,62 @@ export const Route = createFileRoute("/api/webhooks/stripe")({
     },
   },
 });
+
+async function handlePaymentIntentSucceeded(
+  paymentIntent: Stripe.PaymentIntent,
+) {
+  console.log("Processing payment intent succeeded:", paymentIntent.id);
+
+  const orderId = paymentIntent.metadata?.orderId;
+  const userId = paymentIntent.metadata?.userId;
+
+  if (!orderId) {
+    throw new Error("Order ID not found in payment intent metadata");
+  }
+
+  const existingOrder = await db.query.orders.findFirst({
+    where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
+    columns: {
+      id: true,
+      paymentIntent: true,
+    },
+  });
+
+  if (!existingOrder) {
+    throw new Error(`Order ${orderId} not found for payment completion`);
+  }
+
+  if (
+    existingOrder.paymentIntent &&
+    existingOrder.paymentIntent !== paymentIntent.id &&
+    !existingOrder.paymentIntent.startsWith("cs_")
+  ) {
+    throw new Error(`Payment intent mismatch for order ${orderId}`);
+  }
+
+  const [updatedOrder] = await db
+    .update(orders)
+    .set({
+      status: "PAID",
+      paymentStatus: "PAID",
+      paymentIntent: paymentIntent.id,
+      updatedAt: new Date(),
+    })
+    .where(eq(orders.id, orderId))
+    .returning({
+      id: orders.id,
+    });
+
+  if (!updatedOrder) {
+    throw new Error(`Failed to update paid order ${orderId}`);
+  }
+
+  if (userId) {
+    await clearUserCart(userId);
+  }
+
+  console.log(`Order ${orderId} marked as paid`);
+}
 
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
@@ -77,9 +138,13 @@ async function handleCheckoutSessionCompleted(
     throw new Error(`Order ${orderId} not found for checkout completion`);
   }
 
+  const sessionPaymentIntentId =
+    typeof session.payment_intent === "string" ? session.payment_intent : null;
+
   if (
     existingOrder.paymentIntent &&
-    existingOrder.paymentIntent !== session.id
+    existingOrder.paymentIntent !== session.id &&
+    existingOrder.paymentIntent !== sessionPaymentIntentId
   ) {
     throw new Error(`Checkout session mismatch for order ${orderId}`);
   }
@@ -100,7 +165,7 @@ async function handleCheckoutSessionCompleted(
     .set({
       status: "PAID",
       paymentStatus: "PAID",
-      paymentIntent: session.payment_intent as string,
+      paymentIntent: sessionPaymentIntentId,
       phone: session.customer_details?.phone,
       shippingAddress: addressString.length > 0 ? addressString : null,
       updatedAt: new Date(),
@@ -115,17 +180,21 @@ async function handleCheckoutSessionCompleted(
   }
 
   if (userId) {
-    const userCart = await db.query.carts.findFirst({
-      where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
-    });
-
-    if (userCart) {
-      await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
-      console.log(`Cart cleared for user ${userId}`);
-    }
+    await clearUserCart(userId);
   }
 
   console.log(`Order ${orderId} marked as paid`);
+}
+
+async function clearUserCart(userId: string) {
+  const userCart = await db.query.carts.findFirst({
+    where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
+  });
+
+  if (userCart) {
+    await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
+    console.log(`Cart cleared for user ${userId}`);
+  }
 }
 
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {

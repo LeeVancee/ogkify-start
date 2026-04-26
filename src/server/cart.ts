@@ -5,7 +5,6 @@ import { z } from "zod";
 
 import { db } from "@/db";
 import { cartItems, carts, orderItems, orders } from "@/db/schema";
-import { env } from "@/env/server";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 
 import { getSession } from "./getSession";
@@ -334,8 +333,8 @@ const checkoutLineItemSchema = z.object({
   sizeId: z.uuid().nullable(),
 });
 
-// Create checkout session from cart
-export const createCheckoutSession = createServerFn({
+// Create an unpaid order and Stripe PaymentIntent from the current cart.
+export const createCheckoutPaymentIntent = createServerFn({
   method: "POST",
 }).handler(async () => {
   const session = await getSession();
@@ -382,34 +381,6 @@ export const createCheckoutSession = createServerFn({
     }),
   );
 
-  // Build line items
-  const lineItems = cart.items.map((item) => {
-    const productName = item.product.name;
-    const colorName = item.color?.name;
-    const sizeName = item.size?.name;
-
-    // Build variant info string (only include non-empty values)
-    const variantParts = [colorName, sizeName].filter(
-      (part) => part && part.trim().length > 0,
-    );
-    const variantInfo =
-      variantParts.length > 0 ? variantParts.join(", ") : null;
-    const primaryImage = item.product.images[0]?.url;
-
-    return {
-      price_data: {
-        currency: "usd",
-        product_data: {
-          name: productName,
-          description: variantInfo !== null ? variantInfo : undefined,
-          images: primaryImage ? [primaryImage] : undefined,
-        },
-        unit_amount: formatAmountForStripe(item.product.price),
-      },
-      quantity: item.quantity,
-    };
-  });
-
   const order = await db.transaction(async (tx) => {
     const [createdOrder] = await tx
       .insert(orders)
@@ -436,48 +407,33 @@ export const createCheckoutSession = createServerFn({
     return createdOrder;
   });
 
-  const baseUrl = env.VITE_BASE_URL;
-
-  // Create Stripe checkout session
-  const checkoutSession = await stripe.checkout.sessions.create({
-    mode: "payment",
-    line_items: lineItems,
-    success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-    cancel_url: `${baseUrl}/checkout/cancel?order_id=${order.id}`,
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: formatAmountForStripe(amount),
+    currency: "usd",
+    automatic_payment_methods: {
+      enabled: true,
+    },
+    description: `Order ${order.orderNumber}`,
     metadata: {
       orderId: order.id,
       userId: session.user.id,
     },
-    payment_intent_data: {
-      metadata: {
-        orderId: order.id,
-        userId: session.user.id,
-      },
-    },
-    billing_address_collection: "required",
-    shipping_address_collection: {
-      allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],
-    },
-    phone_number_collection: {
-      enabled: true,
-    },
   });
 
-  if (!checkoutSession.url) {
-    throw new Error("Stripe checkout session URL is missing");
+  if (!paymentIntent.client_secret) {
+    throw new Error("Stripe PaymentIntent client secret is missing");
   }
 
-  // Update order with Stripe session ID
   await db
     .update(orders)
     .set({
       paymentMethod: "Stripe",
-      paymentIntent: checkoutSession.id,
+      paymentIntent: paymentIntent.id,
     })
     .where(eq(orders.id, order.id));
 
   return {
-    sessionId: checkoutSession.id,
-    sessionUrl: checkoutSession.url,
+    orderId: order.id,
+    clientSecret: paymentIntent.client_secret,
   };
 });

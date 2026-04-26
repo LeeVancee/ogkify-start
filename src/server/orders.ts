@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
-import { env } from "@/env/server";
 import { formatAmountForStripe, stripe } from "@/lib/stripe";
 import { formatPrice } from "@/lib/utils";
 
@@ -17,6 +16,11 @@ const orderIdSchema = z.uuid();
 const updateOrderStatusSchema = z.object({
   orderId: z.uuid(),
   status: z.enum(["PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]),
+});
+const checkoutOrderDetailsSchema = z.object({
+  orderId: z.uuid(),
+  shippingAddress: z.string().trim().min(1).max(1000),
+  phone: z.string().trim().max(50).optional(),
 });
 
 // Get all user orders
@@ -257,8 +261,8 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
   return { success: true, orders: formattedOrders };
 });
 
-// Create new payment session for unpaid order
-export const createPaymentSession = createServerFn({ method: "POST" })
+// Create or reuse a Stripe PaymentIntent for an unpaid order.
+export const createOrderPaymentIntent = createServerFn({ method: "POST" })
   .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
@@ -294,82 +298,198 @@ export const createPaymentSession = createServerFn({ method: "POST" })
       return { error: "Order not found", success: false };
     }
 
-    // Build line items
-    const lineItems = order.items.map((item) => {
-      const productName = item.product.name;
-      const variantInfoParts = [];
-
-      if (item.color) {
-        variantInfoParts.push(item.color.name);
-      }
-
-      if (item.size) {
-        variantInfoParts.push(item.size.name);
-      }
-
-      const variantInfo = variantInfoParts.join(", ");
-
-      return {
-        price_data: {
-          currency: "usd",
-          product_data: {
-            name: productName,
-            description: variantInfo ? `${variantInfo}` : undefined,
-            images: [
-              getRequiredOrderItemImageUrl(
-                order.orderNumber,
-                item.product.images[0]?.url,
-              ),
-            ],
-          },
-          unit_amount: formatAmountForStripe(item.price),
-        },
-        quantity: item.quantity,
-      };
+    const paymentIntent = await createOrReusePaymentIntent({
+      existingPaymentIntentId: order.paymentIntent,
+      amount: order.totalAmount,
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+      userId: session.user.id,
     });
 
-    // Use absolute URL
-    const baseUrl = env.VITE_BASE_URL;
-    // Create Stripe checkout session
-    const checkoutSession = await stripe.checkout.sessions.create({
-      mode: "payment",
-      line_items: lineItems,
-      success_url: `${baseUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-      cancel_url: `${baseUrl}/checkout/cancel?order_id=${order.id}`,
-      metadata: {
-        orderId: order.id,
-        userId: session.user.id,
-      },
-      payment_intent_data: {
-        metadata: {
-          orderId: order.id,
-          userId: session.user.id,
-        },
-      },
-      billing_address_collection: "required",
-      shipping_address_collection: {
-        allowed_countries: ["CN", "US", "CA", "JP", "SG", "HK", "TW", "MO"],
-      },
-      phone_number_collection: {
-        enabled: true,
-      },
-    });
+    if (!paymentIntent.client_secret) {
+      return { error: "Payment client secret is unavailable", success: false };
+    }
 
-    // Update order payment intent ID
     await db
       .update(orders)
       .set({
         paymentMethod: "Stripe",
-        paymentIntent: checkoutSession.id,
+        paymentIntent: paymentIntent.id,
       })
       .where(eq(orders.id, order.id));
 
     return {
       success: true,
-      sessionId: checkoutSession.id,
-      sessionUrl: checkoutSession.url,
+      orderId: order.id,
+      clientSecret: paymentIntent.client_secret,
     };
   });
+
+// Get the order snapshot and PaymentIntent client secret for the checkout page.
+export const getCheckoutOrder = createServerFn()
+  .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
+  .handler(async ({ data: orderId }) => {
+    const session = await getSession();
+
+    if (!session?.user.id) {
+      return { error: "Unauthorized", success: false };
+    }
+
+    const order = await db.query.orders.findFirst({
+      where: (ordersTable, { eq, and }) =>
+        and(
+          eq(ordersTable.id, orderId),
+          eq(ordersTable.userId, session.user.id),
+          eq(ordersTable.paymentStatus, "UNPAID"),
+        ),
+      with: {
+        items: {
+          with: {
+            product: {
+              with: {
+                images: true,
+              },
+            },
+            color: true,
+            size: true,
+          },
+        },
+      },
+    });
+
+    if (!order) {
+      return { error: "Order not found or already paid", success: false };
+    }
+
+    if (!order.paymentIntent || !order.paymentIntent.startsWith("pi_")) {
+      return { error: "Payment has not been initialized", success: false };
+    }
+
+    const paymentIntent = await stripe.paymentIntents.retrieve(
+      order.paymentIntent,
+    );
+
+    if (!paymentIntent.client_secret) {
+      return { error: "Payment client secret is unavailable", success: false };
+    }
+
+    return {
+      success: true,
+      clientSecret: paymentIntent.client_secret,
+      order: {
+        id: order.id,
+        orderNumber: order.orderNumber,
+        totalAmount: order.totalAmount,
+        items: order.items.map((item) => ({
+          id: item.id,
+          productId: item.productId,
+          productName: item.product.name,
+          quantity: item.quantity,
+          price: item.price,
+          imageUrl: getRequiredOrderItemImageUrl(
+            order.orderNumber,
+            item.product.images[0]?.url,
+          ),
+          color: item.color
+            ? {
+                name: item.color.name,
+                value: item.color.value,
+              }
+            : null,
+          size: item.size
+            ? {
+                name: item.size.name,
+                value: item.size.value,
+              }
+            : null,
+        })),
+      },
+    };
+  });
+
+export const updateCheckoutOrderDetails = createServerFn({ method: "POST" })
+  .inputValidator((input: z.infer<typeof checkoutOrderDetailsSchema>) =>
+    checkoutOrderDetailsSchema.parse(input),
+  )
+  .handler(async ({ data }) => {
+    const session = await getSession();
+
+    if (!session?.user.id) {
+      return { error: "Unauthorized", success: false };
+    }
+
+    const [updatedOrder] = await db
+      .update(orders)
+      .set({
+        shippingAddress: data.shippingAddress,
+        phone: data.phone,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(orders.id, data.orderId),
+          eq(orders.userId, session.user.id),
+          eq(orders.paymentStatus, "UNPAID"),
+        ),
+      )
+      .returning({
+        id: orders.id,
+      });
+
+    if (!updatedOrder) {
+      return { error: "Order not found or already paid", success: false };
+    }
+
+    return { success: true };
+  });
+
+async function createOrReusePaymentIntent({
+  existingPaymentIntentId,
+  amount,
+  orderId,
+  orderNumber,
+  userId,
+}: {
+  existingPaymentIntentId: string | null;
+  amount: number;
+  orderId: string;
+  orderNumber: string;
+  userId: string;
+}) {
+  const amountInCents = formatAmountForStripe(amount);
+
+  if (existingPaymentIntentId?.startsWith("pi_")) {
+    const existingPaymentIntent = await stripe.paymentIntents.retrieve(
+      existingPaymentIntentId,
+    );
+
+    if (
+      existingPaymentIntent.status !== "succeeded" &&
+      existingPaymentIntent.status !== "canceled"
+    ) {
+      if (existingPaymentIntent.amount !== amountInCents) {
+        return stripe.paymentIntents.update(existingPaymentIntent.id, {
+          amount: amountInCents,
+        });
+      }
+
+      return existingPaymentIntent;
+    }
+  }
+
+  return stripe.paymentIntents.create({
+    amount: amountInCents,
+    currency: "usd",
+    automatic_payment_methods: {
+      enabled: true,
+    },
+    description: `Order ${orderNumber}`,
+    metadata: {
+      orderId,
+      userId,
+    },
+  });
+}
 
 // Update order status
 export const updateOrderStatus = createServerFn({ method: "POST" })

@@ -1,12 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { formatPrice } from "@/lib/utils";
 import {
-  createCheckoutSession,
+  createCheckoutPaymentIntent,
   getUserCart,
   removeFromCart,
   updateCartItemQuantity,
@@ -29,6 +29,7 @@ interface CartItem {
 
 function CartPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     data: cartData,
@@ -68,9 +69,14 @@ function CartPage() {
   });
 
   const checkoutMutation = useMutation({
-    mutationFn: () => createCheckoutSession(),
+    mutationFn: () => createCheckoutPaymentIntent(),
     onSuccess: (data) => {
-      window.location.href = data.sessionUrl;
+      navigate({
+        to: "/checkout",
+        search: {
+          order_id: data.orderId,
+        },
+      });
     },
     onError: (error) => {
       toast.error(

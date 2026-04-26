@@ -18,7 +18,7 @@ export const Route = createFileRoute("/(shop)/checkout/success")({
 });
 
 function CheckoutSuccessContent() {
-  const { session_id, order_id } = Route.useSearch();
+  const { order_id } = Route.useSearch();
 
   // use TanStack Query to get order data
   const {
@@ -27,12 +27,10 @@ function CheckoutSuccessContent() {
     isError,
     error,
   } = useQuery({
-    queryKey: ["order", order_id, session_id],
+    queryKey: ["order", order_id],
     queryFn: async () => {
-      if (!session_id || !order_id) {
-        throw new Error(
-          "Checkout success page requires session_id and order_id",
-        );
+      if (!order_id) {
+        throw new Error("Checkout success page requires order_id");
       }
 
       // wait for a short time to ensure webhook is processed
@@ -49,11 +47,15 @@ function CheckoutSuccessContent() {
         throw new Error(result.error);
       }
 
+      if (result.order.paymentStatus !== "PAID") {
+        throw new Error("Payment is still being confirmed");
+      }
+
       return result;
     },
     retry: 2,
     staleTime: 1000 * 60 * 10, // 10 minutes cache, checkout success page is usually only visited once
-    enabled: Boolean(session_id && order_id),
+    enabled: Boolean(order_id),
   });
 
   const orderData = orderResult?.order;

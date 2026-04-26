@@ -1,9 +1,10 @@
+import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { createPaymentSession } from "@/server/orders";
+import { createOrderPaymentIntent } from "@/server/orders";
 
 interface PayOrderButtonProps {
   orderId: string;
@@ -11,24 +12,24 @@ interface PayOrderButtonProps {
 
 export function PayOrderButton({ orderId }: PayOrderButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   async function handlePayment() {
     setIsLoading(true);
 
     try {
-      const result = await createPaymentSession({ data: orderId });
+      const result = await createOrderPaymentIntent({ data: orderId });
 
       if (!result.success) {
-        throw new Error(result.error || "Failed to create payment session");
+        throw new Error(result.error || "Failed to initialize payment");
       }
 
-      // If successful, redirect to Stripe payment page
-      if (result.sessionUrl) {
-        window.location.href = result.sessionUrl;
-        return;
-      }
-
-      toast.error("Failed to create payment session");
+      navigate({
+        to: "/checkout",
+        search: {
+          order_id: result.orderId,
+        },
+      });
     } catch (error) {
       console.error("Payment error:", error);
       toast.error(
