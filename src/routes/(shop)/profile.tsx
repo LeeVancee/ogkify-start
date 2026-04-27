@@ -29,7 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
-import { useI18n } from "@/lib/i18n/i18n-context";
+import { useI18n } from "@/lib/i18n";
 import { getSession } from "@/server/getSession";
 
 export const Route = createFileRoute("/(shop)/profile")({

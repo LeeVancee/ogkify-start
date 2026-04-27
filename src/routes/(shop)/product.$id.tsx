@@ -5,7 +5,7 @@ import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductInfo } from "@/components/shop/product/product-info";
 import { ProductInfoLoading } from "@/components/shop/product/product-info-loading";
 import { ProductTabs } from "@/components/shop/product/product-tabs";
-import { defaultLocale, messages, useI18n } from "@/lib/i18n";
+import { useI18n } from "@/lib/i18n";
 import { handleAddToCartFormAction } from "@/server/cart";
 import { getProduct, getRelatedProducts } from "@/server/product-shop";
 
@@ -15,7 +15,7 @@ export const Route = createFileRoute("/(shop)/product/$id")({
   loader: async ({ params }: { params: { id: string } }) => {
     const product = await getProduct({ data: params.id });
     if (!product) {
-      throw new Error(messages[defaultLocale].shop.productDetail.notFound);
+      throw new Error("Product not found");
     }
 
     const relatedProducts = await getRelatedProducts({

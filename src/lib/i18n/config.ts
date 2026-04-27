@@ -5,7 +5,6 @@ export type Locale = (typeof supportedLocales)[number];
 export const defaultLocale: Locale = "en";
 
 export const localeCookieName = "ogkify-locale";
-export const localeStorageKey = "ogkify-locale";
 
 export const localeLabels: Record<Locale, string> = {
   en: "English",
