@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -48,6 +49,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
     product.sizes[0] ? product.sizes[0].id : "",
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleAddToCart = async () => {
     const formData = new FormData();
@@ -71,6 +73,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         throw new Error(result.error ? result.error : "Failed to add to cart");
       }
 
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
       toast.success(result.message ? result.message : "Added to cart");
     } catch (error) {
       toast.error(

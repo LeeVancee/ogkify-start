@@ -210,7 +210,7 @@ export const getUserCart = createServerFn().handler(async () => {
 
   return {
     items: formattedItems,
-    totalItems: formattedItems.length,
+    totalItems: formattedItems.reduce((sum, item) => sum + item.quantity, 0),
   };
 });
 

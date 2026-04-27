@@ -1,305 +1,218 @@
-Welcome to your new TanStack app!
+# ogkify
 
-# Getting Started
+ogkify is a full-stack e-commerce application built with TanStack Start. It includes a customer-facing storefront, authentication, shopping cart, checkout flow, Stripe payments, and an admin dashboard for managing products, categories, colors, sizes, and orders.
 
-To run this application:
+## Features
+
+- Storefront with home page, product listing, search, product detail pages, cart, checkout, profile, and order history
+- Admin dashboard for products, categories, colors, sizes, and order management
+- Email/password authentication powered by Better Auth
+- PostgreSQL data layer with Drizzle ORM
+- Product images and category images through Cloudinary upload widgets
+- Stripe checkout/payment intent flow with webhook handling
+- Tailwind CSS v4 and shadcn/ui-based interface
+- TanStack Router file-based routing and TanStack Query data fetching
+
+## Tech Stack
+
+- **Framework**: TanStack Start, TanStack Router, React 19, Vite
+- **Database**: PostgreSQL, Drizzle ORM, Drizzle Kit
+- **Authentication**: Better Auth with admin plugin
+- **Payments**: Stripe
+- **Uploads**: Cloudinary upload widget, optional UploadThing token support
+- **UI**: Tailwind CSS v4, shadcn/ui, Base UI, lucide-react, Sonner
+- **Validation and Forms**: Zod, React Hook Form, TanStack Form
+- **Tooling**: TypeScript, Vitest, oxlint, oxfmt, pnpm
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 20+
+- pnpm
+- PostgreSQL database
+- Stripe account for payment testing
+- Cloudinary account for image uploads
+
+### Install Dependencies
 
 ```bash
 pnpm install
-pnpm start
 ```
 
-# Building For Production
+### Configure Environment Variables
 
-To build this application for production:
+Create a local environment file:
+
+```bash
+cp .env.example .env
+```
+
+Fill in the required values:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
+
+BETTER_AUTH_SECRET="your-auth-secret"
+
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
+VITE_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+
+VITE_BASE_URL="http://localhost:3000"
+
+VITE_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+VITE_CLOUDINARY_UPLOAD_PRESET="your-upload-preset"
+
+UPLOADTHING_TOKEN="optional-uploadthing-token"
+```
+
+`UPLOADTHING_TOKEN` is optional in the server environment schema. Cloudinary variables are required by the client-side upload components.
+
+### Set Up the Database
+
+Push the Drizzle schema to your database:
+
+```bash
+pnpm db:push
+```
+
+Optionally seed demo catalog data:
+
+```bash
+pnpm db:seed
+```
+
+Open Drizzle Studio when you need to inspect or edit records:
+
+```bash
+pnpm db:studio
+```
+
+### Run the App
+
+```bash
+pnpm dev
+```
+
+The development server runs at:
+
+```txt
+http://localhost:3000
+```
+
+If Vite cache causes stale behavior, start with a clean cache:
+
+```bash
+pnpm dev:clean
+```
+
+## Common Scripts
+
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the development server on port 3000 |
+| `pnpm dev:clean` | Clear Vite cache and start the dev server |
+| `pnpm build` | Build the production application |
+| `pnpm start` | Run the built production server |
+| `pnpm start:local` | Run the built server with `.env` loaded |
+| `pnpm test` | Run Vitest tests |
+| `pnpm typecheck` | Run TypeScript checks |
+| `pnpm lint` | Run oxlint |
+| `pnpm lint:fix` | Fix lint issues with oxlint |
+| `pnpm format` | Check formatting with oxfmt |
+| `pnpm format:fix` | Format files with oxfmt |
+| `pnpm check` | Fix lint issues and format files |
+| `pnpm db:push` | Push Drizzle schema changes |
+| `pnpm db:studio` | Open Drizzle Studio |
+| `pnpm db:seed` | Seed demo catalog data |
+
+## Project Structure
+
+```txt
+src/
+  components/
+    dashboard/       Admin dashboard UI
+    shop/            Storefront, product, cart, checkout, and order UI
+    shared/          Shared application components
+    ui/              shadcn/ui primitives
+  db/
+    schema.ts        Drizzle schema and relations
+    seed.ts          Demo data seed script
+  env/
+    client.ts        Public client environment schema
+    server.ts        Server-only environment schema
+  lib/
+    auth.ts          Better Auth configuration
+  routes/
+    (auth)/          Login and signup routes
+    (shop)/          Customer storefront routes
+    api/             API endpoints and webhooks
+    dashboard/       Admin dashboard routes
+  server/
+    *.ts             Server functions for data queries and mutations
+```
+
+## Routing
+
+Routes are file-based through TanStack Router:
+
+- `src/routes/(shop)` contains the storefront, product listing, cart, checkout, profile, and customer order pages.
+- `src/routes/dashboard` contains admin pages for managing catalog resources and orders.
+- `src/routes/(auth)` contains login and signup pages.
+- `src/routes/api/auth.$.ts` exposes Better Auth handlers.
+- `src/routes/api/webhooks/stripe.ts` handles Stripe webhook events.
+
+## Data Model
+
+The database schema is defined in `src/db/schema.ts`. Core tables include:
+
+- `user`, `session`, `account`, `verification` for Better Auth
+- `products`, `categories`, `images`
+- `colors`, `sizes`, and product relationship tables
+- `carts`, `cart_items`
+- `orders`, `order_items`
+
+Order status and payment status are represented with PostgreSQL enums.
+
+## Authentication and Admin Access
+
+Authentication is configured in `src/lib/auth.ts` with Better Auth email/password login and the admin plugin. Dashboard routes should be protected by the existing server-side admin/session checks.
+
+## Payments and Webhooks
+
+Stripe keys are required for checkout and payment status updates. In local development, forward Stripe webhook events to:
+
+```txt
+http://localhost:3000/api/webhooks/stripe
+```
+
+Then set the generated webhook signing secret as `STRIPE_WEBHOOK_SECRET`.
+
+## Production Build
+
+Build the app:
 
 ```bash
 pnpm build
 ```
 
-## Testing
-
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
+Start the production server:
 
 ```bash
-pnpm test
+pnpm start
 ```
 
-## Styling
-
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
-
-## Linting & Formatting
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
+For local production testing with `.env` loaded:
 
 ```bash
-pnpm lint
-pnpm format
-pnpm check
+pnpm start:local
 ```
 
-## Shadcn
-
-Add components using the latest version of [Shadcn](https://ui.shadcn.com/).
-
-```bash
-pnpx shadcn@latest add button
-```
-
-## Routing
-
-This project uses [TanStack Router](https://tanstack.com/router). The initial setup is a file based router. Which means that the routes are managed as files in `src/routes`.
-
-### Adding A Route
-
-To add a new route to your application just add another a new file in the `./src/routes` directory.
-
-TanStack will automatically generate the content of the route file for you.
-
-Now that you have two routes you can use a `Link` component to navigate between them.
-
-### Adding Links
-
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
-
-```tsx
-import { Link } from "@tanstack/react-router";
-```
-
-Then anywhere in your JSX you can use it like so:
-
-```tsx
-<Link to="/about">About</Link>
-```
-
-This will create a link that will navigate to the `/about` route.
-
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
-
-### Using A Layout
-
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you use the `<Outlet />` component.
-
-Here is an example layout that includes a header:
-
-```tsx
-import { Outlet, createRootRoute } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-
-import { Link } from "@tanstack/react-router";
-
-export const Route = createRootRoute({
-  component: () => (
-    <>
-      <header>
-        <nav>
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-        </nav>
-      </header>
-      <Outlet />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-The `<TanStackRouterDevtools />` component is not required so you can remove it if you don't want it in your layout.
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-const peopleRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/people",
-  loader: async () => {
-    const response = await fetch("https://swapi.dev/api/people");
-    return response.json() as Promise<{
-      results: {
-        name: string;
-      }[];
-    }>;
-  },
-  component: () => {
-    const data = peopleRoute.useLoaderData();
-    return (
-      <ul>
-        {data.results.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    );
-  },
-});
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-### React-Query
-
-React-Query is an excellent addition or alternative to route loading and integrating it into you application is a breeze.
-
-First add your dependencies:
-
-```bash
-pnpm add @tanstack/react-query @tanstack/react-query-devtools
-```
-
-Next we'll need to create a query client and provider. We recommend putting those in `main.tsx`.
-
-```tsx
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-// ...
-
-const queryClient = new QueryClient();
-
-// ...
-
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-
-  root.render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  );
-}
-```
-
-You can also add TanStack Query Devtools to the root route (optional).
-
-```tsx
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-
-const rootRoute = createRootRoute({
-  component: () => (
-    <>
-      <Outlet />
-      <ReactQueryDevtools buttonPosition="top-right" />
-      <TanStackRouterDevtools />
-    </>
-  ),
-});
-```
-
-Now you can use `useQuery` to fetch your data.
-
-```tsx
-import { useQuery } from "@tanstack/react-query";
-
-import "./App.css";
-
-function App() {
-  const { data } = useQuery({
-    queryKey: ["people"],
-    queryFn: () =>
-      fetch("https://swapi.dev/api/people")
-        .then((res) => res.json())
-        .then((data) => data.results as { name: string }[]),
-    initialData: [],
-  });
-
-  return (
-    <div>
-      <ul>
-        {data.map((person) => (
-          <li key={person.name}>{person.name}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-export default App;
-```
-
-You can find out everything you need to know on how to use React-Query in the [React-Query documentation](https://tanstack.com/query/latest/docs/framework/react/overview).
-
-## State Management
-
-Another common requirement for React applications is state management. There are many options for state management in React. TanStack Store provides a great starting point for your project.
-
-First you need to add TanStack Store as a dependency:
-
-```bash
-pnpm add @tanstack/store
-```
-
-Now let's create a simple counter in the `src/App.tsx` file as a demonstration.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-function App() {
-  const count = useStore(countStore);
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-    </div>
-  );
-}
-
-export default App;
-```
-
-One of the many nice features of TanStack Store is the ability to derive state from other state. That derived state will update when the base state updates.
-
-Let's check this out by doubling the count using derived state.
-
-```tsx
-import { useStore } from "@tanstack/react-store";
-import { Store, Derived } from "@tanstack/store";
-import "./App.css";
-
-const countStore = new Store(0);
-
-const doubledStore = new Derived({
-  fn: () => countStore.state * 2,
-  deps: [countStore],
-});
-doubledStore.mount();
-
-function App() {
-  const count = useStore(countStore);
-  const doubledCount = useStore(doubledStore);
-
-  return (
-    <div>
-      <button onClick={() => countStore.setState((n) => n + 1)}>
-        Increment - {count}
-      </button>
-      <div>Doubled - {doubledCount}</div>
-    </div>
-  );
-}
-
-export default App;
-```
-
-We use the `Derived` class to create a new store that is derived from another store. The `Derived` class has a `mount` method that will start the derived store updating.
-
-Once we've created the derived store we can use it in the `App` component just like we would any other store using the `useStore` hook.
-
-You can find out everything you need to know on how to use TanStack Store in the [TanStack Store documentation](https://tanstack.com/store/latest).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
+## Development Notes
+
+- Use server functions in `src/server` for database-backed operations.
+- Use Drizzle ORM for type-safe database queries.
+- Keep customer-facing UI in `src/components/shop` and admin UI in `src/components/dashboard`.
+- Use Tailwind CSS utilities and `cn()` from `src/lib/utils.ts` for conditional classes.
+- Prefer existing shadcn/ui components in `src/components/ui` before adding new UI primitives.

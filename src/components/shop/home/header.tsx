@@ -1,9 +1,13 @@
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useState } from "react";
 
+import { CartSheet } from "@/components/shop/cart-sheet";
+import type { CartSheetData } from "@/components/shop/cart-sheet";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { getUserCart } from "@/server/cart";
 
 import { DropDown } from "../DropDown";
 
@@ -11,11 +15,6 @@ const navigation = [
   { name: "All Products", href: "/products", search: {} },
   { name: "Search", href: "/search", search: {} },
 ];
-
-interface CartItem {
-  id: string;
-  [key: string]: unknown;
-}
 
 interface SessionUser {
   name?: string | null;
@@ -29,10 +28,7 @@ interface Session {
 }
 
 interface HeaderProps {
-  initialCartData: {
-    items: Array<CartItem>;
-    totalItems: number;
-  };
+  initialCartData: CartSheetData;
   initialSession?: Session;
 }
 
@@ -42,9 +38,20 @@ export default function Header({
 }: HeaderProps) {
   const pathname = useLocation().pathname;
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const {
+    data: cartData,
+    isLoading: isCartLoading,
+    isError: isCartError,
+  } = useQuery({
+    queryKey: ["cart"],
+    queryFn: () => getUserCart(),
+    initialData: initialCartData,
+    staleTime: 1000 * 60 * 2,
+  });
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter") return;
@@ -120,18 +127,23 @@ export default function Header({
               </Link>
             )}
 
-            <Link
-              to="/cart"
-              className="relative p-2 text-slate-500 transition-colors hover:text-slate-900"
+            <button
+              type="button"
+              onClick={() => setIsCartOpen(true)}
+              className={cn(
+                "relative rounded-full p-2 text-slate-500 transition-colors hover:text-slate-900 cursor-pointer",
+                isCartOpen && "bg-slate-100 text-slate-900",
+              )}
               aria-label="Cart"
+              aria-expanded={isCartOpen}
             >
               <ShoppingBag className="h-5 w-5" />
-              {initialCartData.totalItems ? (
-                <span className="absolute right-0.5 top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-black text-[9px] font-semibold text-white">
-                  {initialCartData.totalItems}
+              {cartData.totalItems ? (
+                <span className="absolute right-0 top-0 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
+                  {cartData.totalItems}
                 </span>
               ) : null}
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -184,6 +196,14 @@ export default function Header({
           </nav>
         ) : null}
       </div>
+
+      <CartSheet
+        cartData={cartData}
+        isLoading={isCartLoading}
+        isError={isCartError}
+        open={isCartOpen}
+        onOpenChange={setIsCartOpen}
+      />
     </header>
   );
 }
