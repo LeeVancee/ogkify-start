@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import type { Category } from "@/lib/types";
 
 import { CheckboxFilterSection } from "./checkbox-filter-section";
@@ -9,6 +10,7 @@ interface CategoryFilterProps {
 
 export function CategoryFilter({ categories }: CategoryFilterProps) {
   const { search, updateSearch } = useProductFilterNavigation();
+  const { t } = useI18n();
   const currentCategory = search.category;
 
   const handleChange = (categoryId: string) => {
@@ -23,7 +25,7 @@ export function CategoryFilter({ categories }: CategoryFilterProps) {
   return (
     <CheckboxFilterSection
       value="categories"
-      title="Categories"
+      title={t("shop.productFilters.categories")}
       options={categories.map((category) => ({
         id: `category-${category.id}`,
         label: category.name,

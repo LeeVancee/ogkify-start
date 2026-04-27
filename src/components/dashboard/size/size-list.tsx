@@ -12,42 +12,49 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useI18n } from "@/lib/i18n";
 import { deleteSize, getSizes } from "@/server/sizes";
 
 import { ResourceList } from "../resource-list";
 
 export function SizeList() {
+  const { t } = useI18n();
+
   return (
     <ResourceList
       layout="table"
       queryKey={["sizes"]}
       queryFn={() => getSizes()}
       deleteFn={(id) => deleteSize({ data: id })}
-      searchPlaceholder="Search for sizes..."
+      searchPlaceholder={t("dashboard.resources.searchSizes")}
       addHref="/dashboard/sizes/new"
-      addLabel="Add Size"
-      emptyTitle="No sizes found"
-      emptyDescription="No sizes match your search criteria or you have not added any sizes yet."
-      errorTitle="Failed to load sizes"
-      errorDescription="There was an error loading the sizes. Please try again."
+      addLabel={t("dashboard.actions.addSize")}
+      emptyTitle={t("dashboard.resources.noSizes")}
+      emptyDescription={t("dashboard.resources.noSizesDescription")}
+      errorTitle={t("dashboard.resources.loadSizesFailed")}
+      errorDescription={t("dashboard.resources.loadSizesError")}
       matchesSearch={(size, query) =>
         !query ||
         size.name.toLowerCase().includes(query) ||
         size.value.toLowerCase().includes(query)
       }
       getItemId={(size) => size.id}
-      getDeleteSuccessMessage={() => "Size deleted successfully"}
-      getDeleteErrorMessage={() => "Failed to delete size"}
+      getDeleteSuccessMessage={() => t("dashboard.resources.sizeDeleted")}
+      getDeleteErrorMessage={() => t("dashboard.resources.sizeDeleteFailed")}
       renderCard={() => null}
       renderTable={(sizes, isDeleting, onDelete) => (
         <DataTableShell>
           <Table className="min-w-[680px]">
             <TableHeader>
               <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-[160px]">Display Value</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead className="w-[180px] text-right">Actions</TableHead>
+                <TableHead className="w-[160px]">
+                  {t("dashboard.table.displayValue")}
+                </TableHead>
+                <TableHead>{t("dashboard.table.name")}</TableHead>
+                <TableHead>{t("dashboard.table.value")}</TableHead>
+                <TableHead className="w-[180px] text-right">
+                  {t("dashboard.table.actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -67,7 +74,7 @@ export function SizeList() {
                       {size.name}
                     </Link>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      Product size option
+                      {t("dashboard.resources.productSizeOption")}
                     </div>
                   </TableCell>
                   <TableCell>
@@ -89,7 +96,7 @@ export function SizeList() {
                         })}
                       >
                         <Edit className="mr-1.5 h-3.5 w-3.5" />
-                        Edit
+                        {t("dashboard.actions.edit")}
                       </Link>
                       <Button
                         variant="destructive"
@@ -102,7 +109,7 @@ export function SizeList() {
                         ) : (
                           <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                         )}
-                        Delete
+                        {t("dashboard.actions.delete")}
                       </Button>
                     </div>
                   </TableCell>

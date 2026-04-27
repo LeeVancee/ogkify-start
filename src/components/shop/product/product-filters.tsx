@@ -1,5 +1,6 @@
 import { Accordion } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/lib/i18n";
 
 import { CategoryFilter } from "./category-filter";
 import { ColorFilter } from "./color-filter";
@@ -17,6 +18,7 @@ export function ProductFilters({
   maxPrice = 5000,
 }: FilterProps) {
   const { search, resetSearch } = useProductFilterNavigation();
+  const { t } = useI18n();
   const currentCategory = search.category;
   const currentSort = search.sort || "featured";
   const isFeatured = search.featured === true;
@@ -50,7 +52,7 @@ export function ProductFilters({
         onClick={resetSearch}
         disabled={!hasActiveFilters}
       >
-        Reset Filters
+        {t("shop.productFilters.resetFilters")}
       </Button>
     </div>
   );

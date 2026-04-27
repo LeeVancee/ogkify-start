@@ -7,6 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Slider } from "@/components/ui/slider";
+import { useI18n } from "@/lib/i18n";
 
 import { createQueryParams } from "./filter-types";
 
@@ -16,6 +17,7 @@ interface PriceFilterProps {
 
 export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const search = useSearch({ strict: false });
   const [, startTransition] = useTransition();
 
@@ -41,7 +43,7 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
 
   return (
     <AccordionItem value="price">
-      <AccordionTrigger>Price Range</AccordionTrigger>
+      <AccordionTrigger>{t("shop.productFilters.priceRange")}</AccordionTrigger>
       <AccordionContent>
         <div className="pt-2 space-y-6">
           <Slider

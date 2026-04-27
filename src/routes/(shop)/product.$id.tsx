@@ -5,6 +5,7 @@ import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductInfo } from "@/components/shop/product/product-info";
 import { ProductInfoLoading } from "@/components/shop/product/product-info-loading";
 import { ProductTabs } from "@/components/shop/product/product-tabs";
+import { defaultLocale, messages, useI18n } from "@/lib/i18n";
 import { handleAddToCartFormAction } from "@/server/cart";
 import { getProduct, getRelatedProducts } from "@/server/product-shop";
 
@@ -14,7 +15,7 @@ export const Route = createFileRoute("/(shop)/product/$id")({
   loader: async ({ params }: { params: { id: string } }) => {
     const product = await getProduct({ data: params.id });
     if (!product) {
-      throw new Error("Product not found");
+      throw new Error(messages[defaultLocale].shop.productDetail.notFound);
     }
 
     const relatedProducts = await getRelatedProducts({
@@ -28,6 +29,7 @@ export const Route = createFileRoute("/(shop)/product/$id")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
   const { product, relatedProducts } = Route.useLoaderData();
 
   const addToCartAdapter = async (formData: FormData) => {
@@ -45,7 +47,8 @@ function RouteComponent() {
         to="/products"
         className="mb-8 inline-flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-slate-900"
       >
-        <ChevronLeft className="h-4 w-4" /> Back to Products
+        <ChevronLeft className="h-4 w-4" />{" "}
+        {t("shop.productDetail.backToProducts")}
       </Link>
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
@@ -58,10 +61,10 @@ function RouteComponent() {
         <div className="mt-20 border-t border-slate-100 pt-16">
           <div className="mb-10">
             <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-              You May Also Like
+              {t("shop.productDetail.youMayAlsoLike")}
             </p>
             <h2 className="text-3xl font-light tracking-tight text-slate-900">
-              Related Products
+              {t("shop.productDetail.relatedProducts")}
             </h2>
           </div>
           <ProductGrid products={relatedProducts} />

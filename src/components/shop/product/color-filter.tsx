@@ -1,3 +1,5 @@
+import { useI18n } from "@/lib/i18n";
+
 import { CheckboxFilterSection } from "./checkbox-filter-section";
 import { normalizeArray } from "./filter-types";
 import { useProductFilterNavigation } from "./use-product-filter-navigation";
@@ -8,6 +10,7 @@ interface ColorFilterProps {
 
 export function ColorFilter({ colors }: ColorFilterProps) {
   const { search, updateSearch } = useProductFilterNavigation();
+  const { t } = useI18n();
   const currentColorNames = normalizeArray(search.color);
 
   const handleChange = (color: { id: string; name: string; value: string }) => {
@@ -24,7 +27,7 @@ export function ColorFilter({ colors }: ColorFilterProps) {
   return (
     <CheckboxFilterSection
       value="colors"
-      title="Colors"
+      title={t("shop.productFilters.colors")}
       options={colors.map((color) => ({
         id: `color-${color.id}`,
         label: color.name,

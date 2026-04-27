@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { SizeList } from "@/components/dashboard/size/size-list";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard/sizes/")({
   component: RouteComponent,
@@ -10,11 +11,13 @@ export const Route = createFileRoute("/dashboard/sizes/")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
       <DashboardPageHeader
-        title="Sizes"
-        description="Manage size labels and values used across product variants."
+        title={t("dashboard.nav.sizes")}
+        description={t("dashboard.pages.sizesDescription")}
       />
       <SizeList />
     </div>

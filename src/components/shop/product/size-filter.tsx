@@ -1,3 +1,5 @@
+import { useI18n } from "@/lib/i18n";
+
 import { CheckboxFilterSection } from "./checkbox-filter-section";
 import { normalizeArray } from "./filter-types";
 import { useProductFilterNavigation } from "./use-product-filter-navigation";
@@ -8,6 +10,7 @@ interface SizeFilterProps {
 
 export function SizeFilter({ sizes }: SizeFilterProps) {
   const { search, updateSearch } = useProductFilterNavigation();
+  const { t } = useI18n();
   const currentSizeNames = normalizeArray(search.size);
 
   const handleChange = (size: { id: string; name: string; value: string }) => {
@@ -24,7 +27,7 @@ export function SizeFilter({ sizes }: SizeFilterProps) {
   return (
     <CheckboxFilterSection
       value="sizes"
-      title="Sizes"
+      title={t("shop.productFilters.sizes")}
       options={sizes.map((size) => ({
         id: `size-${size.id}`,
         label: size.value,

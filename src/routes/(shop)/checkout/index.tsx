@@ -17,6 +17,7 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { env } from "@/env/client";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 import { getCheckoutOrder, updateCheckoutOrderDetails } from "@/server/orders";
 
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/(shop)/checkout/")({
 function CheckoutPage() {
   const { order_id } = Route.useSearch();
   const { session } = Route.useRouteContext();
+  const { t } = useI18n();
 
   const {
     data: checkoutResult,
@@ -46,13 +48,13 @@ function CheckoutPage() {
     queryKey: ["checkout-order", order_id],
     queryFn: async () => {
       if (!order_id) {
-        throw new Error("Checkout requires an order ID");
+        throw new Error(t("shop.checkoutPage.unavailable"));
       }
 
       const result = await getCheckoutOrder({ data: order_id });
 
       if (!result.success) {
-        throw new Error(result.error || "Failed to load checkout");
+        throw new Error(result.error || t("shop.checkoutPage.unableToLoad"));
       }
 
       return result;
@@ -62,14 +64,16 @@ function CheckoutPage() {
   });
 
   if (!order_id) {
-    return <CheckoutMessage title="Checkout unavailable" to="/cart" />;
+    return (
+      <CheckoutMessage title={t("shop.checkoutPage.unavailable")} to="/cart" />
+    );
   }
 
   if (!env.VITE_STRIPE_PUBLISHABLE_KEY || !stripePromise) {
     return (
       <CheckoutMessage
-        title="Stripe is not configured"
-        description="Add VITE_STRIPE_PUBLISHABLE_KEY before using embedded checkout."
+        title={t("shop.checkoutPage.stripeNotConfigured")}
+        description={t("shop.checkoutPage.stripeNotConfiguredDescription")}
         to="/cart"
       />
     );
@@ -86,11 +90,11 @@ function CheckoutPage() {
   if (isError || !checkoutResult?.order || !checkoutResult.clientSecret) {
     return (
       <CheckoutMessage
-        title="Unable to load checkout"
+        title={t("shop.checkoutPage.unableToLoad")}
         description={
           error instanceof Error
             ? error.message
-            : "Please return to your cart and try again."
+            : t("shop.checkoutPage.returnToCartAndTryAgain")
         }
         to="/cart"
       />
@@ -101,10 +105,10 @@ function CheckoutPage() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="mb-8">
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-          Secure Checkout
+          {t("shop.checkoutPage.eyebrow")}
         </p>
         <h1 className="mt-3 text-3xl font-light tracking-tight text-slate-900">
-          Complete your order
+          {t("shop.checkoutPage.title")}
         </h1>
       </div>
 
@@ -113,7 +117,7 @@ function CheckoutPage() {
         <div className="h-fit rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
           <div className="mb-5 flex items-center gap-2 text-sm font-medium text-slate-700">
             <LockKeyhole className="h-4 w-4" />
-            Payment details are encrypted by Stripe
+            {t("shop.checkoutPage.encryptedByStripe")}
           </div>
 
           <Elements
@@ -178,22 +182,26 @@ interface CheckoutOrder {
 }
 
 function OrderSnapshot({ order }: { order: CheckoutOrder }) {
+  const { t } = useI18n();
+
   return (
     <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="mb-5 flex items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">
-            Order Summary
+            {t("shop.cart.orderSummary")}
           </h2>
           <p className="mt-1 text-sm text-slate-500">
-            Order #{order.orderNumber}
+            {t("shop.checkoutPage.orderNumber", {
+              orderNumber: order.orderNumber,
+            })}
           </p>
         </div>
         <Link
           to="/cart"
           className="text-sm font-medium text-slate-500 transition-colors hover:text-slate-900"
         >
-          Back to cart
+          {t("shop.checkoutPage.backToCart")}
         </Link>
       </div>
 
@@ -222,7 +230,7 @@ function OrderSnapshot({ order }: { order: CheckoutOrder }) {
                   .join(" / ")}
               </p>
               <p className="mt-3 text-xs font-medium text-slate-500">
-                Qty {item.quantity}
+                {t("shop.checkoutPage.quantity", { quantity: item.quantity })}
               </p>
             </div>
             <div className="text-right text-sm font-semibold tabular-nums text-slate-900">
@@ -234,17 +242,19 @@ function OrderSnapshot({ order }: { order: CheckoutOrder }) {
 
       <div className="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm">
         <div className="flex justify-between text-slate-500">
-          <span>Subtotal</span>
+          <span>{t("shop.cart.subtotal")}</span>
           <span className="font-medium text-slate-900">
             {formatPrice(order.totalAmount)}
           </span>
         </div>
         <div className="flex justify-between text-slate-500">
-          <span>Shipping</span>
-          <span className="font-medium text-slate-900">Free</span>
+          <span>{t("shop.cart.shipping")}</span>
+          <span className="font-medium text-slate-900">
+            {t("shop.cart.free")}
+          </span>
         </div>
         <div className="flex justify-between text-base font-semibold text-slate-900">
-          <span>Total</span>
+          <span>{t("shop.cart.total")}</span>
           <span className="tabular-nums">{formatPrice(order.totalAmount)}</span>
         </div>
       </div>
@@ -261,6 +271,7 @@ function CheckoutPaymentForm({
 }) {
   const stripe = useStripe();
   const elements = useElements();
+  const { t } = useI18n();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState(customerEmail);
 
@@ -274,7 +285,7 @@ function CheckoutPaymentForm({
     const addressElement = elements.getElement(AddressElement);
 
     if (!addressElement) {
-      toast.error("Shipping address form is not ready yet");
+      toast.error(t("shop.checkoutPage.shippingAddressNotReady"));
       return;
     }
 
@@ -284,7 +295,7 @@ function CheckoutPaymentForm({
       const addressResult = await addressElement.getValue();
 
       if (!addressResult.complete) {
-        toast.error("Please complete your shipping address");
+        toast.error(t("shop.checkoutPage.completeShippingAddress"));
         return;
       }
 
@@ -297,7 +308,9 @@ function CheckoutPaymentForm({
       });
 
       if (!saveResult.success) {
-        throw new Error(saveResult.error || "Failed to save shipping details");
+        throw new Error(
+          saveResult.error || t("shop.checkoutPage.saveShippingFailed"),
+        );
       }
 
       const confirmResult = await stripe.confirmPayment({
@@ -337,12 +350,15 @@ function CheckoutPaymentForm({
 
       if (confirmResult.error) {
         throw new Error(
-          confirmResult.error.message || "Payment could not be confirmed",
+          confirmResult.error.message ||
+            t("shop.checkoutPage.paymentConfirmFailed"),
         );
       }
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Payment process failed",
+        error instanceof Error
+          ? error.message
+          : t("shop.checkoutPage.paymentProcessFailed"),
       );
     } finally {
       setIsSubmitting(false);
@@ -353,8 +369,8 @@ function CheckoutPaymentForm({
     <form onSubmit={handleSubmit} className="space-y-5">
       <CheckoutSection
         icon={<Mail className="h-4 w-4" />}
-        title="Contact"
-        description="Stripe can use this email for receipts and payment updates."
+        title={t("shop.checkoutPage.contact")}
+        description={t("shop.checkoutPage.contactDescription")}
       >
         <LinkAuthenticationElement
           options={{
@@ -368,8 +384,8 @@ function CheckoutPaymentForm({
 
       <CheckoutSection
         icon={<MapPin className="h-4 w-4" />}
-        title="Shipping address"
-        description="Enter the delivery address exactly as it should appear on the order."
+        title={t("shop.checkoutPage.shippingAddress")}
+        description={t("shop.checkoutPage.shippingAddressDescription")}
       >
         <AddressElement
           options={{
@@ -400,8 +416,8 @@ function CheckoutPaymentForm({
 
       <CheckoutSection
         icon={<ShieldCheck className="h-4 w-4" />}
-        title="Payment"
-        description="Cards and eligible local payment methods are handled securely by Stripe."
+        title={t("shop.checkoutPage.payment")}
+        description={t("shop.checkoutPage.paymentDescription")}
       >
         <PaymentElement
           options={{
@@ -427,10 +443,10 @@ function CheckoutPaymentForm({
         {isSubmitting ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Processing...
+            {t("shop.cart.processing")}
           </>
         ) : (
-          "Pay securely"
+          t("shop.checkoutPage.paySecurely")
         )}
       </Button>
     </form>
@@ -491,22 +507,26 @@ function formatAddress(value: {
 
 function CheckoutMessage({
   title,
-  description = "Please return to your cart and try again.",
+  description,
   to,
 }: {
   title: string;
   description?: string;
   to: "/cart" | "/";
 }) {
+  const { t } = useI18n();
+
   return (
     <div className="shop-shell flex min-h-[60vh] flex-col items-center justify-center py-16 text-center">
       <h1 className="mb-3 text-2xl font-semibold text-slate-900">{title}</h1>
-      <p className="mb-8 max-w-md text-sm text-slate-500">{description}</p>
+      <p className="mb-8 max-w-md text-sm text-slate-500">
+        {description ?? t("shop.checkoutPage.returnToCartAndTryAgain")}
+      </p>
       <Link
         to={to}
         className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700"
       >
-        Return
+        {t("shop.checkoutPage.return")}
       </Link>
     </div>
   );

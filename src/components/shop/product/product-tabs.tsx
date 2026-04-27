@@ -1,4 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useI18n } from "@/lib/i18n";
 
 interface Product {
   description: string;
@@ -10,6 +11,8 @@ interface ProductTabsProps {
 }
 
 export function ProductTabs({ product }: ProductTabsProps) {
+  const { t } = useI18n();
+
   return (
     <Tabs defaultValue="details" className="mt-10">
       <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b border-border bg-transparent p-0">
@@ -17,13 +20,13 @@ export function ProductTabs({ product }: ProductTabsProps) {
           value="details"
           className="rounded-none border-b-2 border-transparent px-0 pb-3 text-sm data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none"
         >
-          Details
+          {t("shop.productDetail.details")}
         </TabsTrigger>
         <TabsTrigger
           value="notes"
           className="rounded-none border-b-2 border-transparent px-0 pb-3 text-sm data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none"
         >
-          Notes
+          {t("shop.productDetail.notes")}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="details" className="pt-5">
@@ -33,11 +36,11 @@ export function ProductTabs({ product }: ProductTabsProps) {
       </TabsContent>
       <TabsContent value="notes" className="pt-5">
         <div className="space-y-3 text-sm text-muted-foreground">
-          <p>Category: {product.category}</p>
           <p>
-            Available sizes and colors depend on the current product options.
+            {t("shop.productDetail.category")}: {product.category}
           </p>
-          <p>Orders follow the existing checkout and fulfillment flow.</p>
+          <p>{t("shop.productDetail.optionsNote")}</p>
+          <p>{t("shop.productDetail.fulfillmentNote")}</p>
         </div>
       </TabsContent>
     </Tabs>

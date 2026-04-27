@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
 export interface SimpleProduct {
@@ -20,6 +21,8 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ products }: ProductGridProps) {
+  const { t } = useI18n();
+
   return (
     <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-3 lg:gap-8">
       {products.map((product) => (
@@ -37,12 +40,12 @@ export function ProductGrid({ products }: ProductGridProps) {
             />
             {product.isNew ? (
               <span className="absolute left-3 top-3 rounded-lg bg-slate-900 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-                New
+                {t("shop.productFilters.newBadge")}
               </span>
             ) : null}
             {product.originalPrice ? (
               <span className="absolute right-3 top-3 rounded-lg bg-red-500 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
-                Sale
+                {t("shop.productFilters.saleBadge")}
               </span>
             ) : null}
           </div>

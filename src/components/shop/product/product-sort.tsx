@@ -9,17 +9,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useI18n } from "@/lib/i18n";
 
 const sortOptions = [
-  { value: "newest", label: "Newest" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "featured", label: "Featured" },
+  { value: "newest", labelKey: "shop.productFilters.sortNewest" },
+  { value: "price-asc", labelKey: "shop.productFilters.sortPriceAsc" },
+  { value: "price-desc", labelKey: "shop.productFilters.sortPriceDesc" },
+  { value: "featured", labelKey: "shop.productFilters.sortFeatured" },
 ];
 
 export function ProductSort() {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
+  const { t } = useI18n();
   const currentSort = search.sort || "newest";
 
   // Create query params object, preserving existing parameters
@@ -41,18 +43,18 @@ export function ProductSort() {
   return (
     <div className="flex items-center gap-2">
       <Label htmlFor="sort-select" className="text-sm font-medium">
-        Sort by:
+        {t("shop.productFilters.sortBy")}:
       </Label>
       <Select value={currentSort} onValueChange={handleSortChange}>
         <SelectTrigger id="sort-select" className="w-[180px]">
-          <SelectValue placeholder="Sort by" />
+          <SelectValue placeholder={t("shop.productFilters.sortBy")} />
         </SelectTrigger>
 
         <SelectContent alignItemWithTrigger={false}>
           <SelectGroup>
             {sortOptions.map((option) => (
               <SelectItem key={option.value} value={option.value}>
-                {option.label}
+                {t(option.labelKey)}
               </SelectItem>
             ))}
           </SelectGroup>

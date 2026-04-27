@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useI18n } from "@/lib/i18n";
 
 interface DeleteDialogProps {
   open: boolean;
@@ -21,20 +22,26 @@ export function DeleteDialog({
   open,
   onOpenChange,
   onConfirm,
-  title = "Are you sure you want to delete?",
-  description = "This action cannot be undone. The item will be permanently deleted and cannot be recovered.",
+  title,
+  description,
 }: DeleteDialogProps) {
+  const { t } = useI18n();
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>
+            {title ?? t("dashboard.deleteDialog.title")}
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            {description ?? t("dashboard.deleteDialog.description")}
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("dashboard.actions.cancel")}</AlertDialogCancel>
           <AlertDialogAction onClick={onConfirm} variant="destructive">
-            Delete
+            {t("dashboard.actions.delete")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

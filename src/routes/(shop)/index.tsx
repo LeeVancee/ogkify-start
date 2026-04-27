@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 import { getCategories } from "@/server/categories";
 import { getFeaturedProducts } from "@/server/get-featured-products";
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/(shop)/")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
   const { featuredProducts, categories } = Route.useLoaderData();
   const featured = featuredProducts.slice(0, 4);
   const newArrivals = featuredProducts.slice(4, 7);
@@ -69,10 +71,10 @@ function RouteComponent() {
         <div className="shop-shell py-20 sm:py-24">
           <div className="mb-12 text-center">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-              Browse
+              {t("shop.home.browse")}
             </p>
             <h2 className="text-3xl font-light tracking-tight text-slate-900">
-              Shop By Category
+              {t("shop.home.shopByCategory")}
             </h2>
           </div>
           <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4">
@@ -113,17 +115,17 @@ function RouteComponent() {
           <div className="mb-10 flex items-end justify-between">
             <div>
               <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-                Handpicked
+                {t("shop.home.handpicked")}
               </p>
               <h2 className="text-3xl font-light tracking-tight text-slate-900">
-                Featured Picks
+                {t("shop.home.featuredPicks")}
               </h2>
             </div>
             <Link
               to="/products"
               className="flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-slate-900"
             >
-              View All <ArrowRight className="h-3.5 w-3.5" />
+              {t("shop.home.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4">
@@ -161,17 +163,17 @@ function RouteComponent() {
             <div className="mb-10 flex items-end justify-between">
               <div>
                 <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-                  Just In
+                  {t("shop.home.justIn")}
                 </p>
                 <h2 className="text-3xl font-light tracking-tight text-slate-900">
-                  New Arrivals
+                  {t("shop.home.newArrivals")}
                 </h2>
               </div>
               <Link
                 to="/products"
                 className="flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-slate-900"
               >
-                View All <ArrowRight className="h-3.5 w-3.5" />
+                {t("shop.home.viewAll")} <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>
 

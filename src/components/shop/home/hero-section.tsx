@@ -1,7 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ShoppingBag, Star, TrendingUp, Truck } from "lucide-react";
 
+import { useI18n } from "@/lib/i18n";
+
 export default function HeroSection() {
+  const { t } = useI18n();
+
   return (
     <>
       <section className="relative">
@@ -45,9 +49,9 @@ export default function HeroSection() {
                 <Truck className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold">Free Shipping</h3>
+                <h3 className="font-semibold">{t("shop.home.freeShipping")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  On orders over $25
+                  {t("shop.home.freeShippingDescription")}
                 </p>
               </div>
             </div>
@@ -58,9 +62,11 @@ export default function HeroSection() {
                 <Star className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold">Quality Products</h3>
+                <h3 className="font-semibold">
+                  {t("shop.home.qualityProducts")}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Curated selection
+                  {t("shop.home.qualityProductsDescription")}
                 </p>
               </div>
             </div>
@@ -71,9 +77,9 @@ export default function HeroSection() {
                 <TrendingUp className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold">Latest Trends</h3>
+                <h3 className="font-semibold">{t("shop.home.latestTrends")}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Updated regularly
+                  {t("shop.home.latestTrendsDescription")}
                 </p>
               </div>
             </div>
@@ -84,9 +90,11 @@ export default function HeroSection() {
                 <ShoppingBag className="h-6 w-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold">Secure Checkout</h3>
+                <h3 className="font-semibold">
+                  {t("shop.home.secureCheckout")}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Safe transactions
+                  {t("shop.home.secureCheckoutDescription")}
                 </p>
               </div>
             </div>

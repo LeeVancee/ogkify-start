@@ -1,13 +1,20 @@
 import { Link } from "@tanstack/react-router";
 
-const footerLinks = [
-  { label: "All Products", to: "/products", search: {} },
-  { label: "Featured", to: "/products", search: { featured: true } },
-  { label: "Login", to: "/login" },
-  { label: "My Orders", to: "/myorders" },
-];
+import { useI18n } from "@/lib/i18n";
 
 export default function Footer() {
+  const { t } = useI18n();
+  const footerLinks = [
+    { label: t("shop.header.allProducts"), to: "/products", search: {} },
+    {
+      label: t("shop.footer.featured"),
+      to: "/products",
+      search: { featured: true },
+    },
+    { label: t("shop.userMenu.login"), to: "/login" },
+    { label: t("shop.userMenu.myOrders"), to: "/myorders" },
+  ];
+
   return (
     <footer className="mt-auto border-t border-slate-200 bg-white">
       <div className="shop-shell py-14 sm:py-18">
@@ -19,15 +26,14 @@ export default function Footer() {
             OGKIFY
           </Link>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
-            Curated essentials for a refined, minimal lifestyle with a sharp
-            editorial feel.
+            {t("shop.footer.description")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           <div>
             <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-900">
-              Shop
+              {t("shop.footer.shop")}
             </h4>
             <ul className="space-y-3">
               {footerLinks.map((link) => (
@@ -46,50 +52,50 @@ export default function Footer() {
 
           <div>
             <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-900">
-              Customer Care
+              {t("shop.footer.customerCare")}
             </h4>
             <ul className="space-y-3 text-sm text-slate-500">
               <li className="hover:text-slate-900 transition-colors cursor-default">
-                Shipping Information
+                {t("shop.footer.shippingInformation")}
               </li>
               <li className="hover:text-slate-900 transition-colors cursor-default">
-                Returns Policy
+                {t("shop.footer.returnsPolicy")}
               </li>
               <li className="hover:text-slate-900 transition-colors cursor-default">
-                FAQ
+                {t("shop.footer.faq")}
               </li>
               <li className="hover:text-slate-900 transition-colors cursor-default">
-                Contact Us
+                {t("shop.footer.contactUs")}
               </li>
             </ul>
           </div>
 
           <div>
             <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-900">
-              Contact
+              {t("shop.footer.contact")}
             </h4>
             <ul className="space-y-3 text-sm text-slate-500">
               <li>service@ogkify.com</li>
               <li>+886 2 2345 6789</li>
-              <li>Mon – Fri, 10:00 – 18:00</li>
+              <li>{t("shop.footer.hours")}</li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 text-xs text-slate-400 sm:flex-row">
-          <p>© 2026 OGKIFY. All rights reserved.</p>
+          <p>{t("shop.footer.copyright")}</p>
           <div className="flex items-center gap-6">
             <span className="cursor-pointer transition-colors hover:text-slate-700">
-              Privacy Policy
+              {t("shop.footer.privacyPolicy")}
             </span>
             <span className="cursor-pointer transition-colors hover:text-slate-700">
-              Terms of Service
+              {t("shop.footer.termsOfService")}
             </span>
             <a
               href="https://github.com/LeeVancee/ogkify-start"
               target="_blank"
               rel="noreferrer"
-              aria-label="OGKIFY GitHub repository"
+              aria-label={t("shop.footer.github")}
               className="transition-colors hover:text-slate-700"
             >
               <svg

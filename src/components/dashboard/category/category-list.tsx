@@ -13,42 +13,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useI18n } from "@/lib/i18n";
 import { deleteCategory, getCategories } from "@/server/categories";
 
 import { ResourceList } from "../resource-list";
 
 export function CategoryList() {
+  const { t } = useI18n();
+
   return (
     <ResourceList
       layout="table"
       queryKey={["categories"]}
       queryFn={() => getCategories()}
       deleteFn={(id) => deleteCategory({ data: id })}
-      searchPlaceholder="Search for categories..."
+      searchPlaceholder={t("dashboard.resources.searchCategories")}
       addHref="/dashboard/categories/new"
-      addLabel="Add Category"
-      emptyTitle="No categories found"
-      emptyDescription="No categories match your search criteria or you have not added any categories yet."
-      errorTitle="Failed to load categories"
-      errorDescription="There was an error loading the categories. Please try again."
+      addLabel={t("dashboard.actions.addCategory")}
+      emptyTitle={t("dashboard.resources.noCategories")}
+      emptyDescription={t("dashboard.resources.noCategoriesDescription")}
+      errorTitle={t("dashboard.resources.loadCategoriesFailed")}
+      errorDescription={t("dashboard.resources.loadCategoriesError")}
       matchesSearch={(category, query) =>
         !query ||
         category.name.toLowerCase().includes(query) ||
         !!category.imageUrl?.toLowerCase().includes(query)
       }
       getItemId={(category) => category.id}
-      getDeleteSuccessMessage={() => "Category deleted successfully"}
-      getDeleteErrorMessage={() => "Failed to delete category"}
+      getDeleteSuccessMessage={() => t("dashboard.resources.categoryDeleted")}
+      getDeleteErrorMessage={() =>
+        t("dashboard.resources.categoryDeleteFailed")
+      }
       renderCard={() => null}
       renderTable={(categories, isDeleting, onDelete) => (
         <DataTableShell>
           <Table className="min-w-[720px]">
             <TableHeader>
               <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-[76px]">Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Image Status</TableHead>
-                <TableHead className="w-[180px] text-right">Actions</TableHead>
+                <TableHead className="w-[76px]">
+                  {t("dashboard.table.image")}
+                </TableHead>
+                <TableHead>{t("dashboard.table.name")}</TableHead>
+                <TableHead>{t("dashboard.table.imageStatus")}</TableHead>
+                <TableHead className="w-[180px] text-right">
+                  {t("dashboard.table.actions")}
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -76,19 +85,19 @@ export function CategoryList() {
                       {category.name}
                     </Link>
                     <div className="mt-0.5 text-xs text-muted-foreground">
-                      Catalog category
+                      {t("dashboard.resources.catalogCategory")}
                     </div>
                   </TableCell>
                   <TableCell>
                     {category.imageUrl ? (
                       <Badge variant="outline" className="gap-1.5">
                         <Image className="h-3.5 w-3.5" />
-                        Image set
+                        {t("dashboard.resources.imageSet")}
                       </Badge>
                     ) : (
                       <Badge variant="secondary" className="gap-1.5">
                         <ImageOff className="h-3.5 w-3.5" />
-                        No image
+                        {t("dashboard.resources.noImage")}
                       </Badge>
                     )}
                   </TableCell>
@@ -103,7 +112,7 @@ export function CategoryList() {
                         })}
                       >
                         <Edit className="mr-1.5 h-3.5 w-3.5" />
-                        Edit
+                        {t("dashboard.actions.edit")}
                       </Link>
                       <Button
                         variant="destructive"
@@ -116,7 +125,7 @@ export function CategoryList() {
                         ) : (
                           <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                         )}
-                        Delete
+                        {t("dashboard.actions.delete")}
                       </Button>
                     </div>
                   </TableCell>

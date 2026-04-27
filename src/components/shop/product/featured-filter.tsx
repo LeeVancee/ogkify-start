@@ -5,11 +5,13 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useI18n } from "@/lib/i18n";
 
 import { useProductFilterNavigation } from "./use-product-filter-navigation";
 
 export function FeaturedFilter() {
   const { search, updateSearch } = useProductFilterNavigation();
+  const { t } = useI18n();
   const isFeatured = search.featured === true;
 
   const handleChange = (value: boolean) => {
@@ -20,7 +22,9 @@ export function FeaturedFilter() {
 
   return (
     <AccordionItem value="featured">
-      <AccordionTrigger>Featured Products</AccordionTrigger>
+      <AccordionTrigger>
+        {t("shop.productFilters.featuredProducts")}
+      </AccordionTrigger>
       <AccordionContent>
         <div className="flex items-center space-x-2">
           <Checkbox
@@ -29,7 +33,7 @@ export function FeaturedFilter() {
             onCheckedChange={(checked) => handleChange(!!checked)}
           />
           <Label htmlFor="featured-products" className="text-sm font-normal">
-            Only show featured products
+            {t("shop.productFilters.onlyFeatured")}
           </Label>
         </div>
       </AccordionContent>

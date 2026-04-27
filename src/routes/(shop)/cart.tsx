@@ -4,6 +4,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 import {
   createCheckoutPaymentIntent,
@@ -30,6 +31,7 @@ interface CartItem {
 function CartPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const {
     data: cartData,
@@ -44,11 +46,11 @@ function CartPage() {
   const removeItemMutation = useMutation({
     mutationFn: (cartItemId: string) => removeFromCart({ data: cartItemId }),
     onSuccess: () => {
-      toast.success("Item removed from cart");
+      toast.success(t("shop.cart.removedToast"));
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      toast.error("Failed to remove item");
+      toast.error(t("shop.cart.removeErrorToast"));
     },
   });
 
@@ -64,7 +66,7 @@ function CartPage() {
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      toast.error("Failed to update quantity");
+      toast.error(t("shop.cart.updateErrorToast"));
     },
   });
 
@@ -80,17 +82,19 @@ function CartPage() {
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Checkout process failed",
+        error instanceof Error
+          ? error.message
+          : t("shop.cart.checkoutErrorToast"),
       );
     },
   });
 
   if (isLoading) {
-    return <SpinnerLoading text="Loading cart..." />;
+    return <SpinnerLoading text={t("shop.cart.loading")} />;
   }
 
   if (isError || !cartData) {
-    throw new Error("Failed to load cart");
+    throw new Error(t("shop.cart.loadError"));
   }
 
   const items = cartData.items as Array<CartItem>;
@@ -105,14 +109,14 @@ function CartPage() {
     return (
       <div className="shop-shell py-24 text-center">
         <h1 className="mb-3 text-3xl font-light tracking-tight text-slate-900">
-          Your Cart
+          {t("shop.cart.title")}
         </h1>
-        <p className="text-slate-500">Your cart is empty</p>
+        <p className="text-slate-500">{t("shop.cart.emptyTitle")}</p>
         <Link
           to="/products"
           className="mt-8 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-700"
         >
-          Continue Shopping
+          {t("common.actions.continueShopping")}
         </Link>
       </div>
     );
@@ -121,7 +125,7 @@ function CartPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
       <h1 className="mb-10 text-3xl font-light tracking-tight text-slate-900">
-        Your Cart
+        {t("shop.cart.title")}
       </h1>
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -210,21 +214,23 @@ function CartPage() {
 
         <div className="h-fit rounded-2xl border border-slate-200 bg-white p-6 lg:sticky lg:top-24">
           <h2 className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">
-            Order Summary
+            {t("shop.cart.orderSummary")}
           </h2>
           <div className="space-y-3 text-sm">
             <div className="flex justify-between text-slate-500">
-              <span>Subtotal</span>
+              <span>{t("shop.cart.subtotal")}</span>
               <span className="tabular-nums font-medium text-slate-900">
                 {formatPrice(subtotal)}
               </span>
             </div>
             <div className="flex justify-between text-slate-500">
-              <span>Shipping</span>
-              <span className="font-medium text-slate-900">Free</span>
+              <span>{t("shop.cart.shipping")}</span>
+              <span className="font-medium text-slate-900">
+                {t("shop.cart.free")}
+              </span>
             </div>
             <div className="flex justify-between border-t border-slate-100 pt-3 text-slate-900">
-              <span className="font-semibold">Total</span>
+              <span className="font-semibold">{t("shop.cart.total")}</span>
               <span className="tabular-nums font-semibold">
                 {formatPrice(total)}
               </span>
@@ -238,8 +244,8 @@ function CartPage() {
             className="mt-6 w-full rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {checkoutMutation.isPending
-              ? "Processing..."
-              : "Proceed to Checkout"}
+              ? t("shop.cart.processing")
+              : t("shop.cart.proceedToCheckout")}
           </button>
         </div>
       </div>

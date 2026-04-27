@@ -3,6 +3,7 @@ import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductColor {
@@ -36,6 +37,8 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
+  const { t } = useI18n();
+
   if (product.images.length === 0) {
     throw new Error(`Product images are missing for product ${product.id}`);
   }
@@ -70,14 +73,20 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
       const result = await addToCartAction(formData);
 
       if (!result.success) {
-        throw new Error(result.error ? result.error : "Failed to add to cart");
+        throw new Error(
+          result.error ? result.error : t("shop.productDetail.addToCartFailed"),
+        );
       }
 
       queryClient.invalidateQueries({ queryKey: ["cart"] });
-      toast.success(result.message ? result.message : "Added to cart");
+      toast.success(
+        result.message ? result.message : t("shop.productDetail.addedToCart"),
+      );
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to add to cart",
+        error instanceof Error
+          ? error.message
+          : t("shop.productDetail.addToCartFailed"),
       );
     } finally {
       setIsSubmitting(false);
@@ -135,7 +144,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         {product.colors.length > 0 ? (
           <div className="mt-8">
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-              Color
+              {t("shop.productDetail.color")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {product.colors.map((color) => (
@@ -159,7 +168,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         {product.sizes.length > 0 ? (
           <div className="mt-6">
             <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-slate-400">
-              Size
+              {t("shop.productDetail.size")}
             </h3>
             <div className="flex flex-wrap gap-2">
               {product.sizes.map((size) => (
@@ -207,7 +216,9 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
             disabled={isSubmitting}
             className="flex-1 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
-            {isSubmitting ? "Adding..." : "Add to Cart"}
+            {isSubmitting
+              ? t("shop.productDetail.adding")
+              : t("shop.productDetail.addToCart")}
           </button>
         </div>
       </div>

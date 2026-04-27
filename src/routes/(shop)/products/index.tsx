@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 import { getCategories } from "@/server/categories";
 import { getFilteredProducts } from "@/server/get-filtered-products";
@@ -31,10 +32,10 @@ const searchParamsSchema = z.object({
 });
 
 const sortOptions = [
-  { value: "featured", label: "Featured" },
-  { value: "price-asc", label: "Price: Low to High" },
-  { value: "price-desc", label: "Price: High to Low" },
-  { value: "newest", label: "Newest" },
+  { value: "featured", labelKey: "shop.productFilters.sortFeatured" },
+  { value: "price-asc", labelKey: "shop.productFilters.sortPriceAsc" },
+  { value: "price-desc", labelKey: "shop.productFilters.sortPriceDesc" },
+  { value: "newest", labelKey: "shop.productFilters.sortNewest" },
 ];
 
 function SortSelect({
@@ -50,10 +51,12 @@ function SortSelect({
   contentClassName?: string;
   contentAlign?: "start" | "center" | "end";
 }) {
+  const { t } = useI18n();
+
   return (
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger className={triggerClassName}>
-        <SelectValue placeholder="Sort by" />
+        <SelectValue placeholder={t("shop.productFilters.sortBy")} />
       </SelectTrigger>
       <SelectContent
         align={contentAlign}
@@ -63,7 +66,7 @@ function SortSelect({
         <SelectGroup>
           {sortOptions.map((option) => (
             <SelectItem key={option.value} value={option.value}>
-              {option.label}
+              {t(option.labelKey)}
             </SelectItem>
           ))}
         </SelectGroup>
@@ -137,6 +140,7 @@ export const Route = createFileRoute("/(shop)/products/")({
 
 function CategoriesPage() {
   const navigate = useNavigate({ from: Route.fullPath });
+  const { t } = useI18n();
   const {
     products,
     total,
@@ -162,10 +166,10 @@ function CategoriesPage() {
   }, [minPrice, maxPrice]);
 
   const categoryLabel = useMemo(() => {
-    if (!selectedCategory) return "All Products";
+    if (!selectedCategory) return t("shop.header.allProducts");
     const category = categories.find((item) => item.name === selectedCategory);
-    return category ? category.name : "Products";
-  }, [categories, selectedCategory]);
+    return category ? category.name : t("shop.productFilters.fallbackProducts");
+  }, [categories, selectedCategory, t]);
 
   const updateSearch = (next: {
     category?: string;
@@ -209,7 +213,7 @@ function CategoriesPage() {
     <div className="space-y-8">
       <div>
         <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          Category
+          {t("shop.productFilters.categories")}
         </h3>
         <div className="space-y-0.5">
           <button
@@ -221,7 +225,7 @@ function CategoriesPage() {
                 : "block w-full border-l-2 border-transparent pl-3 py-1.5 text-left text-sm text-slate-500 transition-colors hover:text-slate-900 hover:border-slate-300 cursor-pointer"
             }
           >
-            All
+            {t("shop.productFilters.all")}
           </button>
           {categories.map((category) => (
             <button
@@ -242,7 +246,7 @@ function CategoriesPage() {
 
       <div>
         <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          Price Range
+          {t("shop.productFilters.priceRange")}
         </h3>
         <Slider
           min={0}
@@ -269,7 +273,12 @@ function CategoriesPage() {
       <div className="mb-8 flex items-end justify-between">
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
-            {total} products
+            {t(
+              total === 1
+                ? "shop.productFilters.productCount_one"
+                : "shop.productFilters.productCount_other",
+              { count: total },
+            )}
           </p>
           <h1 className="text-3xl font-light tracking-tight text-slate-900 sm:text-4xl">
             {categoryLabel}
@@ -292,7 +301,8 @@ function CategoriesPage() {
             onClick={() => setFilterOpen((open) => !open)}
             className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 transition-colors hover:text-slate-900 sm:hidden cursor-pointer"
           >
-            <SlidersHorizontal className="h-4 w-4" /> Filters
+            <SlidersHorizontal className="h-4 w-4" />{" "}
+            {t("shop.productFilters.filters")}
           </button>
         </div>
       </div>
@@ -309,7 +319,7 @@ function CategoriesPage() {
             <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-white p-6 shadow-2xl">
               <div className="mb-6 flex items-center justify-between">
                 <span className="text-sm font-semibold text-slate-900">
-                  Filters
+                  {t("shop.productFilters.filters")}
                 </span>
                 <button
                   type="button"
@@ -322,7 +332,7 @@ function CategoriesPage() {
               {filterSidebar}
               <div className="mt-8">
                 <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  Sort By
+                  {t("shop.productFilters.sortBy")}
                 </h3>
                 <SortSelect
                   value={selectedSort}
@@ -341,14 +351,14 @@ function CategoriesPage() {
           {products.length === 0 ? (
             <div className="py-24 text-center">
               <p className="text-lg font-light text-slate-500">
-                No products matched your current filters.
+                {t("shop.productFilters.noMatches")}
               </p>
               <button
                 type="button"
                 onClick={resetFilters}
                 className="mt-4 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 cursor-pointer"
               >
-                Clear Filters
+                {t("shop.productFilters.clearFilters")}
               </button>
             </div>
           ) : (

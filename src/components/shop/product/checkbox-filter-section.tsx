@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/accordion";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useI18n } from "@/lib/i18n";
 
 interface CheckboxFilterOption {
   id: string;
@@ -30,12 +31,16 @@ export function CheckboxFilterSection({
   columnsClassName = "grid gap-2",
   onToggle,
 }: CheckboxFilterSectionProps) {
+  const { t } = useI18n();
+
   if (emptyState) {
     return (
       <AccordionItem value={value}>
         <AccordionTrigger>{title}</AccordionTrigger>
         <AccordionContent>
-          <p className="text-sm text-muted-foreground">No options available.</p>
+          <p className="text-sm text-muted-foreground">
+            {t("shop.productFilters.noOptions")}
+          </p>
         </AccordionContent>
       </AccordionItem>
     );

@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Loader2, User } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -29,6 +29,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/lib/i18n/i18n-context";
 import { getSession } from "@/server/getSession";
 
 export const Route = createFileRoute("/(shop)/profile")({
@@ -43,37 +44,52 @@ export const Route = createFileRoute("/(shop)/profile")({
   },
 });
 
-// profile form validation
-const profileFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  image: z.string().nullable().optional(),
-});
+type ProfileFormValues = {
+  name: string;
+  image?: string | null;
+};
 
-// password change form validation
-const passwordFormSchema = z
-  .object({
-    currentPassword: z
-      .string()
-      .min(6, { message: "Current password must be at least 6 characters." }),
-    newPassword: z
-      .string()
-      .min(6, { message: "New password must be at least 6 characters." }),
-    confirmPassword: z
-      .string()
-      .min(6, { message: "Confirm password must be at least 6 characters." }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match.",
-    path: ["confirmPassword"],
-  });
-
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
-type PasswordFormValues = z.infer<typeof passwordFormSchema>;
+type PasswordFormValues = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 function ProfilePage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("profile");
   const { session } = Route.useRouteContext();
+  const { t } = useI18n();
+  const profileFormSchema = useMemo(
+    () =>
+      z.object({
+        name: z
+          .string()
+          .min(2, { message: t("shop.profile.validation.nameMin") }),
+        image: z.string().nullable().optional(),
+      }),
+    [t],
+  );
+  const passwordFormSchema = useMemo(
+    () =>
+      z
+        .object({
+          currentPassword: z.string().min(6, {
+            message: t("shop.profile.validation.currentPasswordMin"),
+          }),
+          newPassword: z.string().min(6, {
+            message: t("shop.profile.validation.newPasswordMin"),
+          }),
+          confirmPassword: z.string().min(6, {
+            message: t("shop.profile.validation.confirmPasswordMin"),
+          }),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: t("shop.profile.validation.passwordsMismatch"),
+          path: ["confirmPassword"],
+        }),
+    [t],
+  );
 
   if (!session.user.name) {
     throw new Error("Authenticated user name is required");
@@ -89,12 +105,12 @@ function ProfilePage() {
       return await authClient.updateUser(values);
     },
     onSuccess: () => {
-      toast.success("Profile updated successfully");
+      toast.success(t("shop.profile.profileUpdated"));
       router.invalidate();
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update profile",
+        error instanceof Error ? error.message : t("shop.profile.updateFailed"),
       );
     },
   });
@@ -109,12 +125,14 @@ function ProfilePage() {
       });
     },
     onSuccess: () => {
-      toast.success("Password changed successfully");
+      toast.success(t("shop.profile.passwordChanged"));
       passwordForm.reset();
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Failed to change password",
+        error instanceof Error
+          ? error.message
+          : t("shop.profile.passwordChangeFailed"),
       );
     },
   });
@@ -154,7 +172,7 @@ function ProfilePage() {
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-10">
-      <h1 className="mb-8 text-3xl font-bold">Your Profile</h1>
+      <h1 className="mb-8 text-3xl font-bold">{t("shop.profile.title")}</h1>
 
       <Tabs
         value={activeTab}
@@ -162,17 +180,19 @@ function ProfilePage() {
         className="space-y-8"
       >
         <TabsList>
-          <TabsTrigger value="profile">Profile</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="profile">{t("shop.profile.profile")}</TabsTrigger>
+          <TabsTrigger value="security">
+            {t("shop.profile.security")}
+          </TabsTrigger>
         </TabsList>
 
         {/* user profile */}
         <TabsContent value="profile">
           <Card>
             <CardHeader>
-              <CardTitle>Profile Information</CardTitle>
+              <CardTitle>{t("shop.profile.profileInformation")}</CardTitle>
               <CardDescription>
-                Update your account profile information.
+                {t("shop.profile.profileDescription")}
               </CardDescription>
             </CardHeader>
             <Form {...profileForm}>
@@ -197,7 +217,9 @@ function ProfilePage() {
                         name="image"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Profile Picture</FormLabel>
+                            <FormLabel>
+                              {t("shop.profile.profilePicture")}
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 placeholder="https://example.com/avatar.jpg"
@@ -206,7 +228,7 @@ function ProfilePage() {
                               />
                             </FormControl>
                             <FormDescription>
-                              Enter the URL of your profile picture.
+                              {t("shop.profile.profilePictureDescription")}
                             </FormDescription>
                             <FormMessage />
                           </FormItem>
@@ -221,12 +243,12 @@ function ProfilePage() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Name</FormLabel>
+                        <FormLabel>{t("shop.profile.name")}</FormLabel>
                         <FormControl>
                           <Input {...field} />
                         </FormControl>
                         <FormDescription>
-                          This is your public display name.
+                          {t("shop.profile.nameDescription")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -235,10 +257,10 @@ function ProfilePage() {
 
                   {/* email (read only) */}
                   <div className="space-y-2">
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>{t("shop.profile.email")}</FormLabel>
                     <Input value={session.user.email} disabled readOnly />
                     <p className="text-sm text-muted-foreground">
-                      Your email address is verified and cannot be changed.
+                      {t("shop.profile.emailDescription")}
                     </p>
                   </div>
                 </CardContent>
@@ -253,10 +275,10 @@ function ProfilePage() {
                     {updateProfileMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving...
+                        {t("shop.profile.saving")}
                       </>
                     ) : (
-                      "Save Changes"
+                      t("shop.profile.saveChanges")
                     )}
                   </Button>
                 </CardFooter>
@@ -269,9 +291,9 @@ function ProfilePage() {
         <TabsContent value="security">
           <Card>
             <CardHeader>
-              <CardTitle>Change Password</CardTitle>
+              <CardTitle>{t("shop.profile.changePassword")}</CardTitle>
               <CardDescription>
-                Update your password to enhance your account security.
+                {t("shop.profile.passwordDescription")}
               </CardDescription>
             </CardHeader>
             <Form {...passwordForm}>
@@ -283,7 +305,9 @@ function ProfilePage() {
                     name="currentPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Current Password</FormLabel>
+                        <FormLabel>
+                          {t("shop.profile.currentPassword")}
+                        </FormLabel>
                         <FormControl>
                           <Input type="password" {...field} />
                         </FormControl>
@@ -298,12 +322,12 @@ function ProfilePage() {
                     name="newPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>New Password</FormLabel>
+                        <FormLabel>{t("shop.profile.newPassword")}</FormLabel>
                         <FormControl>
                           <Input type="password" {...field} />
                         </FormControl>
                         <FormDescription>
-                          Password must be at least 6 characters.
+                          {t("shop.profile.passwordRequirement")}
                         </FormDescription>
                         <FormMessage />
                       </FormItem>
@@ -316,7 +340,9 @@ function ProfilePage() {
                     name="confirmPassword"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Confirm New Password</FormLabel>
+                        <FormLabel>
+                          {t("shop.profile.confirmNewPassword")}
+                        </FormLabel>
                         <FormControl>
                           <Input type="password" {...field} />
                         </FormControl>
@@ -336,10 +362,10 @@ function ProfilePage() {
                     {changePasswordMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Changing...
+                        {t("shop.profile.changing")}
                       </>
                     ) : (
-                      "Change Password"
+                      t("shop.profile.changePassword")
                     )}
                   </Button>
                 </CardFooter>

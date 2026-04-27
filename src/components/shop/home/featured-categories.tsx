@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { useI18n } from "@/lib/i18n";
 
 interface CategoryWithImage {
   id: string;
@@ -13,6 +14,7 @@ interface FeaturedCategoriesProps {
 }
 
 export function FeaturedCategories({ initialData }: FeaturedCategoriesProps) {
+  const { t } = useI18n();
   const categories = initialData;
 
   return (
@@ -20,9 +22,11 @@ export function FeaturedCategories({ initialData }: FeaturedCategoriesProps) {
       <div className="container mx-auto px-4">
         {/* title */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold">Featured Categories</h2>
+          <h2 className="text-2xl font-bold">
+            {t("shop.home.featuredCategories")}
+          </h2>
           <p className="mt-2 text-base-content/60">
-            Explore our featured categories
+            {t("shop.home.featuredCategoriesDescription")}
           </p>
         </div>
 
