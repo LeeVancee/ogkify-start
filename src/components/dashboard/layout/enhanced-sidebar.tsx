@@ -2,7 +2,6 @@ import { Link } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
 import type * as React from "react";
 
-import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -53,9 +52,6 @@ export function EnhancedSidebar({
         <NavMain groups={sidebarData.navGroups} />
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-2">
-          <LanguageSwitcher />
-        </div>
         <NavUser />
       </SidebarFooter>
     </Sidebar>

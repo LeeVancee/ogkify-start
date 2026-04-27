@@ -11,6 +11,7 @@ export function persistLocale(locale: Locale) {
     document.cookie = `${localeCookieName}=${encodeURIComponent(
       locale,
     )}; path=/; max-age=31536000; samesite=lax`;
+    document.documentElement.lang = locale;
   }
 
   if (typeof window !== "undefined") {

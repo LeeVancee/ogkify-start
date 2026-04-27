@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
+import { Link, useLocation } from "@tanstack/react-router";
+import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { CartSheet } from "@/components/shop/cart-sheet";
 import type { CartSheetData } from "@/components/shop/cart-sheet";
-import { Input } from "@/components/ui/input";
 import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { getUserCart } from "@/server/cart";
@@ -37,9 +36,6 @@ export default function Header({
   const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
   const navigation = [
     { name: t("shop.header.allProducts"), href: "/products", search: {} },
     { name: t("shop.header.search"), href: "/search", search: {} },
@@ -54,16 +50,6 @@ export default function Header({
     initialData: initialCartData,
     staleTime: 1000 * 60 * 2,
   });
-
-  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key !== "Enter") return;
-    if (!searchQuery.trim()) return;
-
-    navigate({
-      to: "/search",
-      search: { q: searchQuery.trim() },
-    });
-  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
@@ -107,27 +93,27 @@ export default function Header({
             ))}
           </nav>
 
-          <div className="flex items-center gap-0.5">
+          <div className="flex items-center gap-1">
             <LanguageSwitcher />
 
-            <button
-              type="button"
-              onClick={() => setSearchOpen((open) => !open)}
-              className="p-2 text-slate-500 transition-colors hover:text-slate-900 cursor-pointer"
+            <Link
+              to="/search"
+              search={{}}
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
               aria-label={t("shop.header.search")}
             >
               <Search className="h-5 w-5" />
-            </button>
+            </Link>
 
             {initialSession ? (
               <DropDown initialSession={initialSession} />
             ) : (
               <Link
                 to="/login"
-                className="p-2 text-slate-500 transition-colors hover:text-slate-900"
+                className="flex h-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
                 aria-label={t("shop.header.account")}
               >
-                <User className="h-5 w-5" />
+                {t("shop.userMenu.login")}
               </Link>
             )}
 
@@ -135,7 +121,7 @@ export default function Header({
               type="button"
               onClick={() => setIsCartOpen(true)}
               className={cn(
-                "relative rounded-full p-2 text-slate-500 transition-colors hover:text-slate-900 cursor-pointer",
+                "relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 cursor-pointer",
                 isCartOpen && "bg-slate-100 text-slate-900",
               )}
               aria-label={t("shop.header.cart")}
@@ -150,34 +136,6 @@ export default function Header({
             </button>
           </div>
         </div>
-
-        {searchOpen ? (
-          <div className="pb-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                type="search"
-                placeholder={t("shop.header.searchPlaceholder")}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 text-sm focus-visible:ring-slate-900"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleSearch}
-                autoFocus
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setSearchOpen(false);
-                  setSearchQuery("");
-                }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
-                aria-label={t("common.actions.close")}
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        ) : null}
 
         {isMenuOpen ? (
           <nav className="space-y-0.5 border-t border-slate-100 bg-white px-1 py-3 sm:hidden">

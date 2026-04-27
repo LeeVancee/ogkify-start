@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import type React from "react";
 
 import { EnhancedSidebar } from "@/components/dashboard/layout/enhanced-sidebar";
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import {
   SidebarInset,
   SidebarProvider,
@@ -33,12 +34,13 @@ function RouteComponent() {
     >
       <EnhancedSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4">
           <SidebarTrigger
             variant="outline"
             size="icon"
             className="-ml-1 rounded-xl border-sidebar-border bg-background shadow-sm"
           />
+          <LanguageSwitcher />
         </header>
         <div className="flex flex-1 ">
           <Outlet />

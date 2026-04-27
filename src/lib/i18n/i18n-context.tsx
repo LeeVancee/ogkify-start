@@ -1,25 +1,18 @@
+import i18next from "i18next";
+import type { TFunction } from "i18next";
+import { useCallback, useMemo } from "react";
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react";
+  I18nextProvider,
+  initReactI18next,
+  useTranslation,
+} from "react-i18next";
 
 import { persistLocale } from "./client";
 import { defaultLocale, isSupportedLocale } from "./config";
 import type { Locale } from "./config";
 import { messages } from "./messages";
-import { translate } from "./translate";
-import type { TranslationValues } from "./translate";
 
-interface I18nContextValue {
-  locale: Locale;
-  setLocale: (locale: Locale) => void;
-  t: (key: string, values?: TranslationValues) => string;
-}
-
-const I18nContext = createContext<I18nContextValue | null>(null);
+type TranslationValues = Record<string, string | number>;
 
 interface I18nProviderProps {
   initialLocale?: Locale;
@@ -30,44 +23,65 @@ export function I18nProvider({
   initialLocale = defaultLocale,
   children,
 }: I18nProviderProps) {
-  const [locale, setLocaleState] = useState<Locale>(
-    isSupportedLocale(initialLocale) ? initialLocale : defaultLocale,
-  );
+  const locale = isSupportedLocale(initialLocale)
+    ? initialLocale
+    : defaultLocale;
 
-  const setLocale = useCallback((nextLocale: Locale) => {
-    setLocaleState(nextLocale);
-    persistLocale(nextLocale);
-  }, []);
+  const i18n = useMemo(() => {
+    const instance = i18next.createInstance();
 
-  const t = useCallback(
-    (key: string, values: TranslationValues = {}) =>
-      translate(messages[locale], key, values),
-    [locale],
-  );
+    instance.use(initReactI18next).init({
+      fallbackLng: defaultLocale,
+      initAsync: false,
+      interpolation: {
+        escapeValue: false,
+      },
+      lng: locale,
+      resources: {
+        en: { translation: messages.en },
+        "zh-TW": { translation: messages["zh-TW"] },
+        "zh-CN": { translation: messages["zh-CN"] },
+      },
+    });
 
-  const value = useMemo(
-    () => ({
-      locale,
-      setLocale,
-      t,
-    }),
-    [locale, setLocale, t],
-  );
+    return instance;
+  }, [locale]);
 
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+  return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
 
 export function useI18n() {
-  const context = useContext(I18nContext);
+  const { i18n, t: translate } = useTranslation();
+  const locale = isSupportedLocale(i18n.language)
+    ? i18n.language
+    : defaultLocale;
 
-  if (!context) {
-    return {
-      locale: defaultLocale,
-      setLocale: persistLocale,
-      t: (key: string, values: TranslationValues = {}) =>
-        translate(messages[defaultLocale], key, values),
-    };
-  }
+  const setLocale = useCallback(
+    (nextLocale: Locale) => {
+      persistLocale(nextLocale);
+      i18n.changeLanguage(nextLocale);
+    },
+    [i18n],
+  );
 
-  return context;
+  const t = useCallback(
+    (key: string, values: TranslationValues = {}) =>
+      normalizeTranslation(translate, key, values),
+    [translate],
+  );
+
+  return {
+    locale,
+    setLocale,
+    t,
+  };
+}
+
+function normalizeTranslation(
+  translate: TFunction,
+  key: string,
+  values: TranslationValues,
+): string {
+  const result = translate(key, values);
+  return typeof result === "string" ? result : key;
 }

@@ -82,7 +82,7 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <Button variant="ghost" className="relative h-9 w-9 rounded-lg p-0">
             <Avatar className="h-8 w-8">
               {currentSession.user.image ? (
                 <AvatarImage
