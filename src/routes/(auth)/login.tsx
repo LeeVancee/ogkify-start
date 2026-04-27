@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/(auth)/login")({
   component: RouteComponent,
@@ -16,6 +17,7 @@ function fieldInputClass() {
 
 function RouteComponent() {
   const router = useRouter();
+  const { t } = useI18n();
   const [error, setError] = useState("");
   const [isPending, setIsPending] = useState(false);
 
@@ -36,7 +38,7 @@ function RouteComponent() {
           },
           onSuccess: () => {
             setIsPending(false);
-            toast.success("Logged in successfully");
+            toast.success(t("auth.login.success"));
             router.navigate({ to: "/" });
           },
           onError: (ctx) => {
@@ -55,7 +57,7 @@ function RouteComponent() {
   return (
     <div>
       <h1 className="mb-8 text-center text-2xl font-light tracking-tight text-foreground">
-        Sign In
+        {t("auth.login.title")}
       </h1>
 
       <form
@@ -70,9 +72,9 @@ function RouteComponent() {
           name="email"
           validators={{
             onChange: ({ value }) => {
-              if (!value) return "Email is required";
+              if (!value) return t("auth.login.emailRequired");
               if (!/^\S+@\S+$/i.test(value))
-                return "Please enter a valid email address";
+                return t("auth.login.emailInvalid");
               return undefined;
             },
           }}
@@ -82,7 +84,7 @@ function RouteComponent() {
               <input
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder={t("auth.login.emailPlaceholder")}
                 className={fieldInputClass()}
                 disabled={isPending}
                 value={field.state.value}
@@ -102,9 +104,8 @@ function RouteComponent() {
           name="password"
           validators={{
             onChange: ({ value }) => {
-              if (!value) return "Password is required";
-              if (value.length < 6)
-                return "Password must be at least 6 characters";
+              if (!value) return t("auth.login.passwordRequired");
+              if (value.length < 6) return t("auth.login.passwordMin");
               return undefined;
             },
           }}
@@ -114,7 +115,7 @@ function RouteComponent() {
               <input
                 id="password"
                 type="password"
-                placeholder="Password"
+                placeholder={t("auth.login.passwordPlaceholder")}
                 className={fieldInputClass()}
                 disabled={isPending}
                 value={field.state.value}
@@ -138,10 +139,10 @@ function RouteComponent() {
           {isPending ? (
             <>
               <LoaderCircle className="h-4 w-4 animate-spin" />
-              Signing in...
+              {t("auth.login.submitting")}
             </>
           ) : (
-            "Sign In"
+            t("auth.login.submit")
           )}
         </button>
       </form>
@@ -151,12 +152,12 @@ function RouteComponent() {
       ) : null}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Don't have an account?{" "}
+        {t("auth.login.createAccountPrompt")}{" "}
         <Link
           to="/signup"
           className="text-foreground underline underline-offset-4"
         >
-          Create one
+          {t("auth.login.createAccountLink")}
         </Link>
       </p>
     </div>

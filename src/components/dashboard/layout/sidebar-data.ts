@@ -10,51 +10,51 @@ import {
 import type { NavGroup, SidebarBrand } from "./types";
 
 const brand: SidebarBrand = {
-  title: "OGKIFY Admin",
-  subtitle: "Commerce Control",
+  titleKey: "dashboard.brand.title",
+  subtitleKey: "dashboard.brand.subtitle",
 };
 
 const navGroups: NavGroup[] = [
   {
-    title: "Overview",
+    titleKey: "dashboard.nav.overview",
     items: [
       {
-        title: "Dashboard",
+        titleKey: "dashboard.nav.dashboard",
         url: "/dashboard",
         icon: LayoutDashboard,
       },
     ],
   },
   {
-    title: "Catalog",
+    titleKey: "dashboard.nav.catalog",
     items: [
       {
-        title: "Categories",
+        titleKey: "dashboard.nav.categories",
         url: "/dashboard/categories",
         icon: Grid,
       },
       {
-        title: "Colors",
+        titleKey: "dashboard.nav.colors",
         url: "/dashboard/colors",
         icon: Palette,
       },
       {
-        title: "Sizes",
+        titleKey: "dashboard.nav.sizes",
         url: "/dashboard/sizes",
         icon: Ruler,
       },
       {
-        title: "Products",
+        titleKey: "dashboard.nav.products",
         url: "/dashboard/products",
         icon: Package,
       },
     ],
   },
   {
-    title: "Operations",
+    titleKey: "dashboard.nav.operations",
     items: [
       {
-        title: "Orders",
+        titleKey: "dashboard.nav.orders",
         url: "/dashboard/orders",
         icon: ShoppingCart,
       },

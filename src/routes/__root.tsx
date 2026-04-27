@@ -8,6 +8,8 @@ import {
 
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
+import { getLocale, I18nProvider } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 import { seo } from "@/lib/seo";
 import { getSession } from "@/server/getSession";
 
@@ -16,6 +18,7 @@ import appCss from "../styles.css?url";
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   session: Awaited<ReturnType<typeof getSession>> | undefined;
+  locale: Locale;
 }>()({
   head: () => ({
     meta: [
@@ -43,24 +46,37 @@ export const Route = createRootRouteWithContext<{
   }),
 
   beforeLoad: async () => {
-    const session = await getSession();
+    const [session, locale] = await Promise.all([getSession(), getLocale()]);
 
     return {
       session: session || undefined,
+      locale,
     };
   },
 
-  component: () => (
-    <RootDocument>
-      <Outlet />
-    </RootDocument>
-  ),
+  component: () => {
+    const { locale } = Route.useRouteContext();
+
+    return (
+      <RootDocument locale={locale}>
+        <I18nProvider initialLocale={locale}>
+          <Outlet />
+        </I18nProvider>
+      </RootDocument>
+    );
+  },
   notFoundComponent: () => <NotFound />,
 });
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+function RootDocument({
+  children,
+  locale,
+}: {
+  children: React.ReactNode;
+  locale: Locale;
+}) {
   return (
-    <html lang="en">
+    <html lang={locale}>
       <head>
         <HeadContent />
       </head>

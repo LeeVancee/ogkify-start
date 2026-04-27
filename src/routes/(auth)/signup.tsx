@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/(auth)/signup")({
   component: RouteComponent,
@@ -15,6 +16,7 @@ function fieldInputClass() {
 }
 
 function RouteComponent() {
+  const { t } = useI18n();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -38,7 +40,7 @@ function RouteComponent() {
           },
           onSuccess: () => {
             setIsPending(false);
-            toast.success("Account created successfully");
+            toast.success(t("auth.signup.success"));
             router.navigate({ to: "/login" });
           },
           onError: (ctx) => {
@@ -57,7 +59,7 @@ function RouteComponent() {
   return (
     <div>
       <h1 className="mb-8 text-center text-2xl font-light tracking-tight text-foreground">
-        Create Account
+        {t("auth.signup.title")}
       </h1>
 
       <form
@@ -72,7 +74,7 @@ function RouteComponent() {
           name="name"
           validators={{
             onChange: ({ value }) => {
-              if (!value) return "Name is required";
+              if (!value) return t("auth.signup.nameRequired");
               return undefined;
             },
           }}
@@ -82,7 +84,7 @@ function RouteComponent() {
               <input
                 id="name"
                 type="text"
-                placeholder="Name"
+                placeholder={t("auth.signup.namePlaceholder")}
                 className={fieldInputClass()}
                 disabled={isPending}
                 value={field.state.value}
@@ -102,9 +104,9 @@ function RouteComponent() {
           name="email"
           validators={{
             onChange: ({ value }) => {
-              if (!value) return "Email is required";
+              if (!value) return t("auth.signup.emailRequired");
               if (!/^\S+@\S+$/i.test(value))
-                return "Please enter a valid email address";
+                return t("auth.signup.emailInvalid");
               return undefined;
             },
           }}
@@ -114,7 +116,7 @@ function RouteComponent() {
               <input
                 id="email"
                 type="email"
-                placeholder="Email"
+                placeholder={t("auth.signup.emailPlaceholder")}
                 className={fieldInputClass()}
                 disabled={isPending}
                 value={field.state.value}
@@ -134,9 +136,8 @@ function RouteComponent() {
           name="password"
           validators={{
             onChange: ({ value }) => {
-              if (!value) return "Password is required";
-              if (value.length < 6)
-                return "Password must be at least 6 characters";
+              if (!value) return t("auth.signup.passwordRequired");
+              if (value.length < 6) return t("auth.signup.passwordMin");
               return undefined;
             },
           }}
@@ -146,7 +147,7 @@ function RouteComponent() {
               <input
                 id="password"
                 type="password"
-                placeholder="Password"
+                placeholder={t("auth.signup.passwordPlaceholder")}
                 className={fieldInputClass()}
                 disabled={isPending}
                 value={field.state.value}
@@ -170,10 +171,10 @@ function RouteComponent() {
           {isPending ? (
             <>
               <LoaderCircle className="h-4 w-4 animate-spin" />
-              Creating...
+              {t("auth.signup.submitting")}
             </>
           ) : (
-            "Sign Up"
+            t("auth.signup.submit")
           )}
         </button>
       </form>
@@ -183,12 +184,12 @@ function RouteComponent() {
       ) : null}
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
-        Already have an account?{" "}
+        {t("auth.signup.existingAccountPrompt")}{" "}
         <Link
           to="/login"
           className="text-foreground underline underline-offset-4"
         >
-          Sign In
+          {t("auth.signup.loginLink")}
         </Link>
       </p>
     </div>

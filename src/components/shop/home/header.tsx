@@ -3,18 +3,15 @@ import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingBag, User, X } from "lucide-react";
 import { useState } from "react";
 
+import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { CartSheet } from "@/components/shop/cart-sheet";
 import type { CartSheetData } from "@/components/shop/cart-sheet";
 import { Input } from "@/components/ui/input";
+import { useI18n } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { getUserCart } from "@/server/cart";
 
 import { DropDown } from "../DropDown";
-
-const navigation = [
-  { name: "All Products", href: "/products", search: {} },
-  { name: "Search", href: "/search", search: {} },
-];
 
 interface SessionUser {
   name?: string | null;
@@ -37,11 +34,16 @@ export default function Header({
   initialSession,
 }: HeaderProps) {
   const pathname = useLocation().pathname;
+  const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const navigation = [
+    { name: t("shop.header.allProducts"), href: "/products", search: {} },
+    { name: t("shop.header.search"), href: "/search", search: {} },
+  ];
   const {
     data: cartData,
     isLoading: isCartLoading,
@@ -71,7 +73,7 @@ export default function Header({
             type="button"
             className="sm:hidden p-2 -ml-2 text-slate-500 transition-colors hover:text-slate-900"
             onClick={() => setIsMenuOpen((open) => !open)}
-            aria-label="Toggle menu"
+            aria-label={t("shop.header.toggleMenu")}
           >
             {isMenuOpen ? (
               <X className="h-5 w-5" />
@@ -106,11 +108,13 @@ export default function Header({
           </nav>
 
           <div className="flex items-center gap-0.5">
+            <LanguageSwitcher />
+
             <button
               type="button"
               onClick={() => setSearchOpen((open) => !open)}
               className="p-2 text-slate-500 transition-colors hover:text-slate-900 cursor-pointer"
-              aria-label="Search"
+              aria-label={t("shop.header.search")}
             >
               <Search className="h-5 w-5" />
             </button>
@@ -121,7 +125,7 @@ export default function Header({
               <Link
                 to="/login"
                 className="p-2 text-slate-500 transition-colors hover:text-slate-900"
-                aria-label="Account"
+                aria-label={t("shop.header.account")}
               >
                 <User className="h-5 w-5" />
               </Link>
@@ -134,7 +138,7 @@ export default function Header({
                 "relative rounded-full p-2 text-slate-500 transition-colors hover:text-slate-900 cursor-pointer",
                 isCartOpen && "bg-slate-100 text-slate-900",
               )}
-              aria-label="Cart"
+              aria-label={t("shop.header.cart")}
               aria-expanded={isCartOpen}
             >
               <ShoppingBag className="h-5 w-5" />
@@ -153,7 +157,7 @@ export default function Header({
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <Input
                 type="search"
-                placeholder="Search products..."
+                placeholder={t("shop.header.searchPlaceholder")}
                 className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-10 pr-10 text-sm focus-visible:ring-slate-900"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -167,7 +171,7 @@ export default function Header({
                   setSearchQuery("");
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
-                aria-label="Close search"
+                aria-label={t("common.actions.close")}
               >
                 <X className="h-4 w-4" />
               </button>

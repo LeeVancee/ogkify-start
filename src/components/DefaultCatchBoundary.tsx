@@ -7,10 +7,13 @@ import {
   useRouter,
 } from "@tanstack/react-router";
 
+import { useI18n } from "@/lib/i18n";
+
 import { Button } from "./ui/button";
 
 export function DefaultCatchBoundary({ error }: Readonly<ErrorComponentProps>) {
   const router = useRouter();
+  const { t } = useI18n();
   const isRoot = useMatch({
     strict: false,
     select: (state) => state.id === rootRouteId,
@@ -28,21 +31,21 @@ export function DefaultCatchBoundary({ error }: Readonly<ErrorComponentProps>) {
             router.invalidate();
           }}
         >
-          Try Again
+          {t("common.actions.retry")}
         </Button>
         {isRoot ? (
           <Link
             to="/"
             className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
           >
-            Home
+            {t("common.actions.home")}
           </Link>
         ) : (
           <Link
             to="/"
             className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
           >
-            Go Back
+            {t("common.actions.goBack")}
           </Link>
         )}
       </div>

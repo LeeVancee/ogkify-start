@@ -18,6 +18,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 import {
   createCheckoutPaymentIntent,
@@ -58,6 +59,7 @@ export function CartSheet({
 }: CartSheetProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useI18n();
 
   const items = cartData.items;
   const subtotal = items.reduce(
@@ -69,11 +71,11 @@ export function CartSheet({
   const removeItemMutation = useMutation({
     mutationFn: (cartItemId: string) => removeFromCart({ data: cartItemId }),
     onSuccess: () => {
-      toast.success("Item removed from cart");
+      toast.success(t("shop.cart.removedToast"));
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      toast.error("Failed to remove item");
+      toast.error(t("shop.cart.removeErrorToast"));
     },
   });
 
@@ -89,7 +91,7 @@ export function CartSheet({
       queryClient.invalidateQueries({ queryKey: ["cart"] });
     },
     onError: () => {
-      toast.error("Failed to update quantity");
+      toast.error(t("shop.cart.updateErrorToast"));
     },
   });
 
@@ -106,7 +108,9 @@ export function CartSheet({
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Checkout process failed",
+        error instanceof Error
+          ? error.message
+          : t("shop.cart.checkoutErrorToast"),
       );
     },
   });
@@ -126,32 +130,40 @@ export function CartSheet({
           <div className="flex items-start justify-between gap-4 pr-8">
             <div>
               <p className="text-[11px] font-semibold tracking-[0.22em] text-slate-400 uppercase">
-                Quick Cart
+                {t("shop.cart.eyebrow")}
               </p>
               <SheetTitle className="mt-2 text-xl font-semibold text-slate-900">
-                Your Cart
+                {t("shop.cart.title")}
               </SheetTitle>
             </div>
             {cartData.totalItems > 0 ? (
               <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600">
-                {cartData.totalItems} item{cartData.totalItems === 1 ? "" : "s"}
+                {t(
+                  cartData.totalItems === 1
+                    ? "shop.cart.itemCount_one"
+                    : "shop.cart.itemCount_other",
+                  { count: cartData.totalItems },
+                )}
               </span>
             ) : null}
           </div>
           <SheetDescription className="mt-2 text-sm leading-6 text-slate-500">
             {cartData.totalItems > 0
-              ? `${lineItemCount} selection${lineItemCount === 1 ? "" : "s"} ready to review before secure checkout.`
-              : "Add a few picks and they will show up here."}
+              ? t("shop.cart.descriptionWithItems", {
+                  count: lineItemCount,
+                  plural: lineItemCount === 1 ? "" : "s",
+                })
+              : t("shop.cart.descriptionEmpty")}
           </SheetDescription>
         </SheetHeader>
 
         {isLoading ? (
           <div className="flex flex-1 items-center justify-center px-6 py-16 text-sm text-slate-500">
-            Loading cart...
+            {t("shop.cart.loading")}
           </div>
         ) : isError ? (
           <div className="flex flex-1 items-center justify-center px-6 py-16 text-center text-sm text-slate-500">
-            We could not load your cart right now.
+            {t("shop.cart.loadError")}
           </div>
         ) : items.length === 0 ? (
           <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 text-center">
@@ -159,21 +171,20 @@ export function CartSheet({
               <ShoppingBag className="h-7 w-7" />
             </div>
             <h3 className="mt-6 text-xl font-semibold text-slate-900">
-              Your cart is empty
+              {t("shop.cart.emptyTitle")}
             </h3>
             <p className="mt-3 max-w-sm text-sm leading-6 text-slate-500">
-              Keep exploring curated essentials and add the ones you want to
-              review here before checkout.
+              {t("shop.cart.emptyDescription")}
             </p>
             <div className="mt-6 flex max-w-sm flex-wrap items-center justify-center gap-2 text-xs text-slate-400">
               <span className="rounded-full border border-slate-200 px-3 py-1.5">
-                Fast checkout
+                {t("shop.cart.fastCheckout")}
               </span>
               <span className="rounded-full border border-slate-200 px-3 py-1.5">
-                Free shipping
+                {t("shop.cart.freeShipping")}
               </span>
               <span className="rounded-full border border-slate-200 px-3 py-1.5">
-                Secure payment
+                {t("shop.cart.securePayment")}
               </span>
             </div>
             <Link
@@ -181,7 +192,7 @@ export function CartSheet({
               onClick={() => onOpenChange(false)}
               className="mt-8 inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700"
             >
-              Continue Shopping
+              {t("common.actions.continueShopping")}
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -220,7 +231,9 @@ export function CartSheet({
                               {item.name}
                             </Link>
                             <p className="mt-1 text-xs text-slate-400">
-                              {item.colorName ? item.colorName : "Standard"}
+                              {item.colorName
+                                ? item.colorName
+                                : t("shop.cart.standard")}
                               {item.sizeValue ? ` / ${item.sizeValue}` : ""}
                             </p>
                             <p className="mt-2 text-sm font-medium text-slate-900">
@@ -232,7 +245,9 @@ export function CartSheet({
                             onClick={() => removeItemMutation.mutate(item.id)}
                             disabled={isMutating}
                             className="rounded-lg p-1 text-slate-300 transition-colors hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                            aria-label={`Remove ${item.name}`}
+                            aria-label={t("shop.cart.removeLabel", {
+                              name: item.name,
+                            })}
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -255,7 +270,9 @@ export function CartSheet({
                               }}
                               disabled={isMutating}
                               className="flex h-7 w-7 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                              aria-label={`Decrease quantity for ${item.name}`}
+                              aria-label={t("shop.cart.decreaseLabel", {
+                                name: item.name,
+                              })}
                             >
                               <Minus className="h-3 w-3" />
                             </button>
@@ -272,7 +289,9 @@ export function CartSheet({
                               }
                               disabled={isMutating}
                               className="flex h-7 w-7 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-                              aria-label={`Increase quantity for ${item.name}`}
+                              aria-label={t("shop.cart.increaseLabel", {
+                                name: item.name,
+                              })}
                             >
                               <Plus className="h-3 w-3" />
                             </button>
@@ -293,17 +312,21 @@ export function CartSheet({
               <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center justify-between text-slate-500">
-                    <span>Subtotal</span>
+                    <span>{t("shop.cart.subtotal")}</span>
                     <span className="font-medium text-slate-900 tabular-nums">
                       {formatPrice(subtotal)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-slate-500">
-                    <span>Shipping</span>
-                    <span className="font-medium text-slate-900">Free</span>
+                    <span>{t("shop.cart.shipping")}</span>
+                    <span className="font-medium text-slate-900">
+                      {t("shop.cart.free")}
+                    </span>
                   </div>
                   <div className="flex items-center justify-between border-t border-slate-200 pt-2.5 text-slate-900">
-                    <span className="font-semibold">Total</span>
+                    <span className="font-semibold">
+                      {t("shop.cart.total")}
+                    </span>
                     <span className="font-semibold tabular-nums">
                       {formatPrice(subtotal)}
                     </span>
@@ -313,7 +336,7 @@ export function CartSheet({
 
               <div className="flex items-center gap-2 text-xs text-slate-500">
                 <ShieldCheck className="h-4 w-4 text-slate-700" />
-                Payment details are encrypted and processed securely by Stripe.
+                {t("shop.cart.securePaymentNote")}
               </div>
 
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -322,7 +345,7 @@ export function CartSheet({
                   onClick={() => onOpenChange(false)}
                   className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-900 transition-colors hover:border-slate-300 hover:bg-slate-50"
                 >
-                  View Cart
+                  {t("shop.cart.viewCart")}
                 </Link>
                 <button
                   type="button"
@@ -330,7 +353,9 @@ export function CartSheet({
                   disabled={checkoutMutation.isPending}
                   className="inline-flex items-center justify-center rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
                 >
-                  {checkoutMutation.isPending ? "Processing..." : "Checkout"}
+                  {checkoutMutation.isPending
+                    ? t("shop.cart.processing")
+                    : t("shop.cart.checkout")}
                 </button>
               </div>
             </SheetFooter>

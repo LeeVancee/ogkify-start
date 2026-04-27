@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
 type BaseNavItem = {
-  title: string;
+  titleKey: string;
   badge?: string;
   icon?: LucideIcon;
 };
@@ -23,13 +23,13 @@ type NavCollapsible = BaseNavItem & {
 type NavItem = NavLink | NavCollapsible;
 
 type NavGroup = {
-  title: string;
+  titleKey: string;
   items: NavItem[];
 };
 
 type SidebarBrand = {
-  title: string;
-  subtitle: string;
+  titleKey: string;
+  subtitleKey: string;
 };
 
 export type {

@@ -12,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/lib/i18n";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -33,6 +34,7 @@ interface DropDownProps {
 
 export function DropDown({ initialSession }: DropDownProps = {}) {
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   // If no initial session data is passed, fetch on client side (compatible with other pages)
   const { data: session, isPending } = authClient.useSession();
@@ -63,7 +65,7 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
   if (!currentSession) {
     return (
       <Button variant="ghost" onClick={() => navigate({ to: "/login" })}>
-        login
+        {t("shop.userMenu.login")}
       </Button>
     );
   }
@@ -113,24 +115,24 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate({ to: "/dashboard" })}>
               <LayoutDashboard className="mr-2 h-4 w-4" />
-              Dashboard
+              {t("shop.userMenu.dashboard")}
             </DropdownMenuItem>
           </>
         )}
 
         <DropdownMenuItem onClick={() => navigate({ to: "/myorders" })}>
           <ShoppingBag className="mr-2 h-4 w-4" />
-          My Orders
+          {t("shop.userMenu.myOrders")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => navigate({ to: "/profile" })}>
           <User className="mr-2 h-4 w-4" />
-          Profile
+          {t("shop.userMenu.profile")}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
-          Log out
+          {t("shop.userMenu.logout")}
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>

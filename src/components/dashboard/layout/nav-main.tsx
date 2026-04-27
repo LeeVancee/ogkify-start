@@ -16,12 +16,14 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useI18n } from "@/lib/i18n";
 
 import { ActiveLink } from "../active-link";
 import type { NavGroup, NavItem } from "./types";
 
 export function NavMain({ groups }: { groups: NavGroup[] }) {
   const location = useLocation();
+  const { t } = useI18n();
 
   const isActiveGroup = (item: NavItem) => {
     if (!("items" in item) || !item.items) {
@@ -47,8 +49,8 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
   return (
     <>
       {groups.map((group) => (
-        <SidebarGroup key={group.title}>
-          <SidebarGroupLabel>{group.title}</SidebarGroupLabel>
+        <SidebarGroup key={group.titleKey}>
+          <SidebarGroupLabel>{t(group.titleKey)}</SidebarGroupLabel>
           <SidebarMenu>
             {group.items.map((item) => {
               if (
@@ -57,12 +59,12 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
                 item.items.length === 0
               ) {
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={item.titleKey}>
                     <SidebarMenuButton
                       render={
                         <ActiveLink href={item.url} exact>
                           {item.icon && <item.icon />}
-                          <span>{item.title}</span>
+                          <span>{t(item.titleKey)}</span>
                         </ActiveLink>
                       }
                     />
@@ -73,13 +75,13 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
               const isActive = isActiveGroup(item);
 
               return (
-                <Collapsible key={item.title} defaultOpen={isActive}>
+                <Collapsible key={item.titleKey} defaultOpen={isActive}>
                   <SidebarMenuItem>
                     <CollapsibleTrigger
                       render={
-                        <SidebarMenuButton tooltip={item.title}>
+                        <SidebarMenuButton tooltip={t(item.titleKey)}>
                           {item.icon && <item.icon />}
-                          <span>{item.title}</span>
+                          <span>{t(item.titleKey)}</span>
                           <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                         </SidebarMenuButton>
                       }
@@ -87,12 +89,12 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
                     <CollapsibleContent>
                       <SidebarMenuSub>
                         {item.items.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubItem key={subItem.titleKey}>
                             <SidebarMenuSubButton
                               render={
                                 <ActiveLink href={subItem.url} exact>
                                   {subItem.icon && <subItem.icon />}
-                                  <span>{subItem.title}</span>
+                                  <span>{t(subItem.titleKey)}</span>
                                 </ActiveLink>
                               }
                             />
