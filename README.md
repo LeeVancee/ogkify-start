@@ -1,38 +1,43 @@
 # ogkify
 
-ogkify is a full-stack e-commerce application built with TanStack Start. It includes a customer-facing storefront, authentication, shopping cart, checkout flow, Stripe payments, and an admin dashboard for managing products, categories, colors, sizes, and orders.
+ogkify is a full-stack e-commerce application built with TanStack Start. It provides a customer storefront for browsing and purchasing products, plus an admin dashboard for managing the store catalog and orders.
 
-## Features
+## Project Features
 
-- Storefront with home page, product listing, search, product detail pages, cart, checkout, profile, and order history
-- Admin dashboard for products, categories, colors, sizes, and order management
-- Email/password authentication powered by Better Auth
-- PostgreSQL data layer with Drizzle ORM
-- Product images and category images through Cloudinary upload widgets
-- Stripe checkout/payment intent flow with webhook handling
-- Tailwind CSS v4 and shadcn/ui-based interface
-- TanStack Router file-based routing and TanStack Query data fetching
+- Customer storefront with product listing, product details, search, cart, checkout, profile, and order history
+- Admin dashboard for managing products, categories, colors, sizes, and orders
+- Email and password authentication with Better Auth
+- Product catalog stored in PostgreSQL using Drizzle ORM
+- Product image upload support through Cloudinary
+- Stripe payment integration with webhook support
+- Responsive UI built with Tailwind CSS v4 and shadcn/ui components
 
 ## Tech Stack
 
-- **Framework**: TanStack Start, TanStack Router, React 19, Vite
-- **Database**: PostgreSQL, Drizzle ORM, Drizzle Kit
-- **Authentication**: Better Auth with admin plugin
+- **Framework**: TanStack Start, TanStack Router, React, Vite
+- **Language**: TypeScript
+- **Database**: PostgreSQL
+- **ORM**: Drizzle ORM, Drizzle Kit
+- **Authentication**: Better Auth
 - **Payments**: Stripe
-- **Uploads**: Cloudinary upload widget, optional UploadThing token support
-- **UI**: Tailwind CSS v4, shadcn/ui, Base UI, lucide-react, Sonner
-- **Validation and Forms**: Zod, React Hook Form, TanStack Form
-- **Tooling**: TypeScript, Vitest, oxlint, oxfmt, pnpm
+- **Image Uploads**: Cloudinary
+- **UI**: Tailwind CSS v4, shadcn/ui, Base UI, lucide-react
+- **Forms and Validation**: React Hook Form, TanStack Form, Zod
+- **Data Fetching**: TanStack Query
+- **Testing**: Vitest
+- **Package Manager**: pnpm
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
+Make sure you have the following installed or prepared:
+
+- Node.js 20 or later
 - pnpm
-- PostgreSQL database
-- Stripe account for payment testing
-- Cloudinary account for image uploads
+- A PostgreSQL database
+- A Stripe account for payment testing
+- A Cloudinary account for image uploads
 
 ### Install Dependencies
 
@@ -40,20 +45,20 @@ ogkify is a full-stack e-commerce application built with TanStack Start. It incl
 pnpm install
 ```
 
-### Configure Environment Variables
+### Environment Variables
 
-Create a local environment file:
+Copy the example environment file:
 
 ```bash
 cp .env.example .env
 ```
 
-Fill in the required values:
+Then fill in the values in `.env`:
 
 ```bash
 DATABASE_URL="postgresql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-BETTER_AUTH_SECRET="your-auth-secret"
+BETTER_AUTH_SECRET="your-better-auth-secret"
 
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
@@ -61,15 +66,24 @@ VITE_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 
 VITE_BASE_URL="http://localhost:3000"
 
-VITE_CLOUDINARY_CLOUD_NAME="your-cloud-name"
-VITE_CLOUDINARY_UPLOAD_PRESET="your-upload-preset"
-
-UPLOADTHING_TOKEN="optional-uploadthing-token"
+VITE_CLOUDINARY_CLOUD_NAME="your-cloudinary-cloud-name"
+VITE_CLOUDINARY_UPLOAD_PRESET="your-cloudinary-upload-preset"
 ```
 
-`UPLOADTHING_TOKEN` is optional in the server environment schema. Cloudinary variables are required by the client-side upload components.
+### Environment Variable Reference
 
-### Set Up the Database
+| Variable | Required | Description |
+| --- | --- | --- |
+| `DATABASE_URL` | Yes | PostgreSQL connection string used by Drizzle |
+| `BETTER_AUTH_SECRET` | Yes | Secret key used by Better Auth |
+| `STRIPE_SECRET_KEY` | Yes | Stripe server-side secret key |
+| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret |
+| `VITE_STRIPE_PUBLISHABLE_KEY` | Yes | Stripe publishable key used on the client |
+| `VITE_BASE_URL` | Yes | Base URL of the app, usually `http://localhost:3000` in development |
+| `VITE_CLOUDINARY_CLOUD_NAME` | Yes | Cloudinary cloud name for image uploads |
+| `VITE_CLOUDINARY_UPLOAD_PRESET` | Yes | Cloudinary unsigned upload preset |
+
+## Database Setup
 
 Push the Drizzle schema to your database:
 
@@ -77,121 +91,41 @@ Push the Drizzle schema to your database:
 pnpm db:push
 ```
 
-Optionally seed demo catalog data:
+Seed demo data:
 
 ```bash
 pnpm db:seed
 ```
 
-Open Drizzle Studio when you need to inspect or edit records:
+Open Drizzle Studio:
 
 ```bash
 pnpm db:studio
 ```
 
-### Run the App
+## Run the Project
+
+Start the development server:
 
 ```bash
 pnpm dev
 ```
 
-The development server runs at:
+The app will run at:
 
 ```txt
 http://localhost:3000
 ```
 
-If Vite cache causes stale behavior, start with a clean cache:
+If you need a clean Vite cache:
 
 ```bash
 pnpm dev:clean
 ```
 
-## Common Scripts
+## Build for Production
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the development server on port 3000 |
-| `pnpm dev:clean` | Clear Vite cache and start the dev server |
-| `pnpm build` | Build the production application |
-| `pnpm start` | Run the built production server |
-| `pnpm start:local` | Run the built server with `.env` loaded |
-| `pnpm test` | Run Vitest tests |
-| `pnpm typecheck` | Run TypeScript checks |
-| `pnpm lint` | Run oxlint |
-| `pnpm lint:fix` | Fix lint issues with oxlint |
-| `pnpm format` | Check formatting with oxfmt |
-| `pnpm format:fix` | Format files with oxfmt |
-| `pnpm check` | Fix lint issues and format files |
-| `pnpm db:push` | Push Drizzle schema changes |
-| `pnpm db:studio` | Open Drizzle Studio |
-| `pnpm db:seed` | Seed demo catalog data |
-
-## Project Structure
-
-```txt
-src/
-  components/
-    dashboard/       Admin dashboard UI
-    shop/            Storefront, product, cart, checkout, and order UI
-    shared/          Shared application components
-    ui/              shadcn/ui primitives
-  db/
-    schema.ts        Drizzle schema and relations
-    seed.ts          Demo data seed script
-  env/
-    client.ts        Public client environment schema
-    server.ts        Server-only environment schema
-  lib/
-    auth.ts          Better Auth configuration
-  routes/
-    (auth)/          Login and signup routes
-    (shop)/          Customer storefront routes
-    api/             API endpoints and webhooks
-    dashboard/       Admin dashboard routes
-  server/
-    *.ts             Server functions for data queries and mutations
-```
-
-## Routing
-
-Routes are file-based through TanStack Router:
-
-- `src/routes/(shop)` contains the storefront, product listing, cart, checkout, profile, and customer order pages.
-- `src/routes/dashboard` contains admin pages for managing catalog resources and orders.
-- `src/routes/(auth)` contains login and signup pages.
-- `src/routes/api/auth.$.ts` exposes Better Auth handlers.
-- `src/routes/api/webhooks/stripe.ts` handles Stripe webhook events.
-
-## Data Model
-
-The database schema is defined in `src/db/schema.ts`. Core tables include:
-
-- `user`, `session`, `account`, `verification` for Better Auth
-- `products`, `categories`, `images`
-- `colors`, `sizes`, and product relationship tables
-- `carts`, `cart_items`
-- `orders`, `order_items`
-
-Order status and payment status are represented with PostgreSQL enums.
-
-## Authentication and Admin Access
-
-Authentication is configured in `src/lib/auth.ts` with Better Auth email/password login and the admin plugin. Dashboard routes should be protected by the existing server-side admin/session checks.
-
-## Payments and Webhooks
-
-Stripe keys are required for checkout and payment status updates. In local development, forward Stripe webhook events to:
-
-```txt
-http://localhost:3000/api/webhooks/stripe
-```
-
-Then set the generated webhook signing secret as `STRIPE_WEBHOOK_SECRET`.
-
-## Production Build
-
-Build the app:
+Create a production build:
 
 ```bash
 pnpm build
@@ -203,16 +137,64 @@ Start the production server:
 pnpm start
 ```
 
-For local production testing with `.env` loaded:
+Run the production server locally with `.env` loaded:
 
 ```bash
 pnpm start:local
 ```
 
-## Development Notes
+## Available Scripts
 
-- Use server functions in `src/server` for database-backed operations.
-- Use Drizzle ORM for type-safe database queries.
-- Keep customer-facing UI in `src/components/shop` and admin UI in `src/components/dashboard`.
-- Use Tailwind CSS utilities and `cn()` from `src/lib/utils.ts` for conditional classes.
-- Prefer existing shadcn/ui components in `src/components/ui` before adding new UI primitives.
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the development server on port 3000 |
+| `pnpm dev:clean` | Clear Vite cache and start the dev server |
+| `pnpm build` | Build the app for production |
+| `pnpm start` | Start the production server |
+| `pnpm start:local` | Start the production server with `.env` loaded |
+| `pnpm test` | Run tests with Vitest |
+| `pnpm typecheck` | Run TypeScript type checking |
+| `pnpm lint` | Run oxlint |
+| `pnpm lint:fix` | Fix lint issues |
+| `pnpm format` | Check formatting with oxfmt |
+| `pnpm format:fix` | Format files |
+| `pnpm check` | Fix lint issues and format files |
+| `pnpm db:push` | Push database schema changes |
+| `pnpm db:studio` | Open Drizzle Studio |
+| `pnpm db:seed` | Seed demo data |
+
+## Project Structure
+
+```txt
+src/
+  components/
+    dashboard/       Admin dashboard components
+    shop/            Customer storefront components
+    shared/          Shared components
+    ui/              Reusable UI primitives
+  db/
+    schema.ts        Database schema and relations
+    seed.ts          Demo data seed script
+  env/
+    client.ts        Client environment variable schema
+    server.ts        Server environment variable schema
+  lib/
+    auth.ts          Better Auth configuration
+  routes/
+    (auth)/          Login and signup routes
+    (shop)/          Customer-facing routes
+    api/             API routes and webhooks
+    dashboard/       Admin dashboard routes
+  server/
+    *.ts             Server-side queries and mutations
+```
+
+## Stripe Webhook
+
+For local Stripe webhook testing, forward events to:
+
+```txt
+http://localhost:3000/api/webhooks/stripe
+```
+
+Set the generated webhook signing secret as `STRIPE_WEBHOOK_SECRET` in `.env`.

@@ -7,7 +7,6 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1),
     STRIPE_WEBHOOK_SECRET: z.string().min(1),
-    UPLOADTHING_TOKEN: z.string().min(1).optional(),
     VITE_BASE_URL: z.url().default("http://localhost:3000"),
   },
   runtimeEnv: process.env,

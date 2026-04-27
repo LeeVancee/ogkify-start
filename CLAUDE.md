@@ -13,7 +13,7 @@ This is **ogkify**, a full-stack e-commerce application built with TanStack Star
 - **Authentication**: Better Auth
 - **Styling**: Tailwind CSS v4 + shadcn/ui components
 - **Payment**: Stripe integration
-- **File Upload**: UploadThing
+- **File Upload**: Cloudinary
 - **State Management**: TanStack Query
 - **Package Manager**: pnpm
 
@@ -117,7 +117,7 @@ Uses React Hook Form with Zod validation. See existing forms in dashboard compon
 - Authentication is required for both shop (customers) and dashboard (admin)
 - Database schema supports complex e-commerce relationships
 - Payment processing is handled through Stripe
-- File uploads use UploadThing service
+- File uploads use Cloudinary
 - All forms use proper validation and error handling
 
 ## Testing
