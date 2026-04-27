@@ -1,5 +1,6 @@
 import { Eye, RefreshCw } from "lucide-react";
 
+import { DataTableShell } from "@/components/dashboard/data-table-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +26,7 @@ interface OrdersTableProps {
 function OrderStatusBadge({ status }: { status: string }) {
   const variants: Record<string, string> = {
     COMPLETED: "bg-green-50 text-green-700 border-green-200",
+    PROCESSING: "bg-blue-50 text-blue-700 border-blue-200",
     PAID: "bg-blue-50 text-blue-700 border-blue-200",
     PENDING: "bg-amber-50 text-amber-700 border-amber-200",
     CANCELLED: "bg-red-50 text-red-700 border-red-200",
@@ -61,8 +63,8 @@ export function OrdersTable({
   onUpdateStatus,
 }: OrdersTableProps) {
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-      <Table>
+    <DataTableShell>
+      <Table className="min-w-[900px]">
         <TableHeader>
           <TableRow className="bg-muted/50 hover:bg-muted/50">
             <TableHead className="font-semibold text-foreground">
@@ -169,6 +171,6 @@ export function OrdersTable({
           )}
         </TableBody>
       </Table>
-    </div>
+    </DataTableShell>
   );
 }

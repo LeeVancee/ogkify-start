@@ -4,9 +4,14 @@ import type { Product } from "./product-types";
 interface ProductGridViewProps {
   products: Array<Product>;
   onDelete: (id: string) => void;
+  isDeleting: boolean;
 }
 
-export function ProductGridView({ products, onDelete }: ProductGridViewProps) {
+export function ProductGridView({
+  products,
+  onDelete,
+  isDeleting,
+}: ProductGridViewProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {products.map((product) => (
@@ -23,6 +28,7 @@ export function ProductGridView({ products, onDelete }: ProductGridViewProps) {
             images: product.images.map((img) => img.url),
           }}
           onDelete={onDelete}
+          isDeleting={isDeleting}
         />
       ))}
     </div>

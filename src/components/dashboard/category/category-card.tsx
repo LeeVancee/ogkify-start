@@ -1,5 +1,6 @@
 import { ArrowRight, Folder } from "lucide-react";
 
+import { ImagePlaceholder } from "@/components/dashboard/image-placeholder";
 import { ManagementCard } from "@/components/shared/management-card";
 import { Badge } from "@/components/ui/badge";
 
@@ -27,11 +28,15 @@ export function CategoryCard({
       deleteConfirmTitle={`Are you sure you want to delete the category "${category.name}"?`}
     >
       <div className="aspect-video overflow-hidden relative bg-muted/30">
-        <img
-          src={getRequiredCategoryImage(category.imageUrl, category.name)}
-          alt={category.name}
-          className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
-        />
+        {category.imageUrl ? (
+          <img
+            src={category.imageUrl}
+            alt={category.name}
+            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+          />
+        ) : (
+          <ImagePlaceholder label="No category image" />
+        )}
         <div className="absolute top-2.5 left-2.5">
           <Badge
             variant="outline"
@@ -51,15 +56,4 @@ export function CategoryCard({
       </div>
     </ManagementCard>
   );
-}
-
-function getRequiredCategoryImage(
-  imageUrl: string | null | undefined,
-  categoryName: string,
-) {
-  if (!imageUrl) {
-    throw new Error(`Category image is required for ${categoryName}`);
-  }
-
-  return imageUrl;
 }

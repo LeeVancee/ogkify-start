@@ -9,9 +9,5 @@ export const Route = createFileRoute("/dashboard/orders/")({
 });
 
 function RouteComponent() {
-  return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <OrderManagement />
-    </div>
-  );
+  return <OrderManagement />;
 }

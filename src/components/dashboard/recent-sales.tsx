@@ -1,4 +1,7 @@
+import { Link } from "@tanstack/react-router";
+
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { buttonVariants } from "@/components/ui/button";
 
 interface Order {
   id: string;
@@ -19,8 +22,17 @@ export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
   return (
     <div className="space-y-8">
       {recentOrders.length === 0 ? (
-        <div className="flex h-40 items-center justify-center">
-          <p className="text-sm text-muted-foreground">No recent orders</p>
+        <div className="flex h-40 flex-col items-center justify-center rounded-lg border border-dashed bg-muted/20 text-center">
+          <p className="text-sm font-medium">No recent orders</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            New completed orders will appear here.
+          </p>
+          <Link
+            to="/dashboard/orders"
+            className={`${buttonVariants({ variant: "outline", size: "sm" })} mt-3`}
+          >
+            View Orders
+          </Link>
         </div>
       ) : (
         recentOrders.map((order) => (

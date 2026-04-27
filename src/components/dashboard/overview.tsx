@@ -3,9 +3,12 @@ import {
   BarChart,
   CartesianGrid,
   ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+
+import { formatPrice } from "@/lib/utils";
 
 interface SalesData {
   name: string;
@@ -44,6 +47,17 @@ export function Overview({ data }: OverviewProps) {
           axisLine={false}
           tickMargin={8}
           tickFormatter={(value) => `$${value}`}
+        />
+        <Tooltip
+          cursor={{ fill: "var(--color-muted)" }}
+          formatter={(value) => [formatPrice(Number(value)), "Revenue"]}
+          labelClassName="text-foreground"
+          contentStyle={{
+            background: "var(--color-background)",
+            border: "1px solid var(--color-border)",
+            borderRadius: "0.75rem",
+            color: "var(--color-foreground)",
+          }}
         />
         <Bar
           dataKey="total"

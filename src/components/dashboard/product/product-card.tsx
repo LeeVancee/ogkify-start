@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Edit, Palette, Package, Trash2 } from "lucide-react";
+import { Edit, Loader2, Palette, Package, Trash2 } from "lucide-react";
 import { useState } from "react";
 
+import { ImagePlaceholder } from "@/components/dashboard/image-placeholder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -22,22 +23,31 @@ interface Product {
 interface ProductCardProps {
   product: Product;
   onDelete: (productId: string) => void;
+  isDeleting?: boolean;
 }
 
-export function ProductCard({ product, onDelete }: ProductCardProps) {
+export function ProductCard({
+  product,
+  onDelete,
+  isDeleting = false,
+}: ProductCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   return (
     <>
-      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-white">
+      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-card">
         <div className="aspect-4/3 w-full overflow-hidden relative bg-muted/30">
-          <img
-            src={getRequiredProductCardImage(product.images[0], product.id)}
-            alt={product.name}
-            className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
-          />
+          {product.images[0] ? (
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="h-full w-full object-cover transition-transform duration-200 group-hover:scale-[1.02]"
+            />
+          ) : (
+            <ImagePlaceholder label="No product image" />
+          )}
           <div className="absolute bottom-2.5 right-2.5">
-            <span className="inline-flex items-center rounded-full bg-white/95 px-2.5 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border">
+            <span className="inline-flex items-center rounded-full bg-background/95 px-2.5 py-1 text-xs font-semibold text-foreground shadow-sm ring-1 ring-border">
               ￥{product.price}
             </span>
           </div>
@@ -115,12 +125,17 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
             Edit
           </Link>
           <Button
-            variant="ghost"
+            variant="destructive"
             size="sm"
-            className="text-destructive hover:text-destructive hover:bg-destructive/10 text-xs h-7 px-2"
+            className="text-xs h-7 px-2"
             onClick={() => setShowDeleteDialog(true)}
+            disabled={isDeleting}
           >
-            <Trash2 className="h-3.5 w-3.5 mr-1" />
+            {isDeleting ? (
+              <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
+            ) : (
+              <Trash2 className="h-3.5 w-3.5 mr-1" />
+            )}
             Delete
           </Button>
         </CardFooter>
@@ -137,15 +152,4 @@ export function ProductCard({ product, onDelete }: ProductCardProps) {
       />
     </>
   );
-}
-
-function getRequiredProductCardImage(
-  imageUrl: string | undefined,
-  productId: string,
-) {
-  if (!imageUrl) {
-    throw new Error(`Primary image is required for product ${productId}`);
-  }
-
-  return imageUrl;
 }

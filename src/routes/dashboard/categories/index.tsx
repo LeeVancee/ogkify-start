@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { CategoryList } from "@/components/dashboard/category/category-list";
+import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 
 export const Route = createFileRoute("/dashboard/categories/")({
@@ -10,16 +11,12 @@ export const Route = createFileRoute("/dashboard/categories/")({
 
 function RouteComponent() {
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Categories</h1>
-      </div>
-      <div className="grid gap-6">
-        <div className="rounded-xl border p-6">
-          <h2 className="mb-4 text-lg font-semibold">Categories List</h2>
-          <CategoryList />
-        </div>
-      </div>
+    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+      <DashboardPageHeader
+        title="Categories"
+        description="Organize the catalog groups customers use to browse products."
+      />
+      <CategoryList />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Edit, Trash2 } from "lucide-react";
 
+import { DataTableShell } from "@/components/dashboard/data-table-shell";
+import { ImagePlaceholder } from "@/components/dashboard/image-placeholder";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,8 +29,8 @@ export function ProductTableView({
   isDeleting,
 }: ProductTableViewProps) {
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
-      <Table>
+    <DataTableShell>
+      <Table className="min-w-[760px]">
         <TableHeader>
           <TableRow className="bg-muted/50 hover:bg-muted/50">
             <TableHead className="font-semibold text-foreground">
@@ -62,14 +64,15 @@ export function ProductTableView({
             >
               <TableCell>
                 <div className="h-10 w-10 overflow-hidden rounded-lg border border-border">
-                  <img
-                    src={getRequiredProductTableImage(
-                      product.images[0]?.url,
-                      product.id,
-                    )}
-                    alt={product.name}
-                    className="h-full w-full object-cover"
-                  />
+                  {product.images[0]?.url ? (
+                    <img
+                      src={product.images[0].url}
+                      alt={product.name}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <ImagePlaceholder label="" />
+                  )}
                 </div>
               </TableCell>
               <TableCell>
@@ -129,9 +132,9 @@ export function ProductTableView({
                     <span className="hidden sm:inline">Edit</span>
                   </Link>
                   <Button
-                    variant="ghost"
+                    variant="destructive"
                     size="sm"
-                    className="h-8 px-2.5 text-destructive hover:text-destructive hover:bg-destructive/10"
+                    className="h-8 px-2.5"
                     onClick={() => onDelete(product.id)}
                     disabled={isDeleting}
                   >
@@ -144,17 +147,6 @@ export function ProductTableView({
           ))}
         </TableBody>
       </Table>
-    </div>
+    </DataTableShell>
   );
-}
-
-function getRequiredProductTableImage(
-  imageUrl: string | undefined,
-  productId: string,
-) {
-  if (!imageUrl) {
-    throw new Error(`Primary image is required for product ${productId}`);
-  }
-
-  return imageUrl;
 }

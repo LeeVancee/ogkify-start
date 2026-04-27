@@ -31,7 +31,7 @@ export function ManagementCard<T = any>({
 
   return (
     <>
-      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-white">
+      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-card">
         <div className="relative">{children}</div>
 
         {/* Fixed bottom action bar */}
@@ -45,9 +45,8 @@ export function ManagementCard<T = any>({
             Edit
           </Link>
           <Button
-            variant="ghost"
+            variant="destructive"
             size="sm"
-            className="text-destructive hover:text-destructive hover:bg-destructive/10"
             onClick={() => setShowDeleteDialog(true)}
             disabled={isDeleting}
           >

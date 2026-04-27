@@ -1,6 +1,7 @@
 import { CreditCard, DollarSign, Package, Tag } from "lucide-react";
 
 import { Overview } from "@/components/dashboard/overview";
+import { DashboardPageHeader } from "@/components/dashboard/page-header";
 import { RecentSales } from "@/components/dashboard/recent-sales";
 import {
   Card,
@@ -10,6 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { formatPrice } from "@/lib/utils";
 
 interface SalesData {
   name: string;
@@ -41,10 +43,11 @@ export function DashboardView({
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="mb-2 flex items-center justify-between space-y-2">
-        <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
-      </div>
+    <div className="flex-1 space-y-4 p-4 md:p-6">
+      <DashboardPageHeader
+        title="Dashboard"
+        description="Monitor catalog coverage, order workload, and completed revenue."
+      />
       <Tabs defaultValue="overview" className="space-y-4">
         <div className="w-full overflow-x-auto pb-2">
           <TabsList>
@@ -56,7 +59,7 @@ export function DashboardView({
         </div>
         <TabsContent value="overview" className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card>
+            <Card size="sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Total Products
@@ -65,10 +68,12 @@ export function DashboardView({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{productsCount}</div>
-                <p className="text-xs text-muted-foreground">All products</p>
+                <p className="text-xs text-muted-foreground">
+                  {categoriesCount} categories available
+                </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card size="sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Total Categories
@@ -78,11 +83,11 @@ export function DashboardView({
               <CardContent>
                 <div className="text-2xl font-bold">{categoriesCount}</div>
                 <p className="text-xs text-muted-foreground">
-                  All product categories
+                  Used to organize the storefront
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card size="sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Total Revenue
@@ -91,24 +96,24 @@ export function DashboardView({
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  ${totalRevenue.toFixed(2)}
+                  {formatPrice(totalRevenue)}
                 </div>
                 <p className="text-xs text-muted-foreground">
-                  All completed orders
+                  From {completedOrders} completed orders
                 </p>
               </CardContent>
             </Card>
-            <Card>
+            <Card size="sm">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Pending Orders
+                  Order Workload
                 </CardTitle>
                 <CreditCard className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{pendingOrders}</div>
                 <p className="text-xs text-muted-foreground">
-                  Orders to be processed
+                  Pending, {completedOrders} completed
                 </p>
               </CardContent>
             </Card>
@@ -117,6 +122,9 @@ export function DashboardView({
             <Card className="col-span-1 lg:col-span-4">
               <CardHeader className="pb-0">
                 <CardTitle>Overview</CardTitle>
+                <CardDescription>
+                  Monthly completed order revenue
+                </CardDescription>
               </CardHeader>
               <CardContent className="ps-2 pt-2">
                 <Overview data={monthlySalesData} />

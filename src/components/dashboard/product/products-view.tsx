@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { Grid, List, Plus, Search, X } from "lucide-react";
+import { AlertCircle, Grid, List, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -11,6 +11,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteProduct, getProducts } from "@/server/products";
 
 import { DeleteDialog } from "../delete-dialog";
+import { EmptyState } from "../empty-state";
 import { ProductGridView } from "./product-grid-view";
 import { ProductTableView } from "./product-table-view";
 
@@ -73,24 +74,23 @@ export function ProductsView() {
 
   if (isError) {
     return (
-      <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-          <h3 className="mt-4 text-lg font-semibold text-red-500">
-            Failed to load products
-          </h3>
-          <p className="mb-4 mt-2 text-sm text-muted-foreground">
-            There was an error loading the products. Please try again.
-          </p>
+      <EmptyState
+        icon={AlertCircle}
+        title="Failed to load products"
+        description="There was an error loading the products. Please try again."
+        tone="destructive"
+        action={
           <Button
             onClick={() =>
               queryClient.invalidateQueries({ queryKey: ["products"] })
             }
             variant="outline"
+            size="sm"
           >
             Try Again
           </Button>
-        </div>
-      </div>
+        }
+      />
     );
   }
 
@@ -117,7 +117,10 @@ export function ProductsView() {
             </Button>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-3 sm:justify-end">
+          <div className="text-xs text-muted-foreground">
+            Showing {filteredProducts.length} of {products.length}
+          </div>
           <Tabs
             defaultValue={viewType}
             onValueChange={(value) => setViewType(value as "table" | "grid")}
@@ -137,25 +140,33 @@ export function ProductsView() {
       </div>
 
       {filteredProducts.length === 0 ? (
-        <div className="flex h-[400px] flex-col items-center justify-center rounded-md border border-dashed p-8 text-center">
-          <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-            <h3 className="mt-4 text-lg font-semibold">No products found</h3>
-            <p className="mb-4 mt-2 text-sm text-muted-foreground">
-              {searchQuery
-                ? "No products match your search criteria. Please try using different search terms."
-                : "You have not added any products yet. Click the button below to add a product."}
-            </p>
-            {!searchQuery && (
+        <EmptyState
+          title="No products found"
+          description={
+            searchQuery
+              ? "No products match your search criteria. Try a different term or clear the search."
+              : "You have not added any products yet. Create the first product to start building the catalog."
+          }
+          action={
+            searchQuery ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSearchQuery("")}
+              >
+                Clear Search
+              </Button>
+            ) : (
               <Link
                 to="/dashboard/products/new"
-                className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="inline-flex h-8 items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 <Plus className="h-4 w-4" />
                 Add Product
               </Link>
-            )}
-          </div>
-        </div>
+            )
+          }
+        />
       ) : viewType === "table" ? (
         <ProductTableView
           products={filteredProducts}
@@ -166,6 +177,7 @@ export function ProductsView() {
         <ProductGridView
           products={filteredProducts}
           onDelete={handleDeleteClick}
+          isDeleting={deleteMutation.isPending}
         />
       )}
 

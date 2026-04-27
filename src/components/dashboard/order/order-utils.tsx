@@ -13,6 +13,7 @@ export function getOrderStatusIcon(status: string) {
   switch (status) {
     case "COMPLETED":
       return <CheckCircle className="h-5 w-5 text-green-500" />;
+    case "PROCESSING":
     case "PAID":
       return <Clock className="h-5 w-5 text-blue-500" />;
     case "PENDING":
@@ -43,6 +44,7 @@ export function getOrderStatusName(status: string) {
   switch (status) {
     case "COMPLETED":
       return "Completed";
+    case "PROCESSING":
     case "PAID":
       return "Processing";
     case "PENDING":

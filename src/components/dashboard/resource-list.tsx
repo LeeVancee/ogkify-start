@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { AlertCircle, PackageOpen, Plus, Search, X } from "lucide-react";
+import { AlertCircle, Plus, Search, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -8,7 +8,10 @@ import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { EmptyState } from "./empty-state";
+
 interface ResourceListProps<TItem> {
+  layout?: "grid" | "table";
   queryKey: string[];
   queryFn: () => Promise<TItem[]>;
   deleteFn: (id: string) => Promise<{ success: boolean; error?: string }>;
@@ -28,9 +31,15 @@ interface ResourceListProps<TItem> {
     isDeleting: boolean,
     onDelete: (id: string) => void,
   ) => React.ReactNode;
+  renderTable?: (
+    items: TItem[],
+    isDeleting: boolean,
+    onDelete: (id: string) => void,
+  ) => React.ReactNode;
 }
 
 export function ResourceList<TItem>({
+  layout = "grid",
   queryKey,
   queryFn,
   deleteFn,
@@ -46,6 +55,7 @@ export function ResourceList<TItem>({
   getDeleteSuccessMessage,
   getDeleteErrorMessage,
   renderCard,
+  renderTable,
 }: ResourceListProps<TItem>) {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
@@ -87,22 +97,21 @@ export function ResourceList<TItem>({
 
   if (isError) {
     return (
-      <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-destructive/30 bg-destructive/5 p-8 text-center">
-        <AlertCircle className="h-10 w-10 text-destructive/60" />
-        <h3 className="mt-4 text-base font-semibold text-destructive">
-          {errorTitle}
-        </h3>
-        <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-sm">
-          {errorDescription}
-        </p>
-        <Button
-          onClick={() => queryClient.invalidateQueries({ queryKey })}
-          variant="outline"
-          size="sm"
-        >
-          Try Again
-        </Button>
-      </div>
+      <EmptyState
+        icon={AlertCircle}
+        title={errorTitle}
+        description={errorDescription}
+        tone="destructive"
+        action={
+          <Button
+            onClick={() => queryClient.invalidateQueries({ queryKey })}
+            variant="outline"
+            size="sm"
+          >
+            Try Again
+          </Button>
+        }
+      />
     );
   }
 
@@ -137,25 +146,50 @@ export function ResourceList<TItem>({
           {addLabel}
         </Link>
       </div>
+      <div className="text-xs text-muted-foreground">
+        Showing {filteredItems.length} of {items.length}
+      </div>
 
       {filteredItems.length === 0 ? (
-        <div className="flex h-[400px] flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 p-8 text-center">
-          <PackageOpen className="h-10 w-10 text-muted-foreground/50" />
-          <h3 className="mt-4 text-base font-semibold text-foreground">
-            {emptyTitle}
-          </h3>
-          <p className="mb-4 mt-2 text-sm text-muted-foreground max-w-sm">
-            {emptyDescription}
-          </p>
-        </div>
+        <EmptyState
+          title={emptyTitle}
+          description={emptyDescription}
+          action={
+            searchQuery ? (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSearchQuery("")}
+              >
+                Clear Search
+              </Button>
+            ) : (
+              <Link
+                to={addHref}
+                className="inline-flex h-8 items-center justify-center gap-2 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+              >
+                <Plus className="h-4 w-4" />
+                {addLabel}
+              </Link>
+            )
+          }
+        />
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {filteredItems.map((item) =>
-            renderCard(item, deleteMutation.isPending, (id) =>
+        <>
+          {layout === "table" && renderTable ? (
+            renderTable(filteredItems, deleteMutation.isPending, (id) =>
               deleteMutation.mutate(id),
-            ),
+            )
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredItems.map((item) =>
+                renderCard(item, deleteMutation.isPending, (id) =>
+                  deleteMutation.mutate(id),
+                ),
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
