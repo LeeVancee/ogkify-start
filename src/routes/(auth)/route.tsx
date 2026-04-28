@@ -1,4 +1,9 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Link,
+  Outlet,
+  redirect,
+} from "@tanstack/react-router";
 
 export const Route = createFileRoute("/(auth)")({
   beforeLoad: async ({ context }) => {
@@ -11,11 +16,18 @@ export const Route = createFileRoute("/(auth)")({
 
 function RouteComponent() {
   return (
-    <div className="min-h-svh bg-background px-4 py-16 sm:py-24">
-      <div className="mx-auto max-w-sm">
-        <div className="rounded-3xl border border-border bg-card p-8 shadow-sm sm:p-10">
-          <Outlet />
+    <div className="min-h-svh bg-white px-6 text-slate-950">
+      <div className="mx-auto flex min-h-svh w-full max-w-sm flex-col justify-center py-10">
+        <div className="mb-10 text-center">
+          <Link
+            to="/"
+            className="inline-flex text-2xl font-black tracking-[0.18em] transition-opacity hover:opacity-70"
+          >
+            OGKIFY
+          </Link>
         </div>
+
+        <Outlet />
       </div>
     </div>
   );
