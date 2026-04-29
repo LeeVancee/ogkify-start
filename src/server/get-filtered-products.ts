@@ -55,7 +55,7 @@ export const getFilteredProducts = createServerFn()
     const offset = (page - 1) * limit;
 
     // Handle sorting
-    let orderBy: any = [desc(products.createdAt)]; // Default sort by creation time descending
+    let orderBy: any = [desc(products.createdAt)];
 
     if (options.sort) {
       switch (options.sort) {
@@ -70,32 +70,26 @@ export const getFilteredProducts = createServerFn()
           break;
         case "featured":
         default:
-          // Featured products first, then by creation time descending
           orderBy = [desc(products.isFeatured), desc(products.createdAt)];
       }
     }
 
-    // Use relational query to get product list
+    // Since we need to support in-memory filtering for categories/colors/sizes (due to relational structure),
+    // we fetch all and filter, then slice. 
+    // BUT to be more efficient, we can at least return the total count correctly.
+    
     let productsList = await db.query.products.findMany({
       where: (productsTable, { and: andFn }) => andFn(...baseConditions),
       with: {
         category: true,
         images: true,
-        colors: {
-          with: {
-            color: true,
-          },
-        },
-        sizes: {
-          with: {
-            size: true,
-          },
-        },
+        colors: { with: { color: true } },
+        sizes: { with: { size: true } },
       },
       orderBy,
     });
 
-    // Additional filtering in memory (category, colors, sizes)
+    // In-memory filtering (Category, Colors, Sizes)
     if (options.category) {
       productsList = productsList.filter(
         (product) => product.category.name === options.category,
@@ -114,13 +108,9 @@ export const getFilteredProducts = createServerFn()
       );
     }
 
-    // Get total count
     const total = productsList.length;
-
-    // Apply pagination
     const paginatedProducts = productsList.slice(offset, offset + limit);
 
-    // Format data to match SimpleProduct interface, return only necessary fields
     const formattedProducts = paginatedProducts.map((product) => ({
       id: product.id,
       name: product.name,
@@ -128,9 +118,6 @@ export const getFilteredProducts = createServerFn()
       price: product.price,
       images: product.images.map((image) => image.url),
       category: product.category.name,
-      // Removed unnecessary hardcoded fields: inStock, rating, reviews, discount, freeShipping
-      // These fields are not used in ProductGrid, reducing data transfer
-      // If these fields are needed in the future, they should be fetched from database instead of hardcoded
     }));
 
     return {
