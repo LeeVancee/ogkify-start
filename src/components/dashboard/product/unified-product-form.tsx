@@ -16,7 +16,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
-import { CloudinaryMultiImageUpload } from "@/components/dashboard/cloudinary-multi-image-upload";
+import { CloudinaryImageUpload } from "@/components/dashboard/cloudinary-image-upload";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -384,10 +384,12 @@ export function UnifiedProductForm({
                     <FormItem>
                       <FormControl>
                         <div className="rounded-lg border-2 border-dashed p-4 transition-colors bg-muted/30">
-                          <CloudinaryMultiImageUpload
+                          <CloudinaryImageUpload
                             value={field.value}
                             onChange={field.onChange}
                             disabled={isLoading}
+                            maxFiles={4}
+                            imageAlt="Product image"
                           />
                         </div>
                       </FormControl>

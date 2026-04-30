@@ -1,14 +1,16 @@
+import { Link } from "@tanstack/react-router";
+import type { LucideIcon } from "lucide-react";
 import { ShoppingBasket } from "lucide-react";
-import type { ReactNode } from "react";
 
-import { EmptyState } from "@/components/shared/empty-state";
+import { EmptyState } from "@/components/dashboard/empty-state";
+import { Button } from "@/components/ui/button";
 
 interface NoOrdersProps {
   title: string;
   description: string;
   buttonText: string;
   buttonHref?: string;
-  icon?: ReactNode;
+  icon?: LucideIcon;
 }
 
 export function NoOrders({
@@ -16,15 +18,18 @@ export function NoOrders({
   description,
   buttonText,
   buttonHref = "/",
-  icon = <ShoppingBasket className="h-10 w-10" />,
+  icon = ShoppingBasket,
 }: NoOrdersProps) {
   return (
     <EmptyState
       icon={icon}
       title={title}
       description={description}
-      actionText={buttonText}
-      actionHref={buttonHref}
+      action={
+        <Link to={buttonHref}>
+          <Button>{buttonText}</Button>
+        </Link>
+      }
     />
   );
 }

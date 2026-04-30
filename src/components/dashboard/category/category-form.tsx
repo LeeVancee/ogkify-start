@@ -16,7 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { createCategory, updateCategory } from "@/server/categories";
 
-import { CloudinarySingleImageUpload } from "../cloudinary-single-image-upload";
+import { CloudinaryImageUpload } from "../cloudinary-image-upload";
 import { useResourceFormSubmit } from "../use-resource-form-submit";
 
 const formSchema = z.object({
@@ -111,10 +111,12 @@ export function CategoryForm({ category }: CategoryFormProps = {}) {
               </FormDescription>
               <FormControl>
                 <div className="rounded-lg border-2 border-dashed bg-muted/30 p-6 transition-colors">
-                  <CloudinarySingleImageUpload
-                    value={field.value}
-                    onChange={field.onChange}
+                  <CloudinaryImageUpload
+                    value={field.value ? [field.value] : []}
+                    onChange={(nextValue) => field.onChange(nextValue[0] ?? "")}
                     disabled={isSubmitting}
+                    maxFiles={1}
+                    imageAlt="Category image"
                   />
                 </div>
               </FormControl>

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { AlertCircle, Plus, Search, X } from "lucide-react";
+import type { ReactNode } from "react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -8,6 +9,7 @@ import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { DeleteDialog } from "./delete-dialog";
 import { EmptyState } from "./empty-state";
 
 interface ResourceListProps<TItem> {
@@ -26,6 +28,8 @@ interface ResourceListProps<TItem> {
   getItemId: (item: TItem) => string;
   getDeleteSuccessMessage: (id: string) => string;
   getDeleteErrorMessage: (id: string) => string;
+  getDeleteDialogTitle?: (item: TItem) => string;
+  renderToolbarEnd?: (filteredCount: number, totalCount: number) => ReactNode;
   renderCard: (
     item: TItem,
     isDeleting: boolean,
@@ -51,14 +55,17 @@ export function ResourceList<TItem>({
   errorTitle,
   errorDescription,
   matchesSearch,
-  getItemId: _getItemId,
+  getItemId,
   getDeleteSuccessMessage,
   getDeleteErrorMessage,
+  getDeleteDialogTitle,
+  renderToolbarEnd,
   renderCard,
   renderTable,
 }: ResourceListProps<TItem>) {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
+  const [itemToDelete, setItemToDelete] = useState<TItem | null>(null);
 
   const {
     data: items = [],
@@ -90,6 +97,26 @@ export function ResourceList<TItem>({
   const filteredItems = items.filter((item) =>
     matchesSearch(item, searchQuery.trim().toLowerCase()),
   );
+  const deleteItemId = itemToDelete ? getItemId(itemToDelete) : null;
+  const requestDelete = (id: string) => {
+    if (!getDeleteDialogTitle) {
+      deleteMutation.mutate(id);
+      return;
+    }
+
+    const item = items.find((current) => getItemId(current) === id);
+    if (item) {
+      setItemToDelete(item);
+    }
+  };
+  const confirmDelete = () => {
+    if (!deleteItemId) {
+      return;
+    }
+
+    deleteMutation.mutate(deleteItemId);
+    setItemToDelete(null);
+  };
 
   if (isLoading) {
     return <SpinnerLoading />;
@@ -117,7 +144,7 @@ export function ResourceList<TItem>({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center">
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -138,16 +165,22 @@ export function ResourceList<TItem>({
             </Button>
           )}
         </div>
-        <Link
-          to={addHref}
-          className="inline-flex h-8 items-center justify-center gap-2 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
-        >
-          <Plus className="h-4 w-4" />
-          {addLabel}
-        </Link>
-      </div>
-      <div className="px-1 text-xs text-muted-foreground">
-        Showing {filteredItems.length} of {items.length}
+        <div className="flex items-center justify-between gap-3 sm:ml-auto sm:justify-end">
+          {renderToolbarEnd ? (
+            renderToolbarEnd(filteredItems.length, items.length)
+          ) : (
+            <div className="text-xs text-muted-foreground">
+              Showing {filteredItems.length} of {items.length}
+            </div>
+          )}
+          <Link
+            to={addHref}
+            className="inline-flex h-8 items-center justify-center gap-2 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
+          >
+            <Plus className="h-4 w-4" />
+            {addLabel}
+          </Link>
+        </div>
       </div>
 
       {filteredItems.length === 0 ? (
@@ -177,20 +210,28 @@ export function ResourceList<TItem>({
       ) : (
         <>
           {layout === "table" && renderTable ? (
-            renderTable(filteredItems, deleteMutation.isPending, (id) =>
-              deleteMutation.mutate(id),
-            )
+            renderTable(filteredItems, deleteMutation.isPending, requestDelete)
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredItems.map((item) =>
-                renderCard(item, deleteMutation.isPending, (id) =>
-                  deleteMutation.mutate(id),
-                ),
+                renderCard(item, deleteMutation.isPending, requestDelete),
               )}
             </div>
           )}
         </>
       )}
+      {getDeleteDialogTitle && itemToDelete ? (
+        <DeleteDialog
+          open={Boolean(itemToDelete)}
+          onOpenChange={(open) => {
+            if (!open) {
+              setItemToDelete(null);
+            }
+          }}
+          onConfirm={confirmDelete}
+          title={getDeleteDialogTitle(itemToDelete)}
+        />
+      ) : null}
     </div>
   );
 }

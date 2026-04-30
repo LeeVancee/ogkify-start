@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { z } from "zod";
 
+import { ProductFilters } from "@/components/shop/product/product-filters";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
 import {
@@ -13,9 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
 import { useI18n } from "@/lib/i18n";
-import { formatPrice } from "@/lib/utils";
 import { getCategories } from "@/server/categories";
 import { getFilteredProducts } from "@/server/get-filtered-products";
 
@@ -146,25 +145,11 @@ function CategoriesPage() {
     total,
     categories,
     currentPage,
-    minPrice,
-    maxPrice,
     selectedCategory,
     selectedSort,
   } = Route.useLoaderData();
 
   const [filterOpen, setFilterOpen] = useState(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>(() => {
-    const nextMinPrice = typeof minPrice === "number" ? minPrice : 0;
-    const nextMaxPrice = typeof maxPrice === "number" ? maxPrice : 5000;
-    return [nextMinPrice, nextMaxPrice];
-  });
-
-  useEffect(() => {
-    const nextMinPrice = typeof minPrice === "number" ? minPrice : 0;
-    const nextMaxPrice = typeof maxPrice === "number" ? maxPrice : 5000;
-    setPriceRange([nextMinPrice, nextMaxPrice]);
-  }, [minPrice, maxPrice]);
-
   const categoryLabel = useMemo(() => {
     if (!selectedCategory) return t("shop.header.allProducts");
     const category = categories.find((item) => item.name === selectedCategory);
@@ -194,79 +179,14 @@ function CategoriesPage() {
     });
   };
 
-  const resetFilters = () => {
-    setPriceRange([0, 5000]);
+  const clearProductFilters = () => {
     navigate({
       to: "/products",
-      search: (prev) => ({
-        ...prev,
-        category: undefined,
-        minPrice: undefined,
-        maxPrice: undefined,
-        sort: "featured",
-        page: 1,
-      }),
+      search: {},
     });
   };
 
-  const filterSidebar = (
-    <div className="space-y-8">
-      <div>
-        <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          {t("shop.productFilters.categories")}
-        </h3>
-        <div className="space-y-0.5">
-          <button
-            type="button"
-            onClick={() => updateSearch({ category: "", page: 1 })}
-            className={
-              !selectedCategory
-                ? "block w-full border-l-2 border-slate-900 pl-3 py-1.5 text-left text-sm font-semibold text-slate-900"
-                : "block w-full border-l-2 border-transparent pl-3 py-1.5 text-left text-sm text-slate-500 transition-colors hover:text-slate-900 hover:border-slate-300 cursor-pointer"
-            }
-          >
-            {t("shop.productFilters.all")}
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() => updateSearch({ category: category.name, page: 1 })}
-              className={
-                selectedCategory === category.name
-                  ? "block w-full border-l-2 border-slate-900 pl-3 py-1.5 text-left text-sm font-semibold text-slate-900"
-                  : "block w-full border-l-2 border-transparent pl-3 py-1.5 text-left text-sm text-slate-500 transition-colors hover:text-slate-900 hover:border-slate-300 cursor-pointer"
-              }
-            >
-              {category.name}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          {t("shop.productFilters.priceRange")}
-        </h3>
-        <Slider
-          min={0}
-          max={5000}
-          step={100}
-          value={priceRange}
-          onValueChange={(value) => setPriceRange(value as [number, number])}
-          onValueCommitted={(value) => {
-            const [nextMin, nextMax] = value as [number, number];
-            updateSearch({ minPrice: nextMin, maxPrice: nextMax, page: 1 });
-          }}
-          className="mb-3"
-        />
-        <div className="flex justify-between text-xs text-slate-500">
-          <span>{formatPrice(priceRange[0])}</span>
-          <span>{formatPrice(priceRange[1])}</span>
-        </div>
-      </div>
-    </div>
-  );
+  const filterSidebar = <ProductFilters categories={categories} />;
 
   return (
     <div className="shop-shell py-10 sm:py-14">
@@ -355,7 +275,7 @@ function CategoriesPage() {
               </p>
               <button
                 type="button"
-                onClick={resetFilters}
+                onClick={clearProductFilters}
                 className="mt-4 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 cursor-pointer"
               >
                 {t("shop.productFilters.clearFilters")}
