@@ -46,27 +46,31 @@ export function ColorList() {
         <DataTableShell>
           <Table className="min-w-[680px]">
             <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-[76px]">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="h-10 w-[76px] text-xs font-medium text-muted-foreground">
                   {t("dashboard.table.swatch")}
                 </TableHead>
-                <TableHead>{t("dashboard.table.name")}</TableHead>
-                <TableHead>{t("dashboard.table.value")}</TableHead>
-                <TableHead className="w-[180px] text-right">
+                <TableHead className="h-10 text-xs font-medium text-muted-foreground">
+                  {t("dashboard.table.name")}
+                </TableHead>
+                <TableHead className="h-10 text-xs font-medium text-muted-foreground">
+                  {t("dashboard.table.value")}
+                </TableHead>
+                <TableHead className="h-10 w-[180px] text-right text-xs font-medium text-muted-foreground">
                   {t("dashboard.table.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {colors.map((color) => (
-                <TableRow key={color.id} className="h-16">
-                  <TableCell>
+                <TableRow key={color.id} className="hover:bg-muted/30">
+                  <TableCell className="py-3">
                     <div
                       className="h-9 w-9 rounded-lg border shadow-sm ring-1 ring-border/60"
                       style={{ backgroundColor: color.value }}
                     />
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     <Link
                       to="/dashboard/colors/$id"
                       params={{ id: color.id }}
@@ -78,7 +82,7 @@ export function ColorList() {
                       {t("dashboard.resources.productColorOption")}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     <Badge
                       variant="outline"
                       className="font-mono text-xs uppercase"
@@ -86,7 +90,7 @@ export function ColorList() {
                       {color.value}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         to="/dashboard/colors/$id"

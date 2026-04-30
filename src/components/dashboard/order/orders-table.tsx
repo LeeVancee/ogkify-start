@@ -66,29 +66,29 @@ export function OrdersTable({
     <DataTableShell>
       <Table className="min-w-[900px]">
         <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
-            <TableHead className="font-semibold text-foreground">
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="h-10 text-xs font-medium text-muted-foreground">
               Order
             </TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-foreground">
+            <TableHead className="hidden h-10 text-xs font-medium text-muted-foreground md:table-cell">
               Date
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="h-10 text-xs font-medium text-muted-foreground">
               Customer
             </TableHead>
-            <TableHead className="text-right font-semibold text-foreground">
+            <TableHead className="h-10 text-right text-xs font-medium text-muted-foreground">
               Amount
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="h-10 text-xs font-medium text-muted-foreground">
               Order Status
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="h-10 text-xs font-medium text-muted-foreground">
               Payment
             </TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-foreground">
+            <TableHead className="hidden h-10 text-xs font-medium text-muted-foreground md:table-cell">
               Items
             </TableHead>
-            <TableHead className="text-right font-semibold text-foreground">
+            <TableHead className="h-10 text-right text-xs font-medium text-muted-foreground">
               Actions
             </TableHead>
           </TableRow>
@@ -118,13 +118,13 @@ export function OrdersTable({
                 key={order.id}
                 className="hover:bg-muted/30 transition-colors"
               >
-                <TableCell className="font-medium text-sm text-foreground">
+                <TableCell className="py-3 font-medium text-sm text-foreground">
                   {order.orderNumber}
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                <TableCell className="hidden py-3 text-sm text-muted-foreground md:table-cell">
                   {new Date(order.createdAt).toLocaleDateString("zh-CN")}
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-3">
                   <div className="font-medium text-sm text-foreground">
                     {order.customer || "Unknown User"}
                   </div>
@@ -132,19 +132,19 @@ export function OrdersTable({
                     {order.email || "—"}
                   </div>
                 </TableCell>
-                <TableCell className="text-right font-semibold text-sm text-foreground">
+                <TableCell className="py-3 text-right font-semibold text-sm text-foreground">
                   {formatPrice(order.totalAmount)}
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-3">
                   <OrderStatusBadge status={order.status} />
                 </TableCell>
-                <TableCell>
+                <TableCell className="py-3">
                   <PaymentStatusBadge status={order.paymentStatus} />
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                <TableCell className="hidden py-3 text-sm text-muted-foreground md:table-cell">
                   {order.totalItems}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="py-3 text-right">
                   <div className="flex items-center justify-end gap-1">
                     <Button
                       variant="ghost"

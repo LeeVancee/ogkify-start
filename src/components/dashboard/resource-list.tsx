@@ -117,12 +117,12 @@ export function ResourceList<TItem>({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
-            className="h-10 pl-9 pr-9"
+            className="h-8 pl-9 pr-9 text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -130,7 +130,7 @@ export function ResourceList<TItem>({
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-10 w-10"
+              className="absolute right-0 top-0 size-8"
               onClick={() => setSearchQuery("")}
             >
               <X className="h-4 w-4" />
@@ -140,13 +140,13 @@ export function ResourceList<TItem>({
         </div>
         <Link
           to={addHref}
-          className="inline-flex h-10 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
+          className="inline-flex h-8 items-center justify-center gap-2 rounded-md bg-primary px-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 cursor-pointer"
         >
           <Plus className="h-4 w-4" />
           {addLabel}
         </Link>
       </div>
-      <div className="text-xs text-muted-foreground">
+      <div className="px-1 text-xs text-muted-foreground">
         Showing {filteredItems.length} of {items.length}
       </div>
 
@@ -181,7 +181,7 @@ export function ResourceList<TItem>({
               deleteMutation.mutate(id),
             )
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {filteredItems.map((item) =>
                 renderCard(item, deleteMutation.isPending, (id) =>
                   deleteMutation.mutate(id),

@@ -31,11 +31,10 @@ export function ManagementCard<T = any>({
 
   return (
     <>
-      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-card">
+      <Card className="group overflow-hidden rounded-lg border bg-card shadow-none transition-colors hover:bg-muted/20">
         <div className="relative">{children}</div>
 
-        {/* Fixed bottom action bar */}
-        <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5 bg-muted/30">
+        <div className="flex items-center justify-between gap-2 border-t bg-muted/30 px-4 py-2.5">
           <Link
             to={editRoute}
             params={{ id: item.id }}

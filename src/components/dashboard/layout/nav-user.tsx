@@ -58,9 +58,9 @@ export function NavUser() {
             render={
               <SidebarMenuButton
                 size="lg"
-                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="h-10 rounded-lg px-2 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="size-7 rounded-full">
                   {session.user.image ? (
                     <AvatarImage
                       src={session.user.image}
@@ -75,9 +75,11 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {session.user.name}
                   </span>
-                  <span className="truncate text-xs">{session.user.email}</span>
+                  <span className="truncate text-xs text-sidebar-foreground/60">
+                    {session.user.email}
+                  </span>
                 </div>
-                <ChevronsUpDown className="ml-auto size-4" />
+                <ChevronsUpDown className="ml-auto size-3.5 text-sidebar-foreground/55" />
               </SidebarMenuButton>
             }
           />

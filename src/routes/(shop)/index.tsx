@@ -36,16 +36,16 @@ function RouteComponent() {
         <div className="shop-shell flex flex-col items-center gap-10 py-20 sm:py-28 lg:flex-row lg:gap-20 lg:py-36">
           <div className="flex-1 text-center lg:text-left">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-              Curated Selection
+              Ogkify Essentials
             </p>
             <h1 className="text-5xl font-light leading-[1.05] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Built for
+              Style for
               <br />
-              Everyday Play
+              Everyday Living
             </h1>
             <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-slate-500 sm:text-lg lg:mx-0">
-              Discover standout gear, clean visuals, and a lineup picked for
-              your next session.
+              Explore curated pieces with clean design, easy comfort, and
+              versatile details made for daily rotation.
             </p>
             <Link
               to="/products"

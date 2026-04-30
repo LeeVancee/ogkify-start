@@ -32,26 +32,26 @@ export function ProductTableView({
     <DataTableShell>
       <Table className="min-w-[760px]">
         <TableHeader>
-          <TableRow className="bg-muted/50 hover:bg-muted/50">
-            <TableHead className="font-semibold text-foreground">
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="h-10 text-xs font-medium text-muted-foreground">
               Image
             </TableHead>
-            <TableHead className="font-semibold text-foreground">
+            <TableHead className="h-10 text-xs font-medium text-muted-foreground">
               Name
             </TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-foreground">
+            <TableHead className="hidden h-10 text-xs font-medium text-muted-foreground md:table-cell">
               Category
             </TableHead>
-            <TableHead className="hidden md:table-cell font-semibold text-foreground">
+            <TableHead className="hidden h-10 text-xs font-medium text-muted-foreground md:table-cell">
               Price
             </TableHead>
-            <TableHead className="hidden lg:table-cell font-semibold text-foreground">
+            <TableHead className="hidden h-10 text-xs font-medium text-muted-foreground lg:table-cell">
               Colors
             </TableHead>
-            <TableHead className="hidden lg:table-cell font-semibold text-foreground">
+            <TableHead className="hidden h-10 text-xs font-medium text-muted-foreground lg:table-cell">
               Sizes
             </TableHead>
-            <TableHead className="w-[120px] font-semibold text-foreground">
+            <TableHead className="h-10 w-[120px] text-xs font-medium text-muted-foreground">
               Actions
             </TableHead>
           </TableRow>
@@ -60,9 +60,9 @@ export function ProductTableView({
           {products.map((product) => (
             <TableRow
               key={product.id}
-              className="hover:bg-muted/30 transition-colors"
+              className="transition-colors hover:bg-muted/30"
             >
-              <TableCell>
+              <TableCell className="py-3">
                 <div className="h-10 w-10 overflow-hidden rounded-lg border border-border">
                   {product.images[0]?.url ? (
                     <img
@@ -75,7 +75,7 @@ export function ProductTableView({
                   )}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="py-3">
                 <div className="font-medium text-sm text-foreground">
                   {product.name}
                 </div>
@@ -83,7 +83,7 @@ export function ProductTableView({
                   {truncateText(product.description, 50)}
                 </div>
               </TableCell>
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="hidden py-3 md:table-cell">
                 <Badge
                   variant="outline"
                   className="text-xs bg-primary/5 text-primary border-primary/20"
@@ -91,12 +91,12 @@ export function ProductTableView({
                   {product.category.name}
                 </Badge>
               </TableCell>
-              <TableCell className="hidden md:table-cell">
+              <TableCell className="hidden py-3 md:table-cell">
                 <span className="font-semibold text-sm text-foreground">
                   ￥{product.price}
                 </span>
               </TableCell>
-              <TableCell className="hidden lg:table-cell">
+              <TableCell className="hidden py-3 lg:table-cell">
                 <div className="flex flex-wrap gap-1">
                   {product.colors.map((color) => (
                     <div
@@ -108,7 +108,7 @@ export function ProductTableView({
                   ))}
                 </div>
               </TableCell>
-              <TableCell className="hidden lg:table-cell">
+              <TableCell className="hidden py-3 lg:table-cell">
                 <div className="flex flex-wrap gap-1">
                   {product.sizes.map((size) => (
                     <Badge
@@ -121,7 +121,7 @@ export function ProductTableView({
                   ))}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="py-3">
                 <div className="flex items-center gap-1">
                   <Link
                     to="/dashboard/products/$id"

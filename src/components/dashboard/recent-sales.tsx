@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { ShoppingCart } from "lucide-react";
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
+import { formatPrice } from "@/lib/utils";
 
 interface Order {
   id: string;
@@ -20,9 +22,9 @@ interface RecentSalesProps {
 
 export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-2">
       {recentOrders.length === 0 ? (
-        <div className="flex h-40 flex-col items-center justify-center rounded-lg border border-dashed bg-muted/20 text-center">
+        <div className="flex min-h-[220px] flex-col items-center justify-center rounded-lg border border-dashed bg-muted/20 text-center">
           <p className="text-sm font-medium">No recent orders</p>
           <p className="mt-1 text-xs text-muted-foreground">
             New completed orders will appear here.
@@ -35,25 +37,34 @@ export function RecentSales({ recentOrders = [] }: RecentSalesProps) {
           </Link>
         </div>
       ) : (
-        recentOrders.map((order) => (
-          <div key={order.id} className="flex items-center gap-4">
-            <Avatar className="h-9 w-9">
-              <AvatarFallback>
+        recentOrders.slice(0, 5).map((order) => (
+          <div
+            key={order.id}
+            className="flex items-center gap-3 rounded-lg border bg-muted/20 p-3 transition-colors hover:bg-muted/30"
+          >
+            <Avatar className="size-8 shrink-0 rounded-full">
+              <AvatarFallback className="text-xs">
                 {order.customerName
                   ? order.customerName.substring(0, 2).toUpperCase()
                   : "UN"}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-1 flex-wrap items-center justify-between gap-3">
-              <div className="space-y-1">
-                <p className="text-sm leading-none font-medium">
-                  {order.customerName}
+            <div className="min-w-0 flex-1">
+              <div className="flex min-w-0 items-center justify-between gap-3">
+                <p className="truncate text-sm font-medium">
+                  {order.customerName || "Unknown customer"}
                 </p>
-                <p className="text-sm text-muted-foreground">
-                  Order #{order.orderNumber}
-                </p>
+                <span className="shrink-0 text-sm font-semibold">
+                  {formatPrice(order.amount)}
+                </span>
               </div>
-              <div className="font-medium">${order.amount.toFixed(2)}</div>
+              <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
+                <ShoppingCart className="size-3.5" />
+                <span className="truncate">#{order.orderNumber}</span>
+                <span className="rounded border px-1.5 py-0.5">
+                  {order.itemsCount} items
+                </span>
+              </div>
             </div>
           </div>
         ))

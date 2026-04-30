@@ -180,13 +180,21 @@ export function OrderManagement() {
         value={statusFilter}
         onValueChange={(value) => setValue("statusFilter", value)}
       >
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="w-full overflow-x-auto pb-1 lg:w-auto">
             <TabsList>
-              <TabsTrigger value="all">All Orders</TabsTrigger>
-              <TabsTrigger value="paid">Paid</TabsTrigger>
-              <TabsTrigger value="unpaid">Unpaid</TabsTrigger>
-              <TabsTrigger value="processing">Processing</TabsTrigger>
+              <TabsTrigger value="all" className="h-7 text-xs">
+                All Orders
+              </TabsTrigger>
+              <TabsTrigger value="paid" className="h-7 text-xs">
+                Paid
+              </TabsTrigger>
+              <TabsTrigger value="unpaid" className="h-7 text-xs">
+                Unpaid
+              </TabsTrigger>
+              <TabsTrigger value="processing" className="h-7 text-xs">
+                Processing
+              </TabsTrigger>
             </TabsList>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -198,7 +206,7 @@ export function OrderManagement() {
               <Input
                 type="search"
                 placeholder="Search orders..."
-                className="pl-8 pr-9"
+                className="h-8 pl-8 pr-9 text-sm"
                 {...register("searchQuery")}
               />
               {searchQuery && (
@@ -206,7 +214,7 @@ export function OrderManagement() {
                   variant="ghost"
                   size="icon"
                   type="button"
-                  className="absolute right-0 top-0 h-9 w-9"
+                  className="absolute right-0 top-0 size-8"
                   onClick={clearSearch}
                 >
                   <X className="h-4 w-4" />

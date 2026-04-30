@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { ShoppingBag } from "lucide-react";
+import { Search, ShoppingBag } from "lucide-react";
 import type * as React from "react";
 
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -23,35 +24,42 @@ export function EnhancedSidebar({
   const { t } = useI18n();
 
   return (
-    <Sidebar variant="floating" {...props}>
-      <SidebarHeader>
+    <Sidebar collapsible="offcanvas" className="border-r-0" {...props}>
+      <SidebarHeader className="px-3 py-3">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              render={
-                <Link to="/dashboard">
-                  <div className="flex aspect-square size-9 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
-                    <ShoppingBag className="size-4" />
-                  </div>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      {t(sidebarData.brand.titleKey)}
-                    </span>
-                    <span className="truncate text-xs text-sidebar-foreground/70">
-                      {t(sidebarData.brand.subtitleKey)}
-                    </span>
-                  </div>
-                </Link>
-              }
-            ></SidebarMenuButton>
+            <div className="flex w-full items-center justify-between gap-2">
+              <SidebarMenuButton
+                size="lg"
+                className="h-9 flex-1 px-1.5"
+                render={
+                  <Link to="/dashboard">
+                    <div className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sidebar-primary text-sidebar-primary-foreground">
+                      <ShoppingBag className="size-3.5" />
+                    </div>
+                    <div className="grid flex-1 text-left text-sm leading-tight">
+                      <span className="truncate font-semibold">
+                        {t(sidebarData.brand.titleKey)}
+                      </span>
+                      <span className="truncate text-xs text-sidebar-foreground/60">
+                        {t(sidebarData.brand.subtitleKey)}
+                      </span>
+                    </div>
+                  </Link>
+                }
+              />
+              <Button variant="ghost" size="icon" className="size-7 shrink-0">
+                <Search className="size-3.5" />
+                <span className="sr-only">Search dashboard</span>
+              </Button>
+            </div>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="px-2">
         <NavMain groups={sidebarData.navGroups} />
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="px-2 pb-3">
         <NavUser />
       </SidebarFooter>
     </Sidebar>

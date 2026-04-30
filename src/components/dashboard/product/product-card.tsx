@@ -35,7 +35,7 @@ export function ProductCard({
 
   return (
     <>
-      <Card className="overflow-hidden group hover:shadow-md hover:border-primary/30 transition-all duration-200 border border-border shadow-sm bg-card">
+      <Card className="group overflow-hidden rounded-lg border bg-card shadow-none transition-colors hover:bg-muted/20">
         <div className="aspect-4/3 w-full overflow-hidden relative bg-muted/30">
           {product.images[0] ? (
             <img
@@ -115,7 +115,7 @@ export function ProductCard({
           </div>
         </CardContent>
 
-        <CardFooter className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5 bg-muted/30">
+        <CardFooter className="flex items-center justify-between gap-2 border-t bg-muted/30 px-4 py-2.5">
           <Link
             to="/dashboard/products/$id"
             params={{ id: product.id }}

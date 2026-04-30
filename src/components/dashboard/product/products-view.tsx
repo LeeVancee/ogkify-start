@@ -96,12 +96,12 @@ export function ProductsView() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 sm:flex-row sm:items-center">
         <div className="relative w-full sm:max-w-xs">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search products..."
-            className="pl-8"
+            className="h-8 pl-8 pr-9 text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -109,7 +109,7 @@ export function ProductsView() {
             <Button
               variant="ghost"
               size="icon"
-              className="absolute right-0 top-0 h-9 w-9"
+              className="absolute right-0 top-0 size-8"
               onClick={() => setSearchQuery("")}
             >
               <X className="h-4 w-4" />
@@ -117,7 +117,7 @@ export function ProductsView() {
             </Button>
           )}
         </div>
-        <div className="flex items-center justify-between gap-3 sm:justify-end">
+        <div className="flex items-center justify-between gap-3 sm:ml-auto sm:justify-end">
           <div className="text-xs text-muted-foreground">
             Showing {filteredProducts.length} of {products.length}
           </div>
@@ -126,11 +126,11 @@ export function ProductsView() {
             onValueChange={(value) => setViewType(value as "table" | "grid")}
           >
             <TabsList>
-              <TabsTrigger value="table">
+              <TabsTrigger value="table" className="h-7 text-xs">
                 <List className="mr-2 h-4 w-4" />
                 Table
               </TabsTrigger>
-              <TabsTrigger value="grid">
+              <TabsTrigger value="grid" className="h-7 text-xs">
                 <Grid className="mr-2 h-4 w-4" />
                 Grid
               </TabsTrigger>

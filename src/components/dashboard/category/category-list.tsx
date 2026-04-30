@@ -49,21 +49,25 @@ export function CategoryList() {
         <DataTableShell>
           <Table className="min-w-[720px]">
             <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-[76px]">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="h-10 w-[76px] text-xs font-medium text-muted-foreground">
                   {t("dashboard.table.image")}
                 </TableHead>
-                <TableHead>{t("dashboard.table.name")}</TableHead>
-                <TableHead>{t("dashboard.table.imageStatus")}</TableHead>
-                <TableHead className="w-[180px] text-right">
+                <TableHead className="h-10 text-xs font-medium text-muted-foreground">
+                  {t("dashboard.table.name")}
+                </TableHead>
+                <TableHead className="h-10 text-xs font-medium text-muted-foreground">
+                  {t("dashboard.table.imageStatus")}
+                </TableHead>
+                <TableHead className="h-10 w-[180px] text-right text-xs font-medium text-muted-foreground">
                   {t("dashboard.table.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {categories.map((category) => (
-                <TableRow key={category.id} className="h-16">
-                  <TableCell>
+                <TableRow key={category.id} className="hover:bg-muted/30">
+                  <TableCell className="py-3">
                     <div className="h-11 w-14 overflow-hidden rounded-lg border bg-muted/30">
                       {category.imageUrl ? (
                         <img
@@ -76,7 +80,7 @@ export function CategoryList() {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     <Link
                       to="/dashboard/categories/$id"
                       params={{ id: category.id }}
@@ -88,7 +92,7 @@ export function CategoryList() {
                       {t("dashboard.resources.catalogCategory")}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     {category.imageUrl ? (
                       <Badge variant="outline" className="gap-1.5">
                         <Image className="h-3.5 w-3.5" />
@@ -101,7 +105,7 @@ export function CategoryList() {
                       </Badge>
                     )}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         to="/dashboard/categories/$id"

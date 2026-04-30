@@ -49,8 +49,10 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
   return (
     <>
       {groups.map((group) => (
-        <SidebarGroup key={group.titleKey}>
-          <SidebarGroupLabel>{t(group.titleKey)}</SidebarGroupLabel>
+        <SidebarGroup key={group.titleKey} className="p-0 pt-2">
+          <SidebarGroupLabel className="h-7 px-2 text-[11px] font-semibold uppercase tracking-wider text-sidebar-foreground/55">
+            {t(group.titleKey)}
+          </SidebarGroupLabel>
           <SidebarMenu>
             {group.items.map((item) => {
               if (
@@ -61,8 +63,13 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
                 return (
                   <SidebarMenuItem key={item.titleKey}>
                     <SidebarMenuButton
+                      className="h-9 rounded-lg"
                       render={
-                        <ActiveLink href={item.url} exact>
+                        <ActiveLink
+                          href={item.url}
+                          exact
+                          activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                        >
                           {item.icon && <item.icon />}
                           <span>{t(item.titleKey)}</span>
                         </ActiveLink>
@@ -79,7 +86,10 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
                   <SidebarMenuItem>
                     <CollapsibleTrigger
                       render={
-                        <SidebarMenuButton tooltip={t(item.titleKey)}>
+                        <SidebarMenuButton
+                          tooltip={t(item.titleKey)}
+                          className="h-9 rounded-lg"
+                        >
                           {item.icon && <item.icon />}
                           <span>{t(item.titleKey)}</span>
                           <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -92,7 +102,11 @@ export function NavMain({ groups }: { groups: NavGroup[] }) {
                           <SidebarMenuSubItem key={subItem.titleKey}>
                             <SidebarMenuSubButton
                               render={
-                                <ActiveLink href={subItem.url} exact>
+                                <ActiveLink
+                                  href={subItem.url}
+                                  exact
+                                  activeClassName="bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+                                >
                                   {subItem.icon && <subItem.icon />}
                                   <span>{t(subItem.titleKey)}</span>
                                 </ActiveLink>

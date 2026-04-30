@@ -1,16 +1,18 @@
-import { CreditCard, DollarSign, Package, Tag } from "lucide-react";
-
-import { Overview } from "@/components/dashboard/overview";
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { RecentSales } from "@/components/dashboard/recent-sales";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  CreditCard,
+  DollarSign,
+  MoreVertical,
+  Package,
+  Tag,
+} from "lucide-react";
+
+import {
+  DashboardMetricCard,
+  DashboardPanel,
+} from "@/components/dashboard/dashboard-panel";
+import { Overview } from "@/components/dashboard/overview";
+import { RecentSales } from "@/components/dashboard/recent-sales";
+import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 
 interface SalesData {
@@ -43,107 +45,64 @@ export function DashboardView({
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-6">
-      <DashboardPageHeader
-        title="Dashboard"
-        description="Monitor catalog coverage, order workload, and completed revenue."
-      />
-      <Tabs defaultValue="overview" className="space-y-4">
-        <div className="w-full overflow-x-auto pb-2">
-          <TabsList>
-            <TabsTrigger value="overview">Overview </TabsTrigger>
-            <TabsTrigger value="analytics" disabled>
-              Analytics
-            </TabsTrigger>
-          </TabsList>
-        </div>
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card size="sm">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Products
-                </CardTitle>
-                <Package className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{productsCount}</div>
-                <p className="text-xs text-muted-foreground">
-                  {categoriesCount} categories available
-                </p>
-              </CardContent>
-            </Card>
-            <Card size="sm">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Categories
-                </CardTitle>
-                <Tag className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{categoriesCount}</div>
-                <p className="text-xs text-muted-foreground">
-                  Used to organize the storefront
-                </p>
-              </CardContent>
-            </Card>
-            <Card size="sm">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Total Revenue
-                </CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatPrice(totalRevenue)}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  From {completedOrders} completed orders
-                </p>
-              </CardContent>
-            </Card>
-            <Card size="sm">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Order Workload
-                </CardTitle>
-                <CreditCard className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{pendingOrders}</div>
-                <p className="text-xs text-muted-foreground">
-                  Pending, {completedOrders} completed
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-7">
-            <Card className="col-span-1 lg:col-span-4">
-              <CardHeader className="pb-0">
-                <CardTitle>Overview</CardTitle>
-                <CardDescription>
-                  Monthly completed order revenue
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="ps-2 pt-2">
-                <Overview data={monthlySalesData} />
-              </CardContent>
-            </Card>
-            <Card className="col-span-1 lg:col-span-3">
-              <CardHeader className="pb-0">
-                <CardTitle>Recent Sales</CardTitle>
-                <CardDescription>
-                  Total {completedOrders} completed orders
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <RecentSales recentOrders={recentOrders} />
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-      </Tabs>
-    </div>
+    <main className="w-full flex-1 space-y-4 overflow-x-hidden p-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <DashboardMetricCard
+          label="Total products"
+          value={productsCount}
+          description={`${categoriesCount} categories available`}
+          icon={Package}
+          trend="Catalog"
+        />
+        <DashboardMetricCard
+          label="Total categories"
+          value={categoriesCount}
+          description="Storefront taxonomy"
+          icon={Tag}
+          trend="Live"
+          trendTone="up"
+        />
+        <DashboardMetricCard
+          label="Total revenue"
+          value={formatPrice(totalRevenue)}
+          description={`From ${completedOrders} completed orders`}
+          icon={DollarSign}
+          trend="Paid"
+          trendTone="up"
+        />
+        <DashboardMetricCard
+          label="Order workload"
+          value={pendingOrders}
+          description={`Pending, ${completedOrders} completed`}
+          icon={CreditCard}
+          trend={pendingOrders > 0 ? "Open" : "Clear"}
+          trendTone={pendingOrders > 0 ? "down" : "up"}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <DashboardPanel
+          title="Monthly revenue"
+          action={
+            <Button variant="ghost" size="icon" className="size-7">
+              <MoreVertical className="size-4" />
+              <span className="sr-only">Revenue options</span>
+            </Button>
+          }
+        >
+          <Overview data={monthlySalesData} />
+        </DashboardPanel>
+        <DashboardPanel
+          title="Recent orders"
+          action={
+            <span className="rounded border px-1.5 py-0.5 text-xs text-muted-foreground">
+              {completedOrders} completed
+            </span>
+          }
+        >
+          <RecentSales recentOrders={recentOrders} />
+        </DashboardPanel>
+      </div>
+    </main>
   );
 }

@@ -1,6 +1,6 @@
 import {
-  Bar,
-  BarChart,
+  Area,
+  AreaChart,
   CartesianGrid,
   ResponsiveContainer,
   Tooltip,
@@ -21,8 +21,8 @@ interface OverviewProps {
 
 export function Overview({ data }: OverviewProps) {
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <BarChart
+    <ResponsiveContainer width="100%" height={250}>
+      <AreaChart
         data={data}
         margin={{
           top: 8,
@@ -31,18 +31,36 @@ export function Overview({ data }: OverviewProps) {
           bottom: 0,
         }}
       >
-        <CartesianGrid vertical={false} stroke="var(--color-border)" />
+        <defs>
+          <linearGradient id="revenueGradient" x1="0" x2="0" y1="0" y2="1">
+            <stop
+              offset="5%"
+              stopColor="var(--color-primary)"
+              stopOpacity={0.16}
+            />
+            <stop
+              offset="95%"
+              stopColor="var(--color-primary)"
+              stopOpacity={0}
+            />
+          </linearGradient>
+        </defs>
+        <CartesianGrid
+          vertical={false}
+          stroke="var(--color-border)"
+          strokeDasharray="3 3"
+        />
         <XAxis
           dataKey="name"
           stroke="var(--color-muted-foreground)"
-          fontSize={12}
+          fontSize={10}
           tickLine={false}
           axisLine={false}
           tickMargin={8}
         />
         <YAxis
           stroke="var(--color-muted-foreground)"
-          fontSize={12}
+          fontSize={10}
           tickLine={false}
           axisLine={false}
           tickMargin={8}
@@ -55,18 +73,20 @@ export function Overview({ data }: OverviewProps) {
           contentStyle={{
             background: "var(--color-background)",
             border: "1px solid var(--color-border)",
-            borderRadius: "0.75rem",
+            borderRadius: "0.5rem",
             color: "var(--color-foreground)",
           }}
         />
-        <Bar
+        <Area
+          type="monotone"
           dataKey="total"
-          fill="currentColor"
-          radius={[6, 6, 0, 0]}
-          barSize={36}
-          className="fill-primary"
+          stroke="var(--color-primary)"
+          strokeWidth={2}
+          fill="url(#revenueGradient)"
+          dot={false}
+          activeDot={{ r: 4, strokeWidth: 2 }}
         />
-      </BarChart>
+      </AreaChart>
     </ResponsiveContainer>
   );
 }

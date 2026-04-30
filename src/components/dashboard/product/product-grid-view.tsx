@@ -13,7 +13,7 @@ export function ProductGridView({
   isDeleting,
 }: ProductGridViewProps) {
   return (
-    <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+    <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
       {products.map((product) => (
         <ProductCard
           key={product.id}

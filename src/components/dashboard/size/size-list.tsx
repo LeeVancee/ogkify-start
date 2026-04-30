@@ -46,26 +46,30 @@ export function SizeList() {
         <DataTableShell>
           <Table className="min-w-[680px]">
             <TableHeader>
-              <TableRow className="bg-muted/50 hover:bg-muted/50">
-                <TableHead className="w-[160px]">
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="h-10 w-[160px] text-xs font-medium text-muted-foreground">
                   {t("dashboard.table.displayValue")}
                 </TableHead>
-                <TableHead>{t("dashboard.table.name")}</TableHead>
-                <TableHead>{t("dashboard.table.value")}</TableHead>
-                <TableHead className="w-[180px] text-right">
+                <TableHead className="h-10 text-xs font-medium text-muted-foreground">
+                  {t("dashboard.table.name")}
+                </TableHead>
+                <TableHead className="h-10 text-xs font-medium text-muted-foreground">
+                  {t("dashboard.table.value")}
+                </TableHead>
+                <TableHead className="h-10 w-[180px] text-right text-xs font-medium text-muted-foreground">
                   {t("dashboard.table.actions")}
                 </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {sizes.map((size) => (
-                <TableRow key={size.id} className="h-16">
-                  <TableCell>
+                <TableRow key={size.id} className="hover:bg-muted/30">
+                  <TableCell className="py-3">
                     <span className="inline-flex min-w-16 items-center justify-center rounded-lg border bg-muted/30 px-3 py-1.5 font-semibold tracking-wide text-foreground">
                       {size.value}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     <Link
                       to="/dashboard/sizes/$id"
                       params={{ id: size.id }}
@@ -77,7 +81,7 @@ export function SizeList() {
                       {t("dashboard.resources.productSizeOption")}
                     </div>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="py-3">
                     <Badge
                       variant="outline"
                       className="font-mono text-xs uppercase"
@@ -85,7 +89,7 @@ export function SizeList() {
                       {size.value}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="py-3 text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         to="/dashboard/sizes/$id"
