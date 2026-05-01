@@ -1,13 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
-import { format } from "date-fns";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { db } from "@/db";
-import { cartItems, carts, orderItems, orders } from "@/db/schema";
-import { formatAmountForStripe, stripe } from "@/lib/stripe";
+import { cartItems, carts } from "@/db/schema";
 
 import { getSession } from "./getSession";
+import { createCheckoutOrderPayment } from "./order-payment";
 
 export interface CartItemData {
   productId: string;
@@ -314,25 +313,6 @@ export const clearCart = createServerFn({ method: "POST" }).handler(
   },
 );
 
-// Generate order number: YYYYMMDDHHMMSS + 6-digit random number
-function generateOrderNumber(): string {
-  const now = new Date();
-  const datePart = format(now, "yyyyMMddHHmmss");
-  const randomPart = String(Math.floor(Math.random() * 1000000)).padStart(
-    6,
-    "0",
-  );
-  return `${datePart}${randomPart}`;
-}
-
-const checkoutLineItemSchema = z.object({
-  productId: z.uuid(),
-  quantity: z.number().int().positive().max(99),
-  price: z.number().nonnegative(),
-  colorId: z.uuid().nullable(),
-  sizeId: z.uuid().nullable(),
-});
-
 // Create an unpaid order and Stripe PaymentIntent from the current cart.
 export const createCheckoutPaymentIntent = createServerFn({
   method: "POST",
@@ -343,97 +323,5 @@ export const createCheckoutPaymentIntent = createServerFn({
     throw new Error("Must be logged in to checkout");
   }
 
-  // Get user's cart
-  const cart = await db.query.carts.findFirst({
-    where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
-    with: {
-      items: {
-        with: {
-          product: {
-            with: {
-              images: true,
-            },
-          },
-          color: true,
-          size: true,
-        },
-      },
-    },
-  });
-
-  if (!cart || cart.items.length === 0) {
-    throw new Error("Cart is empty");
-  }
-
-  // Calculate total amount
-  const amount = cart.items.reduce(
-    (total, item) => total + item.product.price * item.quantity,
-    0,
-  );
-
-  const validatedCartItems = cart.items.map((item) =>
-    checkoutLineItemSchema.parse({
-      productId: item.productId,
-      quantity: item.quantity,
-      price: item.product.price,
-      colorId: item.colorId,
-      sizeId: item.sizeId,
-    }),
-  );
-
-  const order = await db.transaction(async (tx) => {
-    const [createdOrder] = await tx
-      .insert(orders)
-      .values({
-        userId: session.user.id,
-        orderNumber: generateOrderNumber(),
-        totalAmount: amount,
-        status: "PENDING",
-        paymentStatus: "UNPAID",
-      })
-      .returning();
-
-    await tx.insert(orderItems).values(
-      validatedCartItems.map((item) => ({
-        orderId: createdOrder.id,
-        productId: item.productId,
-        quantity: item.quantity,
-        price: item.price,
-        colorId: item.colorId,
-        sizeId: item.sizeId,
-      })),
-    );
-
-    return createdOrder;
-  });
-
-  const paymentIntent = await stripe.paymentIntents.create({
-    amount: formatAmountForStripe(amount),
-    currency: "usd",
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    description: `Order ${order.orderNumber}`,
-    metadata: {
-      orderId: order.id,
-      userId: session.user.id,
-    },
-  });
-
-  if (!paymentIntent.client_secret) {
-    throw new Error("Stripe PaymentIntent client secret is missing");
-  }
-
-  await db
-    .update(orders)
-    .set({
-      paymentMethod: "Stripe",
-      paymentIntent: paymentIntent.id,
-    })
-    .where(eq(orders.id, order.id));
-
-  return {
-    orderId: order.id,
-    clientSecret: paymentIntent.client_secret,
-  };
+  return createCheckoutOrderPayment(session.user.id);
 });

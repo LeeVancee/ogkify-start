@@ -1,14 +1,17 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, count, eq, gte, lt, sum } from "drizzle-orm";
-import type Stripe from "stripe";
 import { z } from "zod";
 
 import { db } from "@/db";
-import { cartItems, orderItems, orders } from "@/db/schema";
-import { formatAmountForStripe, stripe } from "@/lib/stripe";
+import { orderItems, orders } from "@/db/schema";
 import { formatPrice } from "@/lib/utils";
 
 import { getSession } from "./getSession";
+import {
+  getCheckoutOrderPayment,
+  prepareExistingOrderPayment,
+  synchronizePaidOrder,
+} from "./order-payment";
 import { requireAdminSession } from "./require-admin";
 
 // Define order status type
@@ -272,58 +275,26 @@ export const createOrderPaymentIntent = createServerFn({ method: "POST" })
       return { error: "Unauthorized", success: false };
     }
 
-    // Get order information
-    const order = await db.query.orders.findFirst({
-      where: (ordersTable, { eq, and }) =>
-        and(
-          eq(ordersTable.id, orderId),
-          eq(ordersTable.userId, session.user.id),
-          eq(ordersTable.paymentStatus, "UNPAID"),
-        ),
-      with: {
-        items: {
-          with: {
-            product: {
-              with: {
-                images: true,
-              },
-            },
-            color: true,
-            size: true,
-          },
-        },
-      },
-    });
+    try {
+      const payment = await prepareExistingOrderPayment(
+        orderId,
+        session.user.id,
+      );
 
-    if (!order) {
-      return { error: "Order not found", success: false };
+      return {
+        success: true,
+        orderId: payment.orderId,
+        clientSecret: payment.clientSecret,
+      };
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Payment client secret is unavailable",
+        success: false,
+      };
     }
-
-    const paymentIntent = await createOrReusePaymentIntent({
-      existingPaymentIntentId: order.paymentIntent,
-      amount: order.totalAmount,
-      orderId: order.id,
-      orderNumber: order.orderNumber,
-      userId: session.user.id,
-    });
-
-    if (!paymentIntent.client_secret) {
-      return { error: "Payment client secret is unavailable", success: false };
-    }
-
-    await db
-      .update(orders)
-      .set({
-        paymentMethod: "Stripe",
-        paymentIntent: paymentIntent.id,
-      })
-      .where(eq(orders.id, order.id));
-
-    return {
-      success: true,
-      orderId: order.id,
-      clientSecret: paymentIntent.client_secret,
-    };
   });
 
 // Get the order snapshot and PaymentIntent client secret for the checkout page.
@@ -336,76 +307,51 @@ export const getCheckoutOrder = createServerFn()
       return { error: "Unauthorized", success: false };
     }
 
-    const order = await db.query.orders.findFirst({
-      where: (ordersTable, { eq, and }) =>
-        and(
-          eq(ordersTable.id, orderId),
-          eq(ordersTable.userId, session.user.id),
-          eq(ordersTable.paymentStatus, "UNPAID"),
-        ),
-      with: {
-        items: {
-          with: {
-            product: {
-              with: {
-                images: true,
-              },
-            },
-            color: true,
-            size: true,
-          },
+    try {
+      const payment = await getCheckoutOrderPayment(orderId, session.user.id);
+      const { order } = payment;
+
+      return {
+        success: true,
+        clientSecret: payment.clientSecret,
+        order: {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          totalAmount: order.totalAmount,
+          items: order.items.map((item) => ({
+            id: item.id,
+            productId: item.productId,
+            productName: item.product.name,
+            quantity: item.quantity,
+            price: item.price,
+            imageUrl: getRequiredOrderItemImageUrl(
+              order.orderNumber,
+              item.product.images[0]?.url,
+            ),
+            color: item.color
+              ? {
+                  name: item.color.name,
+                  value: item.color.value,
+                }
+              : null,
+            size: item.size
+              ? {
+                  name: item.size.name,
+                  value: item.size.value,
+                }
+              : null,
+          })),
         },
-      },
-    });
-
-    if (!order) {
-      return { error: "Order not found or already paid", success: false };
+      };
+    } catch (error) {
+      return {
+        error:
+          error instanceof Error
+            ? error.message
+            : "Payment client secret is unavailable",
+        success: false,
+      };
     }
-
-    if (!order.paymentIntent || !order.paymentIntent.startsWith("pi_")) {
-      return { error: "Payment has not been initialized", success: false };
-    }
-
-    const paymentIntent = await stripe.paymentIntents.retrieve(
-      order.paymentIntent,
-    );
-
-    if (!paymentIntent.client_secret) {
-      return { error: "Payment client secret is unavailable", success: false };
-    }
-
-    return {
-      success: true,
-      clientSecret: paymentIntent.client_secret,
-      order: {
-        id: order.id,
-        orderNumber: order.orderNumber,
-        totalAmount: order.totalAmount,
-        items: order.items.map((item) => ({
-          id: item.id,
-          productId: item.productId,
-          productName: item.product.name,
-          quantity: item.quantity,
-          price: item.price,
-          imageUrl: getRequiredOrderItemImageUrl(
-            order.orderNumber,
-            item.product.images[0]?.url,
-          ),
-          color: item.color
-            ? {
-                name: item.color.name,
-                value: item.color.value,
-              }
-            : null,
-          size: item.size
-            ? {
-                name: item.size.name,
-                value: item.size.value,
-              }
-            : null,
-        })),
-      },
-    };
   });
 
 export const updateCheckoutOrderDetails = createServerFn({ method: "POST" })
@@ -443,54 +389,6 @@ export const updateCheckoutOrderDetails = createServerFn({ method: "POST" })
 
     return { success: true };
   });
-
-async function createOrReusePaymentIntent({
-  existingPaymentIntentId,
-  amount,
-  orderId,
-  orderNumber,
-  userId,
-}: {
-  existingPaymentIntentId: string | null;
-  amount: number;
-  orderId: string;
-  orderNumber: string;
-  userId: string;
-}) {
-  const amountInCents = formatAmountForStripe(amount);
-
-  if (existingPaymentIntentId?.startsWith("pi_")) {
-    const existingPaymentIntent = await stripe.paymentIntents.retrieve(
-      existingPaymentIntentId,
-    );
-
-    if (
-      existingPaymentIntent.status !== "succeeded" &&
-      existingPaymentIntent.status !== "canceled"
-    ) {
-      if (existingPaymentIntent.amount !== amountInCents) {
-        return stripe.paymentIntents.update(existingPaymentIntent.id, {
-          amount: amountInCents,
-        });
-      }
-
-      return existingPaymentIntent;
-    }
-  }
-
-  return stripe.paymentIntents.create({
-    amount: amountInCents,
-    currency: "usd",
-    automatic_payment_methods: {
-      enabled: true,
-    },
-    description: `Order ${orderNumber}`,
-    metadata: {
-      orderId,
-      userId,
-    },
-  });
-}
 
 // Update order status
 export const updateOrderStatus = createServerFn({ method: "POST" })
@@ -691,8 +589,8 @@ export const getOrderById = createServerFn()
       return { success: false, error: "Order not found" };
     }
 
-    const synchronizedOrder = await synchronizePaidOrderFromStripe(
-      order,
+    const synchronizedOrder = await synchronizePaidOrder(
+      order.id,
       session.user.id,
     );
 
@@ -791,96 +689,4 @@ function getRequiredCustomerName(
   }
 
   return customerName;
-}
-
-async function synchronizePaidOrderFromStripe(
-  order: Awaited<ReturnType<typeof db.query.orders.findFirst>>,
-  userId: string,
-) {
-  if (!order) {
-    throw new Error("Order is required for synchronization");
-  }
-
-  if (order.paymentStatus === "PAID") {
-    return order;
-  }
-
-  if (!order.paymentIntent || !order.paymentIntent.startsWith("pi_")) {
-    return order;
-  }
-
-  const paymentIntent = await stripe.paymentIntents.retrieve(
-    order.paymentIntent,
-  );
-
-  if (paymentIntent.status !== "succeeded") {
-    return order;
-  }
-
-  await markOrderAsPaidFromPaymentIntent(order.id, paymentIntent, userId);
-
-  const updatedOrder = await db.query.orders.findFirst({
-    where: (ordersTable, { eq }) => eq(ordersTable.id, order.id),
-    with: {
-      items: {
-        with: {
-          product: {
-            with: {
-              images: true,
-            },
-          },
-          color: true,
-          size: true,
-        },
-      },
-    },
-  });
-
-  if (!updatedOrder) {
-    throw new Error(`Order ${order.id} not found after payment sync`);
-  }
-
-  return updatedOrder;
-}
-
-async function markOrderAsPaidFromPaymentIntent(
-  orderId: string,
-  paymentIntent: Stripe.PaymentIntent,
-  userId: string,
-) {
-  const charge = paymentIntent.latest_charge
-    ? typeof paymentIntent.latest_charge === "string"
-      ? await stripe.charges.retrieve(paymentIntent.latest_charge)
-      : paymentIntent.latest_charge
-    : null;
-
-  const address = charge?.billing_details?.address;
-  const addressParts = [
-    address?.line1,
-    address?.line2,
-    address?.city,
-    address?.state,
-    address?.postal_code,
-    address?.country,
-  ].filter((part): part is string => Boolean(part));
-
-  await db
-    .update(orders)
-    .set({
-      status: "PAID",
-      paymentStatus: "PAID",
-      paymentIntent: paymentIntent.id,
-      phone: charge?.billing_details?.phone || null,
-      shippingAddress: addressParts.length > 0 ? addressParts.join(", ") : null,
-      updatedAt: new Date(),
-    })
-    .where(eq(orders.id, orderId));
-
-  const userCart = await db.query.carts.findFirst({
-    where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
-  });
-
-  if (userCart) {
-    await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
-  }
 }
