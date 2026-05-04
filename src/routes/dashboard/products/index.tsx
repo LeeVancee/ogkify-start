@@ -1,33 +1,31 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { ProductsView } from "@/components/dashboard/product/products-view";
-import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { buttonVariants } from "@/components/ui/button";
-import { useI18n } from "@/lib/i18n";
+import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
+import { ProductList } from "@/components/dashboard/product/product-list";
+import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
+import { adminProductsQueryOptions } from "@/lib/admin/query-options";
+import { deleteAdminProduct } from "@/server/admin/products";
 
 export const Route = createFileRoute("/dashboard/products/")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminProductsQueryOptions()),
+  pendingComponent: PagePendingSpinner,
   component: RouteComponent,
-  pendingComponent: () => <SpinnerLoading />,
 });
 
 function RouteComponent() {
-  const { t } = useI18n();
+  const { data: products } = useSuspenseQuery(adminProductsQueryOptions());
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
-      <DashboardPageHeader
-        title={t("dashboard.nav.products")}
-        description={t("dashboard.pages.productsDescription")}
-        action={
-          <Link to="/dashboard/products/new" className={buttonVariants()}>
-            <Plus className="mr-2 h-4 w-4" />{" "}
-            {t("dashboard.actions.addProduct")}
-          </Link>
-        }
+    <DashboardPageShell
+      title="Products"
+      description="Manage catalog items, visual inventory and product availability."
+    >
+      <ProductList
+        products={products}
+        deleteProduct={(id) => deleteAdminProduct({ data: id })}
       />
-      <ProductsView />
-    </div>
+    </DashboardPageShell>
   );
 }

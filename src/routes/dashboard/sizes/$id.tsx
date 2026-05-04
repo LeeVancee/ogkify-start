@@ -1,54 +1,29 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { SizeForm } from "@/components/dashboard/size/size-form";
-import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { getSize } from "@/server/sizes";
+import { ResourceForm } from "@/components/dashboard/resource/resource-form";
+import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
+import { adminSizeQueryOptions } from "@/lib/admin/query-options";
+import { saveAdminSize } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/sizes/$id")({
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(adminSizeQueryOptions(params.id)),
+  pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { id } = Route.useParams();
-
-  const {
-    data: response,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["size", id],
-    queryFn: () => getSize({ data: id }),
-  });
-
-  if (isLoading) {
-    return <SpinnerLoading />;
-  }
-
-  if (isError || !response?.success || !response.size) {
-    return (
-      <div className="flex h-[400px] flex-col items-center justify-center">
-        <h3 className="text-lg font-semibold">Size not found</h3>
-        <p className="text-muted-foreground">
-          The size you're looking for doesn't exist.
-        </p>
-      </div>
-    );
-  }
+  const { data: size } = useSuspenseQuery(adminSizeQueryOptions(id));
 
   return (
-    <div className="flex-1 space-y-4 p-8 pt-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold tracking-tight">Edit Size</h1>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="space-y-4">
-          <div className="rounded-lg border p-4">
-            <h2 className="mb-4 text-lg font-semibold">Size Details</h2>
-            <SizeForm size={response.size!} />
-          </div>
-        </div>
-      </div>
-    </div>
+    <ResourceForm
+      title="Edit size"
+      backHref="/dashboard/sizes"
+      fields={["name", "value"]}
+      initialValues={{ name: size.name, value: size.value }}
+      save={(values) => saveAdminSize({ data: { id: size.id, values } })}
+    />
   );
 }

@@ -11,6 +11,10 @@ export const cld = new Cloudinary({
 export const CLOUDINARY_UPLOAD_PRESET = env.VITE_CLOUDINARY_UPLOAD_PRESET;
 export const CLOUDINARY_CLOUD_NAME = env.VITE_CLOUDINARY_CLOUD_NAME;
 
+export function hasCloudinaryConfig() {
+  return Boolean(CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET);
+}
+
 // Cache for the script loading promise
 let cloudinaryScriptPromise: Promise<void> | null = null;
 

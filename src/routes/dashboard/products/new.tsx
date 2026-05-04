@@ -1,49 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft } from "lucide-react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 
-import { UnifiedProductForm } from "@/components/dashboard/product/unified-product-form";
-import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { Button } from "@/components/ui/button";
-import { getProductFormData } from "@/server/products";
+import { ProductForm } from "@/components/dashboard/product/product-form";
+import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
+import { adminProductFormDataQueryOptions } from "@/lib/admin/query-options";
+import { saveAdminProduct } from "@/server/admin/products";
 
 export const Route = createFileRoute("/dashboard/products/new")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminProductFormDataQueryOptions()),
+  pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  // Use single query to fetch all product form data for optimal performance
-  const { data, isLoading } = useQuery({
-    queryKey: ["product-form-data"],
-    queryFn: () => getProductFormData(),
-  });
-
-  if (isLoading) {
-    return <SpinnerLoading />;
-  }
-
-  if (!data) {
-    throw new Error("Product form data is missing");
-  }
-
-  const { categories, colors, sizes } = data;
+  const { data } = useSuspenseQuery(adminProductFormDataQueryOptions());
 
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="border-b bg-muted/30 px-6 py-3 md:px-8">
-        <Link to="/dashboard/products">
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Products
-          </Button>
-        </Link>
-      </div>
-      <UnifiedProductForm
-        mode="create"
-        categories={categories}
-        colors={colors}
-        sizes={sizes}
-      />
-    </div>
+    <ProductForm
+      title="New product"
+      categories={data.categories}
+      colors={data.colors}
+      sizes={data.sizes}
+      save={(values) => saveAdminProduct({ data: { values } })}
+    />
   );
 }

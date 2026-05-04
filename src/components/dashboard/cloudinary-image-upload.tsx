@@ -93,7 +93,7 @@ export function CloudinaryImageUpload({
           return;
         }
 
-        if (result?.event === "success" && result.info) {
+        if (result?.event === "success" && result.info?.secure_url) {
           onChange(
             addImageUrl(value, result.info.secure_url, maxFiles, {
               replaceExisting: isSingleImage,

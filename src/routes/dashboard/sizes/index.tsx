@@ -1,25 +1,34 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { DashboardPageHeader } from "@/components/dashboard/page-header";
-import { SizeList } from "@/components/dashboard/size/size-list";
-import { SpinnerLoading } from "@/components/shared/flexible-loading";
-import { useI18n } from "@/lib/i18n";
+import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
+import { ResourceList } from "@/components/dashboard/resource/resource-list";
+import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
+import { adminSizesQueryOptions } from "@/lib/admin/query-options";
+import { deleteAdminSize } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/sizes/")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminSizesQueryOptions()),
+  pendingComponent: PagePendingSpinner,
   component: RouteComponent,
-  pendingComponent: () => <SpinnerLoading />,
 });
 
 function RouteComponent() {
-  const { t } = useI18n();
+  const { data: sizes } = useSuspenseQuery(adminSizesQueryOptions());
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
-      <DashboardPageHeader
-        title={t("dashboard.nav.sizes")}
-        description={t("dashboard.pages.sizesDescription")}
+    <DashboardPageShell
+      title="Sizes"
+      description="Manage size labels and purchasable product options."
+    >
+      <ResourceList
+        title="Sizes"
+        items={sizes}
+        newHref="/dashboard/sizes/new"
+        editHref="/dashboard/sizes/$id"
+        onDelete={(id) => deleteAdminSize({ data: id })}
       />
-      <SizeList />
-    </div>
+    </DashboardPageShell>
   );
 }

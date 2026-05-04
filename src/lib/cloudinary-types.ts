@@ -10,7 +10,7 @@ export interface CloudinaryUploadError {
 export interface CloudinaryUploadResult {
   event: "success" | "close" | "abort" | "queues-end";
   info?: {
-    secure_url: string;
+    secure_url?: string;
     files?: Array<unknown>;
     [key: string]: unknown;
   };
@@ -28,6 +28,6 @@ export interface CloudinaryBase {
 
 declare global {
   interface Window {
-    cloudinary: CloudinaryBase;
+    cloudinary?: CloudinaryBase;
   }
 }

@@ -22,6 +22,7 @@ import { Route as authSignupRouteImport } from './routes/(auth)/signup'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as shopProductsRouteRouteImport } from './routes/(shop)/products/route'
 import { Route as DashboardSizesIndexRouteImport } from './routes/dashboard/sizes/index'
+import { Route as DashboardSettingsIndexRouteImport } from './routes/dashboard/settings/index'
 import { Route as DashboardProductsIndexRouteImport } from './routes/dashboard/products/index'
 import { Route as DashboardOrdersIndexRouteImport } from './routes/dashboard/orders/index'
 import { Route as DashboardColorsIndexRouteImport } from './routes/dashboard/colors/index'
@@ -102,6 +103,11 @@ const shopProductsRouteRoute = shopProductsRouteRouteImport.update({
 const DashboardSizesIndexRoute = DashboardSizesIndexRouteImport.update({
   id: '/sizes/',
   path: '/sizes/',
+  getParentRoute: () => DashboardRouteRoute,
+} as any)
+const DashboardSettingsIndexRoute = DashboardSettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
   getParentRoute: () => DashboardRouteRoute,
 } as any)
 const DashboardProductsIndexRoute = DashboardProductsIndexRouteImport.update({
@@ -225,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/colors/': typeof DashboardColorsIndexRoute
   '/dashboard/orders/': typeof DashboardOrdersIndexRoute
   '/dashboard/products/': typeof DashboardProductsIndexRoute
+  '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/dashboard/sizes/': typeof DashboardSizesIndexRoute
 }
 export interface FileRoutesByTo {
@@ -254,6 +261,7 @@ export interface FileRoutesByTo {
   '/dashboard/colors': typeof DashboardColorsIndexRoute
   '/dashboard/orders': typeof DashboardOrdersIndexRoute
   '/dashboard/products': typeof DashboardProductsIndexRoute
+  '/dashboard/settings': typeof DashboardSettingsIndexRoute
   '/dashboard/sizes': typeof DashboardSizesIndexRoute
 }
 export interface FileRoutesById {
@@ -288,6 +296,7 @@ export interface FileRoutesById {
   '/dashboard/colors/': typeof DashboardColorsIndexRoute
   '/dashboard/orders/': typeof DashboardOrdersIndexRoute
   '/dashboard/products/': typeof DashboardProductsIndexRoute
+  '/dashboard/settings/': typeof DashboardSettingsIndexRoute
   '/dashboard/sizes/': typeof DashboardSizesIndexRoute
 }
 export interface FileRouteTypes {
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/dashboard/colors/'
     | '/dashboard/orders/'
     | '/dashboard/products/'
+    | '/dashboard/settings/'
     | '/dashboard/sizes/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/dashboard/colors'
     | '/dashboard/orders'
     | '/dashboard/products'
+    | '/dashboard/settings'
     | '/dashboard/sizes'
   id:
     | '__root__'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/dashboard/colors/'
     | '/dashboard/orders/'
     | '/dashboard/products/'
+    | '/dashboard/settings/'
     | '/dashboard/sizes/'
   fileRoutesById: FileRoutesById
 }
@@ -485,6 +497,13 @@ declare module '@tanstack/react-router' {
       path: '/sizes'
       fullPath: '/dashboard/sizes/'
       preLoaderRoute: typeof DashboardSizesIndexRouteImport
+      parentRoute: typeof DashboardRouteRoute
+    }
+    '/dashboard/settings/': {
+      id: '/dashboard/settings/'
+      path: '/settings'
+      fullPath: '/dashboard/settings/'
+      preLoaderRoute: typeof DashboardSettingsIndexRouteImport
       parentRoute: typeof DashboardRouteRoute
     }
     '/dashboard/products/': {
@@ -683,6 +702,7 @@ interface DashboardRouteRouteChildren {
   DashboardColorsIndexRoute: typeof DashboardColorsIndexRoute
   DashboardOrdersIndexRoute: typeof DashboardOrdersIndexRoute
   DashboardProductsIndexRoute: typeof DashboardProductsIndexRoute
+  DashboardSettingsIndexRoute: typeof DashboardSettingsIndexRoute
   DashboardSizesIndexRoute: typeof DashboardSizesIndexRoute
 }
 
@@ -700,6 +720,7 @@ const DashboardRouteRouteChildren: DashboardRouteRouteChildren = {
   DashboardColorsIndexRoute: DashboardColorsIndexRoute,
   DashboardOrdersIndexRoute: DashboardOrdersIndexRoute,
   DashboardProductsIndexRoute: DashboardProductsIndexRoute,
+  DashboardSettingsIndexRoute: DashboardSettingsIndexRoute,
   DashboardSizesIndexRoute: DashboardSizesIndexRoute,
 }
 
