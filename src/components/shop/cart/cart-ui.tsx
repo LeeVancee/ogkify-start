@@ -10,7 +10,7 @@ import {
   createCheckoutPaymentIntent,
   removeFromCart,
   updateCartItemQuantity,
-} from "@/server/cart";
+} from "@/server/shop/cart";
 
 export interface CartItemView {
   id: string;

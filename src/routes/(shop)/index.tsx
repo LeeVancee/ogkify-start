@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
+import { ShopHomePending } from "@/components/shop/shop-pending";
 import { useI18n } from "@/lib/i18n";
 import {
   shopCategoriesQueryOptions,
@@ -11,6 +12,7 @@ import { formatPrice } from "@/lib/utils";
 
 export const Route = createFileRoute("/(shop)/")({
   component: RouteComponent,
+  pendingComponent: ShopHomePending,
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData(shopFeaturedProductsQueryOptions(7)),

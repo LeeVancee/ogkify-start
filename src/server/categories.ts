@@ -7,6 +7,8 @@ import { categories } from "@/db/schema";
 
 import { requireAdminSession } from "./require-admin";
 
+export { getCategories } from "./shop/catalog";
+
 const categoryIdSchema = z.uuid();
 const categoryInputSchema = z.object({
   name: z.string().trim().min(1).max(100),
@@ -18,25 +20,11 @@ const updateCategoryInputSchema = z.object({
   imageUrl: z.string().trim().url().optional(),
 });
 
-// Get all categories
-export const getCategories = createServerFn().handler(async () => {
-  const categoriesList = await db.query.categories.findMany({
-    orderBy: (categories, { desc }) => [desc(categories.createdAt)],
-    columns: {
-      id: true,
-      name: true,
-      imageUrl: true,
-    },
-  });
-  return categoriesList;
-});
-
-// Get single category
 export const getCategory = createServerFn()
   .inputValidator((id: string) => categoryIdSchema.parse(id))
   .handler(async ({ data: id }) => {
     const category = await db.query.categories.findFirst({
-      where: (categories, { eq }) => eq(categories.id, id),
+      where: (categoriesTable, { eq }) => eq(categoriesTable.id, id),
       columns: {
         id: true,
         name: true,
@@ -56,7 +44,6 @@ interface CreateCategoryInput {
   imageUrl: string;
 }
 
-// Create category
 export const createCategory = createServerFn({ method: "POST" })
   .inputValidator((input: CreateCategoryInput) =>
     categoryInputSchema.parse(input),
@@ -78,7 +65,6 @@ export const createCategory = createServerFn({ method: "POST" })
     return { success: true, data: category };
   });
 
-// Update category
 export const updateCategory = createServerFn({ method: "POST" })
   .inputValidator((params: { id: string; name: string; imageUrl?: string }) =>
     updateCategoryInputSchema.parse(params),
@@ -98,7 +84,6 @@ export const updateCategory = createServerFn({ method: "POST" })
     return { success: true, data: category };
   });
 
-// Delete category
 export const deleteCategory = createServerFn({ method: "POST" })
   .inputValidator((id: string) => categoryIdSchema.parse(id))
   .handler(async ({ data: id }) => {
@@ -112,7 +97,6 @@ export const deleteCategory = createServerFn({ method: "POST" })
     return { success: true };
   });
 
-// Get category count
 export const getCategoriesCount = createServerFn().handler(async () => {
   const adminSession = await requireAdminSession();
   if (!adminSession.ok) {

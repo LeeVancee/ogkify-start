@@ -20,7 +20,7 @@ import { env } from "@/env/client";
 import { useI18n } from "@/lib/i18n";
 import { shopCheckoutOrderQueryOptions } from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
-import { updateCheckoutOrderDetails } from "@/server/orders";
+import { updateCheckoutOrderDetails } from "@/server/shop/orders";
 
 const stripePromise = env.VITE_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY)

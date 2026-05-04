@@ -5,6 +5,7 @@ import { useState } from "react";
 import { z } from "zod";
 
 import ProductCard from "@/components/shop/product/product-card";
+import { ShopSearchPending } from "@/components/shop/shop-pending";
 import { useI18n } from "@/lib/i18n";
 import { shopSearchResultsQueryOptions } from "@/lib/shop/query-options";
 
@@ -14,6 +15,7 @@ const searchParamsSchema = z.object({
 
 export const Route = createFileRoute("/(shop)/search")({
   validateSearch: searchParamsSchema,
+  pendingComponent: ShopSearchPending,
   loaderDeps: ({ search }) => ({
     q: search.q,
   }),

@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ProductFilters } from "@/components/shop/product/product-filters";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
+import { ShopProductsPending } from "@/components/shop/shop-pending";
 import {
   Select,
   SelectContent,
@@ -79,6 +80,7 @@ function SortSelect({
 
 export const Route = createFileRoute("/(shop)/products/")({
   validateSearch: searchParamsSchema,
+  pendingComponent: ShopProductsPending,
   loaderDeps: ({ search }) => ({
     category: search.category,
     sort: search.sort,

@@ -11,7 +11,7 @@ import {
   shopProductQueryOptions,
   shopRelatedProductsQueryOptions,
 } from "@/lib/shop/query-options";
-import { handleAddToCartFormAction } from "@/server/cart";
+import { handleAddToCartFormAction } from "@/server/shop/cart";
 
 export const Route = createFileRoute("/(shop)/product/$id")({
   pendingComponent: () => <ProductInfoLoading />,

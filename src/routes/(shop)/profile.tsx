@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
+import { ShopProfilePending } from "@/components/shop/shop-pending";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,6 +35,7 @@ import { getSession } from "@/server/getSession";
 
 export const Route = createFileRoute("/(shop)/profile")({
   component: ProfilePage,
+  pendingComponent: ShopProfilePending,
   beforeLoad: async () => {
     const session = await getSession();
     if (!session) {

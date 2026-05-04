@@ -1,20 +1,20 @@
 import { queryOptions } from "@tanstack/react-query";
 
-import { getUserCart } from "@/server/cart";
-import { getCategories } from "@/server/categories";
-import { getFeaturedProducts } from "@/server/get-featured-products";
+import { getUserCart } from "@/server/shop/cart";
 import {
   type FilterOptions,
+  getCategories,
+  getFeaturedProducts,
   getFilteredProducts,
-} from "@/server/get-filtered-products";
+} from "@/server/shop/catalog";
 import {
   getCheckoutOrder,
   getOrderById,
   getUnpaidOrders,
   getUserOrders,
-} from "@/server/orders";
-import { getProduct, getRelatedProducts } from "@/server/product-shop";
-import { searchProducts } from "@/server/search";
+} from "@/server/shop/orders";
+import { getProduct, getRelatedProducts } from "@/server/shop/product";
+import { searchProducts } from "@/server/shop/search";
 
 export const shopQueryKeys = {
   all: ["shop"] as const,
