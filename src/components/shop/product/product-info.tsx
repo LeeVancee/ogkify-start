@@ -4,6 +4,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { useI18n } from "@/lib/i18n";
+import { shopQueryKeys } from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductColor {
@@ -78,7 +79,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         );
       }
 
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
       toast.success(
         result.message ? result.message : t("shop.productDetail.addedToCart"),
       );

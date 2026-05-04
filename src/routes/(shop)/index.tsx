@@ -1,31 +1,29 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
 import { useI18n } from "@/lib/i18n";
+import {
+  shopCategoriesQueryOptions,
+  shopFeaturedProductsQueryOptions,
+} from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
-import { getCategories } from "@/server/categories";
-import { getFeaturedProducts } from "@/server/get-featured-products";
 
 export const Route = createFileRoute("/(shop)/")({
   component: RouteComponent,
-  loader: async () => {
-    const [featuredProducts, categories] = await Promise.all([
-      getFeaturedProducts({ data: 7 }),
-      getCategories(),
-    ]);
-
-    return {
-      featuredProducts,
-      categories,
-    };
-  },
-  staleTime: 1000 * 60 * 30,
-  gcTime: 1000 * 60 * 60,
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(shopFeaturedProductsQueryOptions(7)),
+      context.queryClient.ensureQueryData(shopCategoriesQueryOptions()),
+    ]),
 });
 
 function RouteComponent() {
   const { t } = useI18n();
-  const { featuredProducts, categories } = Route.useLoaderData();
+  const { data: featuredProducts } = useSuspenseQuery(
+    shopFeaturedProductsQueryOptions(7),
+  );
+  const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
   const featured = featuredProducts.slice(0, 4);
   const newArrivals = featuredProducts.slice(4, 7);
 

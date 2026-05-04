@@ -7,7 +7,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Loader2, LockKeyhole, Mail, MapPin, ShieldCheck } from "lucide-react";
 import type React from "react";
@@ -18,8 +18,9 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { env } from "@/env/client";
 import { useI18n } from "@/lib/i18n";
+import { shopCheckoutOrderQueryOptions } from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
-import { getCheckoutOrder, updateCheckoutOrderDetails } from "@/server/orders";
+import { updateCheckoutOrderDetails } from "@/server/orders";
 
 const stripePromise = env.VITE_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY)
@@ -31,37 +32,29 @@ const searchParamsSchema = z.object({
 
 export const Route = createFileRoute("/(shop)/checkout/")({
   validateSearch: searchParamsSchema,
+  loaderDeps: ({ search }) => ({
+    orderId: search.order_id,
+  }),
+  loader: ({ context, deps }) => {
+    if (!deps.orderId) {
+      return null;
+    }
+
+    return context.queryClient.ensureQueryData(
+      shopCheckoutOrderQueryOptions(deps.orderId),
+    );
+  },
+  pendingComponent: () => (
+    <div className="shop-shell flex min-h-[60vh] items-center justify-center">
+      <Loader2 className="h-10 w-10 animate-spin text-slate-900" />
+    </div>
+  ),
   component: CheckoutPage,
 });
 
 function CheckoutPage() {
   const { order_id } = Route.useSearch();
-  const { session } = Route.useRouteContext();
   const { t } = useI18n();
-
-  const {
-    data: checkoutResult,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["checkout-order", order_id],
-    queryFn: async () => {
-      if (!order_id) {
-        throw new Error(t("shop.checkoutPage.unavailable"));
-      }
-
-      const result = await getCheckoutOrder({ data: order_id });
-
-      if (!result.success) {
-        throw new Error(result.error || t("shop.checkoutPage.unableToLoad"));
-      }
-
-      return result;
-    },
-    enabled: Boolean(order_id),
-    staleTime: 1000 * 60,
-  });
 
   if (!order_id) {
     return (
@@ -79,21 +72,27 @@ function CheckoutPage() {
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="shop-shell flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-slate-900" />
-      </div>
-    );
-  }
+  return <CheckoutPageContent orderId={order_id} />;
+}
 
-  if (isError || !checkoutResult?.order || !checkoutResult.clientSecret) {
+function CheckoutPageContent({ orderId }: { orderId: string }) {
+  const { session } = Route.useRouteContext();
+  const { t } = useI18n();
+  const { data: checkoutResult } = useSuspenseQuery(
+    shopCheckoutOrderQueryOptions(orderId),
+  );
+
+  if (
+    !checkoutResult.success ||
+    !checkoutResult.order ||
+    !checkoutResult.clientSecret
+  ) {
     return (
       <CheckoutMessage
         title={t("shop.checkoutPage.unableToLoad")}
         description={
-          error instanceof Error
-            ? error.message
+          checkoutResult.error
+            ? checkoutResult.error
             : t("shop.checkoutPage.returnToCartAndTryAgain")
         }
         to="/cart"

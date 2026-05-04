@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -15,8 +16,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useI18n } from "@/lib/i18n";
-import { getCategories } from "@/server/categories";
-import { getFilteredProducts } from "@/server/get-filtered-products";
+import {
+  shopCategoriesQueryOptions,
+  shopFilteredProductsQueryOptions,
+} from "@/lib/shop/query-options";
 
 const searchParamsSchema = z.object({
   category: z.string().optional(),
@@ -87,23 +90,18 @@ export const Route = createFileRoute("/(shop)/products/")({
     size: search.size,
     page: search.page,
   }),
-  loader: async ({ deps }) => {
-    let page = 1;
-    if (deps.page) {
-      page = deps.page;
-    }
-    const minPrice = deps.minPrice;
-    const maxPrice = deps.maxPrice;
+  loader: ({ context, deps }) => {
+    const page = deps.page ?? 1;
 
-    const [{ products, total }, categories] = await Promise.all([
-      getFilteredProducts({
-        data: {
+    return Promise.all([
+      context.queryClient.ensureQueryData(
+        shopFilteredProductsQueryOptions({
           category: deps.category,
           sort: deps.sort,
           search: deps.search,
-          featured: deps.featured ? deps.featured : false,
-          minPrice,
-          maxPrice,
+          featured: deps.featured ?? false,
+          minPrice: deps.minPrice,
+          maxPrice: deps.maxPrice,
           colors: Array.isArray(deps.color)
             ? deps.color
             : deps.color
@@ -116,38 +114,45 @@ export const Route = createFileRoute("/(shop)/products/")({
               : undefined,
           page,
           limit: 12,
-        },
-      }),
-      getCategories(),
+        }),
+      ),
+      context.queryClient.ensureQueryData(shopCategoriesQueryOptions()),
     ]);
-
-    return {
-      products,
-      total,
-      categories,
-      currentPage: page,
-      minPrice,
-      maxPrice,
-      selectedCategory: deps.category ? deps.category : "",
-      selectedSort: deps.sort ? deps.sort : "featured",
-    };
   },
-  staleTime: 1000 * 60 * 10,
-  gcTime: 1000 * 60 * 30,
   component: CategoriesPage,
 });
 
 function CategoriesPage() {
+  const search = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const { t } = useI18n();
-  const {
-    products,
-    total,
-    categories,
-    currentPage,
-    selectedCategory,
-    selectedSort,
-  } = Route.useLoaderData();
+  const currentPage = search.page ?? 1;
+  const selectedCategory = search.category ?? "";
+  const selectedSort = search.sort ?? "featured";
+  const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
+  const { data: filteredProducts } = useSuspenseQuery(
+    shopFilteredProductsQueryOptions({
+      category: search.category,
+      sort: search.sort,
+      search: search.search,
+      featured: search.featured ?? false,
+      minPrice: search.minPrice,
+      maxPrice: search.maxPrice,
+      colors: Array.isArray(search.color)
+        ? search.color
+        : search.color
+          ? [search.color]
+          : undefined,
+      sizes: Array.isArray(search.size)
+        ? search.size
+        : search.size
+          ? [search.size]
+          : undefined,
+      page: currentPage,
+      limit: 12,
+    }),
+  );
+  const { products, total } = filteredProducts;
 
   const [filterOpen, setFilterOpen] = useState(false);
   const categoryLabel = useMemo(() => {

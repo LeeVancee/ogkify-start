@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
@@ -5,7 +6,7 @@ import { z } from "zod";
 
 import ProductCard from "@/components/shop/product/product-card";
 import { useI18n } from "@/lib/i18n";
-import { searchProducts } from "@/server/search";
+import { shopSearchResultsQueryOptions } from "@/lib/shop/query-options";
 
 const searchParamsSchema = z.object({
   q: z.string().optional(),
@@ -17,23 +18,24 @@ export const Route = createFileRoute("/(shop)/search")({
     q: search.q,
   }),
   component: RouteComponent,
-  loader: async ({ deps }) => {
-    if (!deps.q || !deps.q.trim()) {
-      return { products: [], query: "" };
+  loader: ({ context, deps }) => {
+    const query = deps.q?.trim();
+
+    if (!query) {
+      return null;
     }
 
-    const query = deps.q.trim();
-    const products = await searchProducts({ data: query });
-    return { products, query };
+    return context.queryClient.ensureQueryData(
+      shopSearchResultsQueryOptions(query),
+    );
   },
-  staleTime: 1000 * 60 * 5,
-  gcTime: 1000 * 60 * 15,
 });
 
 function RouteComponent() {
   const navigate = useNavigate({ from: Route.fullPath });
   const { t } = useI18n();
-  const { products, query } = Route.useLoaderData();
+  const { q } = Route.useSearch();
+  const query = q?.trim() ?? "";
   const [searchQuery, setSearchQuery] = useState(query);
 
   const submitSearch = () => {
@@ -88,42 +90,53 @@ function RouteComponent() {
           <p className="text-sm">{t("shop.searchPage.emptyPrompt")}</p>
         </div>
       ) : (
-        <>
-          <div className="mt-10 mb-6 flex items-end justify-between border-b border-slate-100 pb-4">
-            <div>
-              <h2 className="text-xl font-light text-slate-900">
-                {t("shop.searchPage.resultsFor")}{" "}
-                <span className="font-semibold">"{query}"</span>
-              </h2>
-              <p className="mt-0.5 text-sm text-slate-400">
-                {t(
-                  products.length === 1
-                    ? "shop.searchPage.productCount_one"
-                    : "shop.searchPage.productCount_other",
-                  { count: products.length },
-                )}
-              </p>
-            </div>
-          </div>
-
-          {products.length === 0 ? (
-            <div className="py-20 text-center">
-              <p className="text-lg font-light text-slate-500">
-                {t("shop.searchPage.noResults", { query })}
-              </p>
-              <p className="mt-2 text-sm text-slate-400">
-                {t("shop.searchPage.noResultsHint")}
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4 lg:gap-8">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
-          )}
-        </>
+        <SearchResults query={query} />
       )}
     </div>
+  );
+}
+
+function SearchResults({ query }: { query: string }) {
+  const { t } = useI18n();
+  const { data: products } = useSuspenseQuery(
+    shopSearchResultsQueryOptions(query),
+  );
+
+  return (
+    <>
+      <div className="mt-10 mb-6 flex items-end justify-between border-b border-slate-100 pb-4">
+        <div>
+          <h2 className="text-xl font-light text-slate-900">
+            {t("shop.searchPage.resultsFor")}{" "}
+            <span className="font-semibold">"{query}"</span>
+          </h2>
+          <p className="mt-0.5 text-sm text-slate-400">
+            {t(
+              products.length === 1
+                ? "shop.searchPage.productCount_one"
+                : "shop.searchPage.productCount_other",
+              { count: products.length },
+            )}
+          </p>
+        </div>
+      </div>
+
+      {products.length === 0 ? (
+        <div className="py-20 text-center">
+          <p className="text-lg font-light text-slate-500">
+            {t("shop.searchPage.noResults", { query })}
+          </p>
+          <p className="mt-2 text-sm text-slate-400">
+            {t("shop.searchPage.noResultsHint")}
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4 lg:gap-8">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      )}
+    </>
   );
 }

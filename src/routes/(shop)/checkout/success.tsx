@@ -1,10 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle, Loader2 } from "lucide-react";
-import { Suspense } from "react";
 import { z } from "zod";
 
-import { getOrderById } from "@/server/orders";
+import { shopOrderDetailQueryOptions } from "@/lib/shop/query-options";
 
 // define search params schema
 const searchParamsSchema = z.object({
@@ -14,64 +13,36 @@ const searchParamsSchema = z.object({
 
 export const Route = createFileRoute("/(shop)/checkout/success")({
   validateSearch: searchParamsSchema,
+  loaderDeps: ({ search }) => ({
+    orderId: search.order_id,
+  }),
+  loader: ({ context, deps }) => {
+    if (!deps.orderId) {
+      return null;
+    }
+
+    return context.queryClient.ensureQueryData(
+      shopOrderDetailQueryOptions(deps.orderId),
+    );
+  },
+  pendingComponent: () => (
+    <CenteredCheckoutState>
+      <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
+      <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
+      <p className="text-center text-muted-foreground">
+        Please wait, we are processing your payment.
+      </p>
+    </CenteredCheckoutState>
+  ),
   component: CheckoutSuccessPage,
 });
 
-function CheckoutSuccessContent() {
-  const { order_id } = Route.useSearch();
+function CheckoutSuccessContent({ orderId }: { orderId: string }) {
+  const { data: orderResult } = useSuspenseQuery(
+    shopOrderDetailQueryOptions(orderId),
+  );
 
-  const {
-    data: orderResult,
-    isLoading,
-    isError,
-    error,
-  } = useQuery({
-    queryKey: ["order", order_id],
-    queryFn: async () => {
-      if (!order_id) {
-        throw new Error("Checkout success page requires order_id");
-      }
-
-      const result = await getOrderById({ data: order_id });
-
-      if (!result.success) {
-        if (!result.error) {
-          throw new Error("Order request failed without an error message");
-        }
-
-        throw new Error(result.error);
-      }
-
-      return result;
-    },
-    retry: 1,
-    refetchInterval: (query) => {
-      const order = query.state.data?.order;
-
-      if (!order_id) {
-        return false;
-      }
-
-      return order?.paymentStatus === "PAID" ? false : 2000;
-    },
-    refetchIntervalInBackground: true,
-    staleTime: 1000 * 60 * 10, // 10 minutes cache, checkout success page is usually only visited once
-    enabled: Boolean(order_id),
-  });
-
-  const orderData = orderResult?.order;
-
-  if (isLoading) {
-    return (
-      <CenteredCheckoutState>
-        <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
-        <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
-        <p className="text-center text-muted-foreground">
-          Please wait, we are processing your payment.
-        </p>
-      </CenteredCheckoutState>
-    );
-  }
+  const orderData = orderResult.order;
 
   if (orderData && orderData.paymentStatus !== "PAID") {
     return (
@@ -91,15 +62,15 @@ function CheckoutSuccessContent() {
     );
   }
 
-  if (isError || !orderData) {
+  if (!orderResult.success || !orderData) {
     return (
       <CenteredCheckoutState>
         <h1 className="mb-4 text-2xl font-bold">
           Unable to get order information
         </h1>
         <p className="mb-8 text-center text-muted-foreground">
-          {error instanceof Error
-            ? error.message
+          {orderResult.error
+            ? orderResult.error
             : "Unable to get order details."}
         </p>
         <Link
@@ -172,18 +143,26 @@ function CheckoutSuccessContent() {
 }
 
 function CheckoutSuccessPage() {
-  return (
-    <Suspense
-      fallback={
-        <CenteredCheckoutState>
-          <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
-          <h1 className="mb-2 text-2xl font-bold">Loading...</h1>
-        </CenteredCheckoutState>
-      }
-    >
-      <CheckoutSuccessContent />
-    </Suspense>
-  );
+  const { order_id } = Route.useSearch();
+
+  if (!order_id) {
+    return (
+      <CenteredCheckoutState>
+        <h1 className="mb-4 text-2xl font-bold">Missing order information</h1>
+        <p className="mb-8 text-center text-muted-foreground">
+          Checkout success page requires order_id.
+        </p>
+        <Link
+          to="/"
+          className="inline-flex items-center justify-center gap-2 h-10 px-6 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90 transition-colors"
+        >
+          Return to Home
+        </Link>
+      </CenteredCheckoutState>
+    );
+  }
+
+  return <CheckoutSuccessContent orderId={order_id} />;
 }
 
 function CenteredCheckoutState({ children }: { children: React.ReactNode }) {

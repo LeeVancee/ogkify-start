@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   CheckCircle,
@@ -12,10 +12,20 @@ import { useState } from "react";
 
 import { DeleteOrderButton } from "@/components/shop/orders/delete-order-button";
 import { PayOrderButton } from "@/components/shop/orders/pay-order-button";
+import {
+  shopQueryKeys,
+  shopUnpaidOrdersQueryOptions,
+  shopUserOrdersQueryOptions,
+} from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
-import { getUnpaidOrders, getUserOrders } from "@/server/orders";
 
 export const Route = createFileRoute("/(shop)/myorders")({
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(shopUserOrdersQueryOptions()),
+      context.queryClient.ensureQueryData(shopUnpaidOrdersQueryOptions()),
+    ]),
+  pendingComponent: OrdersPageLoading,
   component: MyOrdersPage,
 });
 
@@ -67,44 +77,12 @@ function MyOrdersPage() {
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { data: allOrdersData, isLoading: isLoadingAll } = useQuery({
-    queryKey: ["orders", "all"],
-    queryFn: () => getUserOrders({}),
-    staleTime: 1000 * 60 * 3,
-  });
-
-  const { data: unpaidOrdersData, isLoading: isLoadingUnpaid } = useQuery({
-    queryKey: ["orders", "unpaid"],
-    queryFn: () => getUnpaidOrders({}),
-    staleTime: 1000 * 60 * 3,
-  });
-
-  if (isLoadingAll || isLoadingUnpaid) {
-    return (
-      <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-        <div className="mb-10">
-          <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-            Account
-          </p>
-          <h1 className="text-3xl font-light tracking-tight text-slate-900">
-            My Orders
-          </h1>
-        </div>
-        <div className="space-y-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-20 animate-pulse rounded-2xl bg-slate-100"
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (!allOrdersData || !unpaidOrdersData) {
-    throw new Error("Orders data is missing");
-  }
+  const { data: allOrdersData } = useSuspenseQuery(
+    shopUserOrdersQueryOptions(),
+  );
+  const { data: unpaidOrdersData } = useSuspenseQuery(
+    shopUnpaidOrdersQueryOptions(),
+  );
 
   if (!allOrdersData.success || !unpaidOrdersData.success) {
     throw new Error("Failed to load orders");
@@ -297,7 +275,7 @@ function MyOrdersPage() {
                             orderNumber={order.orderNumber}
                             onDeleted={() =>
                               queryClient.invalidateQueries({
-                                queryKey: ["orders"],
+                                queryKey: shopQueryKeys.orders.all(),
                               })
                             }
                           />
@@ -325,6 +303,29 @@ function MyOrdersPage() {
             </div>
           );
         })}
+      </div>
+    </div>
+  );
+}
+
+function OrdersPageLoading() {
+  return (
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mb-10">
+        <p className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+          Account
+        </p>
+        <h1 className="text-3xl font-light tracking-tight text-slate-900">
+          My Orders
+        </h1>
+      </div>
+      <div className="space-y-3">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="h-20 animate-pulse rounded-2xl bg-slate-100"
+          />
+        ))}
       </div>
     </div>
   );

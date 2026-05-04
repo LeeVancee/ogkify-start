@@ -4,6 +4,7 @@ import { Minus, Plus, ShieldCheck, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useI18n } from "@/lib/i18n";
+import { shopQueryKeys } from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
 import {
   createCheckoutPaymentIntent,
@@ -37,7 +38,7 @@ export function useCartActions({
     mutationFn: (cartItemId: string) => removeFromCart({ data: cartItemId }),
     onSuccess: () => {
       toast.success(t("shop.cart.removedToast"));
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
     },
     onError: () => {
       toast.error(t("shop.cart.removeErrorToast"));
@@ -53,7 +54,7 @@ export function useCartActions({
       quantity: number;
     }) => updateCartItemQuantity({ data: { cartItemId, quantity } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["cart"] });
+      queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
     },
     onError: () => {
       toast.error(t("shop.cart.updateErrorToast"));

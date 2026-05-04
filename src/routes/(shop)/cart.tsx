@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
@@ -10,34 +10,21 @@ import {
   useCartActions,
 } from "@/components/shop/cart/cart-ui";
 import { useI18n } from "@/lib/i18n";
-import { getUserCart } from "@/server/cart";
+import { shopCartQueryOptions } from "@/lib/shop/query-options";
 
 export const Route = createFileRoute("/(shop)/cart")({
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(shopCartQueryOptions()),
+  pendingComponent: () => <SpinnerLoading text="Loading cart..." />,
   component: CartPage,
 });
 
 function CartPage() {
   const { t } = useI18n();
 
-  const {
-    data: cartData,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["cart"],
-    queryFn: () => getUserCart(),
-    staleTime: 1000 * 60 * 2,
-  });
+  const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
 
   const cartActions = useCartActions();
-
-  if (isLoading) {
-    return <SpinnerLoading text={t("shop.cart.loading")} />;
-  }
-
-  if (isError || !cartData) {
-    throw new Error(t("shop.cart.loadError"));
-  }
 
   const items = cartData.items as Array<CartItemView>;
   const subtotal = getCartSubtotal(items);

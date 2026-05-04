@@ -1,14 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
 import { CartSheet } from "@/components/shop/cart-sheet";
-import type { CartSheetData } from "@/components/shop/cart-sheet";
 import { useI18n } from "@/lib/i18n";
+import { shopCartQueryOptions } from "@/lib/shop/query-options";
 import { cn } from "@/lib/utils";
-import { getUserCart } from "@/server/cart";
 
 import { DropDown } from "../DropDown";
 
@@ -24,14 +23,10 @@ interface Session {
 }
 
 interface HeaderProps {
-  initialCartData: CartSheetData;
   initialSession?: Session;
 }
 
-export default function Header({
-  initialCartData,
-  initialSession,
-}: HeaderProps) {
+export default function Header({ initialSession }: HeaderProps) {
   const pathname = useLocation().pathname;
   const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,16 +35,7 @@ export default function Header({
     { name: t("shop.header.allProducts"), href: "/products", search: {} },
     { name: t("shop.header.search"), href: "/search", search: {} },
   ];
-  const {
-    data: cartData,
-    isLoading: isCartLoading,
-    isError: isCartError,
-  } = useQuery({
-    queryKey: ["cart"],
-    queryFn: () => getUserCart(),
-    initialData: initialCartData,
-    staleTime: 1000 * 60 * 2,
-  });
+  const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
@@ -161,8 +147,8 @@ export default function Header({
 
       <CartSheet
         cartData={cartData}
-        isLoading={isCartLoading}
-        isError={isCartError}
+        isLoading={false}
+        isError={false}
         open={isCartOpen}
         onOpenChange={setIsCartOpen}
       />

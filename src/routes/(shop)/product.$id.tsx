@@ -1,3 +1,4 @@
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
@@ -6,31 +7,33 @@ import { ProductInfo } from "@/components/shop/product/product-info";
 import { ProductInfoLoading } from "@/components/shop/product/product-info-loading";
 import { ProductTabs } from "@/components/shop/product/product-tabs";
 import { useI18n } from "@/lib/i18n";
+import {
+  shopProductQueryOptions,
+  shopRelatedProductsQueryOptions,
+} from "@/lib/shop/query-options";
 import { handleAddToCartFormAction } from "@/server/cart";
-import { getProduct, getRelatedProducts } from "@/server/product-shop";
 
 export const Route = createFileRoute("/(shop)/product/$id")({
   pendingComponent: () => <ProductInfoLoading />,
   component: RouteComponent,
-  loader: async ({ params }: { params: { id: string } }) => {
-    const product = await getProduct({ data: params.id });
-    if (!product) {
-      throw new Error("Product not found");
-    }
+  loader: async ({ context, params }) => {
+    const product = await context.queryClient.ensureQueryData(
+      shopProductQueryOptions(params.id),
+    );
 
-    const relatedProducts = await getRelatedProducts({
-      data: { productId: product.id, category: product.categoryId },
-    });
-
-    return { product, relatedProducts };
+    await context.queryClient.ensureQueryData(
+      shopRelatedProductsQueryOptions(product.id, product.categoryId),
+    );
   },
-  staleTime: 1000 * 60 * 15,
-  gcTime: 1000 * 60 * 60,
 });
 
 function RouteComponent() {
   const { t } = useI18n();
-  const { product, relatedProducts } = Route.useLoaderData();
+  const { id } = Route.useParams();
+  const { data: product } = useSuspenseQuery(shopProductQueryOptions(id));
+  const { data: relatedProducts } = useSuspenseQuery(
+    shopRelatedProductsQueryOptions(product.id, product.categoryId),
+  );
 
   const addToCartAdapter = async (formData: FormData) => {
     const result = await handleAddToCartFormAction({ data: formData });
