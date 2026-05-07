@@ -102,6 +102,7 @@ export async function synchronizePaidOrder(orderId: string, userId: string) {
   }
 
   if (order.paymentStatus === "PAID") {
+    await clearUserCartByUserId(userId);
     return order;
   }
 
@@ -118,6 +119,7 @@ export async function synchronizePaidOrder(orderId: string, userId: string) {
   }
 
   await markOrderPaidFromPaymentIntent(paymentIntent);
+  await clearUserCartByUserId(userId);
 
   const updatedOrder = await db.query.orders.findFirst({
     where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),

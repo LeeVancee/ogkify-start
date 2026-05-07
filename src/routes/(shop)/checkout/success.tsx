@@ -1,9 +1,13 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { z } from "zod";
 
-import { shopOrderDetailQueryOptions } from "@/lib/shop/query-options";
+import {
+  shopOrderDetailQueryOptions,
+  shopQueryKeys,
+} from "@/lib/shop/query-options";
 
 // define search params schema
 const searchParamsSchema = z.object({
@@ -38,11 +42,25 @@ export const Route = createFileRoute("/(shop)/checkout/success")({
 });
 
 function CheckoutSuccessContent({ orderId }: { orderId: string }) {
+  const queryClient = useQueryClient();
   const { data: orderResult } = useSuspenseQuery(
     shopOrderDetailQueryOptions(orderId),
   );
 
   const orderData = orderResult.order;
+
+  useEffect(() => {
+    if (orderData?.paymentStatus !== "PAID") {
+      return;
+    }
+
+    queryClient.setQueryData(shopQueryKeys.cart(), {
+      items: [],
+      totalItems: 0,
+    });
+    queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
+    queryClient.invalidateQueries({ queryKey: shopQueryKeys.orders.all() });
+  }, [orderData?.paymentStatus, queryClient]);
 
   if (orderData && orderData.paymentStatus !== "PAID") {
     return (
