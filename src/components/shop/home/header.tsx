@@ -11,22 +11,9 @@ import { cn } from "@/lib/utils";
 
 import { DropDown } from "../DropDown";
 
-interface SessionUser {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  role?: string | null;
-}
 
-interface Session {
-  user: SessionUser;
-}
 
-interface HeaderProps {
-  initialSession?: Session;
-}
-
-export default function Header({ initialSession }: HeaderProps) {
+export default function Header() {
   const pathname = useLocation().pathname;
   const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,6 +23,7 @@ export default function Header({ initialSession }: HeaderProps) {
     { name: t("shop.header.search"), href: "/search", search: {} },
   ];
   const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
+ 
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
@@ -91,7 +79,7 @@ export default function Header({ initialSession }: HeaderProps) {
               <Search className="h-5 w-5" />
             </Link>
 
-            <DropDown initialSession={initialSession} />
+            <DropDown />
 
             <button
               type="button"

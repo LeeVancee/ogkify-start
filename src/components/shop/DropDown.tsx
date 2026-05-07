@@ -17,22 +17,9 @@ import { useI18n } from "@/lib/i18n";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
-interface SessionUser {
-  name?: string | null;
-  email?: string | null;
-  image?: string | null;
-  role?: string | null;
-}
 
-interface Session {
-  user: SessionUser;
-}
 
-interface DropDownProps {
-  initialSession?: Session;
-}
-
-export function DropDown({ initialSession }: DropDownProps = {}) {
+export function DropDown() {
   const navigate = useNavigate();
   const { t } = useI18n();
 
@@ -40,7 +27,7 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
   const { data: session, isPending } = authClient.useSession();
 
   // Prioritize server-side preloaded session data
-  const currentSession = initialSession || session;
+  
 
   const handleLogout = () => {
     authClient.signOut({
@@ -52,7 +39,7 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
     });
   };
 
-  if (!initialSession && isPending) {
+  if (isPending) {
     return (
       <Button variant="ghost" className="relative h-8 w-8 rounded-full">
         <Avatar className="h-8 w-8">
@@ -62,7 +49,7 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
     );
   }
 
-  if (!currentSession) {
+  if (!session) {
     return (
       <Button variant="ghost" onClick={() => navigate({ to: "/login" })}>
         {t("shop.userMenu.login")}
@@ -70,11 +57,11 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
     );
   }
 
-  if (!currentSession.user.name) {
+  if (!session.user.name) {
     throw new Error("Authenticated user name is required");
   }
 
-  if (!currentSession.user.email) {
+  if (!session.user.email) {
     throw new Error("Authenticated user email is required");
   }
 
@@ -84,14 +71,15 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
         render={
           <Button variant="ghost" className="relative h-9 w-9 rounded-lg p-0">
             <Avatar className="h-8 w-8">
-              {currentSession.user.image ? (
+              { 
+              session.user.image ? (
                 <AvatarImage
-                  src={currentSession.user.image}
-                  alt={currentSession.user.name}
+                  src={session.user.image}
+                  alt={session.user.name}
                 />
               ) : null}
               <AvatarFallback>
-                {currentSession.user.name[0].toUpperCase()}
+                {session.user.name[0].toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -102,15 +90,15 @@ export function DropDown({ initialSession }: DropDownProps = {}) {
           <DropdownMenuLabel className="font-normal text-black">
             <div className="flex flex-col space-y-1">
               <p className="text-sm font-medium leading-none">
-                {currentSession.user.name}
+                {session.user.name}
               </p>
               <p className="text-xs leading-none text-muted-foreground">
-                {currentSession.user.email}
+                {session.user.email}
               </p>
             </div>
           </DropdownMenuLabel>
         </DropdownMenuGroup>
-        {currentSession.user.role === "admin" && (
+        {session.user.role === "admin" && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate({ to: "/dashboard" })}>
