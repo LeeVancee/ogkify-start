@@ -44,6 +44,7 @@ export function adminSessionQueryOptions() {
   return queryOptions({
     queryKey: adminQueryKeys.session(),
     queryFn: () => getSession(),
+    staleTime: 1000 * 60 * 5,
   });
 }
 
