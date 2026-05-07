@@ -91,17 +91,7 @@ export default function Header({ initialSession }: HeaderProps) {
               <Search className="h-5 w-5" />
             </Link>
 
-            {initialSession ? (
-              <DropDown initialSession={initialSession} />
-            ) : (
-              <Link
-                to="/login"
-                className="flex h-9 items-center justify-center rounded-lg px-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                aria-label={t("shop.header.account")}
-              >
-                {t("shop.userMenu.login")}
-              </Link>
-            )}
+            <DropDown initialSession={initialSession} />
 
             <button
               type="button"
