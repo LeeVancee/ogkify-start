@@ -299,6 +299,7 @@ export const getCheckoutOrder = createServerFn()
       return {
         success: true,
         clientSecret: payment.clientSecret,
+        customerEmail: session.user.email,
         order: {
           id: order.id,
           orderNumber: order.orderNumber,

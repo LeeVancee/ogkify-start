@@ -76,7 +76,6 @@ function CheckoutPage() {
 }
 
 function CheckoutPageContent({ orderId }: { orderId: string }) {
-  const { session } = Route.useRouteContext();
   const { t } = useI18n();
   const { data: checkoutResult } = useSuspenseQuery(
     shopCheckoutOrderQueryOptions(orderId),
@@ -155,7 +154,7 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
           >
             <CheckoutPaymentForm
               orderId={checkoutResult.order.id}
-              customerEmail={session?.user.email || ""}
+              customerEmail={checkoutResult.customerEmail}
             />
           </Elements>
         </div>

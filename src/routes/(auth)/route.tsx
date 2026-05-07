@@ -5,9 +5,13 @@ import {
   redirect,
 } from "@tanstack/react-router";
 
+import { getSession } from "@/server/getSession";
+
 export const Route = createFileRoute("/(auth)")({
-  beforeLoad: async ({ context }) => {
-    if (context.session) {
+  beforeLoad: async () => {
+    const session = await getSession();
+
+    if (session) {
       throw redirect({ to: "/" });
     }
   },

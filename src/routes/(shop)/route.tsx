@@ -11,11 +11,9 @@ export const Route = createFileRoute("/(shop)")({
 });
 
 function RouteComponent() {
-  const { session } = Route.useRouteContext();
-
   return (
     <div className=" min-h-screen flex flex-col">
-      <Header initialSession={session} />
+      <Header />
       <main className="flex-1">
         <Outlet />
       </main>

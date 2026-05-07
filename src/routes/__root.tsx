@@ -11,13 +11,11 @@ import { Toaster } from "@/components/ui/sonner";
 import { getLocale, I18nProvider } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
 import { seo } from "@/lib/seo";
-import { getSession } from "@/server/getSession";
 
 import appCss from "../styles.css?url";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
-  session: Awaited<ReturnType<typeof getSession>> | undefined;
   locale: Locale;
 }>()({
   head: () => ({
@@ -46,11 +44,8 @@ export const Route = createRootRouteWithContext<{
   }),
 
   beforeLoad: async () => {
-    const [session, locale] = await Promise.all([getSession(), getLocale()]);
-
     return {
-      session: session || undefined,
-      locale,
+      locale: await getLocale(),
     };
   },
 
