@@ -17,8 +17,6 @@ import { useI18n } from "@/lib/i18n";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
-
-
 export function DropDown() {
   const navigate = useNavigate();
   const { t } = useI18n();
@@ -27,7 +25,6 @@ export function DropDown() {
   const { data: session, isPending } = authClient.useSession();
 
   // Prioritize server-side preloaded session data
-  
 
   const handleLogout = () => {
     authClient.signOut({
@@ -71,12 +68,8 @@ export function DropDown() {
         render={
           <Button variant="ghost" className="relative h-9 w-9 rounded-lg p-0">
             <Avatar className="h-8 w-8">
-              { 
-              session.user.image ? (
-                <AvatarImage
-                  src={session.user.image}
-                  alt={session.user.name}
-                />
+              {session.user.image ? (
+                <AvatarImage src={session.user.image} alt={session.user.name} />
               ) : null}
               <AvatarFallback>
                 {session.user.name[0].toUpperCase()}

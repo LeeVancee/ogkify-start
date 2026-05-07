@@ -8,7 +8,9 @@ import { saveAdminCategory } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/categories/$id")({
   loader: ({ context, params }) => {
-    void context.queryClient.prefetchQuery(adminCategoryQueryOptions(params.id));
+    void context.queryClient.prefetchQuery(
+      adminCategoryQueryOptions(params.id),
+    );
   },
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,

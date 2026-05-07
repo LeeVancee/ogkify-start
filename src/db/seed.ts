@@ -1,8 +1,9 @@
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import fs from "node:fs";
 import path from "node:path";
+
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
 import * as schema from "./schema";
 
@@ -127,23 +128,33 @@ async function seed() {
     console.log("Inserted edition types");
 
     const scrapedProducts = JSON.parse(
-      fs.readFileSync(path.join(process.cwd(), "src/db/scraped_products.json"), "utf-8"),
+      fs.readFileSync(
+        path.join(process.cwd(), "src/db/scraped_products.json"),
+        "utf-8",
+      ),
     ) as CatalogProduct[];
 
     // 动态提取分类
-    const uniqueCategoryNames = [...new Set(scrapedProducts.map(p => p.category))];
-    
+    const uniqueCategoryNames = [
+      ...new Set(scrapedProducts.map((p) => p.category)),
+    ];
+
     const insertedCategories = await db
       .insert(schema.categories)
       .values(
         uniqueCategoryNames.map((name) => {
           // 寻找该分类下的第一个商品，用它的图片作为分类封面
-          const firstProductInCat = scrapedProducts.find(p => p.category === name);
+          const firstProductInCat = scrapedProducts.find(
+            (p) => p.category === name,
+          );
           return {
             name: name,
-            imageUrl: buildCategoryImage(name, firstProductInCat?.directImageUrl),
+            imageUrl: buildCategoryImage(
+              name,
+              firstProductInCat?.directImageUrl,
+            ),
           };
-        })
+        }),
       )
       .returning();
 

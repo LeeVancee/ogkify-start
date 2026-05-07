@@ -82,41 +82,6 @@ export function ShopHomePending() {
   );
 }
 
-export function ShopProductsPending() {
-  return (
-    <div className="shop-shell py-10 sm:py-14">
-      <div className="mb-8 flex items-end justify-between">
-        <div className="space-y-3">
-          <SkeletonBlock className="h-3 w-24 rounded-full" />
-          <SkeletonBlock className="h-10 w-52" />
-        </div>
-        <SkeletonBlock className="hidden h-11 w-[180px] rounded-full sm:block" />
-      </div>
-
-      <div className="flex gap-10">
-        <aside className="hidden w-52 shrink-0 space-y-4 sm:block">
-          <SkeletonBlock className="h-5 w-24 rounded-full" />
-          {Array.from({ length: 6 }).map((_, index) => (
-            <SkeletonBlock key={index} className="h-10 w-full rounded-xl" />
-          ))}
-        </aside>
-
-        <div className="flex-1">
-          <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4 lg:gap-8">
-            {Array.from({ length: 8 }).map((_, index) => (
-              <div key={index} className="space-y-3">
-                <SkeletonBlock className="aspect-3/4 w-full" />
-                <SkeletonBlock className="h-4 w-3/4 rounded-full" />
-                <SkeletonBlock className="h-4 w-1/3 rounded-full" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function ShopSearchPending() {
   return (
     <div className="shop-shell py-10 sm:py-14">

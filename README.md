@@ -72,16 +72,16 @@ VITE_CLOUDINARY_UPLOAD_PRESET="your-cloudinary-upload-preset"
 
 ### Environment Variable Reference
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `DATABASE_URL` | Yes | PostgreSQL connection string used by Drizzle |
-| `BETTER_AUTH_SECRET` | Yes | Secret key used by Better Auth |
-| `STRIPE_SECRET_KEY` | Yes | Stripe server-side secret key |
-| `STRIPE_WEBHOOK_SECRET` | Yes | Stripe webhook signing secret |
-| `VITE_STRIPE_PUBLISHABLE_KEY` | Yes | Stripe publishable key used on the client |
-| `VITE_BASE_URL` | Yes | Base URL of the app, usually `http://localhost:3000` in development |
-| `VITE_CLOUDINARY_CLOUD_NAME` | Yes | Cloudinary cloud name for image uploads |
-| `VITE_CLOUDINARY_UPLOAD_PRESET` | Yes | Cloudinary unsigned upload preset |
+| Variable                        | Required | Description                                                         |
+| ------------------------------- | -------- | ------------------------------------------------------------------- |
+| `DATABASE_URL`                  | Yes      | PostgreSQL connection string used by Drizzle                        |
+| `BETTER_AUTH_SECRET`            | Yes      | Secret key used by Better Auth                                      |
+| `STRIPE_SECRET_KEY`             | Yes      | Stripe server-side secret key                                       |
+| `STRIPE_WEBHOOK_SECRET`         | Yes      | Stripe webhook signing secret                                       |
+| `VITE_STRIPE_PUBLISHABLE_KEY`   | Yes      | Stripe publishable key used on the client                           |
+| `VITE_BASE_URL`                 | Yes      | Base URL of the app, usually `http://localhost:3000` in development |
+| `VITE_CLOUDINARY_CLOUD_NAME`    | Yes      | Cloudinary cloud name for image uploads                             |
+| `VITE_CLOUDINARY_UPLOAD_PRESET` | Yes      | Cloudinary unsigned upload preset                                   |
 
 ## Database Setup
 
@@ -145,23 +145,23 @@ pnpm start:local
 
 ## Available Scripts
 
-| Command | Description |
-| --- | --- |
-| `pnpm dev` | Start the development server on port 3000 |
-| `pnpm dev:clean` | Clear Vite cache and start the dev server |
-| `pnpm build` | Build the app for production |
-| `pnpm start` | Start the production server |
+| Command            | Description                                    |
+| ------------------ | ---------------------------------------------- |
+| `pnpm dev`         | Start the development server on port 3000      |
+| `pnpm dev:clean`   | Clear Vite cache and start the dev server      |
+| `pnpm build`       | Build the app for production                   |
+| `pnpm start`       | Start the production server                    |
 | `pnpm start:local` | Start the production server with `.env` loaded |
-| `pnpm test` | Run tests with Vitest |
-| `pnpm typecheck` | Run TypeScript type checking |
-| `pnpm lint` | Run oxlint |
-| `pnpm lint:fix` | Fix lint issues |
-| `pnpm format` | Check formatting with oxfmt |
-| `pnpm format:fix` | Format files |
-| `pnpm check` | Fix lint issues and format files |
-| `pnpm db:push` | Push database schema changes |
-| `pnpm db:studio` | Open Drizzle Studio |
-| `pnpm db:seed` | Seed demo data |
+| `pnpm test`        | Run tests with Vitest                          |
+| `pnpm typecheck`   | Run TypeScript type checking                   |
+| `pnpm lint`        | Run oxlint                                     |
+| `pnpm lint:fix`    | Fix lint issues                                |
+| `pnpm format`      | Check formatting with oxfmt                    |
+| `pnpm format:fix`  | Format files                                   |
+| `pnpm check`       | Fix lint issues and format files               |
+| `pnpm db:push`     | Push database schema changes                   |
+| `pnpm db:studio`   | Open Drizzle Studio                            |
+| `pnpm db:seed`     | Seed demo data                                 |
 
 ## Project Structure
 

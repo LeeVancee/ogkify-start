@@ -7,7 +7,7 @@ import { z } from "zod";
 import { ProductFilters } from "@/components/shop/product/product-filters";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
-import { ShopProductsPending } from "@/components/shop/shop-pending";
+import { ProductsLoading } from "@/components/shop/product/products-loading";
 import {
   Select,
   SelectContent,
@@ -80,7 +80,6 @@ function SortSelect({
 
 export const Route = createFileRoute("/(shop)/products/")({
   validateSearch: searchParamsSchema,
-  pendingComponent: ShopProductsPending,
   loaderDeps: ({ search }) => ({
     category: search.category,
     sort: search.sort,
@@ -117,7 +116,6 @@ export const Route = createFileRoute("/(shop)/products/")({
         limit: 12,
       }),
     );
-    void context.queryClient.prefetchQuery(shopCategoriesQueryOptions());
   },
   component: CategoriesPage,
 });
@@ -131,6 +129,7 @@ function CategoriesPage() {
   const selectedSort = search.sort ?? "featured";
   const [filterOpen, setFilterOpen] = useState(false);
   const categoriesQuery = useQuery(shopCategoriesQueryOptions());
+  const categories = categoriesQuery.data ?? [];
   const filteredProductsQuery = useQuery(
     shopFilteredProductsQueryOptions({
       category: search.category,
@@ -154,17 +153,13 @@ function CategoriesPage() {
     }),
   );
 
-  if (categoriesQuery.isPending || filteredProductsQuery.isPending) {
-    return <ShopProductsPending />;
+  if (filteredProductsQuery.isError) {
+    throw filteredProductsQuery.error;
   }
 
-  if (categoriesQuery.isError || filteredProductsQuery.isError) {
-    throw categoriesQuery.error ?? filteredProductsQuery.error;
-  }
-
-  const categories = categoriesQuery.data;
   const filteredProducts = filteredProductsQuery.data;
-  const { products, total } = filteredProducts;
+  const total = filteredProducts?.total ?? 0;
+  const products = filteredProducts?.products ?? [];
   const categoryLabel = selectedCategory
     ? (categories.find((item) => item.name === selectedCategory)?.name ??
       t("shop.productFilters.fallbackProducts"))
@@ -200,10 +195,10 @@ function CategoriesPage() {
     });
   };
 
-  const filterSidebar = <ProductFilters categories={categories} />;
+  const mobileFilters = <ProductFilters categories={categories} />;
 
   return (
-    <div className="shop-shell py-10 sm:py-14">
+    <>
       <div className="mb-8 flex items-end justify-between">
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
@@ -241,71 +236,67 @@ function CategoriesPage() {
         </div>
       </div>
 
-      <div className="flex gap-10">
-        <aside className="hidden w-52 shrink-0 sm:block">{filterSidebar}</aside>
-
-        {filterOpen ? (
-          <div className="fixed inset-0 z-50 sm:hidden">
-            <div
-              className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-              onClick={() => setFilterOpen(false)}
-            />
-            <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-white p-6 shadow-2xl">
-              <div className="mb-6 flex items-center justify-between">
-                <span className="text-sm font-semibold text-slate-900">
-                  {t("shop.productFilters.filters")}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setFilterOpen(false)}
-                  className="p-1 text-slate-400 hover:text-slate-700 cursor-pointer"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              {filterSidebar}
-              <div className="mt-8">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
-                  {t("shop.productFilters.sortBy")}
-                </h3>
-                <SortSelect
-                  value={selectedSort}
-                  onValueChange={(value) =>
-                    updateSearch({ sort: value ?? "featured", page: 1 })
-                  }
-                  triggerClassName="h-11 w-full rounded-xl border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none"
-                  contentClassName="w-(--anchor-width)"
-                />
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        <div className="flex-1">
-          {products.length === 0 ? (
-            <div className="py-24 text-center">
-              <p className="text-lg font-light text-slate-500">
-                {t("shop.productFilters.noMatches")}
-              </p>
+      {filterOpen ? (
+        <div className="fixed inset-0 z-50 sm:hidden">
+          <div
+            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+            onClick={() => setFilterOpen(false)}
+          />
+          <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-white p-6 shadow-2xl">
+            <div className="mb-6 flex items-center justify-between">
+              <span className="text-sm font-semibold text-slate-900">
+                {t("shop.productFilters.filters")}
+              </span>
               <button
                 type="button"
-                onClick={clearProductFilters}
-                className="mt-4 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 cursor-pointer"
+                onClick={() => setFilterOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-700 cursor-pointer"
               >
-                {t("shop.productFilters.clearFilters")}
+                <X className="h-5 w-5" />
               </button>
             </div>
-          ) : (
-            <>
-              <ProductGrid products={products} />
-              <ProductPagination
-                currentPage={currentPage}
-                totalPages={Math.ceil(total / 12)}
+            {mobileFilters}
+            <div className="mt-8">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                {t("shop.productFilters.sortBy")}
+              </h3>
+              <SortSelect
+                value={selectedSort}
+                onValueChange={(value) =>
+                  updateSearch({ sort: value ?? "featured", page: 1 })
+                }
+                triggerClassName="h-11 w-full rounded-xl border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none"
+                contentClassName="w-(--anchor-width)"
               />
-            </>
-          )}
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      ) : null}
+
+      {filteredProductsQuery.isPending ? (
+        <ProductsLoading />
+      ) : products.length === 0 ? (
+        <div className="py-24 text-center">
+          <p className="text-lg font-light text-slate-500">
+            {t("shop.productFilters.noMatches")}
+          </p>
+          <button
+            type="button"
+            onClick={clearProductFilters}
+            className="mt-4 rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 cursor-pointer"
+          >
+            {t("shop.productFilters.clearFilters")}
+          </button>
+        </div>
+      ) : (
+        <>
+          <ProductGrid products={products} />
+          <ProductPagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(total / 12)}
+          />
+        </>
+      )}
+    </>
   );
 }

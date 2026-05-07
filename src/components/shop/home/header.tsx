@@ -11,8 +11,6 @@ import { cn } from "@/lib/utils";
 
 import { DropDown } from "../DropDown";
 
-
-
 export default function Header() {
   const pathname = useLocation().pathname;
   const { t } = useI18n();
@@ -30,7 +28,6 @@ export default function Header() {
     isLoading: isCartLoading,
     isError: isCartError,
   } = useQuery(shopCartQueryOptions());
- 
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
