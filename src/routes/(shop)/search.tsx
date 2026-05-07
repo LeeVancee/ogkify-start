@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
@@ -27,9 +27,7 @@ export const Route = createFileRoute("/(shop)/search")({
       return null;
     }
 
-    return context.queryClient.ensureQueryData(
-      shopSearchResultsQueryOptions(query),
-    );
+    void context.queryClient.prefetchQuery(shopSearchResultsQueryOptions(query));
   },
 });
 
@@ -100,9 +98,17 @@ function RouteComponent() {
 
 function SearchResults({ query }: { query: string }) {
   const { t } = useI18n();
-  const { data: products } = useSuspenseQuery(
-    shopSearchResultsQueryOptions(query),
-  );
+  const productsQuery = useQuery(shopSearchResultsQueryOptions(query));
+
+  if (productsQuery.isPending) {
+    return <ShopSearchPending />;
+  }
+
+  if (productsQuery.isError) {
+    throw productsQuery.error;
+  }
+
+  const products = productsQuery.data;
 
   return (
     <>

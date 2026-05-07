@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
@@ -9,14 +9,25 @@ import type { OrderStatus } from "@/lib/admin/types";
 import { updateAdminOrderStatus } from "@/server/admin/orders";
 
 export const Route = createFileRoute("/dashboard/orders/")({
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData(adminOrdersQueryOptions()),
+  loader: ({ context }) => {
+    void context.queryClient.prefetchQuery(adminOrdersQueryOptions());
+  },
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { data: orders } = useSuspenseQuery(adminOrdersQueryOptions());
+  const ordersQuery = useQuery(adminOrdersQueryOptions());
+
+  if (ordersQuery.isPending) {
+    return <PagePendingSpinner />;
+  }
+
+  if (ordersQuery.isError) {
+    throw ordersQuery.error;
+  }
+
+  const orders = ordersQuery.data;
 
   return (
     <DashboardPageShell

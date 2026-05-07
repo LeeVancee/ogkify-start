@@ -1,7 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { z } from "zod";
 
 import { ProductFilters } from "@/components/shop/product/product-filters";
@@ -95,31 +95,29 @@ export const Route = createFileRoute("/(shop)/products/")({
   loader: ({ context, deps }) => {
     const page = deps.page ?? 1;
 
-    return Promise.all([
-      context.queryClient.ensureQueryData(
-        shopFilteredProductsQueryOptions({
-          category: deps.category,
-          sort: deps.sort,
-          search: deps.search,
-          featured: deps.featured ?? false,
-          minPrice: deps.minPrice,
-          maxPrice: deps.maxPrice,
-          colors: Array.isArray(deps.color)
-            ? deps.color
-            : deps.color
-              ? [deps.color]
-              : undefined,
-          sizes: Array.isArray(deps.size)
-            ? deps.size
-            : deps.size
-              ? [deps.size]
-              : undefined,
-          page,
-          limit: 12,
-        }),
-      ),
-      context.queryClient.ensureQueryData(shopCategoriesQueryOptions()),
-    ]);
+    void context.queryClient.prefetchQuery(
+      shopFilteredProductsQueryOptions({
+        category: deps.category,
+        sort: deps.sort,
+        search: deps.search,
+        featured: deps.featured ?? false,
+        minPrice: deps.minPrice,
+        maxPrice: deps.maxPrice,
+        colors: Array.isArray(deps.color)
+          ? deps.color
+          : deps.color
+            ? [deps.color]
+            : undefined,
+        sizes: Array.isArray(deps.size)
+          ? deps.size
+          : deps.size
+            ? [deps.size]
+            : undefined,
+        page,
+        limit: 12,
+      }),
+    );
+    void context.queryClient.prefetchQuery(shopCategoriesQueryOptions());
   },
   component: CategoriesPage,
 });
@@ -131,8 +129,9 @@ function CategoriesPage() {
   const currentPage = search.page ?? 1;
   const selectedCategory = search.category ?? "";
   const selectedSort = search.sort ?? "featured";
-  const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
-  const { data: filteredProducts } = useSuspenseQuery(
+  const [filterOpen, setFilterOpen] = useState(false);
+  const categoriesQuery = useQuery(shopCategoriesQueryOptions());
+  const filteredProductsQuery = useQuery(
     shopFilteredProductsQueryOptions({
       category: search.category,
       sort: search.sort,
@@ -154,14 +153,22 @@ function CategoriesPage() {
       limit: 12,
     }),
   );
-  const { products, total } = filteredProducts;
 
-  const [filterOpen, setFilterOpen] = useState(false);
-  const categoryLabel = useMemo(() => {
-    if (!selectedCategory) return t("shop.header.allProducts");
-    const category = categories.find((item) => item.name === selectedCategory);
-    return category ? category.name : t("shop.productFilters.fallbackProducts");
-  }, [categories, selectedCategory, t]);
+  if (categoriesQuery.isPending || filteredProductsQuery.isPending) {
+    return <ShopProductsPending />;
+  }
+
+  if (categoriesQuery.isError || filteredProductsQuery.isError) {
+    throw categoriesQuery.error ?? filteredProductsQuery.error;
+  }
+
+  const categories = categoriesQuery.data;
+  const filteredProducts = filteredProductsQuery.data;
+  const { products, total } = filteredProducts;
+  const categoryLabel = selectedCategory
+    ? (categories.find((item) => item.name === selectedCategory)?.name ??
+      t("shop.productFilters.fallbackProducts"))
+    : t("shop.header.allProducts");
 
   const updateSearch = (next: {
     category?: string;

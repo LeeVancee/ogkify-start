@@ -1,4 +1,4 @@
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle, Loader2 } from "lucide-react";
 import { useEffect } from "react";
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/(shop)/checkout/success")({
       return null;
     }
 
-    return context.queryClient.ensureQueryData(
+    void context.queryClient.prefetchQuery(
       shopOrderDetailQueryOptions(deps.orderId),
     );
   },
@@ -43,14 +43,11 @@ export const Route = createFileRoute("/(shop)/checkout/success")({
 
 function CheckoutSuccessContent({ orderId }: { orderId: string }) {
   const queryClient = useQueryClient();
-  const { data: orderResult } = useSuspenseQuery(
-    shopOrderDetailQueryOptions(orderId),
-  );
-
-  const orderData = orderResult.order;
+  const orderQuery = useQuery(shopOrderDetailQueryOptions(orderId));
+  const paidStatus = orderQuery.data?.order?.paymentStatus;
 
   useEffect(() => {
-    if (orderData?.paymentStatus !== "PAID") {
+    if (paidStatus !== "PAID") {
       return;
     }
 
@@ -60,7 +57,27 @@ function CheckoutSuccessContent({ orderId }: { orderId: string }) {
     });
     queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
     queryClient.invalidateQueries({ queryKey: shopQueryKeys.orders.all() });
-  }, [orderData?.paymentStatus, queryClient]);
+  }, [paidStatus, queryClient]);
+
+  if (orderQuery.isPending) {
+    return (
+      <CenteredCheckoutState>
+        <Loader2 className="mb-4 h-16 w-16 animate-spin text-primary" />
+        <h1 className="mb-2 text-2xl font-bold">Verifying your order...</h1>
+        <p className="text-center text-muted-foreground">
+          Please wait, we are processing your payment.
+        </p>
+      </CenteredCheckoutState>
+    );
+  }
+
+  if (orderQuery.isError) {
+    throw orderQuery.error;
+  }
+
+  const orderResult = orderQuery.data;
+
+  const orderData = orderResult.order;
 
   if (orderData && orderData.paymentStatus !== "PAID") {
     return (

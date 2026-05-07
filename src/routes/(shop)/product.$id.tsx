@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
 
@@ -16,24 +16,41 @@ import { handleAddToCartFormAction } from "@/server/shop/cart";
 export const Route = createFileRoute("/(shop)/product/$id")({
   pendingComponent: () => <ProductInfoLoading />,
   component: RouteComponent,
-  loader: async ({ context, params }) => {
-    const product = await context.queryClient.ensureQueryData(
-      shopProductQueryOptions(params.id),
-    );
-
-    await context.queryClient.ensureQueryData(
-      shopRelatedProductsQueryOptions(product.id, product.categoryId),
-    );
+  loader: ({ context, params }) => {
+    void context.queryClient.prefetchQuery(shopProductQueryOptions(params.id));
   },
 });
 
 function RouteComponent() {
   const { t } = useI18n();
   const { id } = Route.useParams();
-  const { data: product } = useSuspenseQuery(shopProductQueryOptions(id));
-  const { data: relatedProducts } = useSuspenseQuery(
-    shopRelatedProductsQueryOptions(product.id, product.categoryId),
-  );
+  const productQuery = useQuery(shopProductQueryOptions(id));
+  const product = productQuery.data;
+  const relatedProductsQuery = useQuery({
+    ...shopRelatedProductsQueryOptions(
+      product?.id ?? "",
+      product?.categoryId ?? "",
+    ),
+    enabled: !!product,
+  });
+
+  if (productQuery.isPending) {
+    return <ProductInfoLoading />;
+  }
+
+  if (productQuery.isError) {
+    throw productQuery.error;
+  }
+
+  if (!product) {
+    return <ProductInfoLoading />;
+  }
+
+  if (relatedProductsQuery.isError) {
+    throw relatedProductsQuery.error;
+  }
+
+  const relatedProducts = relatedProductsQuery.data ?? [];
 
   const addToCartAdapter = async (formData: FormData) => {
     const result = await handleAddToCartFormAction({ data: formData });

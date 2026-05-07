@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
@@ -22,7 +22,14 @@ export default function Header() {
     { name: t("shop.header.allProducts"), href: "/products", search: {} },
     { name: t("shop.header.search"), href: "/search", search: {} },
   ];
-  const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
+  const {
+    data: cartData = {
+      items: [],
+      totalItems: 0,
+    },
+    isLoading: isCartLoading,
+    isError: isCartError,
+  } = useQuery(shopCartQueryOptions());
  
 
   return (
@@ -125,8 +132,8 @@ export default function Header() {
 
       <CartSheet
         cartData={cartData}
-        isLoading={false}
-        isError={false}
+        isLoading={isCartLoading}
+        isError={isCartError}
         open={isCartOpen}
         onOpenChange={setIsCartOpen}
       />

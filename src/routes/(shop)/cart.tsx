@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
@@ -13,8 +13,9 @@ import { useI18n } from "@/lib/i18n";
 import { shopCartQueryOptions } from "@/lib/shop/query-options";
 
 export const Route = createFileRoute("/(shop)/cart")({
-  loader: ({ context }) =>
-    context.queryClient.ensureQueryData(shopCartQueryOptions()),
+  loader: ({ context }) => {
+    void context.queryClient.prefetchQuery(shopCartQueryOptions());
+  },
   pendingComponent: () => <SpinnerLoading text="Loading cart..." />,
   component: CartPage,
 });
@@ -22,7 +23,17 @@ export const Route = createFileRoute("/(shop)/cart")({
 function CartPage() {
   const { t } = useI18n();
 
-  const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
+  const cartQuery = useQuery(shopCartQueryOptions());
+
+  if (cartQuery.isPending) {
+    return <SpinnerLoading text="Loading cart..." />;
+  }
+
+  if (cartQuery.isError) {
+    throw cartQuery.error;
+  }
+
+  const cartData = cartQuery.data;
 
   const cartActions = useCartActions();
 

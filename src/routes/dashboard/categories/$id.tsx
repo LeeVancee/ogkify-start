@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ResourceForm } from "@/components/dashboard/resource/resource-form";
@@ -7,15 +7,26 @@ import { adminCategoryQueryOptions } from "@/lib/admin/query-options";
 import { saveAdminCategory } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/categories/$id")({
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(adminCategoryQueryOptions(params.id)),
+  loader: ({ context, params }) => {
+    void context.queryClient.prefetchQuery(adminCategoryQueryOptions(params.id));
+  },
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data: category } = useSuspenseQuery(adminCategoryQueryOptions(id));
+  const categoryQuery = useQuery(adminCategoryQueryOptions(id));
+
+  if (categoryQuery.isPending) {
+    return <PagePendingSpinner />;
+  }
+
+  if (categoryQuery.isError) {
+    throw categoryQuery.error;
+  }
+
+  const category = categoryQuery.data;
 
   return (
     <ResourceForm

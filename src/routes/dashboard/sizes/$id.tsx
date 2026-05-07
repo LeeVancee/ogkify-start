@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ResourceForm } from "@/components/dashboard/resource/resource-form";
@@ -7,15 +7,26 @@ import { adminSizeQueryOptions } from "@/lib/admin/query-options";
 import { saveAdminSize } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/sizes/$id")({
-  loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(adminSizeQueryOptions(params.id)),
+  loader: ({ context, params }) => {
+    void context.queryClient.prefetchQuery(adminSizeQueryOptions(params.id));
+  },
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const { data: size } = useSuspenseQuery(adminSizeQueryOptions(id));
+  const sizeQuery = useQuery(adminSizeQueryOptions(id));
+
+  if (sizeQuery.isPending) {
+    return <PagePendingSpinner />;
+  }
+
+  if (sizeQuery.isError) {
+    throw sizeQuery.error;
+  }
+
+  const size = sizeQuery.data;
 
   return (
     <ResourceForm

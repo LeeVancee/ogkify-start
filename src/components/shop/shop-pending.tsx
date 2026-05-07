@@ -1,3 +1,6 @@
+import { Link } from "@tanstack/react-router";
+import { ArrowRight } from "lucide-react";
+
 function SkeletonBlock({ className }: { className: string }) {
   return (
     <div className={`animate-pulse rounded-2xl bg-slate-100 ${className}`} />
@@ -8,16 +11,36 @@ export function ShopHomePending() {
   return (
     <>
       <section className="bg-white">
-        <div className="shop-shell flex flex-col gap-10 py-20 sm:py-28 lg:flex-row lg:gap-20 lg:py-36">
-          <div className="flex-1 space-y-5">
-            <SkeletonBlock className="h-3 w-28 rounded-full" />
-            <SkeletonBlock className="h-16 w-full max-w-xl" />
-            <SkeletonBlock className="h-16 w-4/5 max-w-lg" />
-            <SkeletonBlock className="h-5 w-full max-w-md rounded-full" />
-            <SkeletonBlock className="h-5 w-5/6 max-w-sm rounded-full" />
-            <SkeletonBlock className="mt-8 h-12 w-44" />
+        <div className="shop-shell flex flex-col items-center gap-10 py-20 sm:py-28 lg:flex-row lg:gap-20 lg:py-36">
+          <div className="flex-1 text-center lg:text-left">
+            <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+              Ogkify Essentials
+            </p>
+            <h1 className="text-5xl font-light leading-[1.05] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
+              Style for
+              <br />
+              Everyday Living
+            </h1>
+            <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-slate-500 sm:text-lg lg:mx-0">
+              Explore curated pieces with clean design, easy comfort, and
+              versatile details made for daily rotation.
+            </p>
+            <Link
+              to="/products"
+              className="mt-10 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
+            >
+              Explore Collection <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
-          <SkeletonBlock className="aspect-[4/3] w-full max-w-lg" />
+
+          <div className="w-full max-w-lg flex-1">
+            <img
+              src="/billboard.webp"
+              alt="Spring Summer Collection"
+              fetchPriority="high"
+              className="w-full object-contain"
+            />
+          </div>
         </div>
       </section>
 
