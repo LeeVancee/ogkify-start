@@ -7,7 +7,7 @@ import {
   useStripe,
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Loader2, LockKeyhole, Mail, MapPin, ShieldCheck } from "lucide-react";
 import type React from "react";
@@ -40,7 +40,7 @@ export const Route = createFileRoute("/(shop)/checkout/")({
       return null;
     }
 
-    void context.queryClient.prefetchQuery(
+    return context.queryClient.ensureQueryData(
       shopCheckoutOrderQueryOptions(deps.orderId),
     );
   },
@@ -77,21 +77,9 @@ function CheckoutPage() {
 
 function CheckoutPageContent({ orderId }: { orderId: string }) {
   const { t } = useI18n();
-  const checkoutQuery = useQuery(shopCheckoutOrderQueryOptions(orderId));
-
-  if (checkoutQuery.isPending) {
-    return (
-      <div className="shop-shell flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-slate-900" />
-      </div>
-    );
-  }
-
-  if (checkoutQuery.isError) {
-    throw checkoutQuery.error;
-  }
-
-  const checkoutResult = checkoutQuery.data;
+  const { data: checkoutResult } = useSuspenseQuery(
+    shopCheckoutOrderQueryOptions(orderId),
+  );
 
   if (
     !checkoutResult.success ||

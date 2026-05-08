@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ProductForm } from "@/components/dashboard/product/product-form";
@@ -11,9 +11,11 @@ import {
 import { saveAdminProduct } from "@/server/admin/products";
 
 export const Route = createFileRoute("/dashboard/products/$id")({
-  loader: ({ context, params }) => {
-    void context.queryClient.prefetchQuery(adminProductQueryOptions(params.id));
-    void context.queryClient.prefetchQuery(adminProductFormDataQueryOptions());
+  loader: async ({ context, params }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(adminProductQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(adminProductFormDataQueryOptions()),
+    ]);
   },
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
@@ -21,19 +23,10 @@ export const Route = createFileRoute("/dashboard/products/$id")({
 
 function RouteComponent() {
   const { id } = Route.useParams();
-  const productQuery = useQuery(adminProductQueryOptions(id));
-  const formDataQuery = useQuery(adminProductFormDataQueryOptions());
-
-  if (productQuery.isPending || formDataQuery.isPending) {
-    return <PagePendingSpinner />;
-  }
-
-  if (productQuery.isError || formDataQuery.isError) {
-    throw productQuery.error ?? formDataQuery.error;
-  }
-
-  const product = productQuery.data;
-  const formData = formDataQuery.data;
+  const { data: product } = useSuspenseQuery(adminProductQueryOptions(id));
+  const { data: formData } = useSuspenseQuery(
+    adminProductFormDataQueryOptions(),
+  );
 
   return (
     <ProductForm

@@ -1,4 +1,4 @@
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   CheckCircle,
@@ -20,10 +20,11 @@ import {
 import { formatPrice } from "@/lib/utils";
 
 export const Route = createFileRoute("/(shop)/myorders")({
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(shopUserOrdersQueryOptions());
-    void context.queryClient.prefetchQuery(shopUnpaidOrdersQueryOptions());
-  },
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(shopUserOrdersQueryOptions()),
+      context.queryClient.ensureQueryData(shopUnpaidOrdersQueryOptions()),
+    ]),
   pendingComponent: OrdersPageLoading,
   component: MyOrdersPage,
 });
@@ -76,19 +77,12 @@ function MyOrdersPage() {
   const queryClient = useQueryClient();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const allOrdersQuery = useQuery(shopUserOrdersQueryOptions());
-  const unpaidOrdersQuery = useQuery(shopUnpaidOrdersQueryOptions());
-
-  if (allOrdersQuery.isPending || unpaidOrdersQuery.isPending) {
-    return <OrdersPageLoading />;
-  }
-
-  if (allOrdersQuery.isError || unpaidOrdersQuery.isError) {
-    throw allOrdersQuery.error ?? unpaidOrdersQuery.error;
-  }
-
-  const allOrdersData = allOrdersQuery.data;
-  const unpaidOrdersData = unpaidOrdersQuery.data;
+  const { data: allOrdersData } = useSuspenseQuery(
+    shopUserOrdersQueryOptions(),
+  );
+  const { data: unpaidOrdersData } = useSuspenseQuery(
+    shopUnpaidOrdersQueryOptions(),
+  );
 
   if (!allOrdersData.success || !unpaidOrdersData.success) {
     throw new Error("Failed to load orders");

@@ -26,3 +26,4 @@ dist
 .tanstack
 .tasks
 generated
+.worktrees

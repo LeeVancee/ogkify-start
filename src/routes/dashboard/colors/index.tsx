@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
@@ -8,25 +8,14 @@ import { adminColorsQueryOptions } from "@/lib/admin/query-options";
 import { deleteAdminColor } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/colors/")({
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(adminColorsQueryOptions());
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminColorsQueryOptions()),
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const colorsQuery = useQuery(adminColorsQueryOptions());
-
-  if (colorsQuery.isPending) {
-    return <PagePendingSpinner />;
-  }
-
-  if (colorsQuery.isError) {
-    throw colorsQuery.error;
-  }
-
-  const colors = colorsQuery.data;
+  const { data: colors } = useSuspenseQuery(adminColorsQueryOptions());
 
   return (
     <DashboardPageShell

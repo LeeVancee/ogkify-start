@@ -6,9 +6,8 @@ import { shopCartQueryOptions } from "@/lib/shop/query-options";
 
 export const Route = createFileRoute("/(shop)")({
   component: RouteComponent,
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(shopCartQueryOptions());
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(shopCartQueryOptions()),
 });
 
 function RouteComponent() {

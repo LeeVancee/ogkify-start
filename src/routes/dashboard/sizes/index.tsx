@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
@@ -8,25 +8,14 @@ import { adminSizesQueryOptions } from "@/lib/admin/query-options";
 import { deleteAdminSize } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/sizes/")({
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(adminSizesQueryOptions());
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminSizesQueryOptions()),
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const sizesQuery = useQuery(adminSizesQueryOptions());
-
-  if (sizesQuery.isPending) {
-    return <PagePendingSpinner />;
-  }
-
-  if (sizesQuery.isError) {
-    throw sizesQuery.error;
-  }
-
-  const sizes = sizesQuery.data;
+  const { data: sizes } = useSuspenseQuery(adminSizesQueryOptions());
 
   return (
     <DashboardPageShell

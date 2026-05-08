@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
@@ -8,25 +8,14 @@ import { adminProductsQueryOptions } from "@/lib/admin/query-options";
 import { deleteAdminProduct } from "@/server/admin/products";
 
 export const Route = createFileRoute("/dashboard/products/")({
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(adminProductsQueryOptions());
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(adminProductsQueryOptions()),
   pendingComponent: PagePendingSpinner,
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const productsQuery = useQuery(adminProductsQueryOptions());
-
-  if (productsQuery.isPending) {
-    return <PagePendingSpinner />;
-  }
-
-  if (productsQuery.isError) {
-    throw productsQuery.error;
-  }
-
-  const products = productsQuery.data;
+  const { data: products } = useSuspenseQuery(adminProductsQueryOptions());
 
   return (
     <DashboardPageShell

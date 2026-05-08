@@ -1,19 +1,17 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 import { ProductFilters } from "@/components/shop/product/product-filters";
 import { shopCategoriesQueryOptions } from "@/lib/shop/query-options";
 
 export const Route = createFileRoute("/(shop)/products")({
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(shopCategoriesQueryOptions());
-  },
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(shopCategoriesQueryOptions()),
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const categoriesQuery = useQuery(shopCategoriesQueryOptions());
-  const categories = categoriesQuery.data ?? [];
+  const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
 
   return (
     <div className="shop-shell py-10 sm:py-14">
