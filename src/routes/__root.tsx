@@ -8,8 +8,9 @@ import {
 
 import { NotFound } from "@/components/NotFound";
 import { Toaster } from "@/components/ui/sonner";
-import { getLocale, I18nProvider } from "@/lib/i18n";
+import { getClientLocale, I18nProvider } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n/server";
 import { seo } from "@/lib/seo";
 
 import appCss from "../styles.css?url";
@@ -45,7 +46,8 @@ export const Route = createRootRouteWithContext<{
 
   beforeLoad: async () => {
     return {
-      locale: await getLocale(),
+      locale:
+        typeof document === "undefined" ? await getLocale() : getClientLocale(),
     };
   },
 
