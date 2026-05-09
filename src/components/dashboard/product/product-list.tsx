@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { adminQueryKeys } from "@/lib/admin/query-options";
 import type { AdminProductListItem } from "@/lib/admin/types";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductListProps {
@@ -21,6 +22,7 @@ interface ProductListProps {
 }
 
 export function ProductList({ products, deleteProduct }: ProductListProps) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
 
@@ -36,12 +38,12 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
   );
 
   async function handleDelete(id: string) {
-    if (!window.confirm("Delete product?")) return;
+    if (!window.confirm(t("dashboard.resources.deleteProductConfirm"))) return;
     const result = await deleteProduct(id);
     if (result.success) {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
     } else {
-      window.alert(result.error || "Delete failed");
+      window.alert(result.error || t("dashboard.resources.productDeleteFailed"));
     }
   }
 
@@ -51,7 +53,7 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search products..."
+          placeholder={t("dashboard.resources.searchProducts")}
           className="h-9 sm:max-w-xs"
         />
         <Button
@@ -59,24 +61,24 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
           className="gap-2 sm:ml-auto"
         >
           <Plus className="size-4" />
-          Product
+          {t("dashboard.resources.product")}
         </Button>
       </div>
 
       <AdminTable
         columns={[
-          "Image",
-          "Product",
-          "Category",
-          "Price",
-          "Colors",
-          "Sizes",
-          "Featured",
-          "Archived",
-          "Actions",
+          t("dashboard.table.image"),
+          t("dashboard.table.product"),
+          t("dashboard.table.category"),
+          t("dashboard.table.price"),
+          t("dashboard.table.colors"),
+          t("dashboard.table.sizes"),
+          t("dashboard.table.featured"),
+          t("dashboard.table.archived"),
+          t("dashboard.table.actions"),
         ]}
         empty={filtered.length === 0}
-        emptyMessage="No matching products."
+        emptyMessage={t("dashboard.resources.noMatchingProducts")}
         minWidth="min-w-[1080px]"
       >
         {filtered.map((product) => (
@@ -96,8 +98,12 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
               <div className="max-w-64">
                 <div className="truncate font-medium">{product.name}</div>
                 <div className="truncate text-xs text-muted-foreground">
-                  {product.imageCount} image
-                  {product.imageCount === 1 ? "" : "s"}
+                  {t(
+                    product.imageCount === 1
+                      ? "dashboard.resources.image_one"
+                      : "dashboard.resources.image_other",
+                    { count: product.imageCount },
+                  )}
                 </div>
               </div>
             </AdminTableCell>
@@ -124,12 +130,16 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
             </AdminTableCell>
             <AdminTableCell>
               <StatusPill tone={product.isFeatured ? "success" : "neutral"}>
-                {product.isFeatured ? "Yes" : "No"}
+                {product.isFeatured
+                  ? t("dashboard.resources.yes")
+                  : t("dashboard.resources.no")}
               </StatusPill>
             </AdminTableCell>
             <AdminTableCell>
               <StatusPill tone={product.isArchived ? "warning" : "neutral"}>
-                {product.isArchived ? "Yes" : "No"}
+                {product.isArchived
+                  ? t("dashboard.resources.yes")
+                  : t("dashboard.resources.no")}
               </StatusPill>
             </AdminTableCell>
             <AdminTableCell className="w-28">

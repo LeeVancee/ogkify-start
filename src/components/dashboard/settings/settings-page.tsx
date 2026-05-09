@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { adminQueryKeys } from "@/lib/admin/query-options";
 import { authClient } from "@/lib/auth-client";
+import { useI18n } from "@/lib/i18n";
 
 interface SettingsSession {
   user: {
@@ -34,6 +35,7 @@ interface DashboardSettingsPageProps {
 export function DashboardSettingsPage({
   initialSession,
 }: DashboardSettingsPageProps) {
+  const { t } = useI18n();
   const router = useRouter();
   const queryClient = useQueryClient();
   const sessionQuery = authClient.useSession();
@@ -70,7 +72,7 @@ export function DashboardSettingsPage({
 
     const name = profileValues.name.trim();
     if (name.length < 2) {
-      setProfileError("Name must be at least 2 characters.");
+      setProfileError(t("dashboard.settings.nameMin"));
       return;
     }
 
@@ -83,7 +85,7 @@ export function DashboardSettingsPage({
         onRequest: () => setProfilePending(true),
         onSuccess: async () => {
           setProfilePending(false);
-          setProfileMessage("Profile updated.");
+          setProfileMessage(t("dashboard.settings.profileUpdated"));
           await sessionQuery.refetch();
           await queryClient.invalidateQueries({
             queryKey: adminQueryKeys.session(),
@@ -92,7 +94,9 @@ export function DashboardSettingsPage({
         },
         onError: (ctx) => {
           setProfilePending(false);
-          setProfileError(ctx.error.message || "Failed to update profile.");
+          setProfileError(
+            ctx.error.message || t("dashboard.settings.profileUpdateFailed"),
+          );
         },
       },
     );
@@ -108,12 +112,12 @@ export function DashboardSettingsPage({
       passwordValues.newPassword.length < 6 ||
       passwordValues.confirmPassword.length < 6
     ) {
-      setPasswordError("Passwords must be at least 6 characters.");
+      setPasswordError(t("dashboard.settings.passwordMin"));
       return;
     }
 
     if (passwordValues.newPassword !== passwordValues.confirmPassword) {
-      setPasswordError("New password and confirmation do not match.");
+      setPasswordError(t("dashboard.settings.passwordMismatch"));
       return;
     }
 
@@ -127,7 +131,7 @@ export function DashboardSettingsPage({
         onRequest: () => setPasswordPending(true),
         onSuccess: () => {
           setPasswordPending(false);
-          setPasswordMessage("Password changed.");
+          setPasswordMessage(t("dashboard.settings.passwordChanged"));
           setPasswordValues({
             currentPassword: "",
             newPassword: "",
@@ -136,7 +140,9 @@ export function DashboardSettingsPage({
         },
         onError: (ctx) => {
           setPasswordPending(false);
-          setPasswordError(ctx.error.message || "Failed to change password.");
+          setPasswordError(
+            ctx.error.message || t("dashboard.settings.passwordChangeFailed"),
+          );
         },
       },
     );
@@ -146,8 +152,8 @@ export function DashboardSettingsPage({
 
   return (
     <DashboardPageShell
-      title="Settings"
-      description="Manage your admin profile, avatar and account security."
+      title={t("dashboard.nav.settings")}
+      description={t("dashboard.pages.settingsDescription")}
     >
       <div className="grid h-full min-h-0 gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <form
@@ -158,10 +164,10 @@ export function DashboardSettingsPage({
             <div>
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <User className="size-4" />
-                Profile
+                {t("dashboard.settings.profile")}
               </div>
               <p className="mt-1 text-sm text-muted-foreground">
-                These details are shared across the admin workspace.
+                {t("dashboard.settings.profileDescription")}
               </p>
             </div>
             <Button type="submit" disabled={profilePending} className="gap-2">
@@ -170,7 +176,7 @@ export function DashboardSettingsPage({
               ) : (
                 <Save className="size-4" />
               )}
-              Save profile
+              {t("dashboard.settings.saveProfile")}
             </Button>
           </div>
 
@@ -189,16 +195,16 @@ export function DashboardSettingsPage({
               </Avatar>
               <div className="mt-4 text-center">
                 <div className="font-medium">
-                  {session?.user.name ?? "Admin user"}
+                  {session?.user.name ?? t("dashboard.settings.adminUser")}
                 </div>
                 <div className="mt-1 truncate text-xs text-muted-foreground">
-                  {session?.user.email ?? "No email"}
+                  {session?.user.email ?? t("dashboard.settings.noEmail")}
                 </div>
               </div>
             </div>
 
             <div className="space-y-5">
-              <Field label="Name">
+              <Field label={t("dashboard.settings.name")}>
                 <Input
                   value={profileValues.name}
                   onChange={(event) =>
@@ -208,11 +214,11 @@ export function DashboardSettingsPage({
                     }))
                   }
                   disabled={profilePending}
-                  placeholder="Your name"
+                  placeholder={t("dashboard.settings.yourName")}
                 />
               </Field>
 
-              <Field label="Avatar">
+              <Field label={t("dashboard.settings.avatar")}>
                 <CloudinaryImageUpload
                   value={profileValues.image ? [profileValues.image] : []}
                   onChange={(images) =>
@@ -223,16 +229,18 @@ export function DashboardSettingsPage({
                   }
                   maxFiles={1}
                   disabled={profilePending}
-                  imageAlt={profileValues.name || "Profile avatar"}
+                  imageAlt={
+                    profileValues.name || t("dashboard.settings.profileAvatar")
+                  }
                   showPreview={false}
                 />
               </Field>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Email">
+                <Field label={t("dashboard.settings.email")}>
                   <Input value={session?.user.email ?? ""} disabled readOnly />
                 </Field>
-                <Field label="Role">
+                <Field label={t("dashboard.settings.role")}>
                   <Input
                     value={session?.user.role ?? "user"}
                     disabled
@@ -253,15 +261,15 @@ export function DashboardSettingsPage({
           <div>
             <div className="flex items-center gap-2 text-sm font-semibold">
               <Shield className="size-4" />
-              Security
+              {t("dashboard.settings.security")}
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Change password and revoke other active sessions.
+              {t("dashboard.settings.securityDescription")}
             </p>
           </div>
 
           <div className="space-y-4">
-            <Field label="Current password">
+            <Field label={t("dashboard.settings.currentPassword")}>
               <PasswordInput
                 value={passwordValues.currentPassword}
                 disabled={passwordPending}
@@ -273,7 +281,7 @@ export function DashboardSettingsPage({
                 }
               />
             </Field>
-            <Field label="New password">
+            <Field label={t("dashboard.settings.newPassword")}>
               <PasswordInput
                 value={passwordValues.newPassword}
                 disabled={passwordPending}
@@ -285,7 +293,7 @@ export function DashboardSettingsPage({
                 }
               />
             </Field>
-            <Field label="Confirm new password">
+            <Field label={t("dashboard.settings.confirmNewPassword")}>
               <PasswordInput
                 value={passwordValues.confirmPassword}
                 disabled={passwordPending}
@@ -311,7 +319,7 @@ export function DashboardSettingsPage({
             ) : (
               <Lock className="size-4" />
             )}
-            Change password
+            {t("dashboard.settings.changePassword")}
           </Button>
         </form>
       </div>

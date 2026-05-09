@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { adminQueryKeys } from "@/lib/admin/query-options";
 import type { AdminOrderListItem, OrderStatus } from "@/lib/admin/types";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
 interface OrderListProps {
@@ -21,6 +22,7 @@ interface OrderListProps {
 }
 
 export function OrderList({ orders, updateStatus }: OrderListProps) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
 
   async function handleStatus(orderId: string, status: OrderStatus) {
@@ -28,7 +30,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
     if (result.success) {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
     } else {
-      window.alert(result.error || "Status update failed");
+      window.alert(result.error || t("dashboard.orders.statusUpdateFailed"));
     }
   }
 
@@ -36,17 +38,17 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
     <div className="flex h-full min-h-0 flex-col">
       <AdminTable
         columns={[
-          "Order",
-          "Customer",
-          "Items",
-          "Amount",
-          "Order Status",
-          "Payment",
-          "Created",
-          "Update",
+          t("dashboard.orders.order"),
+          t("dashboard.orders.customer"),
+          t("dashboard.orders.items"),
+          t("dashboard.orders.amount"),
+          t("dashboard.orders.orderStatus"),
+          t("dashboard.orders.payment"),
+          t("dashboard.orders.created"),
+          t("dashboard.orders.update"),
         ]}
         empty={orders.length === 0}
-        emptyMessage="No orders yet."
+        emptyMessage={t("dashboard.orders.noOrders")}
         minWidth="min-w-[1120px]"
       >
         {orders.map((order) => (

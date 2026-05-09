@@ -3,6 +3,7 @@ import { Box, Grid3X3, Palette, Ruler, ShoppingCart, Star } from "lucide-react";
 
 import { DashboardContextPanel } from "@/components/dashboard/layout/context-panel";
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
+import { useI18n } from "@/lib/i18n";
 import type { DashboardOverviewData } from "@/lib/admin/types";
 import { formatPrice } from "@/lib/utils";
 
@@ -11,19 +12,28 @@ interface DashboardOverviewProps {
 }
 
 export function DashboardOverview({ data }: DashboardOverviewProps) {
+  const { t } = useI18n();
   const cards = [
-    { label: "Products", value: data.productsCount, icon: Box },
-    { label: "Categories", value: data.categoriesCount, icon: Grid3X3 },
-    { label: "Colors", value: data.colorsCount, icon: Palette },
-    { label: "Sizes", value: data.sizesCount, icon: Ruler },
-    { label: "Pending orders", value: data.pendingOrders, icon: ShoppingCart },
-    { label: "Featured", value: data.featuredProducts, icon: Star },
+    { label: t("dashboard.overview.products"), value: data.productsCount, icon: Box },
+    {
+      label: t("dashboard.overview.categories"),
+      value: data.categoriesCount,
+      icon: Grid3X3,
+    },
+    { label: t("dashboard.overview.colors"), value: data.colorsCount, icon: Palette },
+    { label: t("dashboard.overview.sizes"), value: data.sizesCount, icon: Ruler },
+    {
+      label: t("dashboard.overview.pendingOrders"),
+      value: data.pendingOrders,
+      icon: ShoppingCart,
+    },
+    { label: t("dashboard.overview.featured"), value: data.featuredProducts, icon: Star },
   ];
 
   return (
     <DashboardPageShell
-      title="Dashboard"
-      description="Catalog, orders and storefront operations in one workspace."
+      title={t("dashboard.nav.dashboard")}
+      description={t("dashboard.pages.dashboardDescription")}
       aside={
         <DashboardContextPanel
           revenue={data.totalRevenue}
@@ -42,7 +52,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
                   <Icon className="size-5 text-muted-foreground" />
                 </div>
                 <span className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Admin
+                  {t("dashboard.overview.admin")}
                 </span>
               </div>
               <div className="text-3xl font-semibold">{card.value}</div>
@@ -57,7 +67,9 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
       <div className="grid gap-6 xl:grid-cols-[1fr_0.8fr]">
         <div className="rounded-xl border bg-card">
           <div className="border-b p-4">
-            <h2 className="text-sm font-semibold">Recent orders</h2>
+            <h2 className="text-sm font-semibold">
+              {t("dashboard.overview.recentOrders")}
+            </h2>
           </div>
           <div className="divide-y">
             {data.recentOrders.map((order) => (
@@ -80,7 +92,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
             ))}
             {data.recentOrders.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
-                No orders yet.
+                {t("dashboard.overview.noOrders")}
               </div>
             ) : null}
           </div>
@@ -88,7 +100,9 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
 
         <div className="rounded-xl border bg-card">
           <div className="border-b p-4">
-            <h2 className="text-sm font-semibold">Latest products</h2>
+            <h2 className="text-sm font-semibold">
+              {t("dashboard.overview.latestProducts")}
+            </h2>
           </div>
           <div className="divide-y">
             {data.latestProducts.map((product) => (
@@ -119,7 +133,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
             ))}
             {data.latestProducts.length === 0 ? (
               <div className="p-6 text-sm text-muted-foreground">
-                No products yet.
+                {t("dashboard.overview.noProducts")}
               </div>
             ) : null}
           </div>

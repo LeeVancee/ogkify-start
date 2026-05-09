@@ -5,6 +5,7 @@ import {
   PackageCheck,
 } from "lucide-react";
 
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
 interface DashboardContextPanelProps {
@@ -18,24 +19,41 @@ export function DashboardContextPanel({
   revenue = 0,
   pendingOrders = 0,
   productsCount = 0,
-  latestLabel = "Synced",
+  latestLabel,
 }: DashboardContextPanelProps) {
+  const { t } = useI18n();
   const items = [
     {
-      label: "Revenue",
+      label: t("dashboard.overview.revenue"),
       value: formatPrice(revenue),
       icon: ChartNoAxesCombined,
     },
-    { label: "Pending", value: String(pendingOrders), icon: Clock },
-    { label: "Products", value: String(productsCount), icon: Archive },
-    { label: "Status", value: latestLabel, icon: PackageCheck },
+    {
+      label: t("dashboard.overview.pending"),
+      value: String(pendingOrders),
+      icon: Clock,
+    },
+    {
+      label: t("dashboard.overview.products"),
+      value: String(productsCount),
+      icon: Archive,
+    },
+    {
+      label: t("dashboard.overview.status"),
+      value: latestLabel ?? t("dashboard.overview.synced"),
+      icon: PackageCheck,
+    },
   ];
 
   return (
     <div className="rounded-xl border bg-card p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold">Workspace</h2>
-        <span className="text-xs text-muted-foreground">Live</span>
+        <h2 className="text-sm font-semibold">
+          {t("dashboard.overview.workspace")}
+        </h2>
+        <span className="text-xs text-muted-foreground">
+          {t("dashboard.overview.live")}
+        </span>
       </div>
       <div className="grid gap-3">
         {items.map((item) => {

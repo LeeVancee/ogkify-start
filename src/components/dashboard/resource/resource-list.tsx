@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { adminQueryKeys } from "@/lib/admin/query-options";
+import { useI18n } from "@/lib/i18n";
 
 interface ResourceItem {
   id: string;
@@ -36,6 +37,7 @@ export function ResourceList({
   accent = "text",
   onDelete,
 }: ResourceListProps) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const filtered = useMemo(
@@ -50,23 +52,37 @@ export function ResourceList({
   );
 
   async function handleDelete(id: string) {
-    const ok = window.confirm(`Delete ${title.slice(0, -1).toLowerCase()}?`);
+    const ok = window.confirm(t("dashboard.resources.deleteResourceConfirm"));
     if (!ok) return;
 
     const result = await onDelete(id);
     if (result.success) {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
     } else {
-      window.alert(result.error || "Delete failed");
+      window.alert(result.error || t("dashboard.resources.productDeleteFailed"));
     }
   }
 
   const columns =
     accent === "image"
-      ? ["Image", "Name", "Value", "Actions"]
+      ? [
+          t("dashboard.table.image"),
+          t("dashboard.table.name"),
+          t("dashboard.table.value"),
+          t("dashboard.table.actions"),
+        ]
       : accent === "color"
-        ? ["Swatch", "Name", "Value", "Actions"]
-        : ["Name", "Value", "Actions"];
+        ? [
+            t("dashboard.table.swatch"),
+            t("dashboard.table.name"),
+            t("dashboard.table.value"),
+            t("dashboard.table.actions"),
+          ]
+        : [
+            t("dashboard.table.name"),
+            t("dashboard.table.value"),
+            t("dashboard.table.actions"),
+          ];
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
@@ -74,19 +90,21 @@ export function ResourceList({
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder={`Search ${title.toLowerCase()}...`}
+          placeholder={t("dashboard.resources.searchResource", {
+            resource: title.toLowerCase(),
+          })}
           className="h-9 sm:max-w-xs"
         />
         <Button render={<Link to={newHref} />} className="gap-2 sm:ml-auto">
           <Plus className="size-4" />
-          New
+          {t("dashboard.resources.new")}
         </Button>
       </div>
 
       <AdminTable
         columns={columns}
         empty={filtered.length === 0}
-        emptyMessage="No matching records."
+        emptyMessage={t("dashboard.resources.noMatchingRecords")}
         minWidth={accent === "text" ? "min-w-[640px]" : "min-w-[760px]"}
       >
         {filtered.map((item) => (

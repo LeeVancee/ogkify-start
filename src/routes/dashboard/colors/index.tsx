@@ -5,6 +5,7 @@ import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
 import { ResourceList } from "@/components/dashboard/resource/resource-list";
 import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
 import { adminColorsQueryOptions } from "@/lib/admin/query-options";
+import { useI18n } from "@/lib/i18n";
 import { deleteAdminColor } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/colors/")({
@@ -15,15 +16,16 @@ export const Route = createFileRoute("/dashboard/colors/")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
   const { data: colors } = useSuspenseQuery(adminColorsQueryOptions());
 
   return (
     <DashboardPageShell
-      title="Colors"
-      description="Maintain product color options and storefront swatches."
+      title={t("dashboard.nav.colors")}
+      description={t("dashboard.pages.colorsDescription")}
     >
       <ResourceList
-        title="Colors"
+        title={t("dashboard.nav.colors")}
         items={colors}
         newHref="/dashboard/colors/new"
         editHref="/dashboard/colors/$id"

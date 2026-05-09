@@ -164,3 +164,60 @@ body {
     @apply inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-3 text-sm font-medium text-background transition-colors hover:bg-foreground/90;
   }
 }
+
+@layer utilities {
+  .dark .bg-white,
+  .dark .bg-white\/95,
+  .dark .bg-white\/96 {
+    background-color: color-mix(in oklch, var(--background) 94%, white 6%);
+  }
+
+  .dark .bg-slate-50,
+  .dark .bg-slate-50\/60,
+  .dark .bg-slate-50\/70,
+  .dark .bg-slate-50\/55,
+  .dark .bg-slate-100 {
+    background-color: var(--muted);
+  }
+
+  .dark .text-slate-950,
+  .dark .text-slate-900,
+  .dark .text-slate-800,
+  .dark .text-slate-700 {
+    color: var(--foreground);
+  }
+
+  .dark .text-slate-600,
+  .dark .text-slate-500,
+  .dark .text-slate-400 {
+    color: var(--muted-foreground);
+  }
+
+  .dark .border-slate-100,
+  .dark .border-slate-200,
+  .dark .border-slate-300,
+  .dark .border-gray-200 {
+    border-color: var(--border);
+  }
+
+  .dark .placeholder\:text-slate-400::placeholder {
+    color: var(--muted-foreground);
+  }
+
+  .dark .hover\:bg-slate-50:hover,
+  .dark .hover\:bg-slate-100:hover,
+  .dark .hover\:bg-white:hover {
+    background-color: var(--accent);
+  }
+
+  .dark .hover\:text-slate-900:hover,
+  .dark .hover\:text-slate-800:hover,
+  .dark .hover\:text-slate-700:hover {
+    color: var(--foreground);
+  }
+
+  .dark .shadow-slate-200,
+  .dark .shadow-slate-200\/50 {
+    --tw-shadow-color: oklch(0 0 0 / 0.35);
+  }
+}

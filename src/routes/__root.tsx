@@ -7,6 +7,7 @@ import {
 } from "@tanstack/react-router";
 
 import { NotFound } from "@/components/NotFound";
+import { ThemeProvider } from "@/components/shared/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { getClientLocale, I18nProvider } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n";
@@ -57,7 +58,10 @@ export const Route = createRootRouteWithContext<{
     return (
       <RootDocument locale={locale}>
         <I18nProvider initialLocale={locale}>
-          <Outlet />
+          <ThemeProvider>
+            <Outlet />
+            <Toaster />
+          </ThemeProvider>
         </I18nProvider>
       </RootDocument>
     );
@@ -73,13 +77,12 @@ function RootDocument({
   locale: Locale;
 }) {
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
       <body>
         {children}
-        <Toaster />
         <Scripts />
       </body>
     </html>

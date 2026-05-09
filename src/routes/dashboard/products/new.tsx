@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ProductForm } from "@/components/dashboard/product/product-form";
 import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
 import { adminProductFormDataQueryOptions } from "@/lib/admin/query-options";
+import { useI18n } from "@/lib/i18n";
 import { saveAdminProduct } from "@/server/admin/products";
 
 export const Route = createFileRoute("/dashboard/products/new")({
@@ -14,11 +15,12 @@ export const Route = createFileRoute("/dashboard/products/new")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
   const { data } = useSuspenseQuery(adminProductFormDataQueryOptions());
 
   return (
     <ProductForm
-      title="New product"
+      title={t("dashboard.forms.newProduct")}
       categories={data.categories}
       colors={data.colors}
       sizes={data.sizes}

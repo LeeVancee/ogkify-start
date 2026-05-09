@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { adminQueryKeys } from "@/lib/admin/query-options";
 import type { AdminResourceFormValues } from "@/lib/admin/types";
+import { useI18n } from "@/lib/i18n";
 
 interface ResourceFormProps {
   title: string;
@@ -26,6 +27,7 @@ export function ResourceForm({
   fields,
   save,
 }: ResourceFormProps) {
+  const { t } = useI18n();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [values, setValues] = useState(initialValues);
@@ -41,7 +43,7 @@ export function ResourceForm({
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
       router.navigate({ to: backHref });
     } else {
-      window.alert(result.error || "Save failed");
+      window.alert(result.error || t("dashboard.resources.saveFailed"));
     }
   }
 
@@ -55,7 +57,7 @@ export function ResourceForm({
           className="gap-2"
         >
           <ArrowLeft className="size-4" />
-          Back
+          {t("dashboard.actions.back")}
         </Button>
       </div>
       <form
@@ -66,7 +68,7 @@ export function ResourceForm({
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
             <p className="mt-1 text-sm text-muted-foreground">
-              Manage this resource across the full admin workspace.
+              {t("dashboard.forms.resourceDescription")}
             </p>
           </div>
           <Button
@@ -75,13 +77,15 @@ export function ResourceForm({
             className="w-full gap-2 sm:w-auto"
           >
             <Save className="size-4" />
-            {isPending ? "Saving" : "Save"}
+            {isPending
+              ? t("dashboard.actions.saving")
+              : t("dashboard.actions.save")}
           </Button>
         </div>
 
         <div className="grid flex-1 content-start gap-5 rounded-xl border bg-card p-4 md:p-5 xl:grid-cols-2">
           {fields.includes("name") ? (
-            <Field label="Name">
+            <Field label={t("dashboard.table.name")}>
               <Input
                 value={values.name}
                 onChange={(event) =>
@@ -96,7 +100,7 @@ export function ResourceForm({
           ) : null}
 
           {fields.includes("value") ? (
-            <Field label="Value">
+            <Field label={t("dashboard.table.value")}>
               <Input
                 value={values.value ?? ""}
                 onChange={(event) =>
@@ -111,7 +115,7 @@ export function ResourceForm({
           ) : null}
 
           {fields.includes("imageUrl") ? (
-            <Field label="Image URL" className="xl:col-span-2">
+            <Field label={t("dashboard.table.image")} className="xl:col-span-2">
               <CloudinaryImageUpload
                 value={values.imageUrl ? [values.imageUrl] : []}
                 onChange={(images) =>
@@ -122,7 +126,7 @@ export function ResourceForm({
                 }
                 maxFiles={1}
                 disabled={isPending}
-                imageAlt={values.name || "Category image"}
+                imageAlt={values.name || t("dashboard.table.image")}
               />
             </Field>
           ) : null}

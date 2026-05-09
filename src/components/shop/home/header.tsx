@@ -4,6 +4,7 @@ import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { CartSheet } from "@/components/shop/cart-sheet";
 import { useI18n } from "@/lib/i18n";
 import { shopCartQueryOptions } from "@/lib/shop/query-options";
@@ -69,6 +70,7 @@ export default function Header() {
 
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
+            <ThemeToggle />
 
             <Link
               to="/search"

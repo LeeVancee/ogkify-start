@@ -12,25 +12,51 @@ import {
 
 export const dashboardNav = [
   {
-    label: "Overview",
-    items: [{ title: "Dashboard", href: "/dashboard", icon: LayoutDashboard }],
-  },
-  {
-    label: "Catalog",
+    labelKey: "dashboard.nav.overview",
     items: [
-      { title: "Products", href: "/dashboard/products", icon: Box },
-      { title: "Categories", href: "/dashboard/categories", icon: Grid3X3 },
-      { title: "Colors", href: "/dashboard/colors", icon: Palette },
-      { title: "Sizes", href: "/dashboard/sizes", icon: Ruler },
+      {
+        titleKey: "dashboard.nav.dashboard",
+        href: "/dashboard",
+        icon: LayoutDashboard,
+      },
     ],
   },
   {
-    label: "Operations",
-    items: [{ title: "Orders", href: "/dashboard/orders", icon: ShoppingCart }],
+    labelKey: "dashboard.nav.catalog",
+    items: [
+      {
+        titleKey: "dashboard.nav.products",
+        href: "/dashboard/products",
+        icon: Box,
+      },
+      {
+        titleKey: "dashboard.nav.categories",
+        href: "/dashboard/categories",
+        icon: Grid3X3,
+      },
+      { titleKey: "dashboard.nav.colors", href: "/dashboard/colors", icon: Palette },
+      { titleKey: "dashboard.nav.sizes", href: "/dashboard/sizes", icon: Ruler },
+    ],
   },
   {
-    label: "Account",
-    items: [{ title: "Settings", href: "/dashboard/settings", icon: Settings }],
+    labelKey: "dashboard.nav.operations",
+    items: [
+      {
+        titleKey: "dashboard.nav.orders",
+        href: "/dashboard/orders",
+        icon: ShoppingCart,
+      },
+    ],
+  },
+  {
+    labelKey: "dashboard.nav.account",
+    items: [
+      {
+        titleKey: "dashboard.nav.settings",
+        href: "/dashboard/settings",
+        icon: Settings,
+      },
+    ],
   },
 ];
 

@@ -5,6 +5,7 @@ import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
 import { ResourceList } from "@/components/dashboard/resource/resource-list";
 import { PagePendingSpinner } from "@/components/ui/page-pending-spinner";
 import { adminCategoriesQueryOptions } from "@/lib/admin/query-options";
+import { useI18n } from "@/lib/i18n";
 import { deleteAdminCategory } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/categories/")({
@@ -15,15 +16,16 @@ export const Route = createFileRoute("/dashboard/categories/")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
   const { data: categories } = useSuspenseQuery(adminCategoriesQueryOptions());
 
   return (
     <DashboardPageShell
-      title="Categories"
-      description="Organize storefront taxonomy and category imagery."
+      title={t("dashboard.nav.categories")}
+      description={t("dashboard.pages.categoriesDescription")}
     >
       <ResourceList
-        title="Categories"
+        title={t("dashboard.nav.categories")}
         items={categories}
         newHref="/dashboard/categories/new"
         editHref="/dashboard/categories/$id"

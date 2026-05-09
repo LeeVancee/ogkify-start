@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -14,11 +13,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { useI18n } from "@/lib/i18n";
 
 import { dashboardNav } from "./nav-data";
 
 export function DashboardSidebar() {
   const { pathname } = useLocation();
+  const { t } = useI18n();
 
   return (
     <Sidebar className="lg:border-r-0!" collapsible="offcanvas">
@@ -29,10 +30,10 @@ export function DashboardSidebar() {
           </div>
           <div className="min-w-0">
             <span className="block truncate text-base font-semibold">
-              Square Admin
+              {t("dashboard.shell.workspaceTitle")}
             </span>
             <span className="block truncate text-xs text-muted-foreground">
-              OGKIFY workspace
+              {t("dashboard.shell.workspaceSubtitle")}
             </span>
           </div>
         </div>
@@ -44,13 +45,13 @@ export function DashboardSidebar() {
           className="mb-4 w-full gap-2"
         >
           <Plus className="size-4" />
-          New Product
+          {t("dashboard.shell.newProduct")}
         </Button>
 
         {dashboardNav.map((group) => (
-          <SidebarGroup key={group.label} className="mt-4 p-0 first:mt-0">
+          <SidebarGroup key={group.labelKey} className="mt-4 p-0 first:mt-0">
             <SidebarGroupLabel className="h-4 pb-4 pt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
-              {group.label}
+              {t(group.labelKey)}
             </SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -69,7 +70,7 @@ export function DashboardSidebar() {
                         className="h-9"
                       >
                         <Icon className="size-4" />
-                        <span className="text-sm">{item.title}</span>
+                        <span className="text-sm">{t(item.titleKey)}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   );
@@ -80,14 +81,6 @@ export function DashboardSidebar() {
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
-        <div className="rounded-xl border bg-card p-3">
-          <div className="text-sm font-medium">Admin migration</div>
-          <p className="mt-1 text-xs leading-5 text-muted-foreground">
-            New UI shell with OGKIFY data adapters.
-          </p>
-        </div>
-      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -8,6 +8,7 @@ import {
   adminProductFormDataQueryOptions,
   adminProductQueryOptions,
 } from "@/lib/admin/query-options";
+import { useI18n } from "@/lib/i18n";
 import { saveAdminProduct } from "@/server/admin/products";
 
 export const Route = createFileRoute("/dashboard/products/$id")({
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/dashboard/products/$id")({
 
 function RouteComponent() {
   const { id } = Route.useParams();
+  const { t } = useI18n();
   const { data: product } = useSuspenseQuery(adminProductQueryOptions(id));
   const { data: formData } = useSuspenseQuery(
     adminProductFormDataQueryOptions(),
@@ -30,7 +32,7 @@ function RouteComponent() {
 
   return (
     <ProductForm
-      title="Edit product"
+      title={t("dashboard.forms.editProduct")}
       initialValues={productToFormValues(product)}
       categories={formData.categories}
       colors={formData.colors}

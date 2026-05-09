@@ -13,6 +13,7 @@ import type {
   AdminOption,
   AdminProductFormValues,
 } from "@/lib/admin/types";
+import { useI18n } from "@/lib/i18n";
 
 interface ProductFormProps {
   title: string;
@@ -33,6 +34,7 @@ export function ProductForm({
   sizes,
   save,
 }: ProductFormProps) {
+  const { t } = useI18n();
   const router = useRouter();
   const queryClient = useQueryClient();
   const [values, setValues] = useState(
@@ -50,7 +52,7 @@ export function ProductForm({
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
       router.navigate({ to: "/dashboard/products" });
     } else {
-      window.alert(result.error || "Save failed");
+      window.alert(result.error || t("dashboard.resources.saveFailed"));
     }
   }
 
@@ -79,7 +81,7 @@ export function ProductForm({
           className="gap-2"
         >
           <ArrowLeft className="size-4" />
-          Back
+          {t("dashboard.actions.back")}
         </Button>
       </div>
 
@@ -92,13 +94,13 @@ export function ProductForm({
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
               <p className="mt-1 text-sm text-muted-foreground">
-                Product details, media, catalog options and publishing status.
+                {t("dashboard.forms.productDescription")}
               </p>
             </div>
           </div>
 
           <section className="space-y-4 rounded-xl border bg-card p-4 md:p-5">
-            <Field label="Product name">
+            <Field label={t("dashboard.forms.productName")}>
               <Input
                 value={values.name}
                 onChange={(event) =>
@@ -110,7 +112,7 @@ export function ProductForm({
                 required
               />
             </Field>
-            <Field label="Description">
+            <Field label={t("dashboard.forms.description")}>
               <textarea
                 value={values.description}
                 onChange={(event) =>
@@ -125,7 +127,7 @@ export function ProductForm({
               />
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="Price">
+              <Field label={t("dashboard.forms.price")}>
                 <Input
                   value={values.price}
                   onChange={(event) =>
@@ -137,7 +139,7 @@ export function ProductForm({
                   required
                 />
               </Field>
-              <Field label="Category">
+              <Field label={t("dashboard.forms.category")}>
                 <select
                   value={values.categoryId}
                   onChange={(event) =>
@@ -149,7 +151,7 @@ export function ProductForm({
                   required
                   className="h-9 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
                 >
-                  <option value="">Select category</option>
+                  <option value="">{t("dashboard.forms.selectCategory")}</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
@@ -161,7 +163,7 @@ export function ProductForm({
           </section>
 
           <section className="flex-1 space-y-4 rounded-xl border bg-card p-4 md:p-5">
-            <Field label="Images">
+            <Field label={t("dashboard.forms.images")}>
               <CloudinaryImageUpload
                 value={values.images.filter(Boolean)}
                 onChange={(images) =>
@@ -172,7 +174,7 @@ export function ProductForm({
                 }
                 maxFiles={8}
                 disabled={isPending}
-                imageAlt={values.name || "Product image"}
+                imageAlt={values.name || t("dashboard.forms.productImage")}
               />
             </Field>
           </section>
@@ -180,9 +182,11 @@ export function ProductForm({
 
         <aside className="flex min-w-0 flex-col gap-4">
           <section className="space-y-4 rounded-xl border bg-card p-4 md:p-5">
-            <h2 className="text-sm font-semibold">Status</h2>
+            <h2 className="text-sm font-semibold">
+              {t("dashboard.forms.status")}
+            </h2>
             <label className="flex items-center justify-between gap-3 text-sm">
-              Featured
+              {t("dashboard.forms.featured")}
               <input
                 type="checkbox"
                 checked={values.isFeatured}
@@ -195,7 +199,7 @@ export function ProductForm({
               />
             </label>
             <label className="flex items-center justify-between gap-3 text-sm">
-              Archived
+              {t("dashboard.forms.archived")}
               <input
                 type="checkbox"
                 checked={values.isArchived}
@@ -210,14 +214,14 @@ export function ProductForm({
           </section>
 
           <ChoiceSection
-            title="Colors"
+            title={t("dashboard.forms.colors")}
             items={colors}
             selected={values.colorIds}
             onToggle={(id) => toggleArrayValue("colorIds", id)}
             color
           />
           <ChoiceSection
-            title="Sizes"
+            title={t("dashboard.forms.sizes")}
             items={sizes}
             selected={values.sizeIds}
             onToggle={(id) => toggleArrayValue("sizeIds", id)}
@@ -225,7 +229,9 @@ export function ProductForm({
 
           <Button type="submit" disabled={isPending} className="w-full gap-2">
             <Save className="size-4" />
-            {isPending ? "Saving" : "Save product"}
+            {isPending
+              ? t("dashboard.actions.saving")
+              : t("dashboard.actions.saveProduct")}
           </Button>
         </aside>
       </form>

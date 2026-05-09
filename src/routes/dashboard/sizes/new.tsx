@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { ResourceForm } from "@/components/dashboard/resource/resource-form";
+import { useI18n } from "@/lib/i18n";
 import { saveAdminSize } from "@/server/admin/resources";
 
 export const Route = createFileRoute("/dashboard/sizes/new")({
@@ -8,9 +9,11 @@ export const Route = createFileRoute("/dashboard/sizes/new")({
 });
 
 function RouteComponent() {
+  const { t } = useI18n();
+
   return (
     <ResourceForm
-      title="New size"
+      title={t("dashboard.forms.newSize")}
       backHref="/dashboard/sizes"
       fields={["name", "value"]}
       initialValues={{ name: "", value: "" }}
