@@ -39,36 +39,36 @@ function RouteComponent() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-white">
-        <div className="shop-shell flex flex-col items-center gap-10 py-20 sm:py-28 lg:flex-row lg:gap-20 lg:py-36">
-          <div className="flex-1 text-center lg:text-left">
+      <section className="overflow-hidden bg-linear-to-b from-white to-slate-50/55">
+        <div className="shop-shell flex min-h-[34rem] items-center justify-center py-20 text-center sm:py-28 lg:py-32">
+          <div className="mx-auto max-w-5xl">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-              Ogkify Essentials
+              Ogkify General Store
             </p>
-            <h1 className="text-5xl font-light leading-[1.05] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl">
-              Style for
+            <h1 className="text-5xl font-light leading-[0.96] tracking-tight text-slate-900 sm:text-7xl lg:text-8xl">
+              Everyday Finds
               <br />
-              Everyday Living
+              All in One Place
             </h1>
-            <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-slate-500 sm:text-lg lg:mx-0">
-              Explore curated pieces with clean design, easy comfort, and
-              versatile details made for daily rotation.
+            <p className="mx-auto mt-8 max-w-3xl text-base leading-relaxed text-slate-500 sm:text-xl">
+              Shop a curated mix of home goods, accessories, lifestyle picks,
+              and useful essentials for every part of your day.
             </p>
-            <Link
-              to="/products"
-              className="mt-10 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-7 py-3.5 text-sm font-medium text-white transition-colors hover:bg-slate-700"
-            >
-              Explore Collection <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-
-          <div className="w-full max-w-lg flex-1">
-            <img
-              src="/billboard.webp"
-              alt="Spring Summer Collection"
-              fetchPriority="high"
-              className="w-full object-contain"
-            />
+            <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link
+                to="/products"
+                className="inline-flex h-14 items-center justify-center gap-2 rounded-full bg-slate-900 px-9 text-base font-medium text-white transition-colors hover:bg-slate-700"
+              >
+                Shop All Products <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/products"
+                search={{ sort: "newest" }}
+                className="inline-flex h-14 items-center justify-center rounded-full border border-slate-200 bg-white/80 px-9 text-base font-medium text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-950"
+              >
+                View New Arrivals
+              </Link>
+            </div>
           </div>
         </div>
       </section>
