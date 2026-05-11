@@ -84,15 +84,7 @@ export function ShopHomePending() {
 
 export function ShopSearchPending() {
   return (
-    <div className="shop-shell py-10 sm:py-14">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-2 flex flex-col items-center gap-3">
-          <SkeletonBlock className="h-3 w-24 rounded-full" />
-          <SkeletonBlock className="h-10 w-48" />
-        </div>
-        <SkeletonBlock className="mt-8 h-14 w-full rounded-2xl" />
-      </div>
-
+    <>
       <div className="mt-10 mb-6 flex items-end justify-between border-b border-slate-100 pb-4">
         <div className="space-y-3">
           <SkeletonBlock className="h-6 w-52 rounded-full" />
@@ -109,7 +101,7 @@ export function ShopSearchPending() {
           </div>
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

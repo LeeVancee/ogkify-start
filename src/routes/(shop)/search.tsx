@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
@@ -15,7 +15,6 @@ const searchParamsSchema = z.object({
 
 export const Route = createFileRoute("/(shop)/search")({
   validateSearch: searchParamsSchema,
-  pendingComponent: ShopSearchPending,
   loaderDeps: ({ search }) => ({
     q: search.q,
   }),
@@ -27,9 +26,7 @@ export const Route = createFileRoute("/(shop)/search")({
       return null;
     }
 
-    return context.queryClient.ensureQueryData(
-      shopSearchResultsQueryOptions(query),
-    );
+    void context.queryClient.prefetchQuery(shopSearchResultsQueryOptions(query));
   },
 });
 
@@ -63,7 +60,7 @@ function RouteComponent() {
         <div className="relative mt-8">
           <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
           <input
-            type="search"
+            type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -100,9 +97,17 @@ function RouteComponent() {
 
 function SearchResults({ query }: { query: string }) {
   const { t } = useI18n();
-  const { data: products } = useSuspenseQuery(
-    shopSearchResultsQueryOptions(query),
-  );
+  const productsQuery = useQuery(shopSearchResultsQueryOptions(query));
+
+  if (productsQuery.isPending) {
+    return <ShopSearchPending />;
+  }
+
+  if (productsQuery.isError) {
+    throw productsQuery.error;
+  }
+
+  const products = productsQuery.data;
 
   return (
     <>
