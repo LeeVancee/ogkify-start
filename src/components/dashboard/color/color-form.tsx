@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createColor, updateColor } from "@/server/colors";
+import { createColor, updateColor } from "@/server/admin/resources";
 
 import { useResourceFormSubmit } from "../use-resource-form-submit";
 

@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createSize, updateSize } from "@/server/sizes";
+import { createSize, updateSize } from "@/server/admin/resources";
 
 import { useResourceFormSubmit } from "../use-resource-form-submit";
 

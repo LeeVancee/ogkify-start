@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useI18n } from "@/lib/i18n";
-import { deleteCategory, getCategories } from "@/server/categories";
+import { deleteCategory, getCategories } from "@/server/admin/resources";
 
 import { ResourceList } from "../resource-list";
 

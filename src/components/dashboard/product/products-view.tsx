@@ -2,7 +2,7 @@ import { Grid, List } from "lucide-react";
 import { useState } from "react";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { deleteProduct, getProducts } from "@/server/products";
+import { deleteProduct, getProducts } from "@/server/admin/products";
 
 import { ResourceList } from "../resource-list";
 import { ProductCard } from "./product-card";

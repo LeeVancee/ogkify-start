@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { updateOrderStatus } from "@/server/orders";
+import { updateOrderStatus } from "@/server/admin/orders";
 
 // Define order type
 interface Order {

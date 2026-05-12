@@ -277,3 +277,43 @@ export const getAdminProductStats = createServerFn().handler(async () => {
       .length,
   };
 });
+
+export async function getProducts() {
+  const list = await listAdminProducts();
+
+  return list.map((product) => ({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+    category: { id: product.categoryName, name: product.categoryName },
+    colors: product.colors,
+    sizes: product.sizes.map((size) => ({
+      ...size,
+      value: size.value ?? size.name,
+    })),
+    images: product.imageUrl ? [{ id: product.imageUrl, url: product.imageUrl }] : [],
+    isFeatured: product.isFeatured,
+    isArchived: product.isArchived,
+  }));
+}
+
+export async function createProduct({
+  data,
+}: {
+  data: AdminProductFormValues;
+}) {
+  return saveAdminProduct({ data: { values: data } });
+}
+
+export async function updateProduct({
+  data,
+}: {
+  data: { id: string; data: AdminProductFormValues };
+}) {
+  return saveAdminProduct({
+    data: { id: data.id, values: data.data },
+  });
+}
+
+export const deleteProduct = deleteAdminProduct;

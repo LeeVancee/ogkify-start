@@ -14,7 +14,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createCategory, updateCategory } from "@/server/categories";
+import { createCategory, updateCategory } from "@/server/admin/resources";
 
 import { CloudinaryImageUpload } from "../cloudinary-image-upload";
 import { useResourceFormSubmit } from "../use-resource-form-submit";

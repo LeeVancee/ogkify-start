@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import { getOrderDetails, getUserOrders } from "@/server/orders";
+import { getOrderDetails, getUserOrders } from "@/server/shop/orders";
 
 import { EmptyState } from "../empty-state";
 import { DashboardPageHeader } from "../page-header";

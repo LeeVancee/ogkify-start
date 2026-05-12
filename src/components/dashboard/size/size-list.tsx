@@ -13,7 +13,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useI18n } from "@/lib/i18n";
-import { deleteSize, getSizes } from "@/server/sizes";
+import { deleteSize, getSizes } from "@/server/admin/resources";
 
 import { ResourceList } from "../resource-list";
 
