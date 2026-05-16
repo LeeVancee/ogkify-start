@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
@@ -7,6 +7,7 @@ import { z } from "zod";
 import { ProductFilters } from "@/components/shop/product/product-filters";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
+import { ProductsLoading } from "@/components/shop/product/products-loading";
 import { useI18n } from "@/lib/i18n";
 import {
   shopCategoriesQueryOptions,
@@ -34,22 +35,6 @@ export const Route = createFileRoute("/(shop)/products/")({
     maxPrice: search.maxPrice,
     page: search.page,
   }),
-  loader: ({ context, deps }) => {
-    const page = deps.page ?? 1;
-
-    return context.queryClient.ensureQueryData(
-      shopFilteredProductsQueryOptions({
-        category: deps.category,
-        sort: deps.sort,
-        search: deps.search,
-        featured: deps.featured ?? false,
-        minPrice: deps.minPrice,
-        maxPrice: deps.maxPrice,
-        page,
-        limit: 12,
-      }),
-    );
-  },
   component: CategoriesPage,
 });
 
@@ -61,7 +46,7 @@ function CategoriesPage() {
   const selectedCategory = search.category ?? "";
   const [filterOpen, setFilterOpen] = useState(false);
   const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
-  const { data: filteredProducts } = useSuspenseQuery(
+  const productsQuery = useQuery(
     shopFilteredProductsQueryOptions({
       category: search.category,
       sort: search.sort,
@@ -73,7 +58,8 @@ function CategoriesPage() {
       limit: 12,
     }),
   );
-  const { products, total } = filteredProducts;
+  const products = productsQuery.data?.products ?? [];
+  const total = productsQuery.data?.total ?? 0;
   const categoryLabel = selectedCategory
     ? (categories.find((item) => item.name === selectedCategory)?.name ??
       t("shop.productFilters.fallbackProducts"))
@@ -141,7 +127,9 @@ function CategoriesPage() {
         </div>
       ) : null}
 
-      {products.length === 0 ? (
+      {productsQuery.isPending ? (
+        <ProductsLoading />
+      ) : products.length === 0 ? (
         <div className="py-24 text-center">
           <p className="text-lg font-light text-slate-500">
             {t("shop.productFilters.noMatches")}
