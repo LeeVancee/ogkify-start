@@ -1,59 +1,67 @@
-import { Accordion } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useI18n } from "@/lib/i18n";
 
 import { CategoryFilter } from "./category-filter";
-import { ColorFilter } from "./color-filter";
-import { FeaturedFilter } from "./featured-filter";
 import type { FilterProps } from "./filter-types";
-import { normalizeArray } from "./filter-types";
 import { PriceFilter } from "./price-filter";
-import { SizeFilter } from "./size-filter";
 import { useProductFilterNavigation } from "./use-product-filter-navigation";
 
-export function ProductFilters({
-  categories,
-  colors = [],
-  sizes = [],
-  maxPrice = 5000,
-}: FilterProps) {
-  const { search, resetSearch } = useProductFilterNavigation();
-  const { t } = useI18n();
-  const currentCategory = search.category;
-  const currentSort = search.sort || "featured";
-  const isFeatured = search.featured === true;
-  const currentMinPrice = Number(search.minPrice || "0");
-  const currentMaxPrice = Number(search.maxPrice || maxPrice.toString());
-  const currentColorNames = normalizeArray(search.color);
-  const currentSizeNames = normalizeArray(search.size);
+const sortOptions = [
+  { value: "featured", labelKey: "shop.productFilters.sortFeatured" },
+  { value: "price-asc", labelKey: "shop.productFilters.sortPriceAsc" },
+  { value: "price-desc", labelKey: "shop.productFilters.sortPriceDesc" },
+  { value: "newest", labelKey: "shop.productFilters.sortNewest" },
+];
 
-  const hasActiveFilters =
-    currentCategory ||
-    currentSort !== "featured" ||
-    isFeatured ||
-    currentMinPrice > 0 ||
-    currentMaxPrice < maxPrice ||
-    currentColorNames.length > 0 ||
-    currentSizeNames.length > 0;
+function FilterSortSelect() {
+  const { search, updateSearch } = useProductFilterNavigation();
+  const { t } = useI18n();
+  const currentSort = search.sort || "featured";
 
   return (
-    <div className="grid gap-6">
-      <Accordion multiple defaultValue={["categories", "featured", "price"]}>
-        <CategoryFilter categories={categories} />
-        <FeaturedFilter />
-        <ColorFilter colors={colors} />
-        <SizeFilter sizes={sizes} />
-        <PriceFilter maxPrice={maxPrice} />
-      </Accordion>
-
-      <Button
-        variant="outline"
-        className="w-full"
-        onClick={resetSearch}
-        disabled={!hasActiveFilters}
+    <section className="space-y-4">
+      <h3 className="text-xs font-semibold tracking-wide text-slate-500">
+        {t("shop.productFilters.sortBy")}
+      </h3>
+      <Select
+        value={currentSort}
+        onValueChange={(value) =>
+          updateSearch({ sort: value || "featured", page: 1 })
+        }
       >
-        {t("shop.productFilters.resetFilters")}
-      </Button>
+        <SelectTrigger className="h-11 w-full rounded-lg border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none">
+          <SelectValue placeholder={t("shop.productFilters.sortBy")} />
+        </SelectTrigger>
+        <SelectContent
+          alignItemWithTrigger={false}
+          className="w-(--anchor-width)"
+        >
+          <SelectGroup>
+            {sortOptions.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {t(option.labelKey)}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+    </section>
+  );
+}
+
+export function ProductFilters({ categories, maxPrice = 5000 }: FilterProps) {
+  return (
+    <div className="grid gap-10">
+      <CategoryFilter categories={categories} />
+      <PriceFilter maxPrice={maxPrice} />
+      <FilterSortSelect />
     </div>
   );
 }

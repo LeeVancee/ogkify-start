@@ -59,7 +59,9 @@ export function ResourceList({
     if (result.success) {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
     } else {
-      window.alert(result.error || t("dashboard.resources.productDeleteFailed"));
+      window.alert(
+        result.error || t("dashboard.resources.productDeleteFailed"),
+      );
     }
   }
 

@@ -440,8 +440,7 @@ export const en = {
       yourName: "Your name",
       profileAvatar: "Profile avatar",
       security: "Security",
-      securityDescription:
-        "Change password and revoke other active sessions.",
+      securityDescription: "Change password and revoke other active sessions.",
       currentPassword: "Current password",
       newPassword: "New password",
       confirmNewPassword: "Confirm new password",

@@ -80,7 +80,6 @@ export function DashboardSidebar() {
           </SidebarGroup>
         ))}
       </SidebarContent>
-
     </Sidebar>
   );
 }

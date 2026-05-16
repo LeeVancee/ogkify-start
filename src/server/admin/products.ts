@@ -292,7 +292,9 @@ export async function getProducts() {
       ...size,
       value: size.value ?? size.name,
     })),
-    images: product.imageUrl ? [{ id: product.imageUrl, url: product.imageUrl }] : [],
+    images: product.imageUrl
+      ? [{ id: product.imageUrl, url: product.imageUrl }]
+      : [],
     isFeatured: product.isFeatured,
     isArchived: product.isArchived,
   }));

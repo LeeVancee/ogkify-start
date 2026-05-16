@@ -34,8 +34,16 @@ export const dashboardNav = [
         href: "/dashboard/categories",
         icon: Grid3X3,
       },
-      { titleKey: "dashboard.nav.colors", href: "/dashboard/colors", icon: Palette },
-      { titleKey: "dashboard.nav.sizes", href: "/dashboard/sizes", icon: Ruler },
+      {
+        titleKey: "dashboard.nav.colors",
+        href: "/dashboard/colors",
+        icon: Palette,
+      },
+      {
+        titleKey: "dashboard.nav.sizes",
+        href: "/dashboard/sizes",
+        icon: Ruler,
+      },
     ],
   },
   {

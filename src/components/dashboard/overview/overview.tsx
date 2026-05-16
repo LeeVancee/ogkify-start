@@ -3,8 +3,8 @@ import { Box, Grid3X3, Palette, Ruler, ShoppingCart, Star } from "lucide-react";
 
 import { DashboardContextPanel } from "@/components/dashboard/layout/context-panel";
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
-import { useI18n } from "@/lib/i18n";
 import type { DashboardOverviewData } from "@/lib/admin/types";
+import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
 interface DashboardOverviewProps {
@@ -14,20 +14,36 @@ interface DashboardOverviewProps {
 export function DashboardOverview({ data }: DashboardOverviewProps) {
   const { t } = useI18n();
   const cards = [
-    { label: t("dashboard.overview.products"), value: data.productsCount, icon: Box },
+    {
+      label: t("dashboard.overview.products"),
+      value: data.productsCount,
+      icon: Box,
+    },
     {
       label: t("dashboard.overview.categories"),
       value: data.categoriesCount,
       icon: Grid3X3,
     },
-    { label: t("dashboard.overview.colors"), value: data.colorsCount, icon: Palette },
-    { label: t("dashboard.overview.sizes"), value: data.sizesCount, icon: Ruler },
+    {
+      label: t("dashboard.overview.colors"),
+      value: data.colorsCount,
+      icon: Palette,
+    },
+    {
+      label: t("dashboard.overview.sizes"),
+      value: data.sizesCount,
+      icon: Ruler,
+    },
     {
       label: t("dashboard.overview.pendingOrders"),
       value: data.pendingOrders,
       icon: ShoppingCart,
     },
-    { label: t("dashboard.overview.featured"), value: data.featuredProducts, icon: Star },
+    {
+      label: t("dashboard.overview.featured"),
+      value: data.featuredProducts,
+      icon: Star,
+    },
   ];
 
   return (

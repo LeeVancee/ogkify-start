@@ -151,7 +151,9 @@ export function ProductForm({
                   required
                   className="h-9 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
                 >
-                  <option value="">{t("dashboard.forms.selectCategory")}</option>
+                  <option value="">
+                    {t("dashboard.forms.selectCategory")}
+                  </option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}

@@ -26,7 +26,9 @@ export const Route = createFileRoute("/(shop)/search")({
       return null;
     }
 
-    void context.queryClient.prefetchQuery(shopSearchResultsQueryOptions(query));
+    void context.queryClient.prefetchQuery(
+      shopSearchResultsQueryOptions(query),
+    );
   },
 });
 

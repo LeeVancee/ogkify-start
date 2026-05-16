@@ -1,11 +1,6 @@
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import { useTransition } from "react";
 
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Slider } from "@/components/ui/slider";
 import { useI18n } from "@/lib/i18n";
 
@@ -34,6 +29,7 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
           search: createQueryParams(search, {
             minPrice: min > 0 ? min : undefined,
             maxPrice: max < maxPrice ? max : undefined,
+            page: 1,
           }),
           replace: true,
         });
@@ -42,23 +38,23 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
   };
 
   return (
-    <AccordionItem value="price">
-      <AccordionTrigger>{t("shop.productFilters.priceRange")}</AccordionTrigger>
-      <AccordionContent>
-        <div className="pt-2 space-y-6">
-          <Slider
-            value={[currentMinPrice, currentMaxPrice]}
-            min={0}
-            max={maxPrice}
-            step={50}
-            onValueChange={handleChange}
-          />
-          <div className="flex items-center justify-between">
-            <p className="text-sm">￥{currentMinPrice}</p>
-            <p className="text-sm">￥{currentMaxPrice}</p>
-          </div>
+    <section className="space-y-4">
+      <h3 className="text-xs font-semibold tracking-wide text-slate-500">
+        {t("shop.productFilters.priceRange")}
+      </h3>
+      <div className="space-y-4">
+        <Slider
+          value={[currentMinPrice, currentMaxPrice]}
+          min={0}
+          max={maxPrice}
+          step={50}
+          onValueChange={handleChange}
+        />
+        <div className="flex items-center justify-between text-sm text-slate-500">
+          <span>￥{currentMinPrice}</span>
+          <span>￥{currentMaxPrice}</span>
         </div>
-      </AccordionContent>
-    </AccordionItem>
+      </div>
+    </section>
   );
 }
