@@ -22,7 +22,7 @@ export function DropDown() {
   const { t } = useI18n();
 
   // If no initial session data is passed, fetch on client side (compatible with other pages)
-  const { data: session, isPending } = authClient.useSession();
+  const { data: session } = authClient.useSession();
 
   // Prioritize server-side preloaded session data
 
@@ -35,16 +35,6 @@ export function DropDown() {
       },
     });
   };
-
-  if (isPending) {
-    return (
-      <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-        <Avatar className="h-8 w-8">
-          <AvatarFallback />
-        </Avatar>
-      </Button>
-    );
-  }
 
   if (!session) {
     return (
