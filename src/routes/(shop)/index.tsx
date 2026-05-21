@@ -1,8 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
-import { ShopHomePending } from "@/components/shop/shop-pending";
 import { useI18n } from "@/lib/i18n";
 import {
   shopCategoriesQueryOptions,
@@ -12,27 +11,20 @@ import { formatPrice } from "@/lib/utils";
 
 export const Route = createFileRoute("/(shop)/")({
   component: RouteComponent,
-  loader: ({ context }) => {
-    void context.queryClient.prefetchQuery(shopFeaturedProductsQueryOptions(7));
-    void context.queryClient.prefetchQuery(shopCategoriesQueryOptions());
+  loader: async ({ context }) => {
+    await Promise.all([
+      context.queryClient.ensureQueryData(shopFeaturedProductsQueryOptions(7)),
+      context.queryClient.ensureQueryData(shopCategoriesQueryOptions()),
+    ]);
   },
 });
 
 function RouteComponent() {
   const { t } = useI18n();
-  const featuredProductsQuery = useQuery(shopFeaturedProductsQueryOptions(7));
-  const categoriesQuery = useQuery(shopCategoriesQueryOptions());
-
-  if (featuredProductsQuery.isPending || categoriesQuery.isPending) {
-    return <ShopHomePending />;
-  }
-
-  if (featuredProductsQuery.isError || categoriesQuery.isError) {
-    throw featuredProductsQuery.error ?? categoriesQuery.error;
-  }
-
-  const featuredProducts = featuredProductsQuery.data;
-  const categories = categoriesQuery.data;
+  const { data: featuredProducts } = useSuspenseQuery(
+    shopFeaturedProductsQueryOptions(7),
+  );
+  const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
   const featured = featuredProducts.slice(0, 4);
   const newArrivals = featuredProducts.slice(4, 7);
 
