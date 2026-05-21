@@ -17,14 +17,25 @@ import { useI18n } from "@/lib/i18n";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
-export function DropDown() {
+type DropDownSession = {
+  user: {
+    name: string;
+    email: string;
+    image?: string | null;
+    role?: string | null;
+  };
+} | null;
+
+interface DropDownProps {
+  initialSession: DropDownSession;
+}
+
+export function DropDown({ initialSession }: DropDownProps) {
   const navigate = useNavigate();
   const { t } = useI18n();
 
-  // If no initial session data is passed, fetch on client side (compatible with other pages)
-  const { data: session } = authClient.useSession();
-
-  // Prioritize server-side preloaded session data
+  const sessionQuery = authClient.useSession();
+  const session = sessionQuery.data ?? initialSession;
 
   const handleLogout = () => {
     authClient.signOut({
