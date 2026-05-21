@@ -1,10 +1,12 @@
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ArrowRight, LoaderCircle, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
+import { authQueryKeys } from "@/lib/auth-query";
 import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/(auth)/login")({
@@ -17,6 +19,7 @@ function fieldInputClass() {
 
 function RouteComponent() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { t } = useI18n();
   const [error, setError] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -36,9 +39,12 @@ function RouteComponent() {
           onRequest: () => {
             setIsPending(true);
           },
-          onSuccess: () => {
+          onSuccess: async () => {
             setIsPending(false);
             toast.success(t("auth.login.success"));
+            await queryClient.invalidateQueries({
+              queryKey: authQueryKeys.session(),
+            });
             router.navigate({ to: "/" });
           },
           onError: (ctx) => {

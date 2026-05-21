@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { LayoutDashboard, LogOut, ShoppingBag, User } from "lucide-react";
 
@@ -12,35 +13,27 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
+import { authQueryKeys } from "@/lib/auth-query";
+import { useSessionQuery } from "@/lib/auth-hooks";
 import { useI18n } from "@/lib/i18n";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 
-type DropDownSession = {
-  user: {
-    name: string;
-    email: string;
-    image?: string | null;
-    role?: string | null;
-  };
-} | null;
-
-interface DropDownProps {
-  initialSession: DropDownSession;
-}
-
-export function DropDown({ initialSession }: DropDownProps) {
+export function DropDown() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { t } = useI18n();
-
-  const sessionQuery = authClient.useSession();
-  const session = sessionQuery.data ?? initialSession;
+  const { session } = useSessionQuery();
 
   const handleLogout = () => {
     authClient.signOut({
       fetchOptions: {
-        onSuccess: () => {
+        onSuccess: async () => {
+          queryClient.setQueryData(authQueryKeys.session(), null);
+          await queryClient.invalidateQueries({
+            queryKey: authQueryKeys.session(),
+          });
           navigate({ to: "/" });
         },
       },

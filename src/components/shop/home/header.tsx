@@ -12,20 +12,7 @@ import { cn } from "@/lib/utils";
 
 import { DropDown } from "../DropDown";
 
-type HeaderSession = {
-  user: {
-    name: string;
-    email: string;
-    image?: string | null;
-    role?: string | null;
-  };
-} | null;
-
-interface HeaderProps {
-  initialSession: HeaderSession;
-}
-
-export default function Header({ initialSession }: HeaderProps) {
+export default function Header() {
   const pathname = useLocation().pathname;
   const { t } = useI18n();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -91,7 +78,7 @@ export default function Header({ initialSession }: HeaderProps) {
               <Search className="h-5 w-5" />
             </Link>
 
-            <DropDown initialSession={initialSession} />
+            <DropDown />
 
             <button
               type="button"
