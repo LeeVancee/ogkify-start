@@ -13,8 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { authClient } from "@/lib/auth-client";
-import { authQueryKeys } from "@/lib/auth-query";
 import { useSessionQuery } from "@/lib/auth-hooks";
+import { authQueryKeys } from "@/lib/auth-query";
 import { useI18n } from "@/lib/i18n";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";

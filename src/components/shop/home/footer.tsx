@@ -16,7 +16,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mt-auto border-t border-slate-200 bg-white">
+    <footer className="mt-auto border-t border-slate-200/80 bg-stone-50">
       <div className="shop-shell py-14 sm:py-18">
         <div className="mb-10 pb-10 border-b border-slate-100">
           <Link

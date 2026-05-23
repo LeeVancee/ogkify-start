@@ -7,9 +7,6 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { authClient } from "@/lib/auth-client";
-import { authQueryKeys } from "@/lib/auth-query";
-import { useI18n } from "@/lib/i18n";
 import {
   Form,
   FormControl,
@@ -18,6 +15,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { authClient } from "@/lib/auth-client";
+import { authQueryKeys } from "@/lib/auth-query";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/(auth)/login")({
   component: RouteComponent,
@@ -99,10 +99,7 @@ function RouteComponent() {
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(handleSubmit)}
-          className="space-y-5"
-        >
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
           <FormField
             control={form.control}
             name="email"

@@ -4,7 +4,6 @@ import { Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useState } from "react";
 
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { CartSheet } from "@/components/shop/cart-sheet";
 import { useI18n } from "@/lib/i18n";
 import { shopCartQueryOptions } from "@/lib/shop/query-options";
@@ -24,7 +23,7 @@ export default function Header() {
   const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-stone-50/95 backdrop-blur-md">
       <div className="shop-shell">
         <div className="flex h-16 items-center justify-between">
           <button
@@ -67,12 +66,11 @@ export default function Header() {
 
           <div className="flex items-center gap-1">
             <LanguageSwitcher />
-            <ThemeToggle />
 
             <Link
               to="/search"
               search={{}}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
+              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-white/60 hover:text-slate-900 cursor-pointer"
               aria-label={t("shop.header.search")}
             >
               <Search className="h-5 w-5" />
@@ -84,8 +82,8 @@ export default function Header() {
               type="button"
               onClick={() => setIsCartOpen(true)}
               className={cn(
-                "relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 cursor-pointer",
-                isCartOpen && "bg-slate-100 text-slate-900",
+                "relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-white/60 hover:text-slate-900 cursor-pointer",
+                isCartOpen && "bg-white/70 text-slate-900",
               )}
               aria-label={t("shop.header.cart")}
               aria-expanded={isCartOpen}
@@ -101,7 +99,7 @@ export default function Header() {
         </div>
 
         {isMenuOpen ? (
-          <nav className="space-y-0.5 border-t border-slate-100 bg-white px-1 py-3 sm:hidden">
+          <nav className="space-y-0.5 border-t border-slate-200/70 bg-stone-50 px-1 py-3 sm:hidden">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -111,8 +109,8 @@ export default function Header() {
                 className={cn(
                   "block rounded-lg px-3 py-2.5 text-sm tracking-wide transition-colors",
                   pathname === item.href
-                    ? "font-medium text-slate-900 bg-slate-50"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-slate-50",
+                    ? "font-medium text-slate-900 bg-white/60"
+                    : "text-slate-500 hover:text-slate-900 hover:bg-white/50",
                 )}
               >
                 {item.name}

@@ -31,7 +31,7 @@ function RouteComponent() {
   return (
     <>
       {/* Hero */}
-      <section className="overflow-hidden bg-linear-to-b from-white to-slate-50/55">
+      <section className="overflow-hidden bg-linear-to-b from-stone-50 via-stone-50 to-stone-100">
         <div className="shop-shell flex min-h-[34rem] items-center justify-center py-20 text-center sm:py-28 lg:py-32">
           <div className="mx-auto max-w-5xl">
             <p className="mb-5 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
@@ -56,7 +56,7 @@ function RouteComponent() {
               <Link
                 to="/products"
                 search={{ sort: "newest" }}
-                className="inline-flex h-14 items-center justify-center rounded-full border border-slate-200 bg-white/80 px-9 text-base font-medium text-slate-700 transition-colors hover:border-slate-300 hover:text-slate-950"
+                className="inline-flex h-14 items-center justify-center rounded-full border border-slate-200 bg-white/80 px-9 text-base font-medium text-slate-700 backdrop-blur-sm transition-colors hover:border-slate-300 hover:bg-white hover:text-slate-950"
               >
                 View New Arrivals
               </Link>
@@ -66,7 +66,7 @@ function RouteComponent() {
       </section>
 
       {/* Shop By Category */}
-      <section className="bg-slate-50">
+      <section className="bg-stone-100">
         <div className="shop-shell py-20 sm:py-24">
           <div className="mb-12 text-center">
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
@@ -109,7 +109,7 @@ function RouteComponent() {
       </section>
 
       {/* Featured Picks */}
-      <section className="bg-white">
+      <section className="bg-stone-50">
         <div className="shop-shell py-20 sm:py-24">
           <div className="mb-10 flex items-end justify-between">
             <div>
@@ -157,7 +157,7 @@ function RouteComponent() {
 
       {/* New Arrivals */}
       {newArrivals.length > 0 ? (
-        <section className="bg-slate-50">
+        <section className="bg-stone-100">
           <div className="shop-shell py-20 sm:py-24">
             <div className="mb-10 flex items-end justify-between">
               <div>
@@ -182,7 +182,7 @@ function RouteComponent() {
                   key={product.id}
                   to="/product/$id"
                   params={{ id: product.id }}
-                  className="group flex items-center gap-5 py-5 transition-colors hover:bg-white rounded-xl px-4 -mx-4 cursor-pointer"
+                  className="group -mx-4 flex items-center gap-5 rounded-xl px-4 py-5 transition-colors hover:bg-white/70 cursor-pointer"
                 >
                   <img
                     src={product.images[0]}

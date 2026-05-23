@@ -2,7 +2,6 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 
 import { LanguageSwitcher } from "@/components/shared/language-switcher";
-import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useI18n } from "@/lib/i18n";
@@ -53,7 +52,6 @@ export function DashboardHeader() {
 
       <div className="flex items-center gap-1">
         <LanguageSwitcher />
-        <ThemeToggle />
         <DashboardUserDropdown />
       </div>
     </header>
