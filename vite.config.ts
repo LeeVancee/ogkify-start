@@ -5,18 +5,16 @@ import babel from '@rolldown/plugin-babel'
 import { defineConfig } from 'vite'
 import { nitro } from "nitro/vite";
 
-export default defineConfig({
-  server: {
-    port: 3000,
-  },
+export default defineConfig(({ mode }) => ({
+
   resolve: {
-      tsconfigPaths: true,
+    tsconfigPaths: true,
   },
   plugins: [
     tanstackStart(),
     react(),
-    babel({ presets: [reactCompilerPreset()]}),
+    babel({ presets: [reactCompilerPreset()] }),
     tailwindcss(),
-    nitro(),
-  ],
-})
+    mode !== 'development' && nitro(),
+  ].filter(Boolean),
+}))
