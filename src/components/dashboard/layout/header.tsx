@@ -29,7 +29,7 @@ export function DashboardHeader() {
   const title = t(currentTitleKey(pathname));
 
   return (
-    <header className="sticky top-0 z-10 flex w-full items-center gap-2 border-b bg-card px-3 py-2 sm:gap-3 sm:px-6 sm:py-3">
+    <header className="sticky top-0 z-10 flex w-full items-center gap-2 border-b border-border/70 bg-card/96 px-3 py-3 backdrop-blur sm:gap-3 sm:px-6">
       <SidebarTrigger className="-ml-1 sm:-ml-2" />
 
       <div className="min-w-0 flex-1">
@@ -46,7 +46,7 @@ export function DashboardHeader() {
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           placeholder={t("dashboard.shell.searchPlaceholder")}
-          className="h-9 bg-card pl-9"
+          className="h-10 border-border/70 bg-background/80 pl-9 shadow-none"
         />
       </div>
 

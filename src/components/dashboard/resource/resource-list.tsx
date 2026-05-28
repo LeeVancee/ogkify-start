@@ -88,14 +88,14 @@ export function ResourceList({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 shadow-[0_1px_2px_rgba(15,23,42,0.03)] sm:flex-row sm:items-center">
         <Input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder={t("dashboard.resources.searchResource", {
             resource: title.toLowerCase(),
           })}
-          className="h-9 sm:max-w-xs"
+          className="h-10 border-border/70 bg-background sm:max-w-xs"
         />
         <Button render={<Link to={newHref} />} className="gap-2 sm:ml-auto">
           <Plus className="size-4" />
@@ -154,7 +154,7 @@ export function ResourceList({
 
 function ResourceImage({ item }: { item: ResourceItem }) {
   return (
-    <div className="size-11 overflow-hidden rounded-md bg-muted">
+    <div className="size-11 overflow-hidden rounded-xl border border-border/60 bg-muted/50">
       {item.imageUrl ? (
         <img src={item.imageUrl} alt="" className="size-full object-cover" />
       ) : (

@@ -18,13 +18,13 @@ export function AdminTable({
   minWidth = "min-w-[760px]",
 }: AdminTableProps) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border bg-card">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
       <div className="min-h-0 w-full flex-1 overflow-auto">
         <table className={cn("w-full border-collapse text-sm", minWidth)}>
-          <thead className="bg-muted/50 text-xs uppercase tracking-widest text-muted-foreground">
+          <thead className="bg-muted/35 text-xs uppercase tracking-[0.18em] text-muted-foreground">
             <tr>
               {columns.map((column) => (
-                <th key={column} className="px-4 py-3 text-left font-medium">
+                <th key={column} className="px-5 py-4 text-left font-medium">
                   {column}
                 </th>
               ))}
@@ -50,12 +50,12 @@ export function AdminTableCell({
   className?: string;
 }) {
   return (
-    <td className={cn("px-4 py-3 align-middle", className)}>{children}</td>
+    <td className={cn("px-5 py-4 align-middle", className)}>{children}</td>
   );
 }
 
 export function AdminTableRow({ children }: { children: React.ReactNode }) {
-  return <tr className="transition-colors hover:bg-muted/30">{children}</tr>;
+  return <tr className="bg-card transition-colors hover:bg-muted/20">{children}</tr>;
 }
 
 export function StatusPill({

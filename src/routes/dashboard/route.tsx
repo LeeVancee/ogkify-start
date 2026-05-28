@@ -26,8 +26,8 @@ function RouteComponent() {
   return (
     <SidebarProvider className="bg-sidebar">
       <DashboardSidebar />
-      <div className="h-svh w-full overflow-hidden lg:p-2">
-        <div className="flex h-full w-full flex-col items-stretch justify-start overflow-hidden bg-background lg:rounded-xl lg:border">
+      <div className="h-svh w-full overflow-hidden bg-[color:var(--color-sidebar)] p-1.5 lg:p-3">
+        <div className="flex h-full w-full flex-col items-stretch justify-start overflow-hidden rounded-[calc(var(--radius)*1.75)] border border-border/70 bg-background shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
           <DashboardHeader />
           <Outlet />
         </div>
