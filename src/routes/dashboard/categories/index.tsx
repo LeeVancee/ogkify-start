@@ -20,16 +20,14 @@ function RouteComponent() {
   const { data: categories } = useSuspenseQuery(adminCategoriesQueryOptions());
 
   return (
-    <DashboardPageShell
-      title={t("dashboard.nav.categories")}
-      description={t("dashboard.pages.categoriesDescription")}
-    >
+    <DashboardPageShell title={t("dashboard.nav.categories")} hideHeader>
       <ResourceList
         title={t("dashboard.nav.categories")}
         items={categories}
         newHref="/dashboard/categories/new"
         editHref="/dashboard/categories/$id"
         accent="image"
+        showTitle
         onDelete={(id) => deleteAdminCategory({ data: id })}
       />
     </DashboardPageShell>

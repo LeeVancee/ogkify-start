@@ -151,10 +151,7 @@ export function DashboardSettingsPage({
   const userInitial = session?.user.name?.[0]?.toUpperCase() ?? "U";
 
   return (
-    <DashboardPageShell
-      title={t("dashboard.nav.settings")}
-      description={t("dashboard.pages.settingsDescription")}
-    >
+    <DashboardPageShell title={t("dashboard.nav.settings")}>
       <div className="grid h-full min-h-0 gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <form
           onSubmit={handleProfileSubmit}

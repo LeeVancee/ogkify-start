@@ -18,7 +18,7 @@ export function AdminTable({
   minWidth = "min-w-[760px]",
 }: AdminTableProps) {
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-border/70 bg-card shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[inherit] bg-card">
       <div className="min-h-0 w-full flex-1 overflow-auto">
         <table className={cn("w-full border-collapse text-sm", minWidth)}>
           <thead className="bg-muted/35 text-xs uppercase tracking-[0.18em] text-muted-foreground">

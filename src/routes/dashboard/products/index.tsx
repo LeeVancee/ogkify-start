@@ -20,10 +20,7 @@ function RouteComponent() {
   const { data: products } = useSuspenseQuery(adminProductsQueryOptions());
 
   return (
-    <DashboardPageShell
-      title={t("dashboard.nav.products")}
-      description={t("dashboard.pages.productsDescription")}
-    >
+    <DashboardPageShell title={t("dashboard.nav.products")}>
       <ProductList
         products={products}
         deleteProduct={(id) => deleteAdminProduct({ data: id })}

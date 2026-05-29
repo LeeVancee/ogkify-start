@@ -20,15 +20,13 @@ function RouteComponent() {
   const { data: sizes } = useSuspenseQuery(adminSizesQueryOptions());
 
   return (
-    <DashboardPageShell
-      title={t("dashboard.nav.sizes")}
-      description={t("dashboard.pages.sizesDescription")}
-    >
+    <DashboardPageShell title={t("dashboard.nav.sizes")} hideHeader>
       <ResourceList
         title={t("dashboard.nav.sizes")}
         items={sizes}
         newHref="/dashboard/sizes/new"
         editHref="/dashboard/sizes/$id"
+        showTitle
         onDelete={(id) => deleteAdminSize({ data: id })}
       />
     </DashboardPageShell>

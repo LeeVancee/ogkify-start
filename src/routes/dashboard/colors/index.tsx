@@ -20,16 +20,14 @@ function RouteComponent() {
   const { data: colors } = useSuspenseQuery(adminColorsQueryOptions());
 
   return (
-    <DashboardPageShell
-      title={t("dashboard.nav.colors")}
-      description={t("dashboard.pages.colorsDescription")}
-    >
+    <DashboardPageShell title={t("dashboard.nav.colors")} hideHeader>
       <ResourceList
         title={t("dashboard.nav.colors")}
         items={colors}
         newHref="/dashboard/colors/new"
         editHref="/dashboard/colors/$id"
         accent="color"
+        showTitle
         onDelete={(id) => deleteAdminColor({ data: id })}
       />
     </DashboardPageShell>

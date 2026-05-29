@@ -21,10 +21,7 @@ function RouteComponent() {
   const { data: orders } = useSuspenseQuery(adminOrdersQueryOptions());
 
   return (
-    <DashboardPageShell
-      title={t("dashboard.nav.orders")}
-      description={t("dashboard.pages.ordersDescription")}
-    >
+    <DashboardPageShell title={t("dashboard.nav.orders")} hideHeader>
       <OrderList
         orders={orders}
         updateStatus={(orderId, status: OrderStatus) =>
