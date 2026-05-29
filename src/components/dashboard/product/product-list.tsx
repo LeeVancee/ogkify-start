@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Edit3, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import {
   AdminTable,
   AdminTableCell,
@@ -25,6 +26,7 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
   const filtered = useMemo(
     () =>
@@ -37,11 +39,12 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
     [products, query],
   );
 
-  async function handleDelete(id: string) {
-    if (!window.confirm(t("dashboard.resources.deleteProductConfirm"))) return;
-    const result = await deleteProduct(id);
+  async function confirmDelete() {
+    if (!pendingDeleteId) return;
+    const result = await deleteProduct(pendingDeleteId);
     if (result.success) {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
+      setPendingDeleteId(null);
     } else {
       window.alert(
         result.error || t("dashboard.resources.productDeleteFailed"),
@@ -161,7 +164,7 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
                 <Button
                   variant="destructive"
                   size="icon-sm"
-                  onClick={() => handleDelete(product.id)}
+                  onClick={() => setPendingDeleteId(product.id)}
                 >
                   <Trash2 className="size-4" />
                 </Button>
@@ -170,6 +173,14 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
           </AdminTableRow>
         ))}
       </AdminTable>
+      <DeleteDialog
+        open={Boolean(pendingDeleteId)}
+        onOpenChange={(open) => {
+          if (!open) setPendingDeleteId(null);
+        }}
+        onConfirm={confirmDelete}
+        description={t("dashboard.resources.deleteProductConfirm")}
+      />
     </div>
   );
 }

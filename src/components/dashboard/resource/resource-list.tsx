@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Edit3, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import {
   AdminTable,
   AdminTableCell,
@@ -42,6 +43,7 @@ export function ResourceList({
   const { t } = useI18n();
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const filtered = useMemo(
     () =>
       items.filter((item) =>
@@ -53,13 +55,12 @@ export function ResourceList({
     [items, query],
   );
 
-  async function handleDelete(id: string) {
-    const ok = window.confirm(t("dashboard.resources.deleteResourceConfirm"));
-    if (!ok) return;
-
-    const result = await onDelete(id);
+  async function confirmDelete() {
+    if (!pendingDeleteId) return;
+    const result = await onDelete(pendingDeleteId);
     if (result.success) {
       await queryClient.invalidateQueries({ queryKey: adminQueryKeys.all });
+      setPendingDeleteId(null);
     } else {
       window.alert(
         result.error || t("dashboard.resources.productDeleteFailed"),
@@ -150,7 +151,7 @@ export function ResourceList({
                     <Button
                       variant="destructive"
                       size="icon-sm"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => setPendingDeleteId(item.id)}
                     >
                       <Trash2 className="size-4" />
                     </Button>
@@ -161,6 +162,14 @@ export function ResourceList({
           </AdminTable>
         </div>
       </div>
+      <DeleteDialog
+        open={Boolean(pendingDeleteId)}
+        onOpenChange={(open) => {
+          if (!open) setPendingDeleteId(null);
+        }}
+        onConfirm={confirmDelete}
+        description={t("dashboard.resources.deleteResourceConfirm")}
+      />
     </div>
   );
 }
