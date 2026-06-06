@@ -15,7 +15,6 @@ import { getLocale } from "@/lib/i18n/server";
 import { seo } from "@/lib/seo";
 
 import appCss from "../styles.css?url";
-import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -42,13 +41,7 @@ export const Route = createRootRouteWithContext<{
         href: appCss,
         //  suppressHydrationWarning: true,
       },
-      {
-        rel: "preload",
-        href: geistLatin,
-        as: "font",
-        type: "font/woff2",
-        crossOrigin: "anonymous",
-      },
+
       { rel: "icon", href: "/logo-black.svg" },
     ],
   }),
