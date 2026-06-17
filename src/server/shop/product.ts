@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { db } from "@/db";
 
 export const getProduct = createServerFn()
-  .inputValidator((id: string) => id)
+  .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     const product = await db.query.products.findFirst({
       where: (products, { eq }) => eq(products.id, id),
@@ -51,7 +51,7 @@ export const getProduct = createServerFn()
   });
 
 export const getRelatedProducts = createServerFn()
-  .inputValidator((params: { productId: string; category: string }) => params)
+  .validator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
     const productsList = await db.query.products.findMany({
       where: (products, { eq, ne, and }) =>

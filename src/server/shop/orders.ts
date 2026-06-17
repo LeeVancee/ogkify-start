@@ -88,7 +88,7 @@ export const getUserOrders = createServerFn().handler(async () => {
 });
 
 export const getOrderDetails = createServerFn()
-  .inputValidator((orderId: string) => orderId)
+  .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
 
@@ -253,7 +253,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
 });
 
 export const createOrderPaymentIntent = createServerFn({ method: "POST" })
-  .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
+  .validator((orderId: string) => orderIdSchema.parse(orderId))
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
 
@@ -284,7 +284,7 @@ export const createOrderPaymentIntent = createServerFn({ method: "POST" })
   });
 
 export const getCheckoutOrder = createServerFn()
-  .inputValidator((orderId: string) => orderIdSchema.parse(orderId))
+  .validator((orderId: string) => orderIdSchema.parse(orderId))
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
 
@@ -341,7 +341,7 @@ export const getCheckoutOrder = createServerFn()
   });
 
 export const updateCheckoutOrderDetails = createServerFn({ method: "POST" })
-  .inputValidator((input: z.infer<typeof checkoutOrderDetailsSchema>) =>
+  .validator((input: z.infer<typeof checkoutOrderDetailsSchema>) =>
     checkoutOrderDetailsSchema.parse(input),
   )
   .handler(async ({ data }) => {
@@ -377,7 +377,7 @@ export const updateCheckoutOrderDetails = createServerFn({ method: "POST" })
   });
 
 export const getOrderById = createServerFn()
-  .inputValidator((orderId: string) => orderId)
+  .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
 
@@ -419,7 +419,7 @@ export const getOrderById = createServerFn()
   });
 
 export const deleteUnpaidOrder = createServerFn()
-  .inputValidator((orderId: string) => orderId)
+  .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
 

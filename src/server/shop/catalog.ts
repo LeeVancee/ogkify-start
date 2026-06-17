@@ -30,7 +30,7 @@ export const getCategories = createServerFn().handler(async () => {
 });
 
 export const getFeaturedProducts = createServerFn()
-  .inputValidator((limit?: number) => limit || 4)
+  .validator((limit?: number) => limit || 4)
   .handler(async ({ data: limit }) => {
     const productsList = await db.query.products.findMany({
       where: (productsTable, { eq, and }) =>
@@ -67,7 +67,7 @@ export const getFeaturedProducts = createServerFn()
   });
 
 export const getFilteredProducts = createServerFn()
-  .inputValidator((options: FilterOptions = {}) => options)
+  .validator((options: FilterOptions = {}) => options)
   .handler(async ({ data: options }) => {
     const baseConditions = [eq(products.isArchived, false)];
 

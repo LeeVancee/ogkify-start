@@ -57,7 +57,7 @@ export const listAdminOrders = createServerFn().handler(
 );
 
 export const updateAdminOrderStatus = createServerFn({ method: "POST" })
-  .inputValidator((input: { orderId: string; status: string }) =>
+  .validator((input: { orderId: string; status: string }) =>
     updateSchema.parse(input),
   )
   .handler(async ({ data }) => {

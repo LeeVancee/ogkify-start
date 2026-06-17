@@ -3,7 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { db } from "@/db";
 
 export const searchProducts = createServerFn()
-  .inputValidator((query: string = "") => query)
+  .validator((query: string = "") => query)
   .handler(async ({ data: query }) => {
     if (!query || query.trim() === "") {
       throw new Error("Search query is required");

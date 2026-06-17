@@ -43,7 +43,7 @@ export const listAdminCategories = createServerFn().handler(async () => {
 });
 
 export const getAdminCategoryDetail = createServerFn()
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const category = await db.query.categories.findFirst({
       where: eq(categories.id, id),
@@ -57,7 +57,7 @@ export const getAdminCategoryDetail = createServerFn()
   });
 
 export const saveAdminCategory = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     (input: { id?: string; values: AdminResourceFormValues }) => ({
       id: input.id,
       values: categorySchema.parse(input.values),
@@ -93,7 +93,7 @@ export const saveAdminCategory = createServerFn({ method: "POST" })
   });
 
 export const deleteAdminCategory = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -109,7 +109,7 @@ export const listAdminColors = createServerFn().handler(async () => {
 });
 
 export const getAdminColorDetail = createServerFn()
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const color = await db.query.colors.findFirst({
       where: eq(colors.id, id),
@@ -123,7 +123,7 @@ export const getAdminColorDetail = createServerFn()
   });
 
 export const saveAdminColor = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     (input: { id?: string; values: AdminResourceFormValues }) => ({
       id: input.id,
       values: colorSchema.parse(input.values),
@@ -157,7 +157,7 @@ export const saveAdminColor = createServerFn({ method: "POST" })
   });
 
 export const deleteAdminColor = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -173,7 +173,7 @@ export const listAdminSizes = createServerFn().handler(async () => {
 });
 
 export const getAdminSizeDetail = createServerFn()
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const size = await db.query.sizes.findFirst({
       where: eq(sizes.id, id),
@@ -187,7 +187,7 @@ export const getAdminSizeDetail = createServerFn()
   });
 
 export const saveAdminSize = createServerFn({ method: "POST" })
-  .inputValidator(
+  .validator(
     (input: { id?: string; values: AdminResourceFormValues }) => ({
       id: input.id,
       values: sizeSchema.parse(input.values),
@@ -221,7 +221,7 @@ export const saveAdminSize = createServerFn({ method: "POST" })
   });
 
 export const deleteAdminSize = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };

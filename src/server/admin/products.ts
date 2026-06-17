@@ -76,7 +76,7 @@ export const listAdminProducts = createServerFn().handler(
 );
 
 export const getAdminProductDetail = createServerFn()
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }): Promise<AdminProductDetail> => {
     const product = await db.query.products.findFirst({
       where: eq(products.id, id),
@@ -134,7 +134,7 @@ export const getAdminProductFormData = createServerFn().handler(async () => {
 });
 
 export const saveAdminProduct = createServerFn({ method: "POST" })
-  .inputValidator((input: { id?: string; values: AdminProductFormValues }) => ({
+  .validator((input: { id?: string; values: AdminProductFormValues }) => ({
     id: input.id,
     values: productSchema.parse(input.values),
   }))
@@ -251,7 +251,7 @@ export const saveAdminProduct = createServerFn({ method: "POST" })
   });
 
 export const deleteAdminProduct = createServerFn({ method: "POST" })
-  .inputValidator((id: string) => idSchema.parse(id))
+  .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };

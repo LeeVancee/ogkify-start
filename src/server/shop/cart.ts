@@ -29,7 +29,7 @@ const updateCartQuantitySchema = z.object({
 });
 
 export const addToCart = createServerFn({ method: "POST" })
-  .inputValidator((data: CartItemData) => cartItemInputSchema.parse(data))
+  .validator((data: CartItemData) => cartItemInputSchema.parse(data))
   .handler(async ({ data }) => {
     const session = await getSession();
 
@@ -106,7 +106,7 @@ export const addToCart = createServerFn({ method: "POST" })
   });
 
 export const handleAddToCartFormAction = createServerFn({ method: "POST" })
-  .inputValidator((formData: FormData) => {
+  .validator((formData: FormData) => {
     if (!(formData instanceof FormData)) {
       throw new Error("Invalid form data");
     }
@@ -208,7 +208,7 @@ function getRequiredCartImage(imageUrl: string | undefined, productId: string) {
 }
 
 export const removeFromCart = createServerFn({ method: "POST" })
-  .inputValidator((cartItemId: string) => cartItemIdSchema.parse(cartItemId))
+  .validator((cartItemId: string) => cartItemIdSchema.parse(cartItemId))
   .handler(async ({ data: cartItemId }) => {
     const session = await getSession();
 
@@ -236,7 +236,7 @@ export const removeFromCart = createServerFn({ method: "POST" })
   });
 
 export const updateCartItemQuantity = createServerFn({ method: "POST" })
-  .inputValidator((params: { cartItemId: string; quantity: number }) =>
+  .validator((params: { cartItemId: string; quantity: number }) =>
     updateCartQuantitySchema.parse(params),
   )
   .handler(async ({ data: { cartItemId, quantity } }) => {
