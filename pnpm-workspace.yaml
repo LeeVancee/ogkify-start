@@ -9,3 +9,4 @@ minimumReleaseAgeExclude:
   - '@tanstack/start-client-core@1.170.4'
   - '@tanstack/start-plugin-core@1.171.6'
   - '@tanstack/start-server-core@1.169.4'
+  - vite@8.1.0
