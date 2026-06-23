@@ -16,23 +16,23 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="mt-auto border-t border-slate-200/80 bg-stone-50">
+    <footer className="mt-auto border-t border-border bg-background">
       <div className="shop-shell py-14 sm:py-18">
-        <div className="mb-10 pb-10 border-b border-slate-100">
+        <div className="mb-10 border-b border-border pb-10">
           <Link
             to="/"
-            className="text-2xl font-bold tracking-widest text-slate-900 uppercase"
+            className="text-2xl font-semibold tracking-[-0.03em] text-foreground uppercase"
           >
             OGKIFY
           </Link>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-slate-500">
+          <p className="mt-3 max-w-sm text-sm leading-5 text-muted-foreground">
             {t("shop.footer.description")}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-900">
+            <h4 className="geist-label mb-4 text-foreground">
               {t("shop.footer.shop")}
             </h4>
             <ul className="space-y-3">
@@ -41,7 +41,7 @@ export default function Footer() {
                   <Link
                     to={link.to}
                     search={link.search}
-                    className="text-sm text-slate-500 transition-colors hover:text-slate-900"
+                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.label}
                   </Link>
@@ -51,30 +51,30 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-900">
+            <h4 className="geist-label mb-4 text-foreground">
               {t("shop.footer.customerCare")}
             </h4>
-            <ul className="space-y-3 text-sm text-slate-500">
-              <li className="hover:text-slate-900 transition-colors cursor-default">
+            <ul className="space-y-3 text-sm text-muted-foreground">
+              <li className="cursor-default transition-colors hover:text-foreground">
                 {t("shop.footer.shippingInformation")}
               </li>
-              <li className="hover:text-slate-900 transition-colors cursor-default">
+              <li className="cursor-default transition-colors hover:text-foreground">
                 {t("shop.footer.returnsPolicy")}
               </li>
-              <li className="hover:text-slate-900 transition-colors cursor-default">
+              <li className="cursor-default transition-colors hover:text-foreground">
                 {t("shop.footer.faq")}
               </li>
-              <li className="hover:text-slate-900 transition-colors cursor-default">
+              <li className="cursor-default transition-colors hover:text-foreground">
                 {t("shop.footer.contactUs")}
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="mb-4 text-xs font-semibold uppercase tracking-widest text-slate-900">
+            <h4 className="geist-label mb-4 text-foreground">
               {t("shop.footer.contact")}
             </h4>
-            <ul className="space-y-3 text-sm text-slate-500">
+            <ul className="space-y-3 text-sm text-muted-foreground">
               <li>service@ogkify.com</li>
               <li>+886 2 2345 6789</li>
               <li>{t("shop.footer.hours")}</li>
@@ -82,13 +82,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-100 pt-6 text-xs text-slate-400 sm:flex-row">
+        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-xs text-muted-foreground sm:flex-row">
           <p>{t("shop.footer.copyright")}</p>
           <div className="flex items-center gap-6">
-            <span className="cursor-pointer transition-colors hover:text-slate-700">
+            <span className="cursor-pointer transition-colors hover:text-foreground">
               {t("shop.footer.privacyPolicy")}
             </span>
-            <span className="cursor-pointer transition-colors hover:text-slate-700">
+            <span className="cursor-pointer transition-colors hover:text-foreground">
               {t("shop.footer.termsOfService")}
             </span>
             <a
@@ -96,7 +96,7 @@ export default function Footer() {
               target="_blank"
               rel="noreferrer"
               aria-label={t("shop.footer.github")}
-              className="transition-colors hover:text-slate-700"
+              className="transition-colors hover:text-foreground"
             >
               <svg
                 viewBox="0 0 24 24"

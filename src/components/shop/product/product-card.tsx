@@ -20,17 +20,17 @@ export default function ProductCard({ product }: { product: Product }) {
       params={{ id: product.id }}
       className="group cursor-pointer"
     >
-      <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-2xl bg-slate-100">
+      <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-md border border-border bg-muted">
         <img
           src={product.image}
           alt={product.name}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
       </div>
-      <h3 className="truncate text-sm font-semibold text-slate-900">
+      <h3 className="truncate text-sm font-medium text-foreground">
         {product.name}
       </h3>
-      <div className="mt-1 text-sm text-slate-500">
+      <div className="mt-1 text-sm text-muted-foreground">
         {formatPrice(product.price)}
       </div>
     </Link>

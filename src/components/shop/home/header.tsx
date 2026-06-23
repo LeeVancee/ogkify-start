@@ -23,12 +23,12 @@ export default function Header() {
   const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-stone-50/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
       <div className="shop-shell">
         <div className="flex h-16 items-center justify-between">
           <button
             type="button"
-            className="sm:hidden p-2 -ml-2 text-slate-500 transition-colors hover:text-slate-900"
+            className="-ml-2 rounded-md p-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground sm:hidden"
             onClick={() => setIsMenuOpen((open) => !open)}
             aria-label={t("shop.header.toggleMenu")}
           >
@@ -41,22 +41,22 @@ export default function Header() {
 
           <Link
             to="/"
-            className="text-base font-bold tracking-widest text-slate-900 uppercase"
+            className="text-base font-semibold tracking-[-0.02em] text-foreground uppercase"
           >
             OGKIFY
           </Link>
 
-          <nav className="hidden sm:flex items-center gap-10">
+          <nav className="hidden items-center gap-8 sm:flex">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
                 search={item.search}
                 className={cn(
-                  "relative text-sm tracking-wide transition-colors hover:text-slate-900 pb-0.5",
+                  "relative rounded-md px-2 py-1 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
                   pathname === item.href
-                    ? "font-medium text-slate-900 after:absolute after:bottom-0 after:left-0 after:right-0 after:h-[2px] after:bg-slate-900 after:rounded-full"
-                    : "text-slate-500",
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground",
                 )}
               >
                 {item.name}
@@ -70,7 +70,7 @@ export default function Header() {
             <Link
               to="/search"
               search={{}}
-              className="flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-white/60 hover:text-slate-900 cursor-pointer"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               aria-label={t("shop.header.search")}
             >
               <Search className="h-5 w-5" />
@@ -82,15 +82,15 @@ export default function Header() {
               type="button"
               onClick={() => setIsCartOpen(true)}
               className={cn(
-                "relative flex h-9 w-9 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-white/60 hover:text-slate-900 cursor-pointer",
-                isCartOpen && "bg-white/70 text-slate-900",
+                "relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                isCartOpen && "bg-muted text-foreground",
               )}
               aria-label={t("shop.header.cart")}
               aria-expanded={isCartOpen}
             >
               <ShoppingBag className="h-5 w-5" />
               {cartData.totalItems ? (
-                <span className="absolute right-0 top-0 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-black px-1 text-[9px] font-semibold text-white">
+                <span className="absolute right-0 top-0 flex h-4.5 min-w-4.5 items-center justify-center rounded-full bg-foreground px-1 text-[9px] font-semibold text-background">
                   {cartData.totalItems}
                 </span>
               ) : null}
@@ -99,7 +99,7 @@ export default function Header() {
         </div>
 
         {isMenuOpen ? (
-          <nav className="space-y-0.5 border-t border-slate-200/70 bg-stone-50 px-1 py-3 sm:hidden">
+          <nav className="space-y-0.5 border-t border-border bg-background px-1 py-3 sm:hidden">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -109,8 +109,8 @@ export default function Header() {
                 className={cn(
                   "block rounded-lg px-3 py-2.5 text-sm tracking-wide transition-colors",
                   pathname === item.href
-                    ? "font-medium text-slate-900 bg-white/60"
-                    : "text-slate-500 hover:text-slate-900 hover:bg-white/50",
+                    ? "bg-muted font-medium text-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
                 )}
               >
                 {item.name}

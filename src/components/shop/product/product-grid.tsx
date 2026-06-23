@@ -32,33 +32,33 @@ export function ProductGrid({ products }: ProductGridProps) {
           params={{ id: product.id }}
           className="group cursor-pointer"
         >
-          <div className="relative mb-3 aspect-3/4 overflow-hidden rounded-2xl bg-slate-100">
+          <div className="relative mb-3 aspect-3/4 overflow-hidden rounded-md border border-border bg-muted">
             <img
               src={product.images[0]}
               alt={product.name}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {product.isNew ? (
-              <span className="absolute left-3 top-3 rounded-lg bg-slate-900 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+              <span className="absolute left-3 top-3 rounded-md bg-foreground px-2.5 py-1 text-[10px] font-medium uppercase text-background">
                 {t("shop.productFilters.newBadge")}
               </span>
             ) : null}
             {product.originalPrice ? (
-              <span className="absolute right-3 top-3 rounded-lg bg-red-500 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+              <span className="absolute right-3 top-3 rounded-md bg-destructive px-2.5 py-1 text-[10px] font-medium uppercase text-destructive-foreground">
                 {t("shop.productFilters.saleBadge")}
               </span>
             ) : null}
           </div>
 
-          <h3 className="truncate text-sm font-semibold text-slate-900">
+          <h3 className="truncate text-sm font-medium text-foreground">
             {product.name}
           </h3>
           <div className="mt-1 flex items-center gap-2">
-            <span className="text-sm text-slate-600">
+            <span className="text-sm text-muted-foreground">
               {formatPrice(product.price)}
             </span>
             {product.originalPrice ? (
-              <span className="text-xs text-slate-400 line-through">
+              <span className="text-xs text-muted-foreground/60 line-through">
                 {formatPrice(product.originalPrice)}
               </span>
             ) : null}
@@ -66,7 +66,7 @@ export function ProductGrid({ products }: ProductGridProps) {
 
           {typeof product.rating === "number" &&
           typeof product.reviewCount === "number" ? (
-            <div className="mt-1 flex items-center gap-1 text-xs text-slate-400">
+            <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
               <span>★ {product.rating}</span>
               <span>({product.reviewCount})</span>
             </div>
