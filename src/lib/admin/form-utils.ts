@@ -29,10 +29,3 @@ export function productToFormValues(
     isArchived: product.isArchived,
   };
 }
-
-export function normalizeImageUrls(value: string) {
-  return value
-    .split("\n")
-    .map((url) => url.trim())
-    .filter(Boolean);
-}

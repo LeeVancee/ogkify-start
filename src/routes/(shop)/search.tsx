@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/(shop)/search")({
 });
 
 function RouteComponent() {
-  const navigate = useNavigate({ from: Route.fullPath });
+  const router = useRouter();
   const { t } = useI18n();
   const { q } = Route.useSearch();
   const query = q?.trim() ?? "";
@@ -42,7 +42,7 @@ function RouteComponent() {
   const submitSearch = () => {
     if (!searchQuery.trim()) return;
 
-    navigate({
+    router.navigate({
       to: "/search",
       search: { q: searchQuery.trim() },
     });
@@ -69,7 +69,7 @@ function RouteComponent() {
               if (e.key === "Enter") submitSearch();
             }}
             placeholder={t("shop.searchPage.placeholder")}
-            autoFocus
+            aria-label={t("shop.searchPage.placeholder")}
             className="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-12 pr-12 text-base text-slate-900 shadow-sm outline-none transition-colors focus:border-slate-400 focus:ring-0"
           />
           {searchQuery ? (
@@ -99,17 +99,20 @@ function RouteComponent() {
 
 function SearchResults({ query }: { query: string }) {
   const { t } = useI18n();
-  const productsQuery = useQuery(shopSearchResultsQueryOptions(query));
+  const {
+    data: products,
+    error,
+    isError,
+    isPending,
+  } = useQuery(shopSearchResultsQueryOptions(query));
 
-  if (productsQuery.isPending) {
+  if (isPending) {
     return <ShopSearchPending />;
   }
 
-  if (productsQuery.isError) {
-    throw productsQuery.error;
+  if (isError) {
+    throw error;
   }
-
-  const products = productsQuery.data;
 
   return (
     <>

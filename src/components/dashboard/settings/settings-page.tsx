@@ -8,7 +8,8 @@ import {
   Shield,
   User,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import type { SetStateAction } from "react";
 
 import { CloudinaryImageUpload } from "@/components/dashboard/forms/cloudinary-image-upload";
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
@@ -32,6 +33,53 @@ interface DashboardSettingsPageProps {
   initialSession: SettingsSession | null;
 }
 
+function useSettingsState(session: SettingsSession | null) {
+  const [state, setState] = useState({
+    profileValues: {
+      name: session?.user.name ?? "",
+      image: session?.user.image ?? "",
+    },
+    passwordValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    profilePending: false,
+    passwordPending: false,
+    profileMessage: "",
+    passwordMessage: "",
+    profileError: "",
+    passwordError: "",
+  });
+  const setField = <K extends keyof typeof state>(
+    key: K,
+    value: SetStateAction<(typeof state)[K]>,
+  ) =>
+    setState((current) => ({
+      ...current,
+      [key]: typeof value === "function" ? value(current[key]) : value,
+    }));
+  return {
+    ...state,
+    setProfileValues: (value: SetStateAction<typeof state.profileValues>) =>
+      setField("profileValues", value),
+    setPasswordValues: (value: SetStateAction<typeof state.passwordValues>) =>
+      setField("passwordValues", value),
+    setProfilePending: (value: SetStateAction<boolean>) =>
+      setField("profilePending", value),
+    setPasswordPending: (value: SetStateAction<boolean>) =>
+      setField("passwordPending", value),
+    setProfileMessage: (value: SetStateAction<string>) =>
+      setField("profileMessage", value),
+    setPasswordMessage: (value: SetStateAction<string>) =>
+      setField("passwordMessage", value),
+    setProfileError: (value: SetStateAction<string>) =>
+      setField("profileError", value),
+    setPasswordError: (value: SetStateAction<string>) =>
+      setField("passwordError", value),
+  };
+}
+
 export function DashboardSettingsPage({
   initialSession,
 }: DashboardSettingsPageProps) {
@@ -40,30 +88,24 @@ export function DashboardSettingsPage({
   const queryClient = useQueryClient();
   const sessionQuery = authClient.useSession();
   const session = sessionQuery.data ?? initialSession;
-  const [profileValues, setProfileValues] = useState({
-    name: session?.user.name ?? "",
-    image: session?.user.image ?? "",
-  });
-  const [passwordValues, setPasswordValues] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [profilePending, setProfilePending] = useState(false);
-  const [passwordPending, setPasswordPending] = useState(false);
-  const [profileMessage, setProfileMessage] = useState("");
-  const [passwordMessage, setPasswordMessage] = useState("");
-  const [profileError, setProfileError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-
-  useEffect(() => {
-    if (!session) return;
-
-    setProfileValues({
-      name: session.user.name,
-      image: session.user.image ?? "",
-    });
-  }, [session]);
+  const {
+    profileValues,
+    passwordValues,
+    profilePending,
+    passwordPending,
+    profileMessage,
+    passwordMessage,
+    profileError,
+    passwordError,
+    setProfileValues,
+    setPasswordValues,
+    setProfilePending,
+    setPasswordPending,
+    setProfileMessage,
+    setPasswordMessage,
+    setProfileError,
+    setPasswordError,
+  } = useSettingsState(session);
 
   async function handleProfileSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -86,11 +128,13 @@ export function DashboardSettingsPage({
         onSuccess: async () => {
           setProfilePending(false);
           setProfileMessage(t("dashboard.settings.profileUpdated"));
-          await sessionQuery.refetch();
-          await queryClient.invalidateQueries({
-            queryKey: adminQueryKeys.session(),
-          });
-          await router.invalidate();
+          await Promise.all([
+            sessionQuery.refetch(),
+            queryClient.invalidateQueries({
+              queryKey: adminQueryKeys.session(),
+            }),
+            router.invalidate(),
+          ]);
         },
         onError: (ctx) => {
           setProfilePending(false);

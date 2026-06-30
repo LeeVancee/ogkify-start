@@ -4,7 +4,7 @@ import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query
 
 import { DefaultCatchBoundary } from "./components/DefaultCatchBoundary";
 import { NotFound } from "./components/NotFound";
-import { defaultLocale } from "./lib/i18n";
+import { defaultLocale } from "./lib/i18n/config";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 // Create a new router instance

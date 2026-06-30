@@ -28,7 +28,7 @@ const updateCartQuantitySchema = z.object({
   quantity: z.number().int().min(1).max(MAX_CART_ITEM_QUANTITY),
 });
 
-export const addToCart = createServerFn({ method: "POST" })
+const addToCart = createServerFn({ method: "POST" })
   .validator((data: CartItemData) => cartItemInputSchema.parse(data))
   .handler(async ({ data }) => {
     const session = await getSession();
@@ -267,28 +267,6 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
 
     return { success: true, message: "cart updated" };
   });
-
-export const clearCart = createServerFn({ method: "POST" }).handler(
-  async () => {
-    const session = await getSession();
-
-    if (!session?.user.id) {
-      return { error: "user not logged in", success: false };
-    }
-
-    const cart = await db.query.carts.findFirst({
-      where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
-    });
-
-    if (!cart) {
-      return { success: true, message: "cart is already empty" };
-    }
-
-    await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
-
-    return { success: true, message: "cart cleared" };
-  },
-);
 
 export const createCheckoutPaymentIntent = createServerFn({
   method: "POST",

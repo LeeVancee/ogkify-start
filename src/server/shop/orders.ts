@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
-import { formatPrice } from "@/lib/utils";
 
 import { getSession } from "../getSession";
 import {
@@ -86,104 +85,6 @@ export const getUserOrders = createServerFn().handler(async () => {
 
   return { success: true, orders: formattedOrders };
 });
-
-export const getOrderDetails = createServerFn()
-  .validator((orderId: string) => orderId)
-  .handler(async ({ data: orderId }) => {
-    const session = await getSession();
-
-    if (!session?.user.id) {
-      return { error: "Unauthorized", success: false };
-    }
-
-    const order = await db.query.orders.findFirst({
-      where: (ordersTable, { eq, and }) =>
-        and(
-          eq(ordersTable.id, orderId),
-          eq(ordersTable.userId, session.user.id),
-        ),
-      with: {
-        items: {
-          with: {
-            product: {
-              with: {
-                images: true,
-              },
-            },
-            color: true,
-            size: true,
-          },
-        },
-      },
-    });
-
-    if (!order) {
-      return { error: "Order not found", success: false };
-    }
-
-    const totalItems = order.items.reduce(
-      (sum, item) => sum + item.quantity,
-      0,
-    );
-
-    const formattedOrder = {
-      id: order.id,
-      orderNumber: order.orderNumber,
-      createdAt: order.createdAt.toISOString(),
-      createdAtFormatted: new Date(order.createdAt).toLocaleDateString(
-        "zh-CN",
-        {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
-        },
-      ),
-      status: order.status,
-      statusText: getOrderStatusText(order.status),
-      paymentStatus: order.paymentStatus,
-      paymentStatusText: getPaymentStatusText(order.paymentStatus),
-      totalAmount: order.totalAmount,
-      totalAmountFormatted: formatPrice(order.totalAmount),
-      totalItems,
-      shippingAddress: order.shippingAddress,
-      phone: order.phone,
-      paymentMethod: order.paymentMethod,
-      items: order.items.map((item) => ({
-        id: item.id,
-        productId: item.productId,
-        productName: item.product.name,
-        productDescription: item.product.description,
-        quantity: item.quantity,
-        price: item.price,
-        priceFormatted: formatPrice(item.price),
-        totalPrice: item.price * item.quantity,
-        totalPriceFormatted: formatPrice(item.price * item.quantity),
-        imageUrl: getRequiredOrderItemImageUrl(
-          order.orderNumber,
-          item.product.images[0]?.url,
-        ),
-        color: item.color
-          ? {
-              name: item.color.name,
-              value: item.color.value,
-            }
-          : null,
-        size: item.size
-          ? {
-              name: item.size.name,
-              value: item.size.value,
-            }
-          : null,
-      })),
-    };
-
-    return {
-      success: true,
-      order: formattedOrder,
-    };
-  });
 
 export const getUnpaidOrders = createServerFn().handler(async () => {
   const session = await getSession();
@@ -418,7 +319,7 @@ export const getOrderById = createServerFn()
     return { success: true, order: synchronizedOrder };
   });
 
-export const deleteUnpaidOrder = createServerFn()
+export const deleteUnpaidOrder = createServerFn({ method: "POST" })
   .validator((orderId: string) => orderId)
   .handler(async ({ data: orderId }) => {
     const session = await getSession();
@@ -448,36 +349,6 @@ export const deleteUnpaidOrder = createServerFn()
 
     return { success: true, message: "Order deleted successfully" };
   });
-
-function getOrderStatusText(status: string): string {
-  switch (status) {
-    case "PENDING":
-      return "Pending";
-    case "PAID":
-      return "Paid";
-    case "COMPLETED":
-      return "Completed";
-    case "CANCELLED":
-      return "Cancelled";
-    default:
-      throw new Error(`Unknown order status: ${status}`);
-  }
-}
-
-function getPaymentStatusText(status: string): string {
-  switch (status) {
-    case "UNPAID":
-      return "Unpaid";
-    case "PAID":
-      return "Paid";
-    case "REFUNDED":
-      return "Refunded";
-    case "FAILED":
-      return "Failed";
-    default:
-      throw new Error(`Unknown payment status: ${status}`);
-  }
-}
 
 function getRequiredOrderItemImageUrl(
   orderNumber: string,

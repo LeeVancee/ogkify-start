@@ -1,5 +1,5 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { SlidersHorizontal, X } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
@@ -40,13 +40,13 @@ export const Route = createFileRoute("/(shop)/products/")({
 
 function CategoriesPage() {
   const search = Route.useSearch();
-  const navigate = useNavigate({ from: Route.fullPath });
+  const router = useRouter();
   const { t } = useI18n();
   const currentPage = search.page ?? 1;
   const selectedCategory = search.category ?? "";
   const [filterOpen, setFilterOpen] = useState(false);
   const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
-  const productsQuery = useQuery(
+  const { data: productsData, isPending } = useQuery(
     shopFilteredProductsQueryOptions({
       category: search.category,
       sort: search.sort,
@@ -58,15 +58,15 @@ function CategoriesPage() {
       limit: 12,
     }),
   );
-  const products = productsQuery.data?.products ?? [];
-  const total = productsQuery.data?.total ?? 0;
+  const products = productsData?.products ?? [];
+  const total = productsData?.total ?? 0;
   const categoryLabel = selectedCategory
     ? (categories.find((item) => item.name === selectedCategory)?.name ??
       t("shop.productFilters.fallbackProducts"))
     : t("shop.header.allProducts");
 
   const clearProductFilters = () => {
-    navigate({
+    router.navigate({
       to: "/products",
       search: {},
     });
@@ -105,7 +105,9 @@ function CategoriesPage() {
 
       {filterOpen ? (
         <div className="fixed inset-0 z-50 sm:hidden">
-          <div
+          <button
+            type="button"
+            aria-label={t("shop.productFilters.filters")}
             className="absolute inset-0 bg-black/20 backdrop-blur-sm"
             onClick={() => setFilterOpen(false)}
           />
@@ -127,7 +129,7 @@ function CategoriesPage() {
         </div>
       ) : null}
 
-      {productsQuery.isPending ? (
+      {isPending ? (
         <ProductsLoading />
       ) : products.length === 0 ? (
         <div className="py-24 text-center">

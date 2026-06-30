@@ -2,13 +2,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
+import { CartSummary } from "@/components/shop/cart/cart-summary";
 import {
   type CartItemView,
   CartLineItem,
-  CartSummary,
-  getCartSubtotal,
   useCartActions,
 } from "@/components/shop/cart/cart-ui";
+import { getCartSubtotal } from "@/components/shop/cart/cart-utils";
 import { useI18n } from "@/lib/i18n";
 import { shopCartQueryOptions } from "@/lib/shop/query-options";
 

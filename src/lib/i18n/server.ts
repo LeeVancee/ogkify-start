@@ -47,10 +47,10 @@ export function getLocaleFromAcceptLanguageHeader(
 ): Locale {
   if (!acceptLanguageHeader) return defaultLocale;
 
-  const languageTags = acceptLanguageHeader
-    .split(",")
-    .map((part) => part.trim().split(";")[0]?.toLowerCase())
-    .filter(Boolean);
+  const languageTags = acceptLanguageHeader.split(",").flatMap((part) => {
+    const tag = part.trim().split(";")[0]?.toLowerCase();
+    return tag ? [tag] : [];
+  });
 
   for (const languageTag of languageTags) {
     if (languageTag === "zh-tw" || languageTag === "zh-hk") return "zh-TW";

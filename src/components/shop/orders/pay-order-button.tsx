@@ -17,27 +17,25 @@ export function PayOrderButton({ orderId }: PayOrderButtonProps) {
   async function handlePayment() {
     setIsLoading(true);
 
-    try {
-      const result = await createOrderPaymentIntent({ data: orderId });
+    const result = await createOrderPaymentIntent({ data: orderId }).catch(
+      (error: unknown) => ({
+        success: false as const,
+        error:
+          error instanceof Error ? error.message : "Payment process failed",
+      }),
+    );
 
-      if (!result.success) {
-        throw new Error(result.error || "Failed to initialize payment");
-      }
-
+    if (result.success) {
       navigate({
         to: "/checkout",
         search: {
           order_id: result.orderId,
         },
       });
-    } catch (error) {
-      console.error("Payment error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Payment process failed",
-      );
-    } finally {
-      setIsLoading(false);
+    } else {
+      toast.error(result.error || "Failed to initialize payment");
     }
+    setIsLoading(false);
   }
 
   return (

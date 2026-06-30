@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, ShoppingBag } from "lucide-react";
 
+import { CartSummary } from "@/components/shop/cart/cart-summary";
 import {
   type CartItemView,
   CartLineItem,
-  CartSummary,
-  getCartSubtotal,
-  SecurePaymentNote,
   useCartActions,
 } from "@/components/shop/cart/cart-ui";
+import { getCartSubtotal } from "@/components/shop/cart/cart-utils";
+import { SecurePaymentNote } from "@/components/shop/cart/secure-payment-note";
 import {
   Sheet,
   SheetContent,

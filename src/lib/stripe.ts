@@ -30,17 +30,3 @@ export function formatAmountForStripe(
 }
 
 // Convert from Stripe's smallest unit back to regular amount
-export function formatAmountFromStripe(
-  amount: number,
-  currency: string = "usd",
-): number {
-  const currencies: Record<string, number> = {
-    usd: 100,
-    eur: 100,
-    gbp: 100,
-    cny: 100,
-  };
-
-  const divider = currencies[currency.toLowerCase()] || 100;
-  return amount / divider;
-}

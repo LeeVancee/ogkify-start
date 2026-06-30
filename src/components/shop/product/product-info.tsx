@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
+import type { SetStateAction } from "react";
 import { toast } from "sonner";
 
 import { useI18n } from "@/lib/i18n";
@@ -44,15 +45,33 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
     throw new Error(`Product images are missing for product ${product.id}`);
   }
 
-  const [activeImage, setActiveImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState<string>(
-    product.colors[0] ? product.colors[0].id : "",
-  );
-  const [selectedSize, setSelectedSize] = useState<string>(
-    product.sizes[0] ? product.sizes[0].id : "",
-  );
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [state, setState] = useState({
+    activeImage: 0,
+    quantity: 1,
+    selectedColor: product.colors[0]?.id ?? "",
+    selectedSize: product.sizes[0]?.id ?? "",
+    isSubmitting: false,
+  });
+  const { activeImage, quantity, selectedColor, selectedSize, isSubmitting } =
+    state;
+  const setField = <K extends keyof typeof state>(
+    key: K,
+    value: SetStateAction<(typeof state)[K]>,
+  ) =>
+    setState((current) => ({
+      ...current,
+      [key]: typeof value === "function" ? value(current[key]) : value,
+    }));
+  const setActiveImage = (value: SetStateAction<number>) =>
+    setField("activeImage", value);
+  const setQuantity = (value: SetStateAction<number>) =>
+    setField("quantity", value);
+  const setSelectedColor = (value: SetStateAction<string>) =>
+    setField("selectedColor", value);
+  const setSelectedSize = (value: SetStateAction<string>) =>
+    setField("selectedSize", value);
+  const setIsSubmitting = (value: SetStateAction<boolean>) =>
+    setField("isSubmitting", value);
   const queryClient = useQueryClient();
 
   const handleAddToCart = async () => {
@@ -70,28 +89,24 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
     setIsSubmitting(true);
 
-    try {
-      const result = await addToCartAction(formData);
+    const result = await addToCartAction(formData).catch((error: unknown) => ({
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : t("shop.productDetail.addToCartFailed"),
+      message: undefined,
+    }));
 
-      if (!result.success) {
-        throw new Error(
-          result.error ? result.error : t("shop.productDetail.addToCartFailed"),
-        );
-      }
-
+    if (result.success) {
       queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
       toast.success(
         result.message ? result.message : t("shop.productDetail.addedToCart"),
       );
-    } catch (error) {
-      toast.error(
-        error instanceof Error
-          ? error.message
-          : t("shop.productDetail.addToCartFailed"),
-      );
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      toast.error(result.error || t("shop.productDetail.addToCartFailed"));
     }
+    setIsSubmitting(false);
   };
 
   return (

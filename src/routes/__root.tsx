@@ -20,6 +20,12 @@ export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
   locale: Locale;
 }>()({
+  beforeLoad: async () => {
+    return {
+      locale:
+        typeof document === "undefined" ? await getLocale() : getClientLocale(),
+    };
+  },
   head: () => ({
     meta: [
       {
@@ -46,29 +52,24 @@ export const Route = createRootRouteWithContext<{
     ],
   }),
 
-  beforeLoad: async () => {
-    return {
-      locale:
-        typeof document === "undefined" ? await getLocale() : getClientLocale(),
-    };
-  },
-
-  component: () => {
-    const { locale } = Route.useRouteContext();
-
-    return (
-      <RootDocument locale={locale}>
-        <I18nProvider initialLocale={locale}>
-          <ThemeProvider>
-            <Outlet />
-            <Toaster />
-          </ThemeProvider>
-        </I18nProvider>
-      </RootDocument>
-    );
-  },
+  component: RootComponent,
   notFoundComponent: () => <NotFound />,
 });
+
+function RootComponent() {
+  const { locale } = Route.useRouteContext();
+
+  return (
+    <RootDocument locale={locale}>
+      <I18nProvider initialLocale={locale}>
+        <ThemeProvider>
+          <Outlet />
+          <Toaster />
+        </ThemeProvider>
+      </I18nProvider>
+    </RootDocument>
+  );
+}
 
 function RootDocument({
   children,

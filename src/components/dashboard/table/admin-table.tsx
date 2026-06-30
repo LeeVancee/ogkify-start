@@ -55,7 +55,9 @@ export function AdminTableCell({
 }
 
 export function AdminTableRow({ children }: { children: React.ReactNode }) {
-  return <tr className="bg-card transition-colors hover:bg-muted/20">{children}</tr>;
+  return (
+    <tr className="bg-card transition-colors hover:bg-muted/20">{children}</tr>
+  );
 }
 
 export function StatusPill({

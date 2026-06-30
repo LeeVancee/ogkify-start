@@ -1,6 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Filter, MoreHorizontal, RefreshCcw, Search, SlidersHorizontal } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  Filter,
+  MoreHorizontal,
+  RefreshCcw,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
+import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -43,6 +49,17 @@ const statusTabs: Array<{ label: string; value: StatusFilter }> = [
   { label: "Completed", value: "COMPLETED" },
   { label: "Canceled", value: "CANCELLED" },
 ];
+const orderDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
+const orderStatusActions: OrderStatus[] = [
+  "PENDING",
+  "PAID",
+  "COMPLETED",
+  "CANCELLED",
+];
 
 export function OrderList({ orders, updateStatus }: OrderListProps) {
   const { t } = useI18n();
@@ -50,7 +67,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
 
-  const filteredOrders = useMemo(() => {
+  const filteredOrders = (() => {
     const normalized = query.trim().toLowerCase();
 
     return orders.filter((order) => {
@@ -68,7 +85,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
 
       return matchesQuery && matchesStatus;
     });
-  }, [orders, query, statusFilter]);
+  })();
 
   async function handleStatus(orderId: string, status: OrderStatus) {
     const result = await updateStatus(orderId, status);
@@ -90,62 +107,64 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
               </h1>
             </div>
 
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="flex flex-wrap items-center gap-2">
-              {statusTabs.map((tab) => {
-                const active = statusFilter === tab.value;
-                return (
-                  <button
-                    key={tab.value}
-                    type="button"
-                    onClick={() => setStatusFilter(tab.value)}
-                    className={cn(
-                      "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-                      active
-                        ? "border-foreground bg-foreground text-background"
-                        : "border-border bg-white text-muted-foreground hover:text-foreground",
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex flex-wrap items-center gap-2">
+                {statusTabs.map((tab) => {
+                  const active = statusFilter === tab.value;
+                  return (
+                    <button
+                      key={tab.value}
+                      type="button"
+                      onClick={() => setStatusFilter(tab.value)}
+                      className={cn(
+                        "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                        active
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-border bg-white text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <Button variant="outline" className="h-10 gap-2 bg-white">
+                  <Filter className="size-4" />
+                  Status
+                </Button>
+                <Button variant="outline" className="h-10 gap-2 bg-white">
+                  <SlidersHorizontal className="size-4" />
+                  Columns
+                </Button>
+              </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <Button variant="outline" className="h-10 gap-2 bg-white">
-                <Filter className="size-4" />
-                Status
-              </Button>
-              <Button variant="outline" className="h-10 gap-2 bg-white">
-                <SlidersHorizontal className="size-4" />
-                Columns
-              </Button>
-            </div>
-          </div>
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="relative w-full lg:max-w-sm">
+                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search orders, customers, or products..."
+                  className="h-10 bg-white pl-9"
+                />
+              </div>
 
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div className="relative w-full lg:max-w-sm">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search orders, customers, or products..."
-                className="h-10 bg-white pl-9"
-              />
+              <div className="text-sm text-muted-foreground">
+                Showing {filteredOrders.length} of {orders.length} orders
+              </div>
             </div>
-
-            <div className="text-sm text-muted-foreground">
-              Showing {filteredOrders.length} of {orders.length} orders
-            </div>
-          </div>
           </div>
           <div className="overflow-hidden rounded-[inherit]">
             <Table className="min-w-[1080px]">
               <TableHeader className="bg-muted/35">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="px-5">#</TableHead>
-                  <TableHead>{t("dashboard.table.product") || "Product"}</TableHead>
+                  <TableHead>
+                    {t("dashboard.table.product") || "Product"}
+                  </TableHead>
                   <TableHead>{t("dashboard.orders.amount")}</TableHead>
                   <TableHead>{t("dashboard.orders.customer")}</TableHead>
                   <TableHead>{t("dashboard.orders.created")}</TableHead>
@@ -191,8 +210,9 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                                 />
                               ) : (
                                 <div className="flex size-full items-center justify-center text-xs font-medium text-muted-foreground">
-                                  {primaryItem?.productName?.slice(0, 1).toUpperCase() ??
-                                    "O"}
+                                  {primaryItem?.productName
+                                    ?.slice(0, 1)
+                                    .toUpperCase() ?? "O"}
                                 </div>
                               )}
                             </div>
@@ -269,24 +289,21 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                               }
                             />
                             <DropdownMenuContent align="end" className="w-44">
-                              {(
-                                [
-                                  "PENDING",
-                                  "PAID",
-                                  "COMPLETED",
-                                  "CANCELLED",
-                                ] as OrderStatus[]
-                              )
-                                .filter((status) => status !== order.status)
-                                .map((status) => (
-                                  <DropdownMenuItem
-                                    key={status}
-                                    onClick={() => handleStatus(order.id, status)}
-                                  >
-                                    <RefreshCcw className="size-4" />
-                                    Mark as {status.toLowerCase()}
-                                  </DropdownMenuItem>
-                                ))}
+                              {orderStatusActions.flatMap((status) =>
+                                status === order.status
+                                  ? []
+                                  : [
+                                      <DropdownMenuItem
+                                        key={status}
+                                        onClick={() =>
+                                          handleStatus(order.id, status)
+                                        }
+                                      >
+                                        <RefreshCcw className="size-4" />
+                                        Mark as {status.toLowerCase()}
+                                      </DropdownMenuItem>,
+                                    ],
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </TableCell>
@@ -354,9 +371,5 @@ function inferOrderType(order: AdminOrderListItem) {
 }
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
+  return orderDateFormatter.format(new Date(value));
 }

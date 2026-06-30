@@ -143,69 +143,71 @@ export const saveAdminProduct = createServerFn({ method: "POST" })
     if (!admin.ok) return { success: false, error: admin.error };
 
     if (input.id) {
-      await db
-        .update(products)
-        .set({
-          name: input.values.name,
-          description: input.values.description,
-          price: Number(input.values.price),
-          categoryId: input.values.categoryId,
-          isFeatured: input.values.isFeatured,
-          isArchived: input.values.isArchived,
-          updatedAt: new Date(),
-        })
-        .where(eq(products.id, input.id));
+      const [, , , existingImages] = await Promise.all([
+        db
+          .update(products)
+          .set({
+            name: input.values.name,
+            description: input.values.description,
+            price: Number(input.values.price),
+            categoryId: input.values.categoryId,
+            isFeatured: input.values.isFeatured,
+            isArchived: input.values.isArchived,
+            updatedAt: new Date(),
+          })
+          .where(eq(products.id, input.id)),
+        db
+          .delete(productsToColors)
+          .where(eq(productsToColors.productId, input.id)),
+        db
+          .delete(productsToSizes)
+          .where(eq(productsToSizes.productId, input.id)),
+        db.query.images.findMany({ where: eq(images.productId, input.id) }),
+      ]);
 
-      await db
-        .delete(productsToColors)
-        .where(eq(productsToColors.productId, input.id));
-      await db
-        .delete(productsToSizes)
-        .where(eq(productsToSizes.productId, input.id));
-
-      if (input.values.colorIds.length > 0) {
-        await db.insert(productsToColors).values(
-          input.values.colorIds.map((colorId) => ({
-            productId: input.id!,
-            colorId,
-          })),
-        );
-      }
-
-      if (input.values.sizeIds.length > 0) {
-        await db.insert(productsToSizes).values(
-          input.values.sizeIds.map((sizeId) => ({
-            productId: input.id!,
-            sizeId,
-          })),
-        );
-      }
-
-      const existingImages = await db.query.images.findMany({
-        where: eq(images.productId, input.id),
-      });
+      const colorInsert =
+        input.values.colorIds.length > 0
+          ? db.insert(productsToColors).values(
+              input.values.colorIds.map((colorId) => ({
+                productId: input.id!,
+                colorId,
+              })),
+            )
+          : Promise.resolve();
+      const sizeInsert =
+        input.values.sizeIds.length > 0
+          ? db.insert(productsToSizes).values(
+              input.values.sizeIds.map((sizeId) => ({
+                productId: input.id!,
+                sizeId,
+              })),
+            )
+          : Promise.resolve();
       const nextUrls = new Set(input.values.images);
-      const removeIds = existingImages
-        .filter((image) => !nextUrls.has(image.url))
-        .map((image) => image.id);
-
-      if (removeIds.length > 0) {
-        await db.delete(images).where(inArray(images.id, removeIds));
-      }
+      const removeIds = existingImages.flatMap((image) =>
+        nextUrls.has(image.url) ? [] : [image.id],
+      );
 
       const existingUrls = new Set(existingImages.map((image) => image.url));
       const addUrls = input.values.images.filter(
         (url) => !existingUrls.has(url),
       );
 
-      if (addUrls.length > 0) {
-        await db.insert(images).values(
-          addUrls.map((url) => ({
-            productId: input.id!,
-            url,
-          })),
-        );
-      }
+      await Promise.all([
+        colorInsert,
+        sizeInsert,
+        removeIds.length > 0
+          ? db.delete(images).where(inArray(images.id, removeIds))
+          : Promise.resolve(),
+        addUrls.length > 0
+          ? db.insert(images).values(
+              addUrls.map((url) => ({
+                productId: input.id!,
+                url,
+              })),
+            )
+          : Promise.resolve(),
+      ]);
 
       return { success: true };
     }
@@ -222,30 +224,30 @@ export const saveAdminProduct = createServerFn({ method: "POST" })
       })
       .returning();
 
-    if (input.values.colorIds.length > 0) {
-      await db.insert(productsToColors).values(
-        input.values.colorIds.map((colorId) => ({
+    await Promise.all([
+      input.values.colorIds.length > 0
+        ? db.insert(productsToColors).values(
+            input.values.colorIds.map((colorId) => ({
+              productId: product.id,
+              colorId,
+            })),
+          )
+        : Promise.resolve(),
+      input.values.sizeIds.length > 0
+        ? db.insert(productsToSizes).values(
+            input.values.sizeIds.map((sizeId) => ({
+              productId: product.id,
+              sizeId,
+            })),
+          )
+        : Promise.resolve(),
+      db.insert(images).values(
+        input.values.images.map((url) => ({
           productId: product.id,
-          colorId,
+          url,
         })),
-      );
-    }
-
-    if (input.values.sizeIds.length > 0) {
-      await db.insert(productsToSizes).values(
-        input.values.sizeIds.map((sizeId) => ({
-          productId: product.id,
-          sizeId,
-        })),
-      );
-    }
-
-    await db.insert(images).values(
-      input.values.images.map((url) => ({
-        productId: product.id,
-        url,
-      })),
-    );
+      ),
+    ]);
 
     return { success: true, data: product };
   });
@@ -277,45 +279,3 @@ export const getAdminProductStats = createServerFn().handler(async () => {
       .length,
   };
 });
-
-export async function getProducts() {
-  const list = await listAdminProducts();
-
-  return list.map((product) => ({
-    id: product.id,
-    name: product.name,
-    description: product.description,
-    price: product.price,
-    category: { id: product.categoryName, name: product.categoryName },
-    colors: product.colors,
-    sizes: product.sizes.map((size) => ({
-      ...size,
-      value: size.value ?? size.name,
-    })),
-    images: product.imageUrl
-      ? [{ id: product.imageUrl, url: product.imageUrl }]
-      : [],
-    isFeatured: product.isFeatured,
-    isArchived: product.isArchived,
-  }));
-}
-
-export async function createProduct({
-  data,
-}: {
-  data: AdminProductFormValues;
-}) {
-  return saveAdminProduct({ data: { values: data } });
-}
-
-export async function updateProduct({
-  data,
-}: {
-  data: { id: string; data: AdminProductFormValues };
-}) {
-  return saveAdminProduct({
-    data: { id: data.id, values: data.data },
-  });
-}
-
-export const deleteProduct = deleteAdminProduct;

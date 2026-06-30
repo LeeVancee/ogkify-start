@@ -99,11 +99,3 @@ export const getAdminOrderStats = createServerFn().handler(async () => {
     totalRevenue: Number(paidRevenue[0]?.total ?? 0),
   };
 });
-
-export async function updateOrderStatus({
-  data,
-}: {
-  data: { orderId: string; status: string };
-}) {
-  return updateAdminOrderStatus({ data });
-}

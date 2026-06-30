@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Edit3, Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import {
@@ -28,15 +28,11 @@ export function ProductList({ products, deleteProduct }: ProductListProps) {
   const [query, setQuery] = useState("");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
 
-  const filtered = useMemo(
-    () =>
-      products.filter((product) =>
-        [product.name, product.categoryName, product.price]
-          .join(" ")
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-      ),
-    [products, query],
+  const filtered = products.filter((product) =>
+    [product.name, product.categoryName, product.price]
+      .join(" ")
+      .toLowerCase()
+      .includes(query.toLowerCase()),
   );
 
   async function confirmDelete() {

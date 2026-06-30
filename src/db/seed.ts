@@ -104,17 +104,24 @@ async function seed() {
   console.log("Seeding database...");
 
   try {
-    await db.delete(schema.cartItems);
-    await db.delete(schema.carts);
-    await db.delete(schema.orderItems);
-    await db.delete(schema.orders);
-    await db.delete(schema.images);
-    await db.delete(schema.productsToColors);
-    await db.delete(schema.productsToSizes);
-    await db.delete(schema.products);
-    await db.delete(schema.categories);
-    await db.delete(schema.colors);
-    await db.delete(schema.sizes);
+    await Promise.all([
+      db.delete(schema.cartItems),
+      db.delete(schema.orderItems),
+      db.delete(schema.images),
+      db.delete(schema.productsToColors),
+      db.delete(schema.productsToSizes),
+    ])
+      .then(() =>
+        Promise.all([db.delete(schema.carts), db.delete(schema.orders)]),
+      )
+      .then(() => db.delete(schema.products))
+      .then(() =>
+        Promise.all([
+          db.delete(schema.categories),
+          db.delete(schema.colors),
+          db.delete(schema.sizes),
+        ]),
+      );
     console.log("Cleared existing demo commerce data");
 
     const insertedSizes = await db
@@ -165,33 +172,36 @@ async function seed() {
     console.log(`Inserted ${insertedCategories.length} dynamic categories`);
     console.log(`Total products to insert: ${scrapedProducts.length}`);
 
-    for (const product of scrapedProducts) {
-      const [insertedProduct] = await db
-        .insert(schema.products)
-        .values({
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          isFeatured: product.isFeatured,
-          isArchived: false,
-          categoryId: categoryMap[product.category],
-        })
-        .returning();
+    await Promise.all(
+      scrapedProducts.map(async (product) => {
+        const [insertedProduct] = await db
+          .insert(schema.products)
+          .values({
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            isFeatured: product.isFeatured,
+            isArchived: false,
+            categoryId: categoryMap[product.category],
+          })
+          .returning();
 
-      await db.insert(schema.images).values(
-        buildProductImages(product).map((url) => ({
+        const sizeRelations = product.editions.map((edition) => ({
           productId: insertedProduct.id,
-          url,
-        })),
-      );
+          sizeId: sizeMap[edition],
+        }));
 
-      const sizeRelations = product.editions.map((edition) => ({
-        productId: insertedProduct.id,
-        sizeId: sizeMap[edition],
-      }));
-
-      await db.insert(schema.productsToSizes).values(sizeRelations);
-    }
+        await Promise.all([
+          db.insert(schema.images).values(
+            buildProductImages(product).map((url) => ({
+              productId: insertedProduct.id,
+              url,
+            })),
+          ),
+          db.insert(schema.productsToSizes).values(sizeRelations),
+        ]);
+      }),
+    );
 
     console.log(
       `Inserted ${productsData.length} products with stable demo photos`,

@@ -1,5 +1,5 @@
 import { ImagePlus, LinkIcon, LoaderCircle, Trash2 } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,6 @@ import {
 import type {
   CloudinaryUploadError,
   CloudinaryUploadResult,
-  CloudinaryUploadWidget,
 } from "@/lib/cloudinary-types";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +24,70 @@ interface CloudinaryImageUploadProps {
   showPreview?: boolean;
 }
 
+function addImageUrl({
+  url,
+  isSingle,
+  value,
+  maxFiles,
+  onChange,
+}: {
+  url: string;
+  isSingle: boolean;
+  value: string[];
+  maxFiles: number;
+  onChange: (value: string[]) => void;
+}) {
+  const trimmed = url.trim();
+  if (!trimmed) return;
+  if (isSingle) return onChange([trimmed]);
+  if (value.length < maxFiles) onChange([...value, trimmed]);
+}
+
+function createCloudinaryUploadWidget({
+  isSingle,
+  maxFiles,
+  value,
+  onChange,
+}: {
+  isSingle: boolean;
+  maxFiles: number;
+  value: string[];
+  onChange: (value: string[]) => void;
+}) {
+  if (!window.cloudinary) {
+    throw new Error("Cloudinary upload widget failed to initialize");
+  }
+
+  return window.cloudinary.createUploadWidget(
+    {
+      cloudName: CLOUDINARY_CLOUD_NAME,
+      uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+      sources: ["local", "url", "camera"],
+      multiple: !isSingle,
+      maxFiles: isSingle ? 1 : Math.max(maxFiles - value.length, 1),
+      maxFileSize: isSingle ? 4000000 : 5000000,
+      clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
+      resourceType: "image",
+    },
+    (error: CloudinaryUploadError | null, result: CloudinaryUploadResult) => {
+      if (error) {
+        window.alert(error.message || "Upload failed");
+        return;
+      }
+
+      if (result.event === "success" && result.info?.secure_url) {
+        addImageUrl({
+          url: result.info.secure_url,
+          isSingle,
+          value,
+          maxFiles,
+          onChange,
+        });
+      }
+    },
+  );
+}
+
 export function CloudinaryImageUpload({
   value,
   onChange,
@@ -33,56 +96,11 @@ export function CloudinaryImageUpload({
   imageAlt = "Uploaded image",
   showPreview = true,
 }: CloudinaryImageUploadProps) {
-  const uploadWidgetRef = useRef<CloudinaryUploadWidget | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const isSingle = maxFiles === 1;
   const isConfigured = hasCloudinaryConfig();
   const hasReachedLimit = value.length >= maxFiles;
-
-  const addUrl = useCallback(
-    (url: string) => {
-      const trimmed = url.trim();
-      if (!trimmed) return;
-
-      if (isSingle) {
-        onChange([trimmed]);
-        return;
-      }
-
-      if (value.length >= maxFiles) return;
-      onChange([...value, trimmed]);
-    },
-    [isSingle, maxFiles, onChange, value],
-  );
-
-  useEffect(() => {
-    if (!isScriptLoaded || !window.cloudinary || !isConfigured) return;
-
-    uploadWidgetRef.current = window.cloudinary.createUploadWidget(
-      {
-        cloudName: CLOUDINARY_CLOUD_NAME,
-        uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-        sources: ["local", "url", "camera"],
-        multiple: !isSingle,
-        maxFiles: isSingle ? 1 : Math.max(maxFiles - value.length, 1),
-        maxFileSize: isSingle ? 4000000 : 5000000,
-        clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
-        resourceType: "image",
-      },
-      (error: CloudinaryUploadError | null, result: CloudinaryUploadResult) => {
-        if (error) {
-          window.alert(error.message || "Upload failed");
-          return;
-        }
-
-        if (result.event === "success" && result.info?.secure_url) {
-          addUrl(result.info.secure_url);
-        }
-      },
-    );
-  }, [addUrl, isConfigured, isScriptLoaded, isSingle, maxFiles, value]);
 
   function removeUrl(url: string) {
     onChange(value.filter((item) => item !== url));
@@ -91,25 +109,24 @@ export function CloudinaryImageUpload({
   async function handleUpload() {
     if (disabled || !isConfigured || (!isSingle && hasReachedLimit)) return;
 
-    if (isScriptLoaded && uploadWidgetRef.current) {
-      uploadWidgetRef.current.open();
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      await loadCloudinaryScript();
-      setIsScriptLoaded(true);
-      setTimeout(() => uploadWidgetRef.current?.open(), 100);
-    } catch (error) {
-      window.alert(
-        error instanceof Error
-          ? error.message
-          : "Failed to initialize Cloudinary",
-      );
-    } finally {
-      setIsLoading(false);
-    }
+    setIsLoading(true);
+    await loadCloudinaryScript()
+      .then(() => {
+        createCloudinaryUploadWidget({
+          isSingle,
+          maxFiles,
+          value,
+          onChange,
+        }).open();
+      })
+      .catch((error: unknown) => {
+        window.alert(
+          error instanceof Error
+            ? error.message
+            : "Failed to initialize Cloudinary",
+        );
+      });
+    setIsLoading(false);
   }
 
   return (
@@ -186,7 +203,13 @@ export function CloudinaryImageUpload({
               type="button"
               variant="secondary"
               onClick={() => {
-                addUrl(urlInput);
+                addImageUrl({
+                  url: urlInput,
+                  isSingle,
+                  value,
+                  maxFiles,
+                  onChange,
+                });
                 setUrlInput("");
               }}
               disabled={

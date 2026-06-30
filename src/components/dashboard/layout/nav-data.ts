@@ -1,7 +1,5 @@
 import {
-  Archive,
   Box,
-  ChartNoAxesCombined,
   Grid3X3,
   LayoutDashboard,
   Palette,
@@ -66,9 +64,4 @@ export const dashboardNav = [
       },
     ],
   },
-];
-
-export const contextMetrics = [
-  { label: "Revenue", icon: ChartNoAxesCombined },
-  { label: "Catalog", icon: Archive },
 ];

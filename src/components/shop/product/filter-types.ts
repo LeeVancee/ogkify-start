@@ -37,30 +37,3 @@ export function createQueryParams(
 
   return newParams;
 }
-
-export function normalizeArray(
-  value: string | Array<string> | undefined,
-): Array<string> {
-  if (Array.isArray(value)) {
-    return value;
-  }
-
-  if (!value) {
-    return Array<string>();
-  }
-
-  if (value.startsWith("[") && value.endsWith("]")) {
-    const parsed = JSON.parse(value);
-
-    if (!Array.isArray(parsed)) {
-      throw new Error("Expected array-style search parameter value");
-    }
-
-    return parsed.filter(Boolean);
-  }
-
-  return value
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean);
-}

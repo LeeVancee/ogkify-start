@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Minus, Plus, ShieldCheck, Trash2 } from "lucide-react";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { useI18n } from "@/lib/i18n";
@@ -64,6 +64,7 @@ export function useCartActions({
   const checkoutMutation = useMutation({
     mutationFn: () => createCheckoutPaymentIntent(),
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
       onCheckoutSuccess?.();
       navigate({
         to: "/checkout",
@@ -104,10 +105,6 @@ export function useCartActions({
     removeItem,
     setQuantity,
   };
-}
-
-export function getCartSubtotal(items: Array<CartItemView>) {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
 interface CartLineItemProps {
@@ -224,83 +221,6 @@ export function CartLineItem({
   return (
     <div className={itemClasses}>
       {isSheet ? <div className="flex gap-4">{content}</div> : content}
-    </div>
-  );
-}
-
-interface CartSummaryProps {
-  subtotal: number;
-  isCheckingOut: boolean;
-  onCheckout: () => void;
-  variant?: "page" | "sheet";
-}
-
-export function CartSummary({
-  subtotal,
-  isCheckingOut,
-  onCheckout,
-  variant = "page",
-}: CartSummaryProps) {
-  const { t } = useI18n();
-  const isSheet = variant === "sheet";
-
-  return (
-    <div
-      className={
-        isSheet
-          ? "rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-          : "h-fit rounded-2xl border border-slate-200 bg-white p-6 lg:sticky lg:top-24"
-      }
-    >
-      {!isSheet ? (
-        <h2 className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">
-          {t("shop.cart.orderSummary")}
-        </h2>
-      ) : null}
-      <div className="space-y-3 text-sm">
-        <div className="flex justify-between text-slate-500">
-          <span>{t("shop.cart.subtotal")}</span>
-          <span className="tabular-nums font-medium text-slate-900">
-            {formatPrice(subtotal)}
-          </span>
-        </div>
-        <div className="flex justify-between text-slate-500">
-          <span>{t("shop.cart.shipping")}</span>
-          <span className="font-medium text-slate-900">
-            {t("shop.cart.free")}
-          </span>
-        </div>
-        <div className="flex justify-between border-t border-slate-100 pt-3 text-slate-900">
-          <span className="font-semibold">{t("shop.cart.total")}</span>
-          <span className="tabular-nums font-semibold">
-            {formatPrice(subtotal)}
-          </span>
-        </div>
-      </div>
-
-      {!isSheet ? (
-        <button
-          type="button"
-          onClick={onCheckout}
-          disabled={isCheckingOut}
-          className="mt-6 w-full rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
-        >
-          {isCheckingOut
-            ? t("shop.cart.processing")
-            : t("shop.cart.proceedToCheckout")}
-        </button>
-      ) : null}
-    </div>
-  );
-}
-
-export function SecurePaymentNote() {
-  const { t } = useI18n();
-
-  return (
-    <div className="flex items-center gap-2 text-xs text-slate-500">
-      <ShieldCheck className="h-4 w-4 text-slate-700" />
-      {t("shop.cart.securePaymentNote")}
     </div>
   );
 }

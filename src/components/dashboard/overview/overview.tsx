@@ -36,6 +36,10 @@ import type { DashboardOverviewData } from "@/lib/admin/types";
 import { useI18n } from "@/lib/i18n";
 import { cn, formatPrice } from "@/lib/utils";
 
+import { RevenueStat } from "./revenue-stat";
+import { SignalRow } from "./signal-row";
+import { StatusBadge } from "./status-badge";
+
 interface DashboardOverviewProps {
   data: DashboardOverviewData;
 }
@@ -46,8 +50,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     data.completedOrders + data.pendingOrders === 0
       ? 0
       : Math.round(
-          (data.completedOrders /
-            (data.completedOrders + data.pendingOrders)) *
+          (data.completedOrders / (data.completedOrders + data.pendingOrders)) *
             100,
         );
 
@@ -101,8 +104,41 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     },
   ];
 
-  const maxCatalogValue = Math.max(...catalogHealth.map((item) => item.value), 1);
+  const maxCatalogValue = Math.max(
+    ...catalogHealth.map((item) => item.value),
+    1,
+  );
 
+  return renderDashboardOverview({
+    t,
+    data,
+    completionRate,
+    summaryCards,
+    catalogHealth,
+    maxCatalogValue,
+  });
+}
+
+function renderDashboardOverview({
+  t,
+  data,
+  completionRate,
+  summaryCards,
+  catalogHealth,
+  maxCatalogValue,
+}: {
+  t: ReturnType<typeof useI18n>["t"];
+  data: DashboardOverviewData;
+  completionRate: number;
+  summaryCards: Array<{
+    label: string;
+    value: number;
+    detail: string;
+    icon: typeof Box;
+  }>;
+  catalogHealth: Array<{ label: string; value: number; accent: string }>;
+  maxCatalogValue: number;
+}) {
   return (
     <DashboardPageShell
       title={t("dashboard.nav.dashboard")}
@@ -223,8 +259,8 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
             <CardHeader>
               <CardTitle>Total Revenue</CardTitle>
               <CardDescription>
-                A compact operations view built from your live catalog and
-                order data.
+                A compact operations view built from your live catalog and order
+                data.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -365,7 +401,10 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
                   </TableHeader>
                   <TableBody>
                     {data.recentOrders.map((order) => (
-                      <TableRow key={order.id} className="bg-white hover:bg-muted/20">
+                      <TableRow
+                        key={order.id}
+                        className="bg-white hover:bg-muted/20"
+                      >
                         <TableCell className="px-4 py-3.5">
                           <div className="font-medium">{order.orderNumber}</div>
                           <div className="text-xs text-muted-foreground">
@@ -448,13 +487,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
   );
 }
 
-function HeroMiniStat({
-  label,
-  value,
-}: {
-  label: string;
-  value: number;
-}) {
+function HeroMiniStat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
       <div className="text-xs text-white/60">{label}</div>
@@ -463,80 +496,12 @@ function HeroMiniStat({
   );
 }
 
-function RevenueStat({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "up" | "warn" | "neutral";
-}) {
-  return (
-    <div className="rounded-2xl border border-border/70 bg-white p-4">
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className="mt-2 text-2xl font-semibold tracking-tight">{value}</div>
-      <div
-        className={cn(
-          "mt-2 text-xs font-medium",
-          tone === "up" && "text-emerald-600",
-          tone === "warn" && "text-amber-600",
-          tone === "neutral" && "text-muted-foreground",
-        )}
-      >
-        {tone === "up" ? "Healthy" : tone === "warn" ? "Watch list" : "Stable"}
-      </div>
-    </div>
-  );
-}
-
-function SignalRow({
-  label,
-  value,
-  helper,
-}: {
-  label: string;
-  value: string;
-  helper: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-border/70 bg-white p-4">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <div className="text-sm font-medium">{label}</div>
-          <div className="mt-1 text-xs text-muted-foreground">{helper}</div>
-        </div>
-        <div className="text-sm font-semibold">{value}</div>
-      </div>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles = {
-    PENDING: "border-amber-200 bg-amber-50 text-amber-700",
-    PAID: "border-sky-200 bg-sky-50 text-sky-700",
-    COMPLETED: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    CANCELLED: "border-rose-200 bg-rose-50 text-rose-700",
-  } as const;
-
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium",
-        styles[status as keyof typeof styles] ??
-          "border-border bg-muted text-muted-foreground",
-      )}
-    >
-      {status.toLowerCase()}
-    </span>
-  );
-}
+const overviewDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
 
 function formatDate(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value));
+  return overviewDateFormatter.format(new Date(value));
 }

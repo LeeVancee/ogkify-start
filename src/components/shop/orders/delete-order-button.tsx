@@ -33,30 +33,22 @@ export function DeleteOrderButton({
   async function handleDelete() {
     setIsLoading(true);
 
-    try {
-      const result = await deleteUnpaidOrder({
-        data: orderId,
-      });
+    const result = await deleteUnpaidOrder({ data: orderId }).catch(
+      (error: unknown) => ({
+        success: false as const,
+        error:
+          error instanceof Error ? error.message : "Failed to delete order",
+      }),
+    );
 
-      if (!result.success) {
-        throw new Error(result.error || "Failed to delete order");
-      }
-
+    if (result.success) {
       toast.success("Order deleted successfully");
       setIsOpen(false);
-
-      // Notify parent component that order has been deleted so it can refresh the list
-      if (onDeleted) {
-        onDeleted();
-      }
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error(
-        error instanceof Error ? error.message : "Failed to delete order",
-      );
-    } finally {
-      setIsLoading(false);
+      onDeleted?.();
+    } else {
+      toast.error(result.error || "Failed to delete order");
     }
+    setIsLoading(false);
   }
 
   return (

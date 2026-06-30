@@ -38,6 +38,7 @@ export function NotFound({ children }: { children?: ReactNode }) {
       {/* Actions */}
       <div className="mt-12 flex flex-col items-center gap-4 sm:flex-row">
         <button
+          type="button"
           onClick={() => window.history.back()}
           className="group flex h-12 items-center gap-2 rounded-full border border-slate-200 bg-white px-6 text-sm font-medium text-slate-600 transition-all hover:border-slate-900 hover:text-slate-900 cursor-pointer"
         >

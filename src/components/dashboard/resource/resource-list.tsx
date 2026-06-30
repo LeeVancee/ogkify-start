@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Edit3, Plus, Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { DeleteDialog } from "@/components/dashboard/delete-dialog";
 import {
@@ -44,15 +44,11 @@ export function ResourceList({
   const queryClient = useQueryClient();
   const [query, setQuery] = useState("");
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
-  const filtered = useMemo(
-    () =>
-      items.filter((item) =>
-        [item.name, item.value ?? ""]
-          .join(" ")
-          .toLowerCase()
-          .includes(query.toLowerCase()),
-      ),
-    [items, query],
+  const filtered = items.filter((item) =>
+    [item.name, item.value ?? ""]
+      .join(" ")
+      .toLowerCase()
+      .includes(query.toLowerCase()),
   );
 
   async function confirmDelete() {
@@ -137,7 +133,9 @@ export function ResourceList({
                   <div className="font-medium">{item.name}</div>
                 </AdminTableCell>
                 <AdminTableCell>
-                  <span className="text-muted-foreground">{item.value || "-"}</span>
+                  <span className="text-muted-foreground">
+                    {item.value || "-"}
+                  </span>
                 </AdminTableCell>
                 <AdminTableCell className="w-28">
                   <div className="flex justify-end gap-2">

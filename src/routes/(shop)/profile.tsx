@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Loader2, User } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -57,41 +57,40 @@ type PasswordFormValues = {
   confirmPassword: string;
 };
 
+function createProfileSchemas(t: ReturnType<typeof useI18n>["t"]) {
+  return {
+    profileFormSchema: z.object({
+      name: z
+        .string()
+        .min(2, { message: t("shop.profile.validation.nameMin") }),
+      image: z.string().nullable().optional(),
+    }),
+    passwordFormSchema: z
+      .object({
+        currentPassword: z
+          .string()
+          .min(6, { message: t("shop.profile.validation.currentPasswordMin") }),
+        newPassword: z
+          .string()
+          .min(6, { message: t("shop.profile.validation.newPasswordMin") }),
+        confirmPassword: z
+          .string()
+          .min(6, { message: t("shop.profile.validation.confirmPasswordMin") }),
+      })
+      .refine((data) => data.newPassword === data.confirmPassword, {
+        message: t("shop.profile.validation.passwordsMismatch"),
+        path: ["confirmPassword"],
+      }),
+  };
+}
+
 function ProfilePage() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("profile");
   const { session } = Route.useRouteContext();
   const { t } = useI18n();
-  const profileFormSchema = useMemo(
-    () =>
-      z.object({
-        name: z
-          .string()
-          .min(2, { message: t("shop.profile.validation.nameMin") }),
-        image: z.string().nullable().optional(),
-      }),
-    [t],
-  );
-  const passwordFormSchema = useMemo(
-    () =>
-      z
-        .object({
-          currentPassword: z.string().min(6, {
-            message: t("shop.profile.validation.currentPasswordMin"),
-          }),
-          newPassword: z.string().min(6, {
-            message: t("shop.profile.validation.newPasswordMin"),
-          }),
-          confirmPassword: z.string().min(6, {
-            message: t("shop.profile.validation.confirmPasswordMin"),
-          }),
-        })
-        .refine((data) => data.newPassword === data.confirmPassword, {
-          message: t("shop.profile.validation.passwordsMismatch"),
-          path: ["confirmPassword"],
-        }),
-    [t],
-  );
+  const { profileFormSchema, passwordFormSchema } = createProfileSchemas(t);
 
   if (!session.user.name) {
     throw new Error("Authenticated user name is required");
@@ -107,6 +106,7 @@ function ProfilePage() {
       return await authClient.updateUser(values);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries();
       toast.success(t("shop.profile.profileUpdated"));
       router.invalidate();
     },
@@ -127,6 +127,7 @@ function ProfilePage() {
       });
     },
     onSuccess: () => {
+      queryClient.invalidateQueries();
       toast.success(t("shop.profile.passwordChanged"));
       passwordForm.reset();
     },

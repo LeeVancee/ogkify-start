@@ -4,6 +4,7 @@ import { CheckCircle, Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { z } from "zod";
 
+import { CenteredCheckoutState } from "@/components/shop/checkout/centered-checkout-state";
 import {
   shopOrderDetailQueryOptions,
   shopQueryKeys,
@@ -181,12 +182,4 @@ function CheckoutSuccessPage() {
   }
 
   return <CheckoutSuccessContent orderId={order_id} />;
-}
-
-function CenteredCheckoutState({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mx-auto flex min-h-[60vh] w-full max-w-3xl flex-col items-center justify-center px-6 py-16 text-center">
-      {children}
-    </div>
-  );
 }

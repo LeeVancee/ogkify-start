@@ -25,7 +25,7 @@ export const Route = createFileRoute("/(shop)/myorders")({
       context.queryClient.ensureQueryData(shopUserOrdersQueryOptions()),
       context.queryClient.ensureQueryData(shopUnpaidOrdersQueryOptions()),
     ]),
-  pendingComponent: OrdersPageLoading,
+  pendingComponent: () => ordersPageLoading(),
   component: MyOrdersPage,
 });
 
@@ -49,7 +49,7 @@ interface Order {
   items: Array<OrderItem>;
 }
 
-function StatusBadge({ status }: { status: string }) {
+function statusBadge(status: string) {
   if (status === "PAID") {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700 ring-1 ring-green-200">
@@ -146,8 +146,7 @@ function MyOrdersPage() {
           const isUnpaid = unpaidOrderIds.has(order.id);
           const previewImages = order.items
             .slice(0, 3)
-            .map((item) => item.imageUrl)
-            .filter(Boolean);
+            .flatMap((item) => (item.imageUrl ? [item.imageUrl] : []));
 
           return (
             <div
@@ -185,7 +184,7 @@ function MyOrdersPage() {
                     <p className="text-sm font-semibold text-slate-900">
                       {order.orderNumber}
                     </p>
-                    <StatusBadge status={order.paymentStatus} />
+                    {statusBadge(order.paymentStatus)}
                   </div>
                   <p className="mt-0.5 text-xs text-slate-400">
                     {new Date(order.createdAt).toLocaleDateString("en-US", {
@@ -308,7 +307,7 @@ function MyOrdersPage() {
   );
 }
 
-function OrdersPageLoading() {
+function ordersPageLoading() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
       <div className="mb-10">

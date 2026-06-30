@@ -17,15 +17,20 @@ export const Route = createFileRoute("/(shop)/product/$id")({
   pendingComponent: () => <ProductInfoLoading />,
   component: RouteComponent,
   loader: async ({ context, params }) => {
-    const product = await context.queryClient.ensureQueryData(
-      shopProductQueryOptions(params.id),
-    );
-
     await context.queryClient.ensureQueryData(
-      shopRelatedProductsQueryOptions(product.id, product.categoryId),
+      shopProductQueryOptions(params.id),
     );
   },
 });
+
+async function addToCartAdapter(formData: FormData) {
+  const result = await handleAddToCartFormAction({ data: formData });
+  return {
+    success: result.success,
+    error: result.error,
+    message: result.message,
+  };
+}
 
 function RouteComponent() {
   const { t } = useI18n();
@@ -34,15 +39,6 @@ function RouteComponent() {
   const { data: relatedProducts } = useSuspenseQuery(
     shopRelatedProductsQueryOptions(product.id, product.categoryId),
   );
-
-  const addToCartAdapter = async (formData: FormData) => {
-    const result = await handleAddToCartFormAction({ data: formData });
-    return {
-      success: result.success,
-      error: result.error,
-      message: result.message,
-    };
-  };
 
   return (
     <div className="shop-shell py-8 sm:py-12">

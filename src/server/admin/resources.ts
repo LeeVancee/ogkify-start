@@ -57,12 +57,10 @@ export const getAdminCategoryDetail = createServerFn()
   });
 
 export const saveAdminCategory = createServerFn({ method: "POST" })
-  .validator(
-    (input: { id?: string; values: AdminResourceFormValues }) => ({
-      id: input.id,
-      values: categorySchema.parse(input.values),
-    }),
-  )
+  .validator((input: { id?: string; values: AdminResourceFormValues }) => ({
+    id: input.id,
+    values: categorySchema.parse(input.values),
+  }))
   .handler(async ({ data: input }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -123,12 +121,10 @@ export const getAdminColorDetail = createServerFn()
   });
 
 export const saveAdminColor = createServerFn({ method: "POST" })
-  .validator(
-    (input: { id?: string; values: AdminResourceFormValues }) => ({
-      id: input.id,
-      values: colorSchema.parse(input.values),
-    }),
-  )
+  .validator((input: { id?: string; values: AdminResourceFormValues }) => ({
+    id: input.id,
+    values: colorSchema.parse(input.values),
+  }))
   .handler(async ({ data: input }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -187,12 +183,10 @@ export const getAdminSizeDetail = createServerFn()
   });
 
 export const saveAdminSize = createServerFn({ method: "POST" })
-  .validator(
-    (input: { id?: string; values: AdminResourceFormValues }) => ({
-      id: input.id,
-      values: sizeSchema.parse(input.values),
-    }),
-  )
+  .validator((input: { id?: string; values: AdminResourceFormValues }) => ({
+    id: input.id,
+    values: sizeSchema.parse(input.values),
+  }))
   .handler(async ({ data: input }) => {
     const admin = await requireWritableAdmin();
     if (!admin.ok) return { success: false, error: admin.error };
@@ -243,63 +237,3 @@ export const getAdminResourceCounts = createServerFn().handler(async () => {
     sizesCount: sizeCount[0]?.count ?? 0,
   };
 });
-
-export const getCategories = listAdminCategories;
-export const deleteCategory = deleteAdminCategory;
-export const getColors = listAdminColors;
-export const deleteColor = deleteAdminColor;
-export const getSizes = listAdminSizes;
-export const deleteSize = deleteAdminSize;
-
-export async function createCategory({
-  data,
-}: {
-  data: { name: string; imageUrl: string };
-}) {
-  return saveAdminCategory({ data: { values: data } });
-}
-
-export async function updateCategory({
-  data,
-}: {
-  data: { id: string; name: string; imageUrl?: string };
-}) {
-  return saveAdminCategory({
-    data: {
-      id: data.id,
-      values: { name: data.name, imageUrl: data.imageUrl ?? "" },
-    },
-  });
-}
-
-export async function createColor({
-  data,
-}: {
-  data: { name: string; value: string };
-}) {
-  return saveAdminColor({ data: { values: data } });
-}
-
-export async function updateColor({
-  data,
-}: {
-  data: { id: string; data: { name: string; value: string } };
-}) {
-  return saveAdminColor({ data: { id: data.id, values: data.data } });
-}
-
-export async function createSize({
-  data,
-}: {
-  data: { name: string; value: string };
-}) {
-  return saveAdminSize({ data: { values: data } });
-}
-
-export async function updateSize({
-  data,
-}: {
-  data: { id: string; data: { name: string; value: string } };
-}) {
-  return saveAdminSize({ data: { id: data.id, values: data.data } });
-}

@@ -1,6 +1,5 @@
 import i18next from "i18next";
 import type { TFunction } from "i18next";
-import { useCallback, useMemo } from "react";
 import {
   I18nextProvider,
   initReactI18next,
@@ -27,7 +26,7 @@ export function I18nProvider({
     ? initialLocale
     : defaultLocale;
 
-  const i18n = useMemo(() => {
+  const i18n = (() => {
     const instance = i18next.createInstance();
 
     instance.use(initReactI18next).init({
@@ -45,7 +44,7 @@ export function I18nProvider({
     });
 
     return instance;
-  }, [locale]);
+  })();
 
   return <I18nextProvider i18n={i18n}>{children}</I18nextProvider>;
 }
@@ -56,19 +55,13 @@ export function useI18n() {
     ? i18n.language
     : defaultLocale;
 
-  const setLocale = useCallback(
-    (nextLocale: Locale) => {
-      persistLocale(nextLocale);
-      i18n.changeLanguage(nextLocale);
-    },
-    [i18n],
-  );
+  const setLocale = (nextLocale: Locale) => {
+    persistLocale(nextLocale);
+    i18n.changeLanguage(nextLocale);
+  };
 
-  const t = useCallback(
-    (key: string, values: TranslationValues = {}) =>
-      normalizeTranslation(translate, key, values),
-    [translate],
-  );
+  const t = (key: string, values: TranslationValues = {}) =>
+    normalizeTranslation(translate, key, values);
 
   return {
     locale,

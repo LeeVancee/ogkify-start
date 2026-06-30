@@ -1,7 +1,12 @@
-import type React from "react";
-
-import { CircleCheckIcon, InfoIcon, Loader2Icon, OctagonXIcon, TriangleAlertIcon } from "lucide-react";
+import {
+  CircleCheckIcon,
+  InfoIcon,
+  Loader2Icon,
+  OctagonXIcon,
+  TriangleAlertIcon,
+} from "lucide-react";
 import { useTheme } from "next-themes";
+import type React from "react";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 
 function Toaster({ position = "top-center", ...props }: ToasterProps) {

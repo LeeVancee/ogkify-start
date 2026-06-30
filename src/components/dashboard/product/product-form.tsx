@@ -102,6 +102,7 @@ export function ProductForm({
           <section className="space-y-4 rounded-xl border bg-card p-4 md:p-5">
             <Field label={t("dashboard.forms.productName")}>
               <Input
+                aria-label={t("dashboard.forms.productName")}
                 value={values.name}
                 onChange={(event) =>
                   setValues((current) => ({
@@ -114,6 +115,7 @@ export function ProductForm({
             </Field>
             <Field label={t("dashboard.forms.description")}>
               <textarea
+                aria-label={t("dashboard.forms.description")}
                 value={values.description}
                 onChange={(event) =>
                   setValues((current) => ({

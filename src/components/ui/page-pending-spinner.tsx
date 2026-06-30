@@ -12,12 +12,11 @@ export function PagePendingSpinner({
   label = "Loading",
 }: PagePendingSpinnerProps) {
   return (
-    <div
+    <output
       className={cn(
         "flex min-h-80 w-full flex-1 items-center justify-center p-6",
         className,
       )}
-      role="status"
       aria-live="polite"
       aria-label={label}
     >
@@ -27,6 +26,6 @@ export function PagePendingSpinner({
         </div>
         <div className="text-sm font-medium text-muted-foreground">{label}</div>
       </div>
-    </div>
+    </output>
   );
 }

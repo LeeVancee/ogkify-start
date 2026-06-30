@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { LoaderCircle, Lock, Mail, User } from "lucide-react";
 import type React from "react";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -35,20 +35,16 @@ function RouteComponent() {
   const router = useRouter();
   const queryClient = useQueryClient();
 
-  const formSchema = useMemo(
-    () =>
-      z.object({
-        name: z.string().min(1, { message: t("auth.signup.nameRequired") }),
-        email: z
-          .string()
-          .min(1, { message: t("auth.signup.emailRequired") })
-          .email({ message: t("auth.signup.emailInvalid") }),
-        password: z.string().min(6, {
-          message: t("auth.signup.passwordMin"),
-        }),
-      }),
-    [t],
-  );
+  const formSchema = z.object({
+    name: z.string().min(1, { message: t("auth.signup.nameRequired") }),
+    email: z
+      .string()
+      .min(1, { message: t("auth.signup.emailRequired") })
+      .email({ message: t("auth.signup.emailInvalid") }),
+    password: z.string().min(6, {
+      message: t("auth.signup.passwordMin"),
+    }),
+  });
 
   type SignupFormValues = z.infer<typeof formSchema>;
 
@@ -221,16 +217,16 @@ function RouteComponent() {
       </div>
 
       <div className="space-y-4">
-        <SocialButton
-          label="Google"
-          onClick={() => toast.info(t("auth.signup.socialUnavailable"))}
-          icon={<GoogleIcon />}
-        />
-        <SocialButton
-          label="GitHub"
-          onClick={() => toast.info(t("auth.signup.socialUnavailable"))}
-          icon={<GitHubIcon />}
-        />
+        {socialButton({
+          label: "Google",
+          onClick: () => toast.info(t("auth.signup.socialUnavailable")),
+          icon: googleIcon(),
+        })}
+        {socialButton({
+          label: "GitHub",
+          onClick: () => toast.info(t("auth.signup.socialUnavailable")),
+          icon: githubIcon(),
+        })}
       </div>
 
       {error ? (
@@ -252,7 +248,7 @@ function RouteComponent() {
   );
 }
 
-function SocialButton({
+function socialButton({
   icon,
   label,
   onClick,
@@ -273,7 +269,7 @@ function SocialButton({
   );
 }
 
-function GoogleIcon() {
+function googleIcon() {
   return (
     <svg viewBox="0 0 24 24" className="size-6" aria-hidden="true">
       <path
@@ -284,7 +280,7 @@ function GoogleIcon() {
   );
 }
 
-function GitHubIcon() {
+function githubIcon() {
   return (
     <svg viewBox="0 0 24 24" className="size-6" aria-hidden="true">
       <path
