@@ -38,7 +38,7 @@ async function requireWritableAdmin() {
 
 export const listAdminCategories = createServerFn().handler(async () => {
   return db.query.categories.findMany({
-    orderBy: (table, { desc }) => [desc(table.createdAt)],
+    orderBy: { createdAt: "desc" },
   });
 });
 
@@ -46,7 +46,7 @@ export const getAdminCategoryDetail = createServerFn()
   .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const category = await db.query.categories.findFirst({
-      where: eq(categories.id, id),
+      where: { id },
     });
 
     if (!category) {
@@ -102,7 +102,7 @@ export const deleteAdminCategory = createServerFn({ method: "POST" })
 
 export const listAdminColors = createServerFn().handler(async () => {
   return db.query.colors.findMany({
-    orderBy: (table, { asc }) => [asc(table.name)],
+    orderBy: { name: "asc" },
   });
 });
 
@@ -110,7 +110,7 @@ export const getAdminColorDetail = createServerFn()
   .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const color = await db.query.colors.findFirst({
-      where: eq(colors.id, id),
+      where: { id },
     });
 
     if (!color) {
@@ -164,7 +164,7 @@ export const deleteAdminColor = createServerFn({ method: "POST" })
 
 export const listAdminSizes = createServerFn().handler(async () => {
   return db.query.sizes.findMany({
-    orderBy: (table, { asc }) => [asc(table.name)],
+    orderBy: { name: "asc" },
   });
 });
 
@@ -172,7 +172,7 @@ export const getAdminSizeDetail = createServerFn()
   .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }) => {
     const size = await db.query.sizes.findFirst({
-      where: eq(sizes.id, id),
+      where: { id },
     });
 
     if (!size) {

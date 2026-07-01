@@ -26,7 +26,7 @@ export const getUserOrders = createServerFn().handler(async () => {
   }
 
   const ordersList = await db.query.orders.findMany({
-    where: (ordersTable, { eq }) => eq(ordersTable.userId, session.user.id),
+    where: { userId: session.user.id },
     with: {
       items: {
         with: {
@@ -41,7 +41,7 @@ export const getUserOrders = createServerFn().handler(async () => {
       },
       user: true,
     },
-    orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
+    orderBy: { createdAt: "desc" },
   });
 
   const formattedOrders = ordersList.map((order) => ({
@@ -93,11 +93,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
   }
 
   const ordersList = await db.query.orders.findMany({
-    where: (ordersTable, { eq, and }) =>
-      and(
-        eq(ordersTable.userId, session.user.id),
-        eq(ordersTable.paymentStatus, "UNPAID"),
-      ),
+    where: { userId: session.user.id, paymentStatus: "UNPAID" },
     with: {
       items: {
         with: {
@@ -111,7 +107,7 @@ export const getUnpaidOrders = createServerFn().handler(async () => {
         },
       },
     },
-    orderBy: (ordersTable, { desc }) => [desc(ordersTable.createdAt)],
+    orderBy: { createdAt: "desc" },
   });
 
   const formattedOrders = ordersList.map((order) => ({
@@ -287,11 +283,7 @@ export const getOrderById = createServerFn()
     }
 
     const order = await db.query.orders.findFirst({
-      where: (ordersTable, { eq, and }) =>
-        and(
-          eq(ordersTable.id, orderId),
-          eq(ordersTable.userId, session.user.id),
-        ),
+      where: { id: orderId, userId: session.user.id },
       with: {
         items: {
           with: {
@@ -329,12 +321,11 @@ export const deleteUnpaidOrder = createServerFn({ method: "POST" })
     }
 
     const order = await db.query.orders.findFirst({
-      where: (ordersTable, { eq, and }) =>
-        and(
-          eq(ordersTable.id, orderId),
-          eq(ordersTable.userId, session.user.id),
-          eq(ordersTable.paymentStatus, "UNPAID"),
-        ),
+      where: {
+        id: orderId,
+        userId: session.user.id,
+        paymentStatus: "UNPAID",
+      },
     });
 
     if (!order) {

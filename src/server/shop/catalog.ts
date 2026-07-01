@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import { asc, desc, eq, gte, ilike, lte, or } from "drizzle-orm";
+import { and, eq, gte, ilike, lte, or } from "drizzle-orm";
 
 import { db } from "@/db";
 import { products } from "@/db/schema";
@@ -19,7 +19,7 @@ export interface FilterOptions {
 
 export const getCategories = createServerFn().handler(async () => {
   const categoriesList = await db.query.categories.findMany({
-    orderBy: (categories, { desc }) => [desc(categories.createdAt)],
+    orderBy: { createdAt: "desc" },
     columns: {
       id: true,
       name: true,
@@ -33,11 +33,10 @@ export const getFeaturedProducts = createServerFn()
   .validator((limit?: number) => limit || 4)
   .handler(async ({ data: limit }) => {
     const productsList = await db.query.products.findMany({
-      where: (productsTable, { eq, and }) =>
-        and(
-          eq(productsTable.isFeatured, true),
-          eq(productsTable.isArchived, false),
-        ),
+      where: {
+        isFeatured: true,
+        isArchived: false,
+      },
       with: {
         category: true,
         images: true,
@@ -52,7 +51,7 @@ export const getFeaturedProducts = createServerFn()
           },
         },
       },
-      orderBy: (productsTable, { desc }) => [desc(productsTable.createdAt)],
+      orderBy: { createdAt: "desc" },
       limit,
     });
 
@@ -95,27 +94,27 @@ export const getFilteredProducts = createServerFn()
     const limit = options.limit || 12;
     const offset = (page - 1) * limit;
 
-    let orderBy: any = [desc(products.createdAt)];
+    let orderBy: any = { createdAt: "desc" };
 
     if (options.sort) {
       switch (options.sort) {
         case "price-asc":
-          orderBy = [asc(products.price)];
+          orderBy = { price: "asc" };
           break;
         case "price-desc":
-          orderBy = [desc(products.price)];
+          orderBy = { price: "desc" };
           break;
         case "newest":
-          orderBy = [desc(products.createdAt)];
+          orderBy = { createdAt: "desc" };
           break;
         case "featured":
         default:
-          orderBy = [desc(products.isFeatured), desc(products.createdAt)];
+          orderBy = { isFeatured: "desc", createdAt: "desc" };
       }
     }
 
     let productsList = await db.query.products.findMany({
-      where: (productsTable, { and: andFn }) => andFn(...baseConditions),
+      where: { RAW: () => and(...baseConditions)! },
       with: {
         category: true,
         images: true,

@@ -14,7 +14,7 @@ if (!databaseUrl) {
 }
 
 const client = postgres(databaseUrl);
-const db = drizzle({ client, schema });
+const db = drizzle({ client, relations: schema.relations });
 
 type EditionValue = "STANDARD" | "DELUXE" | "LIMITED" | "PREMIUM";
 

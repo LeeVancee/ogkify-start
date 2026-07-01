@@ -55,7 +55,7 @@ export const listAdminProducts = createServerFn().handler(
           },
         },
       },
-      orderBy: (table, { desc }) => [desc(table.createdAt)],
+      orderBy: { createdAt: "desc" },
     });
 
     return list.map((product) => ({
@@ -79,7 +79,7 @@ export const getAdminProductDetail = createServerFn()
   .validator((id: string) => idSchema.parse(id))
   .handler(async ({ data: id }): Promise<AdminProductDetail> => {
     const product = await db.query.products.findFirst({
-      where: eq(products.id, id),
+      where: { id },
       with: {
         images: true,
         colors: {
@@ -116,13 +116,13 @@ export const getAdminProductDetail = createServerFn()
 export const getAdminProductFormData = createServerFn().handler(async () => {
   const [categoryList, colorList, sizeList] = await Promise.all([
     db.query.categories.findMany({
-      orderBy: (table, { desc }) => [desc(table.createdAt)],
+      orderBy: { createdAt: "desc" },
     }),
     db.query.colors.findMany({
-      orderBy: (table, { asc }) => [asc(table.name)],
+      orderBy: { name: "asc" },
     }),
     db.query.sizes.findMany({
-      orderBy: (table, { asc }) => [asc(table.name)],
+      orderBy: { name: "asc" },
     }),
   ]);
 
@@ -162,7 +162,7 @@ export const saveAdminProduct = createServerFn({ method: "POST" })
         db
           .delete(productsToSizes)
           .where(eq(productsToSizes.productId, input.id)),
-        db.query.images.findMany({ where: eq(images.productId, input.id) }),
+        db.query.images.findMany({ where: { productId: input.id } }),
       ]);
 
       const colorInsert =

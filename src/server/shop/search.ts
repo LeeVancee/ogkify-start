@@ -10,11 +10,12 @@ export const searchProducts = createServerFn()
     }
 
     const productsList = await db.query.products.findMany({
-      where: (products, { or, ilike }) =>
-        or(
-          ilike(products.name, `%${query}%`),
-          ilike(products.description, `%${query}%`),
-        ),
+      where: {
+        OR: [
+          { name: { ilike: `%${query}%` } },
+          { description: { ilike: `%${query}%` } },
+        ],
+      },
       with: {
         images: true,
         category: true,

@@ -7,4 +7,4 @@ import * as schema from "./schema";
 
 const driver = postgres(env.DATABASE_URL);
 
-export const db = drizzle({ client: driver, schema });
+export const db = drizzle({ client: driver, relations: schema.relations });

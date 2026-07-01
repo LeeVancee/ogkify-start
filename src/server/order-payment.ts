@@ -80,8 +80,7 @@ export async function applyStripeWebhookEvent(event: Stripe.Event) {
 
 export async function synchronizePaidOrder(orderId: string, userId: string) {
   const order = await db.query.orders.findFirst({
-    where: (ordersTable, { eq, and }) =>
-      and(eq(ordersTable.id, orderId), eq(ordersTable.userId, userId)),
+    where: { id: orderId, userId },
     with: {
       items: {
         with: {
@@ -122,7 +121,7 @@ export async function synchronizePaidOrder(orderId: string, userId: string) {
   await clearUserCartByUserId(userId);
 
   const updatedOrder = await db.query.orders.findFirst({
-    where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
+    where: { id: orderId },
     with: {
       items: {
         with: {
@@ -157,7 +156,7 @@ function generateOrderNumber() {
 
 async function getRequiredUserCart(userId: string) {
   const cart = await db.query.carts.findFirst({
-    where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
+    where: { userId },
     with: {
       items: {
         with: {
@@ -236,12 +235,7 @@ async function createUnpaidOrderFromCart(
 
 async function getRequiredUnpaidOrder(orderId: string, userId: string) {
   const order = await db.query.orders.findFirst({
-    where: (ordersTable, { eq, and }) =>
-      and(
-        eq(ordersTable.id, orderId),
-        eq(ordersTable.userId, userId),
-        eq(ordersTable.paymentStatus, "UNPAID"),
-      ),
+    where: { id: orderId, userId, paymentStatus: "UNPAID" },
     with: {
       items: {
         with: {
@@ -365,7 +359,7 @@ async function markOrderPaidFromPaymentIntent(
   }
 
   const existingOrder = await db.query.orders.findFirst({
-    where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
+    where: { id: orderId },
     columns: {
       id: true,
       paymentIntent: true,
@@ -418,7 +412,7 @@ async function markOrderPaidFromCheckoutSession(
   }
 
   const existingOrder = await db.query.orders.findFirst({
-    where: (ordersTable, { eq }) => eq(ordersTable.id, orderId),
+    where: { id: orderId },
     columns: {
       id: true,
       paymentIntent: true,
@@ -513,7 +507,7 @@ async function markOrderRefunded(charge: Stripe.Charge) {
 
 async function clearUserCartByUserId(userId: string) {
   const userCart = await db.query.carts.findFirst({
-    where: (cartsTable, { eq }) => eq(cartsTable.userId, userId),
+    where: { userId },
   });
 
   if (userCart) {

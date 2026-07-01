@@ -30,7 +30,7 @@ export const listAdminOrders = createServerFn().handler(
           },
         },
       },
-      orderBy: (table, { desc }) => [desc(table.createdAt)],
+      orderBy: { createdAt: "desc" },
     });
 
     return list.map((order) => ({

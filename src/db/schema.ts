@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { defineRelations } from "drizzle-orm";
 import {
   boolean,
   doublePrecision,
@@ -208,145 +208,159 @@ export const productsToSizes = pgTable("products_to_sizes", {
 });
 
 // Relationship definitions
-export const categoriesRelations = relations(categories, ({ many }) => ({
-  products: many(products),
-}));
-
-export const colorsRelations = relations(colors, ({ many }) => ({
-  products: many(productsToColors, { relationName: "colors_to_products" }),
-  cartItems: many(cartItems),
-  orderItems: many(orderItems),
-}));
-
-export const sizesRelations = relations(sizes, ({ many }) => ({
-  products: many(productsToSizes, { relationName: "sizes_to_products" }),
-  cartItems: many(cartItems),
-  orderItems: many(orderItems),
-}));
-
-export const productsRelations = relations(products, ({ one, many }) => ({
-  category: one(categories, {
-    fields: [products.categoryId],
-    references: [categories.id],
-  }),
-  colors: many(productsToColors, { relationName: "products_to_colors" }),
-  sizes: many(productsToSizes, { relationName: "products_to_sizes" }),
-  orderItems: many(orderItems),
-  cartItems: many(cartItems),
-  images: many(images),
-}));
-
-export const ordersRelations = relations(orders, ({ one, many }) => ({
-  user: one(user, {
-    fields: [orders.userId],
-    references: [user.id],
-  }),
-  items: many(orderItems),
-}));
-
-export const orderItemsRelations = relations(orderItems, ({ one }) => ({
-  order: one(orders, {
-    fields: [orderItems.orderId],
-    references: [orders.id],
-  }),
-  product: one(products, {
-    fields: [orderItems.productId],
-    references: [products.id],
-  }),
-  color: one(colors, {
-    fields: [orderItems.colorId],
-    references: [colors.id],
-  }),
-  size: one(sizes, {
-    fields: [orderItems.sizeId],
-    references: [sizes.id],
-  }),
-}));
-
-export const imagesRelations = relations(images, ({ one }) => ({
-  product: one(products, {
-    fields: [images.productId],
-    references: [products.id],
-  }),
-}));
-
-export const cartsRelations = relations(carts, ({ one, many }) => ({
-  user: one(user, {
-    fields: [carts.userId],
-    references: [user.id],
-  }),
-  items: many(cartItems),
-}));
-
-export const cartItemsRelations = relations(cartItems, ({ one }) => ({
-  cart: one(carts, {
-    fields: [cartItems.cartId],
-    references: [carts.id],
-  }),
-  product: one(products, {
-    fields: [cartItems.productId],
-    references: [products.id],
-  }),
-  color: one(colors, {
-    fields: [cartItems.colorId],
-    references: [colors.id],
-  }),
-  size: one(sizes, {
-    fields: [cartItems.sizeId],
-    references: [sizes.id],
-  }),
-}));
-
-export const userRelations = relations(user, ({ many }) => ({
-  orders: many(orders),
-  carts: many(carts),
-  sessions: many(session),
-  accounts: many(account),
-}));
-
-export const sessionRelations = relations(session, ({ one }) => ({
-  user: one(user, {
-    fields: [session.userId],
-    references: [user.id],
-  }),
-}));
-
-export const accountsRelations = relations(account, ({ one }) => ({
-  user: one(user, {
-    fields: [account.userId],
-    references: [user.id],
-  }),
-}));
-
-// Helper relationships for connecting many-to-many relationships
-export const productsToColorsRelations = relations(
+const tables = {
+  account,
+  cartItems,
+  carts,
+  categories,
+  colors,
+  images,
+  orderItems,
+  orders,
+  products,
   productsToColors,
-  ({ one }) => ({
-    product: one(products, {
-      fields: [productsToColors.productId],
-      references: [products.id],
-      relationName: "products_to_colors",
-    }),
-    color: one(colors, {
-      fields: [productsToColors.colorId],
-      references: [colors.id],
-      relationName: "colors_to_products",
-    }),
-  }),
-);
-
-export const productsToSizesRelations = relations(
   productsToSizes,
-  ({ one }) => ({
-    product: one(products, {
-      fields: [productsToSizes.productId],
-      references: [products.id],
-      relationName: "products_to_sizes",
+  session,
+  sizes,
+  user,
+  verification,
+};
+
+export const relations = defineRelations(tables, (r) => ({
+  categories: {
+    products: r.many.products(),
+  },
+  colors: {
+    products: r.many.productsToColors({ alias: "colors_to_products" }),
+    cartItems: r.many.cartItems(),
+    orderItems: r.many.orderItems(),
+  },
+  sizes: {
+    products: r.many.productsToSizes({ alias: "sizes_to_products" }),
+    cartItems: r.many.cartItems(),
+    orderItems: r.many.orderItems(),
+  },
+  products: {
+    category: r.one.categories({
+      from: r.products.categoryId,
+      to: r.categories.id,
+      optional: false,
     }),
-    size: one(sizes, {
-      fields: [productsToSizes.sizeId],
-      references: [sizes.id],
-      relationName: "sizes_to_products",
+    colors: r.many.productsToColors({ alias: "products_to_colors" }),
+    sizes: r.many.productsToSizes({ alias: "products_to_sizes" }),
+    orderItems: r.many.orderItems(),
+    cartItems: r.many.cartItems(),
+    images: r.many.images(),
+  },
+  orders: {
+    user: r.one.user({
+      from: r.orders.userId,
+      to: r.user.id,
+      optional: false,
     }),
-  }),
-);
+    items: r.many.orderItems(),
+  },
+  orderItems: {
+    order: r.one.orders({
+      from: r.orderItems.orderId,
+      to: r.orders.id,
+      optional: false,
+    }),
+    product: r.one.products({
+      from: r.orderItems.productId,
+      to: r.products.id,
+      optional: false,
+    }),
+    color: r.one.colors({
+      from: r.orderItems.colorId,
+      to: r.colors.id,
+    }),
+    size: r.one.sizes({
+      from: r.orderItems.sizeId,
+      to: r.sizes.id,
+    }),
+  },
+  images: {
+    product: r.one.products({
+      from: r.images.productId,
+      to: r.products.id,
+      optional: false,
+    }),
+  },
+  carts: {
+    user: r.one.user({
+      from: r.carts.userId,
+      to: r.user.id,
+      optional: false,
+    }),
+    items: r.many.cartItems(),
+  },
+  cartItems: {
+    cart: r.one.carts({
+      from: r.cartItems.cartId,
+      to: r.carts.id,
+      optional: false,
+    }),
+    product: r.one.products({
+      from: r.cartItems.productId,
+      to: r.products.id,
+      optional: false,
+    }),
+    color: r.one.colors({
+      from: r.cartItems.colorId,
+      to: r.colors.id,
+    }),
+    size: r.one.sizes({
+      from: r.cartItems.sizeId,
+      to: r.sizes.id,
+    }),
+  },
+  user: {
+    orders: r.many.orders(),
+    carts: r.many.carts(),
+    sessions: r.many.session(),
+    accounts: r.many.account(),
+  },
+  session: {
+    user: r.one.user({
+      from: r.session.userId,
+      to: r.user.id,
+      optional: false,
+    }),
+  },
+  account: {
+    user: r.one.user({
+      from: r.account.userId,
+      to: r.user.id,
+      optional: false,
+    }),
+  },
+  productsToColors: {
+    product: r.one.products({
+      from: r.productsToColors.productId,
+      to: r.products.id,
+      alias: "products_to_colors",
+      optional: false,
+    }),
+    color: r.one.colors({
+      from: r.productsToColors.colorId,
+      to: r.colors.id,
+      alias: "colors_to_products",
+      optional: false,
+    }),
+  },
+  productsToSizes: {
+    product: r.one.products({
+      from: r.productsToSizes.productId,
+      to: r.products.id,
+      alias: "products_to_sizes",
+      optional: false,
+    }),
+    size: r.one.sizes({
+      from: r.productsToSizes.sizeId,
+      to: r.sizes.id,
+      alias: "sizes_to_products",
+      optional: false,
+    }),
+  },
+}));

@@ -6,7 +6,7 @@ export const getProduct = createServerFn()
   .validator((id: string) => id)
   .handler(async ({ data: id }) => {
     const product = await db.query.products.findFirst({
-      where: (products, { eq }) => eq(products.id, id),
+      where: { id },
       with: {
         category: true,
         colors: {
@@ -54,12 +54,11 @@ export const getRelatedProducts = createServerFn()
   .validator((params: { productId: string; category: string }) => params)
   .handler(async ({ data: { productId, category } }) => {
     const productsList = await db.query.products.findMany({
-      where: (products, { eq, ne, and }) =>
-        and(
-          eq(products.categoryId, category),
-          ne(products.id, productId),
-          eq(products.isArchived, false),
-        ),
+      where: {
+        categoryId: category,
+        id: { ne: productId },
+        isArchived: false,
+      },
       with: {
         images: true,
       },

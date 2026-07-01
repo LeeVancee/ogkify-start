@@ -39,7 +39,7 @@ const addToCart = createServerFn({ method: "POST" })
     }
 
     const product = await db.query.products.findFirst({
-      where: (productsTable, { eq }) => eq(productsTable.id, data.productId),
+      where: { id: data.productId },
     });
 
     if (!product) {
@@ -50,7 +50,7 @@ const addToCart = createServerFn({ method: "POST" })
     console.log("try to add product to cart", session.user.id, data.productId);
 
     let cart = await db.query.carts.findFirst({
-      where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
+      where: { userId: session.user.id },
     });
 
     if (!cart) {
@@ -65,17 +65,12 @@ const addToCart = createServerFn({ method: "POST" })
     }
 
     const existingItem = await db.query.cartItems.findFirst({
-      where: (cartItemsTable, { eq, and, isNull }) =>
-        and(
-          eq(cartItemsTable.cartId, cart.id),
-          eq(cartItemsTable.productId, data.productId),
-          data.colorId
-            ? eq(cartItemsTable.colorId, data.colorId)
-            : isNull(cartItemsTable.colorId),
-          data.sizeId
-            ? eq(cartItemsTable.sizeId, data.sizeId)
-            : isNull(cartItemsTable.sizeId),
-        ),
+      where: {
+        cartId: cart.id,
+        productId: data.productId,
+        colorId: data.colorId ?? { isNull: true },
+        sizeId: data.sizeId ?? { isNull: true },
+      },
     });
 
     if (existingItem) {
@@ -158,7 +153,7 @@ export const getUserCart = createServerFn().handler(async () => {
   }
 
   const cart = await db.query.carts.findFirst({
-    where: (cartsTable, { eq }) => eq(cartsTable.userId, session.user.id),
+    where: { userId: session.user.id },
     with: {
       items: {
         with: {
@@ -217,7 +212,7 @@ export const removeFromCart = createServerFn({ method: "POST" })
     }
 
     const cartItem = await db.query.cartItems.findFirst({
-      where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
+      where: { id: cartItemId },
       with: {
         cart: true,
       },
@@ -247,7 +242,7 @@ export const updateCartItemQuantity = createServerFn({ method: "POST" })
     }
 
     const cartItem = await db.query.cartItems.findFirst({
-      where: (cartItemsTable, { eq }) => eq(cartItemsTable.id, cartItemId),
+      where: { id: cartItemId },
       with: {
         cart: true,
       },
