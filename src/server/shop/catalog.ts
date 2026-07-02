@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { and, eq, gte, ilike, lte, or } from "drizzle-orm";
 
 import { db } from "@/db";
-import { products } from "@/db/schema";
 
 export interface FilterOptions {
   category?: string;
@@ -68,28 +67,6 @@ export const getFeaturedProducts = createServerFn()
 export const getFilteredProducts = createServerFn()
   .validator((options: FilterOptions = {}) => options)
   .handler(async ({ data: options }) => {
-    const baseConditions = [eq(products.isArchived, false)];
-
-    if (options.featured) {
-      baseConditions.push(eq(products.isFeatured, true));
-    }
-
-    if (options.minPrice !== undefined) {
-      baseConditions.push(gte(products.price, options.minPrice));
-    }
-    if (options.maxPrice !== undefined) {
-      baseConditions.push(lte(products.price, options.maxPrice));
-    }
-
-    if (options.search) {
-      baseConditions.push(
-        or(
-          ilike(products.name, `%${options.search}%`),
-          ilike(products.description, `%${options.search}%`),
-        )!,
-      );
-    }
-
     const page = options.page || 1;
     const limit = options.limit || 12;
     const offset = (page - 1) * limit;
@@ -114,7 +91,25 @@ export const getFilteredProducts = createServerFn()
     }
 
     let productsList = await db.query.products.findMany({
-      where: { RAW: () => and(...baseConditions)! },
+      where: {
+        RAW: (table) =>
+          and(
+            eq(table.isArchived, false),
+            options.featured ? eq(table.isFeatured, true) : undefined,
+            options.minPrice !== undefined
+              ? gte(table.price, options.minPrice)
+              : undefined,
+            options.maxPrice !== undefined
+              ? lte(table.price, options.maxPrice)
+              : undefined,
+            options.search
+              ? or(
+                  ilike(table.name, `%${options.search}%`),
+                  ilike(table.description, `%${options.search}%`),
+                )
+              : undefined,
+          )!,
+      },
       with: {
         category: true,
         images: true,
