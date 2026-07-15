@@ -85,7 +85,7 @@ export const zhCN = {
       noResultsHint: "试试其他关键词，或浏览商品系列。",
     },
     footer: {
-      description: "精选简约生活必备单品，带有利落的编辑风格。",
+      description: "为在意细节的收藏者，精选模型、手办与角色周边。",
       shop: "商店",
       featured: "精选",
       customerCare: "客服",
@@ -101,6 +101,13 @@ export const zhCN = {
       github: "OGKIFY GitHub repository",
     },
     home: {
+      heroEyebrow: "模型、手办与角色周边",
+      heroTitleLineOne: "把喜欢的角色",
+      heroTitleLineTwo: "一起带回家。",
+      heroDescription:
+        "探索值得展示的比例模型、拼装模型与玩偶，收藏那些让你一再回味的作品。",
+      shopAll: "探索所有收藏",
+      heroFeatured: "收藏家精选",
       browse: "浏览",
       shopByCategory: "按分类选购",
       handpicked: "精心挑选",

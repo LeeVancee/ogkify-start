@@ -88,7 +88,7 @@ export const en = {
     },
     footer: {
       description:
-        "Curated essentials for a refined, minimal lifestyle with a sharp editorial feel.",
+        "Figures, model kits, and character goods selected for collectors who care about the details.",
       shop: "Shop",
       featured: "Featured",
       customerCare: "Customer Care",
@@ -104,6 +104,13 @@ export const en = {
       github: "OGKIFY GitHub repository",
     },
     home: {
+      heroEyebrow: "Figures, kits & character goods",
+      heroTitleLineOne: "Bring your favorite",
+      heroTitleLineTwo: "characters home.",
+      heroDescription:
+        "Discover display-ready figures, model kits, and plush from the series you keep coming back to.",
+      shopAll: "Explore the collection",
+      heroFeatured: "Collector's pick",
       browse: "Browse",
       shopByCategory: "Shop By Category",
       handpicked: "Handpicked",

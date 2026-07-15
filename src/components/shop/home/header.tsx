@@ -18,12 +18,15 @@ export default function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const navigation = [
     { name: t("shop.header.allProducts"), href: "/products", search: {} },
+  ];
+  const mobileNavigation = [
+    ...navigation,
     { name: t("shop.header.search"), href: "/search", search: {} },
   ];
   const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/88 backdrop-blur-xl">
       <div className="shop-shell">
         <div className="flex h-16 items-center justify-between">
           <button
@@ -41,9 +44,25 @@ export default function Header() {
 
           <Link
             to="/"
-            className="text-base font-semibold tracking-[-0.02em] text-foreground uppercase"
+            className="group flex items-center gap-2.5 text-sm font-semibold tracking-[0.12em] text-foreground uppercase"
+            aria-label="OGKIFY"
           >
-            OGKIFY
+            <span className="flex size-8 items-center justify-center rounded-[0.65rem] bg-foreground text-background shadow-[0_5px_18px_rgba(57,48,38,0.16)] transition-transform duration-200 group-hover:-rotate-3">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="size-5"
+              >
+                <path d="M5 6.5 12 3l7 3.5v10L12 21l-7-4.5z" />
+                <path d="m5 6.5 7 4 7-4M12 10.5V21" />
+              </svg>
+            </span>
+            <span>OGKIFY</span>
           </Link>
 
           <nav className="hidden items-center gap-8 sm:flex">
@@ -53,7 +72,7 @@ export default function Header() {
                 to={item.href}
                 search={item.search}
                 className={cn(
-                  "relative rounded-md px-2 py-1 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
+                  "relative rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
                   pathname === item.href
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground",
@@ -70,7 +89,7 @@ export default function Header() {
             <Link
               to="/search"
               search={{}}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="hidden h-9 w-9 cursor-pointer items-center justify-center rounded-md text-muted-foreground transition-all duration-200 hover:bg-muted hover:text-foreground active:translate-y-px sm:flex"
               aria-label={t("shop.header.search")}
             >
               <Search className="h-5 w-5" />
@@ -100,7 +119,7 @@ export default function Header() {
 
         {isMenuOpen ? (
           <nav className="space-y-0.5 border-t border-border bg-background px-1 py-3 sm:hidden">
-            {navigation.map((item) => (
+            {mobileNavigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}

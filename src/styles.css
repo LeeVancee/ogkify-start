@@ -50,37 +50,37 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #ffffff;
-  --foreground: #171717;
-  --card: #ffffff;
-  --card-foreground: #171717;
-  --popover: #ffffff;
-  --popover-foreground: #171717;
-  --primary: #171717;
-  --primary-foreground: #ffffff;
-  --secondary: #fafafa;
-  --secondary-foreground: #171717;
-  --muted: #f2f2f2;
-  --muted-foreground: #4d4d4d;
-  --accent: #f2f2f2;
-  --accent-foreground: #171717;
+  --background: #f8f6f2;
+  --foreground: #1d1b18;
+  --card: #fffdf9;
+  --card-foreground: #1d1b18;
+  --popover: #fffdf9;
+  --popover-foreground: #1d1b18;
+  --primary: #1d1b18;
+  --primary-foreground: #fffdf9;
+  --secondary: #f0ece6;
+  --secondary-foreground: #1d1b18;
+  --muted: #e9e4dc;
+  --muted-foreground: #625d55;
+  --accent: #e9e4dc;
+  --accent-foreground: #1d1b18;
   --destructive: #ea001d;
   --destructive-foreground: #ffffff;
-  --border: #00000014;
-  --input: #00000014;
+  --border: #2c271f1f;
+  --input: #2c271f24;
   --ring: #006bff;
   --chart-1: #006bff;
   --chart-2: #28a948;
   --chart-3: #ffae00;
   --chart-4: #a000f8;
   --chart-5: #fc0035;
-  --sidebar: #fafafa;
-  --sidebar-foreground: #171717;
-  --sidebar-primary: #171717;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f2f2f2;
-  --sidebar-accent-foreground: #171717;
-  --sidebar-border: #00000014;
+  --sidebar: #f0ece6;
+  --sidebar-foreground: #1d1b18;
+  --sidebar-primary: #1d1b18;
+  --sidebar-primary-foreground: #fffdf9;
+  --sidebar-accent: #e9e4dc;
+  --sidebar-accent-foreground: #1d1b18;
+  --sidebar-border: #2c271f1f;
   --sidebar-ring: #006bff;
 }
 
@@ -105,6 +105,7 @@
   html {
     @apply font-sans;
     scrollbar-gutter: stable;
+    scroll-behavior: smooth;
   }
 }
 
@@ -131,11 +132,11 @@ body {
   }
 
   .shop-pill-button {
-    @apply inline-flex h-10 items-center justify-center gap-2 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-colors hover:bg-[#4d4d4d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-ring;
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-all duration-200 hover:bg-[#4a453e] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-ring;
   }
 
   .geist-panel {
-    @apply border border-border bg-card shadow-[0_2px_2px_rgba(0,0,0,0.04)];
+    @apply border border-border bg-card shadow-[0_16px_50px_rgba(57,48,38,0.07)];
   }
 
   .geist-label {

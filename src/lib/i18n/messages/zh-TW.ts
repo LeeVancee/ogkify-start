@@ -85,7 +85,7 @@ export const zhTW = {
       noResultsHint: "試試其他關鍵字，或瀏覽商品系列。",
     },
     footer: {
-      description: "精選簡約生活必備單品，帶有俐落的編輯風格。",
+      description: "為在意細節的收藏者，精選模型、公仔與角色周邊。",
       shop: "商店",
       featured: "精選",
       customerCare: "客服",
@@ -101,6 +101,13 @@ export const zhTW = {
       github: "OGKIFY GitHub repository",
     },
     home: {
+      heroEyebrow: "模型、公仔與角色周邊",
+      heroTitleLineOne: "把喜歡的角色",
+      heroTitleLineTwo: "一起帶回家。",
+      heroDescription:
+        "探索值得展示的比例模型、組裝模型與玩偶，收藏那些讓你一再回味的作品。",
+      shopAll: "探索所有收藏",
+      heroFeatured: "收藏家精選",
       browse: "瀏覽",
       shopByCategory: "依分類選購",
       handpicked: "精心挑選",

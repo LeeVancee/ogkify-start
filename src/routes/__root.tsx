@@ -38,7 +38,7 @@ export const Route = createRootRouteWithContext<{
       ...seo({
         title: "OGKIFY",
         description:
-          "OGKIFY - Premium fashion shopping platform offering high-quality clothing, accessories and more with convenient shopping experience",
+          "OGKIFY 精選模型、公仔、組裝模型與角色周邊，為收藏者帶來值得展示的作品。",
       }),
     ],
     links: [
