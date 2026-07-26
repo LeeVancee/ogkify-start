@@ -72,10 +72,10 @@ export default function Header() {
                 to={item.href}
                 search={item.search}
                 className={cn(
-                  "relative rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-muted hover:text-foreground",
+                  "relative px-3 py-2 text-sm font-medium transition-colors",
                   pathname === item.href
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground",
+                    ? "text-foreground underline decoration-1 decoration-foreground/60 underline-offset-8"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {item.name}
