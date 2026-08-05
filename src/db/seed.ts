@@ -37,13 +37,15 @@ type CatalogProduct = {
   editions: EditionValue[];
   imageSeed?: string;
   directImageUrl?: string;
+  imageUrls?: string[];
   imageLayout?: ImageLayout;
+  sourceUrl?: string;
+  sourcePrice?: number;
+  sourceCurrency?: string;
   imageCount?: 2 | 3;
 };
 
 // Removed hardcoded categoryImageSeedMap
-
-const productsData: CatalogProduct[] = [];
 
 function createDemoPhoto({
   seed,
@@ -79,6 +81,10 @@ function buildCategoryImage(name: CategoryName, imageUrl?: string) {
 }
 
 function buildProductImages(product: CatalogProduct) {
+  if (product.imageUrls?.length) {
+    return product.imageUrls;
+  }
+
   if (product.directImageUrl) {
     return [product.directImageUrl];
   }
@@ -158,7 +164,8 @@ async function seed() {
             name: name,
             imageUrl: buildCategoryImage(
               name,
-              firstProductInCat?.directImageUrl,
+              firstProductInCat?.imageUrls?.[0] ??
+                firstProductInCat?.directImageUrl,
             ),
           };
         }),
@@ -204,7 +211,7 @@ async function seed() {
     );
 
     console.log(
-      `Inserted ${productsData.length} products with stable demo photos`,
+      `Inserted ${scrapedProducts.length} products from Good Smile Company`,
     );
     console.log("Seed complete");
   } finally {
