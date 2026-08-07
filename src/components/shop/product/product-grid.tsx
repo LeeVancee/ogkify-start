@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { useI18n } from "@/lib/i18n";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
 export interface SimpleProduct {
   id: string;
@@ -18,13 +18,19 @@ export interface SimpleProduct {
 
 interface ProductGridProps {
   products: Array<SimpleProduct>;
+  className?: string;
 }
 
-export function ProductGrid({ products }: ProductGridProps) {
+export function ProductGrid({ products, className }: ProductGridProps) {
   const { t } = useI18n();
 
   return (
-    <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-3 lg:gap-8">
+    <div
+      className={cn(
+        "grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-3 lg:gap-8",
+        className,
+      )}
+    >
       {products.map((product) => (
         <Link
           key={product.id}

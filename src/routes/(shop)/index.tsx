@@ -125,12 +125,9 @@ function RouteComponent() {
                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-linear-to-t from-black/72 via-black/5 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-5">
+                  <div className="absolute inset-x-0 bottom-0 flex items-end p-4 sm:p-5">
                     <span className="text-sm font-medium text-white sm:text-base">
                       {category.name}
-                    </span>
-                    <span className="font-mono text-[10px] text-white/65">
-                      {String(index + 1).padStart(2, "0")}
                     </span>
                   </div>
                 </Link>

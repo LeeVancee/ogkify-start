@@ -66,7 +66,10 @@ function RouteComponent() {
               {t("shop.productDetail.relatedProducts")}
             </h2>
           </div>
-          <ProductGrid products={relatedProducts} />
+          <ProductGrid
+            products={relatedProducts}
+            className="xl:grid-cols-4 xl:gap-6"
+          />
         </div>
       ) : null}
     </div>
