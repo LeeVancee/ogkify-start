@@ -103,8 +103,8 @@ function RouteComponent() {
               {t("shop.home.shopByCategory")}
             </h2>
           </div>
-          <div className="grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[14rem] lg:grid-cols-12 lg:auto-rows-[13rem]">
-            {categories.map((category, index) => {
+          <div className="grid auto-rows-[16rem] grid-cols-2 gap-3 sm:auto-rows-[18rem] sm:grid-cols-3 lg:auto-rows-[20rem] lg:grid-cols-5">
+            {categories.map((category) => {
               if (!category.imageUrl) {
                 throw new Error(
                   `Category image is missing for category ${category.id}`,
@@ -116,7 +116,7 @@ function RouteComponent() {
                   key={category.id}
                   to="/products"
                   search={{ category: category.name }}
-                  className={`group relative cursor-pointer overflow-hidden rounded-xl bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-secondary ${getCategoryLayoutClass(index)}`}
+                  className="group relative cursor-pointer overflow-hidden rounded-xl bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-secondary"
                 >
                   <img
                     src={category.imageUrl}
@@ -237,16 +237,4 @@ function RouteComponent() {
       ) : null}
     </>
   );
-}
-
-function getCategoryLayoutClass(index: number) {
-  if (index === 0) {
-    return "col-span-2 row-span-2 lg:col-span-6";
-  }
-
-  if (index >= 5) {
-    return "col-span-2 lg:col-span-6";
-  }
-
-  return "col-span-1 lg:col-span-3";
 }
