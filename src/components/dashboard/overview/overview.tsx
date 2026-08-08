@@ -7,10 +7,9 @@ import {
   Grid3X3,
   Palette,
   Ruler,
-  Sparkles,
   Star,
-  TrendingUp,
 } from "lucide-react";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { DashboardPageShell } from "@/components/dashboard/layout/page-shell";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -23,6 +22,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  type ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
 import {
   Table,
   TableBody,
@@ -42,6 +47,13 @@ import { StatusBadge } from "./status-badge";
 interface DashboardOverviewProps {
   data: DashboardOverviewData;
 }
+
+const revenueChartConfig = {
+  revenue: {
+    label: "Revenue",
+    color: "var(--chart-1)",
+  },
+} satisfies ChartConfig;
 
 export function DashboardOverview({ data }: DashboardOverviewProps) {
   const { t } = useI18n();
@@ -107,6 +119,14 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     ...catalogHealth.map((item) => item.value),
     1,
   );
+  const revenueChartData = data.recentOrders
+    .slice()
+    .reverse()
+    .map((order) => ({
+      date: order.createdAt,
+      order: order.orderNumber,
+      revenue: order.amount,
+    }));
 
   return renderDashboardOverview({
     t,
@@ -115,6 +135,7 @@ export function DashboardOverview({ data }: DashboardOverviewProps) {
     summaryCards,
     catalogHealth,
     maxCatalogValue,
+    revenueChartData,
   });
 }
 
@@ -125,6 +146,7 @@ function renderDashboardOverview({
   summaryCards,
   catalogHealth,
   maxCatalogValue,
+  revenueChartData,
 }: {
   t: ReturnType<typeof useI18n>["t"];
   data: DashboardOverviewData;
@@ -137,6 +159,11 @@ function renderDashboardOverview({
   }>;
   catalogHealth: Array<{ label: string; value: number; accent: string }>;
   maxCatalogValue: number;
+  revenueChartData: Array<{
+    date: string;
+    order: string;
+    revenue: number;
+  }>;
 }) {
   return (
     <DashboardPageShell
@@ -156,67 +183,115 @@ function renderDashboardOverview({
     >
       <div className="space-y-5">
         <section className="grid gap-5 xl:grid-cols-12">
-          <Card className="relative overflow-hidden border-border/70 bg-[linear-gradient(135deg,#0f172a_0%,#111827_55%,#1e293b_100%)] text-white xl:col-span-7">
-            <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.14),transparent_58%)]" />
-            <div className="absolute -right-14 -top-14 size-40 rounded-full border border-white/10" />
-            <div className="absolute bottom-4 right-6 size-24 rounded-full bg-white/5 blur-2xl" />
-            <CardHeader className="relative">
-              <div className="flex items-start justify-between gap-4">
-                <div className="space-y-2">
-                  <Badge className="border-white/15 bg-white/10 text-white hover:bg-white/10">
-                    <Sparkles className="size-3" />
-                    Admin workspace
-                  </Badge>
-                  <CardTitle className="text-3xl font-semibold tracking-tight text-white">
-                    Store performance snapshot
-                  </CardTitle>
+          <Card className="border-border/70 xl:col-span-7">
+            <CardHeader className="flex flex-row items-start justify-between gap-4">
+              <CardTitle>{t("dashboard.overview.revenue")}</CardTitle>
+              <div className="flex items-start gap-6 text-right">
+                <div>
+                  <div className="text-xs text-muted-foreground">
+                    Total revenue
+                  </div>
+                  <div className="mt-1 text-xl font-semibold tabular-nums">
+                    {formatPrice(data.totalRevenue)}
+                  </div>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
-                  <div className="text-xs uppercase tracking-[0.2em] text-white/60">
+                <div>
+                  <div className="text-xs text-muted-foreground">
                     Completion
                   </div>
-                  <div className="mt-2 text-3xl font-semibold">
+                  <div className="mt-1 text-xl font-semibold tabular-nums">
                     {completionRate}%
-                  </div>
-                  <div className="mt-1 text-xs text-white/65">
-                    {data.completedOrders} completed orders
                   </div>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="relative pt-2">
-              <div className="flex flex-wrap items-end justify-between gap-5">
-                <div>
-                  <div className="text-sm text-white/65">Total revenue</div>
-                  <div className="mt-2 text-4xl font-semibold tracking-tight">
-                    {formatPrice(data.totalRevenue)}
-                  </div>
-                  <div className="mt-2 flex items-center gap-2 text-sm text-emerald-300">
-                    <TrendingUp className="size-4" />
-                    {data.pendingOrders === 0
-                      ? "All orders are moving cleanly."
-                      : `${data.pendingOrders} orders still need attention.`}
-                  </div>
+            <CardContent>
+              {revenueChartData.length > 0 ? (
+                <ChartContainer
+                  config={revenueChartConfig}
+                  className="h-[280px] w-full"
+                >
+                  <AreaChart
+                    accessibilityLayer
+                    data={revenueChartData}
+                    margin={{ left: 0, right: 12, top: 8 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="fillRevenue"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="var(--color-revenue)"
+                          stopOpacity={0.35}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="var(--color-revenue)"
+                          stopOpacity={0.03}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid vertical={false} />
+                    <XAxis
+                      dataKey="date"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={10}
+                      tickFormatter={formatChartDate}
+                    />
+                    <YAxis
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={8}
+                      width={56}
+                      tickFormatter={formatCompactPrice}
+                    />
+                    <ChartTooltip
+                      cursor={false}
+                      content={
+                        <ChartTooltipContent
+                          indicator="line"
+                          labelFormatter={(_, payload) => {
+                            const point = payload[0]?.payload as
+                              | { date?: string; order?: string }
+                              | undefined;
+                            return point
+                              ? `${point.order} · ${formatChartDate(point.date ?? "")}`
+                              : null;
+                          }}
+                          formatter={(value) => (
+                            <div className="flex min-w-36 items-center justify-between gap-4">
+                              <span className="text-muted-foreground">
+                                Revenue
+                              </span>
+                              <span className="font-mono font-medium tabular-nums">
+                                {formatPrice(Number(value))}
+                              </span>
+                            </div>
+                          )}
+                        />
+                      }
+                    />
+                    <Area
+                      dataKey="revenue"
+                      type="natural"
+                      fill="url(#fillRevenue)"
+                      fillOpacity={1}
+                      stroke="var(--color-revenue)"
+                      strokeWidth={2}
+                    />
+                  </AreaChart>
+                </ChartContainer>
+              ) : (
+                <div className="flex h-[280px] items-center justify-center rounded-xl border border-dashed text-sm text-muted-foreground">
+                  {t("dashboard.overview.noOrders")}
                 </div>
-                <div className="grid min-w-[240px] grid-cols-2 gap-3">
-                  <HeroMiniStat
-                    label={t("dashboard.overview.pendingOrders")}
-                    value={data.pendingOrders}
-                  />
-                  <HeroMiniStat
-                    label="Completed"
-                    value={data.completedOrders}
-                  />
-                  <HeroMiniStat
-                    label={t("dashboard.overview.featured")}
-                    value={data.featuredProducts}
-                  />
-                  <HeroMiniStat
-                    label={t("dashboard.overview.categories")}
-                    value={data.categoriesCount}
-                  />
-                </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 
@@ -469,21 +544,32 @@ function renderDashboardOverview({
   );
 }
 
-function HeroMiniStat({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-      <div className="text-xs text-white/60">{label}</div>
-      <div className="mt-1 text-xl font-semibold text-white">{value}</div>
-    </div>
-  );
-}
-
 const overviewDateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "short",
   day: "numeric",
   year: "numeric",
 });
 
+const chartDateFormatter = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+});
+
+const compactPriceFormatter = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+  notation: "compact",
+  maximumFractionDigits: 1,
+});
+
 function formatDate(value: string) {
   return overviewDateFormatter.format(new Date(value));
+}
+
+function formatChartDate(value: string) {
+  return chartDateFormatter.format(new Date(value));
+}
+
+function formatCompactPrice(value: number) {
+  return compactPriceFormatter.format(value);
 }
