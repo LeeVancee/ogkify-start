@@ -32,9 +32,6 @@ export function DashboardSidebar() {
             <span className="block truncate text-base font-semibold">
               {t("dashboard.shell.workspaceTitle")}
             </span>
-            <span className="block truncate text-xs text-muted-foreground">
-              {t("dashboard.shell.workspaceSubtitle")}
-            </span>
           </div>
         </div>
       </SidebarHeader>

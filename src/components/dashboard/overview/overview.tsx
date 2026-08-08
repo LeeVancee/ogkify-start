@@ -19,7 +19,6 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -171,10 +170,6 @@ function renderDashboardOverview({
                   <CardTitle className="text-3xl font-semibold tracking-tight text-white">
                     Store performance snapshot
                   </CardTitle>
-                  <CardDescription className="max-w-xl text-white/70">
-                    Keep products, orders, and merchandising in one clean
-                    dashboard flow.
-                  </CardDescription>
                 </div>
                 <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right">
                   <div className="text-xs uppercase tracking-[0.2em] text-white/60">
@@ -258,10 +253,6 @@ function renderDashboardOverview({
           <Card className="border-border/70 xl:col-span-7">
             <CardHeader>
               <CardTitle>Total Revenue</CardTitle>
-              <CardDescription>
-                A compact operations view built from your live catalog and order
-                data.
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid gap-4 md:grid-cols-3">
@@ -330,9 +321,6 @@ function renderDashboardOverview({
           <Card className="border-border/70 xl:col-span-5">
             <CardHeader>
               <CardTitle>{t("dashboard.overview.latestProducts")}</CardTitle>
-              <CardDescription>
-                Newly added products ready for editing and merchandising.
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {data.latestProducts.map((product) => (
@@ -379,9 +367,6 @@ function renderDashboardOverview({
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <CardTitle>{t("dashboard.overview.recentOrders")}</CardTitle>
-                  <CardDescription>
-                    The latest customer activity from your admin workspace.
-                  </CardDescription>
                 </div>
                 <Badge variant="outline" className="bg-white">
                   {data.recentOrders.length} records
@@ -446,9 +431,6 @@ function renderDashboardOverview({
           <Card className="border-border/70 xl:col-span-5">
             <CardHeader>
               <CardTitle>Workspace signals</CardTitle>
-              <CardDescription>
-                A quick operational read across products and orders.
-              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <SignalRow

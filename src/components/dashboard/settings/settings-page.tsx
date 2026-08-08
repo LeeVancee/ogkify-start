@@ -207,9 +207,6 @@ export function DashboardSettingsPage({
                 <User className="size-4" />
                 {t("dashboard.settings.profile")}
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("dashboard.settings.profileDescription")}
-              </p>
             </div>
             <Button type="submit" disabled={profilePending} className="gap-2">
               {profilePending ? (
@@ -304,9 +301,6 @@ export function DashboardSettingsPage({
               <Shield className="size-4" />
               {t("dashboard.settings.security")}
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">
-              {t("dashboard.settings.securityDescription")}
-            </p>
           </div>
 
           <div className="space-y-4">

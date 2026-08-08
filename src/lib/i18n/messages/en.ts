@@ -326,21 +326,6 @@ export const en = {
       value: "Value",
       displayValue: "Display Value",
     },
-    pages: {
-      dashboardDescription:
-        "Catalog, orders and storefront operations in one workspace.",
-      categoriesDescription:
-        "Organize the catalog groups customers use to browse products.",
-      colorsDescription:
-        "Maintain color options that can be assigned to products.",
-      sizesDescription:
-        "Manage size labels and values used across product variants.",
-      productsDescription:
-        "Review, search, and maintain the products available in the storefront.",
-      ordersDescription: "Review orders, payments and fulfillment status.",
-      settingsDescription:
-        "Manage your admin profile, avatar and account security.",
-    },
     overview: {
       admin: "Admin",
       workspace: "Workspace",
@@ -417,10 +402,6 @@ export const en = {
       editColor: "Edit color",
       newSize: "New size",
       editSize: "Edit size",
-      resourceDescription:
-        "Manage this resource across the full admin workspace.",
-      productDescription:
-        "Product details, media, catalog options and publishing status.",
       productName: "Product name",
       description: "Description",
       price: "Price",
@@ -436,14 +417,11 @@ export const en = {
     },
     shell: {
       workspaceTitle: "OGKIFY Admin",
-      workspaceSubtitle: "OGKIFY workspace",
       newProduct: "New Product",
       searchPlaceholder: "Search admin...",
     },
     settings: {
       profile: "Profile",
-      profileDescription:
-        "These details are shared across the admin workspace.",
       saveProfile: "Save profile",
       adminUser: "Admin user",
       noEmail: "No email",
@@ -454,7 +432,6 @@ export const en = {
       yourName: "Your name",
       profileAvatar: "Profile avatar",
       security: "Security",
-      securityDescription: "Change password and revoke other active sessions.",
       currentPassword: "Current password",
       newPassword: "New password",
       confirmNewPassword: "Confirm new password",
