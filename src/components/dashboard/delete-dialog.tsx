@@ -29,7 +29,7 @@ export function DeleteDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
+      <AlertDialogContent className="dashboard-theme">
         <AlertDialogHeader>
           <AlertDialogTitle>
             {title ?? t("dashboard.deleteDialog.title")}

@@ -9,7 +9,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { localeLabels, supportedLocales, useI18n } from "@/lib/i18n";
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({
+  dashboard = false,
+}: {
+  dashboard?: boolean;
+}) {
   const { locale, setLocale, t } = useI18n();
 
   return (
@@ -27,7 +31,10 @@ export function LanguageSwitcher() {
           </Button>
         }
       />
-      <DropdownMenuContent align="end" className="w-40">
+      <DropdownMenuContent
+        align="end"
+        className={`${dashboard ? "dashboard-theme " : ""}w-40`}
+      >
         {supportedLocales.map((supportedLocale) => (
           <DropdownMenuItem
             key={supportedLocale}

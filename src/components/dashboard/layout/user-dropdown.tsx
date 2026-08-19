@@ -30,7 +30,7 @@ export function DashboardUserDropdown() {
 
   if (isPending || !session) {
     return (
-      <Button variant="ghost" size="icon" disabled className="rounded-full">
+      <Button variant="ghost" size="icon" disabled className="rounded-md">
         <div className="size-8 animate-pulse rounded-full bg-muted" />
       </Button>
     );
@@ -44,7 +44,7 @@ export function DashboardUserDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
-          <Button variant="ghost" size="icon" className="rounded-full">
+          <Button variant="ghost" size="icon" className="rounded-md">
             <Avatar className="size-8">
               {session.user.image ? (
                 <AvatarImage src={session.user.image} alt={name} />
@@ -54,7 +54,7 @@ export function DashboardUserDropdown() {
           </Button>
         }
       />
-      <DropdownMenuContent align="end" className="w-64">
+      <DropdownMenuContent align="end" className="dashboard-theme w-64">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="p-0 font-normal">
             <div className="flex items-center gap-3 px-2 py-2">

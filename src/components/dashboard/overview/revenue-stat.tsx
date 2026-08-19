@@ -10,7 +10,7 @@ export function RevenueStat({
   tone: "up" | "warn" | "neutral";
 }) {
   return (
-    <div className="rounded-2xl border border-border/70 bg-white p-4">
+    <div className="rounded-xl border border-border/70 bg-card p-4">
       <div className="text-sm text-muted-foreground">{label}</div>
       <div className="mt-2 text-2xl font-semibold tracking-tight">{value}</div>
       <div

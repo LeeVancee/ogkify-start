@@ -141,7 +141,7 @@ export function CloudinaryImageUpload({
           {value.map((url) => (
             <div
               key={url}
-              className="group relative overflow-hidden rounded-lg border bg-muted"
+              className="group relative overflow-hidden rounded-md border border-border/70 bg-muted"
             >
               <div className={cn(isSingle ? "aspect-[21/9]" : "aspect-video")}>
                 <img
@@ -165,7 +165,7 @@ export function CloudinaryImageUpload({
         </div>
       ) : null}
 
-      <div className="grid gap-3 rounded-lg border bg-background p-3">
+      <div className="dashboard-subpanel grid gap-3 p-3">
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             type="button"

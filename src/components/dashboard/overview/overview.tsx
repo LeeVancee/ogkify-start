@@ -170,7 +170,7 @@ function renderDashboardOverview({
       title={t("dashboard.nav.dashboard")}
       action={
         <div className="flex flex-wrap items-center gap-2">
-          <Button variant="outline" className="h-10 gap-2 bg-white">
+          <Button variant="outline" className="h-10 gap-2 bg-card">
             <CalendarDays className="size-4" />
             2026-05-01 - 2026-05-29
           </Button>
@@ -313,7 +313,7 @@ function renderDashboardOverview({
                           {card.detail}
                         </div>
                       </div>
-                      <div className="flex size-11 items-center justify-center rounded-2xl bg-muted">
+                      <div className="flex size-11 items-center justify-center rounded-lg bg-muted">
                         <Icon className="size-5 text-foreground" />
                       </div>
                     </div>
@@ -348,7 +348,7 @@ function renderDashboardOverview({
                 />
               </div>
 
-              <div className="space-y-4 rounded-2xl border border-border/70 bg-muted/30 p-4">
+              <div className="dashboard-subpanel space-y-4 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <div className="text-sm font-medium">Catalog health</div>
@@ -356,7 +356,7 @@ function renderDashboardOverview({
                       Relative size across your catalog dimensions
                     </div>
                   </div>
-                  <Badge variant="outline" className="bg-white">
+                  <Badge variant="outline" className="bg-card">
                     <Palette className="size-3" />
                     Live sync
                   </Badge>
@@ -403,7 +403,7 @@ function renderDashboardOverview({
                   key={product.id}
                   to="/dashboard/products/$id"
                   params={{ id: product.id }}
-                  className="flex items-center gap-3 rounded-2xl border border-border/70 bg-white p-3 transition-colors hover:bg-muted/20"
+                  className="flex items-center gap-3 rounded-xl border border-border/70 bg-card p-3 transition-colors hover:bg-muted/20"
                 >
                   <div className="size-14 overflow-hidden rounded-xl border border-border/60 bg-muted/50">
                     {product.imageUrl ? (
@@ -428,7 +428,7 @@ function renderDashboardOverview({
                 </Link>
               ))}
               {data.latestProducts.length === 0 ? (
-                <div className="rounded-2xl border border-dashed p-6 text-sm text-muted-foreground">
+                <div className="dashboard-subpanel border-dashed! p-6 text-sm text-muted-foreground">
                   {t("dashboard.overview.noProducts")}
                 </div>
               ) : null}
@@ -443,13 +443,13 @@ function renderDashboardOverview({
                 <div>
                   <CardTitle>{t("dashboard.overview.recentOrders")}</CardTitle>
                 </div>
-                <Badge variant="outline" className="bg-white">
+                <Badge variant="outline" className="bg-card">
                   {data.recentOrders.length} records
                 </Badge>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="overflow-hidden rounded-2xl border border-border/70">
+              <div className="overflow-hidden rounded-xl border border-border/70">
                 <Table>
                   <TableHeader className="bg-muted/35">
                     <TableRow className="hover:bg-transparent">
@@ -463,7 +463,7 @@ function renderDashboardOverview({
                     {data.recentOrders.map((order) => (
                       <TableRow
                         key={order.id}
-                        className="bg-white hover:bg-muted/20"
+                        className="bg-card hover:bg-muted/20"
                       >
                         <TableCell className="px-4 py-3.5">
                           <div className="font-medium">{order.orderNumber}</div>
@@ -533,7 +533,7 @@ function renderDashboardOverview({
               <div className="text-sm text-muted-foreground">
                 Keep your admin area focused and scannable.
               </div>
-              <Button variant="outline" size="sm" className="bg-white">
+              <Button variant="outline" size="sm" className="bg-card">
                 Review
               </Button>
             </CardFooter>

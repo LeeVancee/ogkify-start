@@ -49,7 +49,7 @@ export function ResourceForm({
 
   return (
     <div className="min-h-0 w-full flex-1 overflow-auto">
-      <div className="border-b bg-muted/30 px-4 py-3 md:px-6">
+      <div className="border-b border-border/70 bg-background px-4 py-3 md:px-7">
         <Button
           render={<Link to={backHref} />}
           variant="ghost"
@@ -62,7 +62,7 @@ export function ResourceForm({
       </div>
       <form
         onSubmit={handleSubmit}
-        className="flex min-h-full w-full flex-col gap-4 p-3 sm:p-4 md:p-5"
+        className="flex min-h-full w-full flex-col gap-5 p-4 sm:p-6 md:p-7"
       >
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -80,7 +80,7 @@ export function ResourceForm({
           </Button>
         </div>
 
-        <div className="grid flex-1 content-start gap-5 rounded-xl border bg-card p-4 md:p-5 xl:grid-cols-2">
+        <div className="dashboard-panel grid flex-1 content-start gap-5 p-4 md:p-5 xl:grid-cols-2">
           {fields.includes("name") ? (
             <Field label={t("dashboard.table.name")}>
               <Input

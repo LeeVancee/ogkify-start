@@ -87,7 +87,7 @@ export function ResourceList({
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4">
-      <div className="rounded-2xl border border-border/70 bg-card shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <div className="dashboard-panel">
         <div className="flex flex-col gap-4 p-4 sm:p-5">
           {showTitle ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -101,7 +101,7 @@ export function ResourceList({
               placeholder={t("dashboard.resources.searchResource", {
                 resource: title.toLowerCase(),
               })}
-              className="h-10 border-border/70 bg-white sm:max-w-xs"
+              className="h-10 border-border/70 bg-card sm:max-w-xs"
             />
             <Button render={<Link to={newHref} />} className="gap-2 sm:ml-auto">
               <Plus className="size-4" />

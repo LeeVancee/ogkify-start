@@ -73,7 +73,7 @@ export function ProductForm({
 
   return (
     <div className="min-h-0 w-full flex-1 overflow-auto">
-      <div className="border-b bg-muted/30 px-4 py-3 md:px-6">
+      <div className="border-b border-border/70 bg-background px-4 py-3 md:px-7">
         <Button
           render={<Link to="/dashboard/products" />}
           variant="ghost"
@@ -87,7 +87,7 @@ export function ProductForm({
 
       <form
         onSubmit={handleSubmit}
-        className="grid min-h-full w-full gap-4 p-3 sm:p-4 md:p-5 xl:grid-cols-[minmax(0,1fr)_22rem]"
+        className="grid min-h-full w-full gap-5 p-4 sm:p-6 md:p-7 xl:grid-cols-[minmax(0,1fr)_22rem]"
       >
         <main className="flex min-w-0 flex-col gap-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -96,7 +96,7 @@ export function ProductForm({
             </div>
           </div>
 
-          <section className="space-y-4 rounded-xl border bg-card p-4 md:p-5">
+          <section className="dashboard-panel space-y-4 p-4 md:p-5">
             <Field label={t("dashboard.forms.productName")}>
               <Input
                 aria-label={t("dashboard.forms.productName")}
@@ -122,7 +122,7 @@ export function ProductForm({
                 }
                 required
                 rows={5}
-                className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/40"
+                className="w-full rounded-lg border border-border/70 bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring/40"
               />
             </Field>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -148,7 +148,7 @@ export function ProductForm({
                     }))
                   }
                   required
-                  className="h-9 w-full rounded-md border bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
+                  className="h-9 w-full rounded-lg border border-border/70 bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-ring/40"
                 >
                   <option value="">
                     {t("dashboard.forms.selectCategory")}
@@ -163,7 +163,7 @@ export function ProductForm({
             </div>
           </section>
 
-          <section className="flex-1 space-y-4 rounded-xl border bg-card p-4 md:p-5">
+          <section className="dashboard-panel flex-1 space-y-4 p-4 md:p-5">
             <Field label={t("dashboard.forms.images")}>
               <CloudinaryImageUpload
                 value={values.images.filter(Boolean)}
@@ -182,7 +182,7 @@ export function ProductForm({
         </main>
 
         <aside className="flex min-w-0 flex-col gap-4">
-          <section className="space-y-4 rounded-xl border bg-card p-4 md:p-5">
+          <section className="dashboard-panel space-y-4 p-4 md:p-5">
             <h2 className="text-sm font-semibold">
               {t("dashboard.forms.status")}
             </h2>
@@ -269,13 +269,13 @@ function ChoiceSection({
   color?: boolean;
 }) {
   return (
-    <section className="space-y-3 rounded-xl border bg-card p-4">
+    <section className="dashboard-panel space-y-3 p-4">
       <h2 className="text-sm font-semibold">{title}</h2>
       <div className="grid gap-2">
         {items.map((item) => (
           <label
             key={item.id}
-            className="flex cursor-pointer items-center gap-3 rounded-lg border bg-background p-2 text-sm"
+            className="flex cursor-pointer items-center gap-3 rounded-lg border border-border/70 bg-background p-2 text-sm transition-colors hover:bg-muted/50"
           >
             <input
               type="checkbox"

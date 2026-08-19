@@ -98,7 +98,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <Card className="min-h-0 flex-1 border-border/70 bg-card shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+      <Card className="min-h-0 flex-1 bg-card">
         <CardContent className="flex h-full min-h-0 flex-col p-0">
           <div className="space-y-4 p-4 sm:p-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -117,10 +117,10 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                       type="button"
                       onClick={() => setStatusFilter(tab.value)}
                       className={cn(
-                        "rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
+                        "rounded-md border px-3 py-1.5 text-sm font-medium transition-colors",
                         active
                           ? "border-foreground bg-foreground text-background"
-                          : "border-border bg-white text-muted-foreground hover:text-foreground",
+                          : "border-border bg-card text-muted-foreground hover:text-foreground",
                       )}
                     >
                       {tab.label}
@@ -130,11 +130,11 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
               </div>
 
               <div className="flex flex-wrap items-center gap-2">
-                <Button variant="outline" className="h-10 gap-2 bg-white">
+                <Button variant="outline" className="h-10 gap-2 bg-card">
                   <Filter className="size-4" />
                   Status
                 </Button>
-                <Button variant="outline" className="h-10 gap-2 bg-white">
+                <Button variant="outline" className="h-10 gap-2 bg-card">
                   <SlidersHorizontal className="size-4" />
                   Columns
                 </Button>
@@ -148,7 +148,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
                   placeholder="Search orders, customers, or products..."
-                  className="h-10 bg-white pl-9"
+                  className="h-10 bg-card pl-9"
                 />
               </div>
 
@@ -177,7 +177,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
 
               <TableBody>
                 {filteredOrders.length === 0 ? (
-                  <TableRow className="bg-white hover:bg-white">
+                  <TableRow className="bg-card hover:bg-card">
                     <TableCell
                       colSpan={9}
                       className="px-5 py-16 text-center text-sm text-muted-foreground"
@@ -193,7 +193,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                     return (
                       <TableRow
                         key={order.id}
-                        className="bg-white hover:bg-muted/20"
+                        className="bg-card hover:bg-muted/20"
                       >
                         <TableCell className="px-5 py-4 font-medium">
                           {order.orderNumber}
@@ -261,7 +261,7 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                         </TableCell>
 
                         <TableCell className="py-4">
-                          <Badge variant="outline" className="bg-white">
+                          <Badge variant="outline" className="bg-card">
                             {inferOrderType(order)}
                           </Badge>
                         </TableCell>
@@ -288,7 +288,10 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
                                 </Button>
                               }
                             />
-                            <DropdownMenuContent align="end" className="w-44">
+                            <DropdownMenuContent
+                              align="end"
+                              className="dashboard-theme w-44"
+                            >
                               {orderStatusActions.flatMap((status) =>
                                 status === order.status
                                   ? []
@@ -322,19 +325,14 @@ export function OrderList({ orders, updateStatus }: OrderListProps) {
 
 function StatusBadge({ status }: { status: OrderStatus }) {
   const styles: Record<OrderStatus, string> = {
-    PENDING: "border-amber-200 bg-amber-50 text-amber-700",
-    PAID: "border-sky-200 bg-sky-50 text-sky-700",
-    COMPLETED: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    CANCELLED: "border-rose-200 bg-rose-50 text-rose-700",
+    PENDING: "border-amber-200/70 bg-amber-50/70 text-amber-700",
+    PAID: "border-slate-200 bg-slate-50 text-slate-700",
+    COMPLETED: "border-emerald-200/70 bg-emerald-50/70 text-emerald-700",
+    CANCELLED: "border-rose-200/70 bg-rose-50/70 text-rose-700",
   };
 
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium capitalize",
-        styles[status],
-      )}
-    >
+    <span className={cn("dashboard-status", styles[status])}>
       {status.toLowerCase()}
     </span>
   );
@@ -346,19 +344,14 @@ function PaymentBadge({
   status: AdminOrderListItem["paymentStatus"];
 }) {
   const styles = {
-    PAID: "border-emerald-200 bg-emerald-50 text-emerald-700",
-    UNPAID: "border-amber-200 bg-amber-50 text-amber-700",
+    PAID: "border-emerald-200/70 bg-emerald-50/70 text-emerald-700",
+    UNPAID: "border-amber-200/70 bg-amber-50/70 text-amber-700",
     REFUNDED: "border-slate-200 bg-slate-50 text-slate-700",
-    FAILED: "border-rose-200 bg-rose-50 text-rose-700",
+    FAILED: "border-rose-200/70 bg-rose-50/70 text-rose-700",
   } as const;
 
   return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium capitalize",
-        styles[status],
-      )}
-    >
+    <span className={cn("dashboard-status", styles[status])}>
       {status.toLowerCase()}
     </span>
   );

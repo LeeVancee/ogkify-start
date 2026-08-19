@@ -20,13 +20,13 @@ export function DashboardPageShell({
   hideHeader = false,
 }: DashboardPageShellProps) {
   return (
-    <div className="min-h-0 w-full flex-1 overflow-auto bg-muted/35">
-      <div className="flex min-h-full flex-col gap-5 p-4 sm:p-5 md:p-6 xl:flex-row">
-        <main className={cn("flex min-w-0 flex-1 flex-col gap-4", className)}>
+    <div className="min-h-0 w-full flex-1 overflow-auto bg-muted/25">
+      <div className="flex min-h-full flex-col gap-6 p-4 sm:p-6 md:p-7 xl:flex-row">
+        <main className={cn("flex min-w-0 flex-1 flex-col gap-5", className)}>
           {!hideHeader ? (
-            <div className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-[0_1px_2px_rgba(15,23,42,0.03)] sm:flex-row sm:items-start sm:justify-between">
+            <div className="flex flex-col gap-4 border-b border-border/70 pb-5 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1">
-                <h1 className="text-2xl font-semibold tracking-tight">
+                <h1 className="text-2xl font-semibold tracking-[-0.03em]">
                   {title}
                 </h1>
               </div>

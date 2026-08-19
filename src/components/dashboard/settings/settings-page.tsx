@@ -199,7 +199,7 @@ export function DashboardSettingsPage({
       <div className="grid h-full min-h-0 gap-4 xl:grid-cols-[minmax(0,1fr)_24rem]">
         <form
           onSubmit={handleProfileSubmit}
-          className="flex min-h-0 flex-col gap-4 rounded-xl border bg-card p-4 md:p-5"
+          className="dashboard-panel flex min-h-0 flex-col gap-4 p-4 md:p-5"
         >
           <div className="flex items-start justify-between gap-4">
             <div>
@@ -219,7 +219,7 @@ export function DashboardSettingsPage({
           </div>
 
           <div className="grid flex-1 content-start gap-5 lg:grid-cols-[12rem_minmax(0,1fr)]">
-            <div className="h-fit rounded-xl border bg-background p-4">
+            <div className="dashboard-subpanel h-fit p-4">
               <Avatar className="mx-auto size-20">
                 {profileValues.image ? (
                   <AvatarImage
@@ -294,7 +294,7 @@ export function DashboardSettingsPage({
 
         <form
           onSubmit={handlePasswordSubmit}
-          className="flex flex-col gap-4 rounded-xl border bg-card p-4 md:p-5"
+          className="dashboard-panel flex flex-col gap-4 p-4 md:p-5"
         >
           <div>
             <div className="flex items-center gap-2 text-sm font-semibold">
@@ -404,8 +404,8 @@ function FormMessage({ message, error }: { message: string; error: string }) {
     <div
       className={
         error
-          ? "flex items-start gap-2 rounded-xl border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive"
-          : "rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300"
+          ? "flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+          : "rounded-md border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-700 dark:text-emerald-300"
       }
     >
       {error ? <AlertCircle className="mt-0.5 size-4 shrink-0" /> : null}

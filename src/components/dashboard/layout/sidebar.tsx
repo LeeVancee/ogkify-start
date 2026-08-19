@@ -1,7 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { HardDrive, Plus } from "lucide-react";
+import { Circle } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
@@ -23,31 +22,26 @@ export function DashboardSidebar() {
 
   return (
     <Sidebar className="lg:border-r-0!" collapsible="offcanvas">
-      <SidebarHeader className="p-4 pb-0">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-8 items-center justify-center rounded-lg bg-linear-to-br from-violet-500 to-fuchsia-500">
-            <HardDrive className="size-4 text-white" />
+      <SidebarHeader className="p-5 pb-0">
+        <div className="flex items-center gap-3">
+          <div className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <Circle className="size-3.5 fill-current" />
           </div>
           <div className="min-w-0">
-            <span className="block truncate text-base font-semibold">
+            <span className="block truncate text-sm font-semibold tracking-tight">
               {t("dashboard.shell.workspaceTitle")}
+            </span>
+            <span className="mt-0.5 block text-[11px] text-muted-foreground">
+              Admin workspace
             </span>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-4 pt-6">
-        <Button
-          render={<Link to="/dashboard/products/new" />}
-          className="mb-4 w-full gap-2"
-        >
-          <Plus className="size-4" />
-          {t("dashboard.shell.newProduct")}
-        </Button>
-
+      <SidebarContent className="px-3 pt-8">
         {dashboardNav.map((group) => (
-          <SidebarGroup key={group.labelKey} className="mt-4 p-0 first:mt-0">
-            <SidebarGroupLabel className="h-4 pb-4 pt-2 text-[10px] uppercase tracking-widest text-muted-foreground">
+          <SidebarGroup key={group.labelKey} className="mt-6 p-0 first:mt-0">
+            <SidebarGroupLabel className="h-5 px-3 pb-2 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
               {t(group.labelKey)}
             </SidebarGroupLabel>
             <SidebarGroupContent>
@@ -64,7 +58,7 @@ export function DashboardSidebar() {
                       <SidebarMenuButton
                         render={<Link to={item.href} />}
                         isActive={isActive}
-                        className="h-9"
+                        className="h-9 rounded-md px-3 text-sidebar-foreground/75 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[active=true]:bg-sidebar-primary data-[active=true]:text-sidebar-primary-foreground data-[active=true]:shadow-none"
                       >
                         <Icon className="size-4" />
                         <span className="text-sm">{t(item.titleKey)}</span>
