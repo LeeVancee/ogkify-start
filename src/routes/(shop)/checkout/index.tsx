@@ -102,7 +102,7 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
 
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_420px]">
         <OrderSnapshot order={checkoutResult.order} />
-        <div className="h-fit rounded-3xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
+        <div className="h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
           <div className="mb-5 flex items-center gap-2 text-sm font-medium text-slate-700">
             <LockKeyhole className="h-4 w-4" />
             {t("shop.checkoutPage.encryptedByStripe")}

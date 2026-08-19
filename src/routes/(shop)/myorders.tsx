@@ -104,8 +104,8 @@ function MyOrdersPage() {
             My Orders
           </h1>
         </div>
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 py-24 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 py-24 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-slate-100">
             <Package className="h-8 w-8 text-slate-400" />
           </div>
           <p className="text-base font-medium text-slate-700">No orders yet</p>
@@ -151,7 +151,7 @@ function MyOrdersPage() {
           return (
             <div
               key={order.id}
-              className="overflow-hidden rounded-2xl border border-slate-200 bg-white transition-shadow hover:shadow-sm"
+              className="overflow-hidden rounded-xl border border-slate-200 bg-white transition-shadow hover:shadow-sm"
             >
               {/* Order header row */}
               <button
@@ -320,10 +320,7 @@ function ordersPageLoading() {
       </div>
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="h-20 animate-pulse rounded-2xl bg-slate-100"
-          />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-slate-100" />
         ))}
       </div>
     </div>

@@ -20,8 +20,8 @@ export function CartSummary({
     <div
       className={
         isSheet
-          ? "rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3"
-          : "h-fit rounded-2xl border border-slate-200 bg-white p-6 lg:sticky lg:top-24"
+          ? "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
+          : "h-fit rounded-xl border border-slate-200 bg-white p-6 lg:sticky lg:top-24"
       }
     >
       {!isSheet ? (
@@ -54,7 +54,7 @@ export function CartSummary({
           type="button"
           onClick={onCheckout}
           disabled={isCheckingOut}
-          className="mt-6 w-full rounded-xl bg-slate-900 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+          className="mt-6 w-full rounded-lg bg-slate-900 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
         >
           {isCheckingOut
             ? t("shop.cart.processing")

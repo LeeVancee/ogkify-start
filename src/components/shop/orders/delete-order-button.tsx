@@ -62,7 +62,7 @@ export function DeleteOrderButton({
         }
       />
 
-      <AlertDialogContent>
+      <AlertDialogContent className="shop-theme">
         <AlertDialogHeader>
           <AlertDialogTitle>
             Are you sure you want to cancel this order?

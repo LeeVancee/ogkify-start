@@ -50,38 +50,38 @@
 
 :root {
   --radius: 0.625rem;
-  --background: #f8f6f2;
-  --foreground: #1d1b18;
-  --card: #fffdf9;
-  --card-foreground: #1d1b18;
-  --popover: #fffdf9;
-  --popover-foreground: #1d1b18;
-  --primary: #1d1b18;
-  --primary-foreground: #fffdf9;
-  --secondary: #f0ece6;
-  --secondary-foreground: #1d1b18;
-  --muted: #e9e4dc;
-  --muted-foreground: #625d55;
-  --accent: #e9e4dc;
-  --accent-foreground: #1d1b18;
-  --destructive: #ea001d;
+  --background: #f6f7f5;
+  --foreground: #202420;
+  --card: #ffffff;
+  --card-foreground: #202420;
+  --popover: #ffffff;
+  --popover-foreground: #202420;
+  --primary: #27332a;
+  --primary-foreground: #ffffff;
+  --secondary: #edf0ec;
+  --secondary-foreground: #27332a;
+  --muted: #e8ece7;
+  --muted-foreground: #687069;
+  --accent: #e6ebe6;
+  --accent-foreground: #27332a;
+  --destructive: #b42318;
   --destructive-foreground: #ffffff;
-  --border: #2c271f1f;
-  --input: #2c271f24;
-  --ring: #006bff;
-  --chart-1: #006bff;
-  --chart-2: #28a948;
-  --chart-3: #ffae00;
-  --chart-4: #a000f8;
-  --chart-5: #fc0035;
-  --sidebar: #f0ece6;
-  --sidebar-foreground: #1d1b18;
-  --sidebar-primary: #1d1b18;
-  --sidebar-primary-foreground: #fffdf9;
-  --sidebar-accent: #e9e4dc;
-  --sidebar-accent-foreground: #1d1b18;
-  --sidebar-border: #2c271f1f;
-  --sidebar-ring: #006bff;
+  --border: #2024201a;
+  --input: #20242026;
+  --ring: #718777;
+  --chart-1: #718777;
+  --chart-2: #52665a;
+  --chart-3: #98a79b;
+  --chart-4: #c0cbc1;
+  --chart-5: #36463b;
+  --sidebar: #eef1ed;
+  --sidebar-foreground: #2b332d;
+  --sidebar-primary: #27332a;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e1e8e1;
+  --sidebar-accent-foreground: #27332a;
+  --sidebar-border: #20242014;
+  --sidebar-ring: #718777;
 }
 
 @layer base {
@@ -214,6 +214,116 @@ body {
   font-weight: 500;
   line-height: 1rem;
   text-transform: capitalize;
+}
+
+.shop-theme {
+  color: var(--foreground);
+}
+
+.shop-theme [data-slot="card"] {
+  border-color: var(--border);
+  border-radius: 0.875rem;
+  box-shadow: 0 1px 2px rgb(32 36 32 / 3%);
+}
+
+.shop-theme [data-slot="card"]:hover {
+  box-shadow: 0 8px 24px rgb(32 36 32 / 4%);
+}
+
+.shop-theme [data-slot="button"],
+.shop-theme [data-slot="input"] {
+  transition: background-color 180ms ease, border-color 180ms ease,
+    box-shadow 180ms ease, color 180ms ease, transform 180ms ease;
+}
+
+.shop-theme [data-slot="button"]:active {
+  transform: translateY(1px);
+}
+
+.shop-theme [data-slot="input"],
+.shop-theme select,
+.shop-theme textarea {
+  border-color: var(--border);
+  background-color: var(--background);
+  box-shadow: none;
+}
+
+.shop-theme [data-slot="input"]:focus,
+.shop-theme select:focus,
+.shop-theme textarea:focus {
+  background-color: var(--background);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 22%, transparent);
+}
+
+.shop-theme .shop-panel {
+  border: 1px solid var(--border);
+  border-radius: 0.875rem;
+  background: var(--card);
+  box-shadow: 0 1px 2px rgb(32 36 32 / 3%);
+}
+
+/* Legacy slate utilities are mapped to the shared neutral shop palette. */
+.shop-theme .bg-white {
+  background-color: var(--card);
+}
+
+.shop-theme .bg-slate-50,
+.shop-theme .bg-slate-100 {
+  background-color: var(--muted);
+}
+
+.shop-theme .bg-slate-900 {
+  background-color: var(--primary);
+}
+
+.shop-theme .bg-slate-950 {
+  background-color: var(--primary);
+}
+
+.shop-theme .border-slate-100,
+.shop-theme .border-slate-200 {
+  border-color: var(--border);
+}
+
+.shop-theme .text-slate-900 {
+  color: var(--foreground);
+}
+
+.shop-theme .text-slate-700,
+.shop-theme .text-slate-600 {
+  color: color-mix(in srgb, var(--foreground) 78%, var(--muted-foreground));
+}
+
+.shop-theme .text-slate-500,
+.shop-theme .text-slate-400 {
+  color: var(--muted-foreground);
+}
+
+.shop-theme .text-slate-300,
+.shop-theme .text-slate-200 {
+  color: color-mix(in srgb, var(--muted-foreground) 55%, var(--background));
+}
+
+.shop-theme .hover\:bg-slate-700:hover {
+  background-color: #354239;
+}
+
+.shop-theme .hover\:bg-slate-100:hover,
+.shop-theme .hover\:bg-slate-50:hover {
+  background-color: var(--muted);
+}
+
+.shop-theme .hover\:border-slate-400:hover {
+  border-color: var(--ring);
+}
+
+.shop-theme .hover\:text-slate-900:hover {
+  color: var(--foreground);
+}
+
+.shop-theme .hover\:text-slate-700:hover,
+.shop-theme .hover\:text-slate-600:hover {
+  color: var(--foreground);
 }
 
 @layer components {

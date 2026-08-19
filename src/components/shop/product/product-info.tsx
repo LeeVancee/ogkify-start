@@ -112,7 +112,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
   return (
     <>
       <div className="space-y-3">
-        <div className="aspect-square overflow-hidden rounded-2xl bg-slate-100">
+        <div className="aspect-square overflow-hidden rounded-xl bg-slate-100">
           <img
             src={product.images[activeImage]}
             alt={product.name}

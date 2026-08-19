@@ -70,7 +70,7 @@ function RouteComponent() {
             }}
             placeholder={t("shop.searchPage.placeholder")}
             aria-label={t("shop.searchPage.placeholder")}
-            className="w-full rounded-2xl border border-slate-200 bg-white py-4 pl-12 pr-12 text-base text-slate-900 shadow-sm outline-none transition-colors focus:border-slate-400 focus:ring-0"
+            className="w-full rounded-xl border border-slate-200 bg-white py-4 pl-12 pr-12 text-base text-slate-900 shadow-sm outline-none transition-colors focus:border-slate-400 focus:ring-0"
           />
           {searchQuery ? (
             <button

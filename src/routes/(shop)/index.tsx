@@ -68,11 +68,11 @@ function RouteComponent() {
           {heroProduct ? (
             <div className="relative">
               <div className="absolute -inset-12 -z-10 rounded-full bg-[radial-gradient(circle,rgba(160,139,109,0.18),transparent_68%)] blur-2xl" />
-              <div className="rounded-[1.75rem] bg-secondary p-3 shadow-[0_28px_90px_rgba(57,48,38,0.12)]">
+              <div className="rounded-xl bg-secondary p-3 shadow-sm">
                 <Link
                   to="/product/$id"
                   params={{ id: heroProduct.id }}
-                  className="group relative block min-h-[29rem] overflow-hidden rounded-[1.15rem] bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-[35rem]"
+                  className="group relative block min-h-[29rem] overflow-hidden rounded-lg bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-[35rem]"
                 >
                   <img
                     src={heroProduct.images[0]}

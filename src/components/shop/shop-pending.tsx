@@ -1,6 +1,6 @@
 function SkeletonBlock({ className }: { className: string }) {
   return (
-    <div className={`animate-pulse rounded-2xl bg-slate-100 ${className}`} />
+    <div className={`animate-pulse rounded-xl bg-slate-100 ${className}`} />
   );
 }
 
@@ -35,7 +35,7 @@ export function ShopProfilePending() {
         <SkeletonBlock className="h-10 w-32 rounded-xl" />
         <SkeletonBlock className="h-10 w-32 rounded-xl" />
       </div>
-      <div className="rounded-2xl border border-slate-200 bg-white p-6">
+      <div className="rounded-xl border border-slate-200 bg-white p-6">
         <div className="mb-6 space-y-3">
           <SkeletonBlock className="h-7 w-56" />
           <SkeletonBlock className="h-4 w-72 rounded-full" />

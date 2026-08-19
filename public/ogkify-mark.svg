@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="title">
+  <title>OGKIFY mark</title>
+  <rect width="48" height="48" rx="12" fill="#27332a"/>
+  <rect x="9.5" y="13" width="12" height="22" rx="6" fill="none" stroke="#f6f7f5" stroke-width="3"/>
+  <path d="M29 13v22M29 24l10-11M29 24l10 11" fill="none" stroke="#f6f7f5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

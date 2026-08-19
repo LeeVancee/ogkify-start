@@ -17,7 +17,7 @@ export const Route = createFileRoute("/(shop)")({
 
 function RouteComponent() {
   return (
-    <div className=" min-h-screen flex flex-col">
+    <div className="shop-theme flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">
         <Outlet />

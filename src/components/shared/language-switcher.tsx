@@ -11,8 +11,10 @@ import { localeLabels, supportedLocales, useI18n } from "@/lib/i18n";
 
 export function LanguageSwitcher({
   dashboard = false,
+  shop = false,
 }: {
   dashboard?: boolean;
+  shop?: boolean;
 }) {
   const { locale, setLocale, t } = useI18n();
 
@@ -33,7 +35,7 @@ export function LanguageSwitcher({
       />
       <DropdownMenuContent
         align="end"
-        className={`${dashboard ? "dashboard-theme " : ""}w-40`}
+        className={`${dashboard ? "dashboard-theme " : shop ? "shop-theme " : ""}w-40`}
       >
         {supportedLocales.map((supportedLocale) => (
           <DropdownMenuItem

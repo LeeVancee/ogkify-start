@@ -23,7 +23,7 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
   const { t } = useI18n();
 
   return (
-    <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
       <div className="mb-5 flex items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">
@@ -47,7 +47,7 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
         {order.items.map((item) => (
           <div
             key={item.id}
-            className="flex gap-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4"
+            className="flex gap-4 rounded-lg border border-slate-100 bg-slate-50/70 p-4"
           >
             <img
               src={item.imageUrl}

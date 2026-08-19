@@ -72,7 +72,7 @@ export function DropDown() {
           </Button>
         }
       />
-      <DropdownMenuContent className="w-56">
+      <DropdownMenuContent className="shop-theme w-56">
         <DropdownMenuGroup>
           <DropdownMenuLabel className="font-normal text-black">
             <div className="flex flex-col space-y-1">

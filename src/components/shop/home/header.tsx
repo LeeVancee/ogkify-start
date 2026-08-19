@@ -47,21 +47,12 @@ export default function Header() {
             className="group flex items-center gap-2.5 text-sm font-semibold tracking-[0.12em] text-foreground uppercase"
             aria-label="OGKIFY"
           >
-            <span className="flex size-8 items-center justify-center rounded-[0.65rem] bg-foreground text-background shadow-[0_5px_18px_rgba(57,48,38,0.16)] transition-transform duration-200 group-hover:-rotate-3">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-                className="size-5"
-              >
-                <path d="M5 6.5 12 3l7 3.5v10L12 21l-7-4.5z" />
-                <path d="m5 6.5 7 4 7-4M12 10.5V21" />
-              </svg>
-            </span>
+            <img
+              src="/ogkify-mark.svg"
+              alt=""
+              aria-hidden="true"
+              className="size-8 rounded-md shadow-sm transition-transform duration-200 group-hover:-rotate-3"
+            />
             <span>OGKIFY</span>
           </Link>
 
@@ -84,7 +75,7 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-1">
-            <LanguageSwitcher />
+            <LanguageSwitcher shop />
 
             <Link
               to="/search"

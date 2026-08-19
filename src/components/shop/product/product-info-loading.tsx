@@ -2,11 +2,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductInfoLoading() {
   return (
-    <div className="shop-shell py-8 sm:py-12" aria-busy="true" aria-label="Loading product">
+    <div
+      className="shop-shell py-8 sm:py-12"
+      aria-busy="true"
+      aria-label="Loading product"
+    >
       <Skeleton className="mb-8 h-5 w-32 rounded-md" />
 
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
-        <Skeleton className="aspect-square w-full rounded-2xl" />
+        <Skeleton className="aspect-square w-full rounded-xl" />
 
         <div className="flex flex-col">
           <Skeleton className="mb-2 h-3 w-16 rounded-full" />

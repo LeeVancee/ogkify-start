@@ -127,8 +127,8 @@ export function CartLineItem({
   const { t } = useI18n();
   const isSheet = variant === "sheet";
   const itemClasses = isSheet
-    ? "rounded-2xl border border-slate-200 bg-white p-4 shadow-[0_1px_2px_rgba(15,23,42,0.04)]"
-    : "flex gap-5 rounded-2xl border border-slate-200 bg-white p-4 sm:p-5";
+    ? "rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+    : "flex gap-5 rounded-xl border border-slate-200 bg-white p-4 sm:p-5";
   const imageClasses = isSheet
     ? "h-20 w-20 rounded-xl object-cover"
     : "h-28 w-28 shrink-0 rounded-xl object-cover";

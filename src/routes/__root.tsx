@@ -48,7 +48,7 @@ export const Route = createRootRouteWithContext<{
         //  suppressHydrationWarning: true,
       },
 
-      { rel: "icon", href: "/logo-black.svg" },
+      { rel: "icon", href: "/ogkify-mark.svg" },
     ],
   }),
 
