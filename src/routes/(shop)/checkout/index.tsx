@@ -1,7 +1,7 @@
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { Loader2, LockKeyhole } from "lucide-react";
 import { z } from "zod";
 
@@ -11,6 +11,7 @@ import { OrderSnapshot } from "@/components/shop/checkout/order-snapshot";
 import { env } from "@/env/client";
 import { useI18n } from "@/lib/i18n";
 import { shopCheckoutOrderQueryOptions } from "@/lib/shop/query-options";
+import { getSession } from "@/server/getSession";
 
 const stripePromise = env.VITE_STRIPE_PUBLISHABLE_KEY
   ? loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY)
@@ -22,6 +23,10 @@ const searchParamsSchema = z.object({
 
 export const Route = createFileRoute("/(shop)/checkout/")({
   validateSearch: searchParamsSchema,
+  beforeLoad: async ({ location }) => {
+    if (!(await getSession()))
+      throw redirect({ to: "/login", search: { redirect: location.href } });
+  },
   loaderDeps: ({ search }) => ({
     orderId: search.order_id,
   }),
@@ -90,19 +95,27 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-      <div className="mb-8">
+    <div className="shop-shell py-12 sm:py-16">
+      <div className="mb-10 border-b border-border pb-8">
+        <nav className="mb-6 flex items-center gap-4 text-xs text-muted-foreground">
+          <Link to="/cart" className="hover:text-foreground">
+            01 — {t("shop.cart.title")}
+          </Link>
+          <span>/</span>
+          <span className="text-foreground">
+            02 — {t("shop.checkoutPage.payment")}
+          </span>
+        </nav>
         <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
           {t("shop.checkoutPage.eyebrow")}
         </p>
-        <h1 className="mt-3 text-3xl font-light tracking-tight text-slate-900">
+        <h1 className="mt-3 text-4xl font-medium tracking-tight text-slate-900">
           {t("shop.checkoutPage.title")}
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_420px]">
-        <OrderSnapshot order={checkoutResult.order} />
-        <div className="h-fit rounded-xl border border-slate-200 bg-white p-6 shadow-sm lg:sticky lg:top-24">
+      <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+        <div className="min-w-0">
           <div className="mb-5 flex items-center gap-2 text-sm font-medium text-slate-700">
             <LockKeyhole className="h-4 w-4" />
             {t("shop.checkoutPage.encryptedByStripe")}
@@ -115,10 +128,10 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
               appearance: {
                 theme: "stripe",
                 variables: {
-                  borderRadius: "10px",
-                  colorPrimary: "#0f172a",
-                  colorText: "#0f172a",
-                  colorTextSecondary: "#64748b",
+                  borderRadius: "4px",
+                  colorPrimary: "#20201e",
+                  colorText: "#20201e",
+                  colorTextSecondary: "#77766f",
                   colorDanger: "#dc2626",
                   colorBackground: "#ffffff",
                   fontFamily: "Geist, sans-serif",
@@ -127,15 +140,15 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
                 },
                 rules: {
                   ".Input": {
-                    borderColor: "#cbd5e1",
+                    borderColor: "#d8d6d0",
                     boxShadow: "none",
                   },
                   ".Input:focus": {
-                    borderColor: "#0f172a",
-                    boxShadow: "0 0 0 1px #0f172a",
+                    borderColor: "#20201e",
+                    boxShadow: "0 0 0 1px #20201e",
                   },
                   ".Label": {
-                    color: "#334155",
+                    color: "#484740",
                     fontWeight: "500",
                   },
                 },
@@ -148,6 +161,9 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
             />
           </Elements>
         </div>
+        <aside className="lg:sticky lg:top-28">
+          <OrderSnapshot order={checkoutResult.order} />
+        </aside>
       </div>
     </div>
   );

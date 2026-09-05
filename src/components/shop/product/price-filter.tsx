@@ -3,6 +3,7 @@ import { useTransition } from "react";
 
 import { Slider } from "@/components/ui/slider";
 import { useI18n } from "@/lib/i18n";
+import { formatPrice } from "@/lib/utils";
 
 import { createQueryParams } from "./filter-types";
 
@@ -51,8 +52,8 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
           onValueChange={handleChange}
         />
         <div className="flex items-center justify-between text-sm text-slate-500">
-          <span>￥{currentMinPrice}</span>
-          <span>￥{currentMaxPrice}</span>
+          <span>{formatPrice(currentMinPrice)}</span>
+          <span>{formatPrice(currentMaxPrice)}</span>
         </div>
       </div>
     </section>

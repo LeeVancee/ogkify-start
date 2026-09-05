@@ -16,6 +16,7 @@ import { authClient } from "@/lib/auth-client";
 import { useSessionQuery } from "@/lib/auth-hooks";
 import { authQueryKeys } from "@/lib/auth-query";
 import { useI18n } from "@/lib/i18n";
+import { shopQueryKeys } from "@/lib/shop/query-options";
 
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
@@ -30,6 +31,12 @@ export function DropDown() {
     authClient.signOut({
       fetchOptions: {
         onSuccess: async () => {
+          await queryClient.cancelQueries();
+          queryClient.clear();
+          queryClient.setQueryData(shopQueryKeys.cart(), {
+            items: [],
+            totalItems: 0,
+          });
           queryClient.setQueryData(authQueryKeys.session(), null);
           await queryClient.invalidateQueries({
             queryKey: authQueryKeys.session(),

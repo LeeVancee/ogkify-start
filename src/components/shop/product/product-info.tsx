@@ -1,9 +1,12 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
 import type { SetStateAction } from "react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { useSessionQuery } from "@/lib/auth-hooks";
 import { useI18n } from "@/lib/i18n";
 import { shopQueryKeys } from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
@@ -39,7 +42,9 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
+  const { session } = useSessionQuery();
+  const navigate = useNavigate();
 
   if (product.images.length === 0) {
     throw new Error(`Product images are missing for product ${product.id}`);
@@ -75,6 +80,13 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
   const queryClient = useQueryClient();
 
   const handleAddToCart = async () => {
+    if (!session) {
+      await navigate({
+        to: "/login",
+        search: { redirect: `/product/${product.id}` },
+      });
+      return;
+    }
     const formData = new FormData();
     formData.append("productId", product.id);
     formData.append("quantity", quantity.toString());
@@ -100,9 +112,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
 
     if (result.success) {
       queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
-      toast.success(
-        result.message ? result.message : t("shop.productDetail.addedToCart"),
-      );
+      toast.success(t("shop.productDetail.addedToCart"));
     } else {
       toast.error(result.error || t("shop.productDetail.addToCartFailed"));
     }
@@ -112,7 +122,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
   return (
     <>
       <div className="space-y-3">
-        <div className="aspect-square overflow-hidden rounded-xl bg-slate-100">
+        <div className="product-photo aspect-[4/5] overflow-hidden">
           <img
             src={product.images[activeImage]}
             alt={product.name}
@@ -120,16 +130,18 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
           />
         </div>
         {product.images.length > 1 ? (
-          <div className="flex gap-2.5">
+          <div className="flex gap-2.5 overflow-x-auto pb-2">
             {product.images.map((image, index) => (
               <button
                 key={image}
+                aria-label={`${product.name} — ${index + 1}`}
+                aria-pressed={activeImage === index}
                 type="button"
                 onClick={() => setActiveImage(index)}
                 className={
                   activeImage === index
-                    ? "h-20 w-20 overflow-hidden rounded-xl border-2 border-slate-900 cursor-pointer"
-                    : "h-20 w-20 overflow-hidden rounded-xl border-2 border-transparent opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+                    ? "h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-slate-900 cursor-pointer"
+                    : "h-20 w-20 shrink-0 overflow-hidden rounded-lg border-2 border-transparent opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
                 }
               >
                 <img
@@ -143,19 +155,26 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
         ) : null}
       </div>
 
-      <div className="flex flex-col">
+      <div className="flex flex-col self-start lg:sticky lg:top-28 lg:py-6">
         <span className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
           {product.category}
         </span>
-        <h1 className="text-2xl font-light leading-tight tracking-tight text-slate-900 sm:text-3xl">
+        <h1 className="text-3xl font-medium leading-snug tracking-tight text-slate-900 sm:text-4xl">
           {product.name}
         </h1>
-        <div className="mt-3 text-2xl font-semibold text-slate-900">
+        <div className="mt-5 border-b border-border pb-7 text-xl font-medium text-slate-900">
           {formatPrice(product.price)}
         </div>
-        <p className="mt-5 text-sm leading-relaxed text-slate-500">
+        <p className="mt-5 line-clamp-3 text-sm leading-relaxed text-slate-500">
           {product.description}
         </p>
+
+        <a
+          href="#product-details"
+          className="mt-3 w-fit text-xs text-muted-foreground transition-colors hover:text-foreground"
+        >
+          {t("shop.productDetail.details")}
+        </a>
 
         {product.colors.length > 0 ? (
           <div className="mt-8">
@@ -166,6 +185,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
               {product.colors.map((color) => (
                 <button
                   key={color.id}
+                  aria-pressed={selectedColor === color.id}
                   type="button"
                   onClick={() => setSelectedColor(color.id)}
                   className={
@@ -190,6 +210,7 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
               {product.sizes.map((size) => (
                 <button
                   key={size.id}
+                  aria-pressed={selectedSize === size.id}
                   type="button"
                   onClick={() => setSelectedSize(size.id)}
                   className={
@@ -209,6 +230,8 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
           <div className="flex items-center gap-3">
             <button
               type="button"
+              aria-label={t("shop.cart.decreaseLabel", { name: product.name })}
+              disabled={quantity <= 1 || isSubmitting}
               onClick={() => setQuantity((value) => Math.max(1, value - 1))}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 cursor-pointer"
             >
@@ -219,24 +242,35 @@ export function ProductInfo({ product, addToCartAction }: ProductInfoProps) {
             </span>
             <button
               type="button"
-              onClick={() => setQuantity((value) => value + 1)}
+              aria-label={t("shop.cart.increaseLabel", { name: product.name })}
+              disabled={quantity >= 99 || isSubmitting}
+              onClick={() => setQuantity((value) => Math.min(99, value + 1))}
               className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 cursor-pointer"
             >
               <Plus className="h-3.5 w-3.5" />
             </button>
           </div>
 
-          <button
+          <Button
             type="button"
             onClick={handleAddToCart}
             disabled={isSubmitting}
-            className="flex-1 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
+            className="h-12 flex-1 rounded-xl bg-slate-900 py-3 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
           >
             {isSubmitting
               ? t("shop.productDetail.adding")
-              : t("shop.productDetail.addToCart")}
-          </button>
+              : !session
+                ? locale === "en"
+                  ? "Sign in to add to bag"
+                  : locale === "zh-CN"
+                    ? "登录后加入购物袋"
+                    : "登入後加入購物袋"
+                : t("shop.productDetail.addToCart")}
+          </Button>
         </div>
+        <p className="mt-6 border-t border-border pt-5 text-xs leading-6 text-muted-foreground">
+          {t("shop.productDetail.optionsNote")}
+        </p>
       </div>
     </>
   );

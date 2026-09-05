@@ -35,7 +35,11 @@ export function useCartActions({
   const { t } = useI18n();
 
   const removeItemMutation = useMutation({
-    mutationFn: (cartItemId: string) => removeFromCart({ data: cartItemId }),
+    mutationFn: async (cartItemId: string) => {
+      const result = await removeFromCart({ data: cartItemId });
+      if (!result.success) throw new Error(result.error);
+      return result;
+    },
     onSuccess: () => {
       toast.success(t("shop.cart.removedToast"));
       queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
@@ -46,13 +50,19 @@ export function useCartActions({
   });
 
   const updateQuantityMutation = useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       cartItemId,
       quantity,
     }: {
       cartItemId: string;
       quantity: number;
-    }) => updateCartItemQuantity({ data: { cartItemId, quantity } }),
+    }) => {
+      const result = await updateCartItemQuantity({
+        data: { cartItemId, quantity },
+      });
+      if (!result.success) throw new Error(result.error);
+      return result;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: shopQueryKeys.cart() });
     },
@@ -128,10 +138,10 @@ export function CartLineItem({
   const isSheet = variant === "sheet";
   const itemClasses = isSheet
     ? "rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
-    : "flex gap-5 rounded-xl border border-slate-200 bg-white p-4 sm:p-5";
+    : "flex gap-5 border-b border-border py-6";
   const imageClasses = isSheet
-    ? "h-20 w-20 rounded-xl object-cover"
-    : "h-28 w-28 shrink-0 rounded-xl object-cover";
+    ? "h-20 w-20 object-cover"
+    : "h-28 w-24 shrink-0 object-cover";
   const quantityButtonClasses = isSheet
     ? "flex h-7 w-7 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
     : "flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer";
@@ -202,7 +212,7 @@ export function CartLineItem({
             <button
               type="button"
               onClick={() => onQuantityChange(item, item.quantity + 1)}
-              disabled={isMutating}
+              disabled={isMutating || item.quantity >= 99}
               className={quantityButtonClasses}
               aria-label={t("shop.cart.increaseLabel", { name: item.name })}
             >

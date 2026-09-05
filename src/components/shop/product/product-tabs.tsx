@@ -14,7 +14,11 @@ export function ProductTabs({ product }: ProductTabsProps) {
   const { t } = useI18n();
 
   return (
-    <Tabs defaultValue="details" className="mt-10">
+    <Tabs
+      id="product-details"
+      defaultValue="details"
+      className="mt-10 scroll-mt-28"
+    >
       <TabsList className="h-auto w-full justify-start gap-6 rounded-none border-b border-border bg-transparent p-0">
         <TabsTrigger
           value="details"

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { ArrowUpRight, ImageOff } from "lucide-react";
 
 import { formatPrice } from "@/lib/utils";
 
@@ -7,36 +8,42 @@ interface Product {
   name: string;
   price: number;
   image: string | null;
-  category: string;
+  category?: string;
 }
-
 export default function ProductCard({ product }: { product: Product }) {
-  if (!product.image) {
-    throw new Error(`Product image is missing for product ${product.id}`);
-  }
-
   return (
     <Link
       to="/product/$id"
       params={{ id: product.id }}
-      className="group cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
+      className="group block min-w-0"
     >
-      <div className="relative mb-3 aspect-[3/4] overflow-hidden rounded-md bg-muted">
-        <img
-          src={product.image}
-          alt={product.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
+      <div className="product-photo relative mb-4 flex aspect-[4/5] items-center justify-center overflow-hidden">
+        {product.image ? (
+          <img
+            src={product.image}
+            alt={product.name}
+            loading="lazy"
+            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <ImageOff className="size-8 text-muted-foreground" />
+        )}
+        <span
+          aria-hidden="true"
+          className="absolute bottom-3 right-3 flex size-8 items-center justify-center bg-background opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+        >
+          <ArrowUpRight className="size-4" />
+        </span>
       </div>
-      <p className="mb-1 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
-        {product.category}
+      <p className="mb-2 text-[10px] tracking-[0.08em] text-muted-foreground">
+        {product.category || "OGKIFY COLLECTION"}
       </p>
-      <h3 className="truncate text-sm font-medium text-foreground">
+      <h3 className="line-clamp-2 min-h-10 text-[13px] font-medium leading-5 group-hover:text-muted-foreground">
         {product.name}
       </h3>
-      <div className="mt-1 text-sm text-foreground tabular-nums">
+      <p className="mt-2 text-[13px] tabular-nums">
         {formatPrice(product.price)}
-      </div>
+      </p>
     </Link>
   );
 }

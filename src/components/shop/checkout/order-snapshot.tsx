@@ -23,7 +23,7 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
   const { t } = useI18n();
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+    <div className="bg-secondary p-6 sm:p-8">
       <div className="mb-5 flex items-center justify-between gap-4">
         <div>
           <h2 className="text-lg font-semibold text-slate-900">
@@ -45,14 +45,11 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
 
       <div className="space-y-3">
         {order.items.map((item) => (
-          <div
-            key={item.id}
-            className="flex gap-4 rounded-lg border border-slate-100 bg-slate-50/70 p-4"
-          >
+          <div key={item.id} className="flex gap-4 border-b border-border py-5">
             <img
               src={item.imageUrl}
               alt={item.productName}
-              className="h-20 w-20 shrink-0 rounded-xl object-cover"
+              className="h-24 w-20 shrink-0 object-cover"
             />
             <div className="min-w-0 flex-1">
               <Link

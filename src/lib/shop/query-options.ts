@@ -170,7 +170,9 @@ export function shopOrderDetailQueryOptions(orderId: string) {
         return false;
       }
 
-      return order?.paymentStatus === "PAID" ? false : 2000;
+      return order.paymentStatus === "UNPAID" && order.status !== "CANCELLED"
+        ? 2000
+        : false;
     },
     refetchIntervalInBackground: true,
     staleTime: 1000 * 60 * 10,

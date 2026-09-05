@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { and, eq, gte, ilike, lte, or } from "drizzle-orm";
+import { z } from "zod";
 
 import { db } from "@/db";
 
@@ -65,13 +66,34 @@ export const getFeaturedProducts = createServerFn()
   });
 
 export const getFilteredProducts = createServerFn()
-  .validator((options: FilterOptions = {}) => options)
+  .validator((options: FilterOptions = {}) =>
+    z
+      .object({
+        category: z.string().max(200).optional(),
+        featured: z.boolean().optional(),
+        sort: z
+          .enum(["featured", "newest", "price-asc", "price-desc"])
+          .optional(),
+        search: z.string().max(200).optional(),
+        minPrice: z.number().nonnegative().optional(),
+        maxPrice: z.number().nonnegative().optional(),
+        colors: z.array(z.string()).max(100).optional(),
+        sizes: z.array(z.string()).max(100).optional(),
+        page: z.number().int().min(1).optional(),
+        limit: z.number().int().min(1).max(100).optional(),
+      })
+      .parse(options),
+  )
   .handler(async ({ data: options }) => {
     const page = options.page || 1;
     const limit = options.limit || 12;
     const offset = (page - 1) * limit;
 
-    let orderBy: any = { createdAt: "desc" };
+    let orderBy: {
+      price?: "asc" | "desc";
+      createdAt?: "asc" | "desc";
+      isFeatured?: "asc" | "desc";
+    } = { createdAt: "desc" };
 
     if (options.sort) {
       switch (options.sort) {

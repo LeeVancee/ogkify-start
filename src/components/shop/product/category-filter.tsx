@@ -33,9 +33,9 @@ export function CategoryFilter({ categories }: CategoryFilterProps) {
           type="button"
           onClick={() => handleChange(undefined)}
           className={cn(
-            "flex h-10 w-full items-center rounded-lg px-4 text-left text-sm font-medium transition-colors cursor-pointer",
+            "flex h-10 w-full items-center border-l-2 border-transparent px-3 text-left text-sm font-medium transition-colors cursor-pointer",
             !currentCategory
-              ? "bg-slate-950 text-white"
+              ? "border-foreground! font-semibold text-foreground"
               : "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
           )}
         >
@@ -50,9 +50,9 @@ export function CategoryFilter({ categories }: CategoryFilterProps) {
               type="button"
               onClick={() => handleChange(category.name)}
               className={cn(
-                "flex h-10 w-full items-center rounded-lg px-4 text-left text-sm font-medium transition-colors cursor-pointer",
+                "flex h-10 w-full items-center border-l-2 border-transparent px-3 text-left text-sm font-medium transition-colors cursor-pointer",
                 isActive
-                  ? "bg-slate-950 text-white"
+                  ? "border-foreground! font-semibold text-foreground"
                   : "text-slate-500 hover:bg-slate-100 hover:text-slate-900",
               )}
             >

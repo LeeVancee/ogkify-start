@@ -2,7 +2,7 @@ import type { Category } from "@/lib/types";
 
 export interface SearchParams {
   category?: string;
-  sort?: string;
+  sort?: "featured" | "newest" | "price-asc" | "price-desc";
   featured?: boolean;
   minPrice?: number;
   maxPrice?: number;

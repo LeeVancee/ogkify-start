@@ -14,9 +14,9 @@ function RouteComponent() {
   const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
 
   return (
-    <div className="shop-shell py-10 sm:py-14">
-      <div className="flex gap-10">
-        <aside className="hidden w-56 shrink-0 sm:block">
+    <div className="shop-shell py-12 sm:py-16">
+      <div className="flex gap-10 lg:gap-14">
+        <aside className="hidden w-44 shrink-0 border-r border-border pr-8 sm:block lg:w-52">
           <ProductFilters categories={categories} />
         </aside>
 

@@ -1,6 +1,6 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 
@@ -8,6 +8,13 @@ import { ProductFilters } from "@/components/shop/product/product-filters";
 import { ProductGrid } from "@/components/shop/product/product-grid";
 import { ProductPagination } from "@/components/shop/product/product-pagination";
 import { ProductsLoading } from "@/components/shop/product/products-loading";
+import { Button } from "@/components/ui/button";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { useI18n } from "@/lib/i18n";
 import {
   shopCategoriesQueryOptions,
@@ -16,12 +23,12 @@ import {
 
 const searchParamsSchema = z.object({
   category: z.string().optional(),
-  sort: z.string().optional(),
+  sort: z.enum(["featured", "newest", "price-asc", "price-desc"]).optional(),
   search: z.string().optional(),
   featured: z.boolean().optional(),
-  minPrice: z.number().optional(),
-  maxPrice: z.number().optional(),
-  page: z.number().optional(),
+  minPrice: z.number().nonnegative().optional(),
+  maxPrice: z.number().nonnegative().optional(),
+  page: z.number().int().positive().optional(),
 });
 
 export const Route = createFileRoute("/(shop)/products/")({
@@ -41,12 +48,17 @@ export const Route = createFileRoute("/(shop)/products/")({
 function CategoriesPage() {
   const search = Route.useSearch();
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const currentPage = search.page ?? 1;
   const selectedCategory = search.category ?? "";
   const [filterOpen, setFilterOpen] = useState(false);
   const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
-  const { data: productsData, isPending } = useQuery(
+  const {
+    data: productsData,
+    isPending,
+    isError,
+    error,
+  } = useQuery(
     shopFilteredProductsQueryOptions({
       category: search.category,
       sort: search.sort,
@@ -58,6 +70,7 @@ function CategoriesPage() {
       limit: 12,
     }),
   );
+  if (isError) throw error;
   const products = productsData?.products ?? [];
   const total = productsData?.total ?? 0;
   const categoryLabel = selectedCategory
@@ -76,7 +89,7 @@ function CategoriesPage() {
 
   return (
     <>
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-8 flex items-end justify-between gap-4 border-b border-border pb-7">
         <div>
           <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-400">
             {t(
@@ -86,7 +99,7 @@ function CategoriesPage() {
               { count: total },
             )}
           </p>
-          <h1 className="text-3xl font-light tracking-tight text-slate-900 sm:text-4xl">
+          <h1 className="text-3xl font-medium tracking-tight text-slate-900 sm:text-5xl">
             {categoryLabel}
           </h1>
         </div>
@@ -103,31 +116,21 @@ function CategoriesPage() {
         </div>
       </div>
 
-      {filterOpen ? (
-        <div className="fixed inset-0 z-50 sm:hidden">
-          <button
-            type="button"
-            aria-label={t("shop.productFilters.filters")}
-            className="absolute inset-0 bg-black/20 backdrop-blur-sm"
-            onClick={() => setFilterOpen(false)}
-          />
-          <div className="absolute right-0 top-0 bottom-0 w-72 overflow-y-auto bg-white p-6 shadow-2xl">
-            <div className="mb-6 flex items-center justify-between">
-              <span className="text-sm font-semibold text-slate-900">
-                {t("shop.productFilters.filters")}
-              </span>
-              <button
-                type="button"
-                onClick={() => setFilterOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700 cursor-pointer"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            {mobileFilters}
-          </div>
-        </div>
-      ) : null}
+      <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
+        <SheetContent className="shop-theme overflow-y-auto p-6">
+          <SheetHeader className="mb-6 p-0">
+            <SheetTitle>{t("shop.productFilters.filters")}</SheetTitle>
+          </SheetHeader>
+          {mobileFilters}
+          <Button className="mt-8 w-full" onClick={() => setFilterOpen(false)}>
+            {locale === "en"
+              ? "Show results"
+              : locale === "zh-CN"
+                ? "显示结果"
+                : "顯示結果"}
+          </Button>
+        </SheetContent>
+      </Sheet>
 
       {isPending ? (
         <ProductsLoading />

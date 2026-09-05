@@ -1,9 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 
 import { db } from "@/db";
 
 export const searchProducts = createServerFn()
-  .validator((query: string = "") => query)
+  .validator((query: string = "") =>
+    z.string().trim().min(1).max(200).parse(query),
+  )
   .handler(async ({ data: query }) => {
     if (!query || query.trim() === "") {
       throw new Error("Search query is required");
@@ -11,6 +14,7 @@ export const searchProducts = createServerFn()
 
     const productsList = await db.query.products.findMany({
       where: {
+        isArchived: false,
         OR: [
           { name: { ilike: `%${query}%` } },
           { description: { ilike: `%${query}%` } },
@@ -27,18 +31,7 @@ export const searchProducts = createServerFn()
       name: product.name,
       description: product.description,
       price: product.price,
-      image: getRequiredSearchProductImage(product.images[0]?.url, product.id),
+      image: product.images[0]?.url ?? null,
       category: product.category.name,
     }));
   });
-
-function getRequiredSearchProductImage(
-  imageUrl: string | undefined,
-  productId: string,
-) {
-  if (!imageUrl) {
-    throw new Error(`Product image is missing for product ${productId}`);
-  }
-
-  return imageUrl;
-}

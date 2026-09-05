@@ -1,5 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ShoppingBag } from "lucide-react";
 
 import { SpinnerLoading } from "@/components/shared/flexible-loading";
 import { CartSummary } from "@/components/shop/cart/cart-summary";
@@ -9,6 +10,7 @@ import {
   useCartActions,
 } from "@/components/shop/cart/cart-ui";
 import { getCartSubtotal } from "@/components/shop/cart/cart-utils";
+import { useSessionQuery } from "@/lib/auth-hooks";
 import { useI18n } from "@/lib/i18n";
 import { shopCartQueryOptions } from "@/lib/shop/query-options";
 
@@ -21,6 +23,7 @@ export const Route = createFileRoute("/(shop)/cart")({
 
 function CartPage() {
   const { t } = useI18n();
+  const { session } = useSessionQuery();
 
   const { data: cartData } = useSuspenseQuery(shopCartQueryOptions());
 
@@ -32,28 +35,32 @@ function CartPage() {
   if (items.length === 0) {
     return (
       <div className="shop-shell py-24 text-center">
+        <ShoppingBag className="mx-auto mb-6 size-10" strokeWidth={1} />
         <h1 className="mb-3 text-3xl font-light tracking-tight text-slate-900">
           {t("shop.cart.title")}
         </h1>
         <p className="text-slate-500">{t("shop.cart.emptyTitle")}</p>
         <Link
-          to="/products"
+          to={session ? "/products" : "/login"}
+          search={session ? {} : { redirect: "/cart" }}
           className="mt-8 inline-flex items-center gap-2 rounded-xl bg-slate-900 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-slate-700"
         >
-          {t("common.actions.continueShopping")}
+          {t(
+            session ? "common.actions.continueShopping" : "shop.userMenu.login",
+          )}
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 sm:py-14">
-      <h1 className="mb-10 text-3xl font-light tracking-tight text-slate-900">
+    <div className="shop-shell py-12 sm:py-16">
+      <h1 className="mb-10 border-b border-border pb-8 text-4xl font-medium tracking-tight text-slate-900">
         {t("shop.cart.title")}
       </h1>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="space-y-3 lg:col-span-2">
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
+        <div className="lg:col-span-2">
           {items.map((item) => (
             <CartLineItem
               key={item.id}

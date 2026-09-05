@@ -1,94 +1,121 @@
-import { useQuery } from "@tanstack/react-query";
-import { createFileRoute, useRouter } from "@tanstack/react-router";
-import { Search, X } from "lucide-react";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { ArrowRight, Search, X } from "lucide-react";
 import { useState } from "react";
 import { z } from "zod";
 
 import ProductCard from "@/components/shop/product/product-card";
 import { ShopSearchPending } from "@/components/shop/shop-pending";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useI18n } from "@/lib/i18n";
-import { shopSearchResultsQueryOptions } from "@/lib/shop/query-options";
-
-const searchParamsSchema = z.object({
-  q: z.string().optional(),
-});
+import {
+  shopCategoriesQueryOptions,
+  shopSearchResultsQueryOptions,
+} from "@/lib/shop/query-options";
 
 export const Route = createFileRoute("/(shop)/search")({
-  validateSearch: searchParamsSchema,
-  loaderDeps: ({ search }) => ({
-    q: search.q,
-  }),
-  component: RouteComponent,
+  validateSearch: z.object({ q: z.string().trim().max(200).optional() }),
+  loaderDeps: ({ search }) => ({ q: search.q }),
   loader: ({ context, deps }) => {
-    const query = deps.q?.trim();
-
-    if (!query) {
-      return null;
-    }
-
-    void context.queryClient.prefetchQuery(
-      shopSearchResultsQueryOptions(query),
-    );
+    void context.queryClient.prefetchQuery(shopCategoriesQueryOptions());
+    if (deps.q)
+      void context.queryClient.prefetchQuery(
+        shopSearchResultsQueryOptions(deps.q),
+      );
   },
+  component: SearchPage,
 });
-
-function RouteComponent() {
+function SearchPage() {
+  const { q = "" } = Route.useSearch();
+  return <SearchContent key={q} query={q} />;
+}
+function SearchContent({ query }: { query: string }) {
   const router = useRouter();
-  const { t } = useI18n();
-  const { q } = Route.useSearch();
-  const query = q?.trim() ?? "";
-  const [searchQuery, setSearchQuery] = useState(query);
-
-  const submitSearch = () => {
-    if (!searchQuery.trim()) return;
-
-    router.navigate({
-      to: "/search",
-      search: { q: searchQuery.trim() },
-    });
-  };
-
+  const { t, locale } = useI18n();
+  const [input, setInput] = useState(query);
+  const { data: categories } = useSuspenseQuery(shopCategoriesQueryOptions());
   return (
-    <div className="shop-shell py-10 sm:py-14">
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-2 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
-            {t("shop.searchPage.eyebrow")}
-          </p>
-          <h1 className="mt-1 text-3xl font-light tracking-tight text-slate-900">
-            {t("shop.searchPage.title")}
-          </h1>
-        </div>
-        <div className="relative mt-8">
-          <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") submitSearch();
+    <div className="shop-shell pb-10 pt-14 sm:pt-20">
+      <p className="mb-4 text-[10px] tracking-[0.16em] text-muted-foreground">
+        FIND YOUR NEXT FAVOURITE
+      </p>
+      <h1 className="text-4xl font-medium tracking-tight sm:text-5xl">
+        {locale === "en"
+          ? "What catches your eye?"
+          : locale === "zh-CN"
+            ? "在找哪一件喜欢？"
+            : "在找哪一件喜歡？"}
+      </h1>
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          void router.navigate({
+            to: "/search",
+            search: { q: input.trim() || undefined },
+          });
+        }}
+        className="mt-9 flex items-center gap-3 border-b border-foreground pb-3"
+      >
+        <Search
+          className="size-5 shrink-0 text-muted-foreground"
+          strokeWidth={1.5}
+        />
+        <Input
+          autoFocus
+          name="q"
+          type="search"
+          maxLength={200}
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder={t("shop.searchPage.placeholder")}
+          aria-label={t("shop.searchPage.placeholder")}
+          className="h-12 min-w-0 flex-1 border-0 bg-transparent text-base! shadow-none focus-visible:ring-0"
+        />
+        {input && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={t("shop.searchPage.clear")}
+            onClick={() => {
+              setInput("");
+              void router.navigate({ to: "/search", search: {} });
             }}
-            placeholder={t("shop.searchPage.placeholder")}
-            aria-label={t("shop.searchPage.placeholder")}
-            className="w-full rounded-xl border border-slate-200 bg-white py-4 pl-12 pr-12 text-base text-slate-900 shadow-sm outline-none transition-colors focus:border-slate-400 focus:ring-0"
-          />
-          {searchQuery ? (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 cursor-pointer"
-              aria-label={t("shop.searchPage.clear")}
-            >
-              <X className="h-4 w-4" />
-            </button>
-          ) : null}
-        </div>
-      </div>
-
+          >
+            <X className="size-4" />
+          </Button>
+        )}
+        <Button
+          type="submit"
+          aria-label={t("shop.header.search")}
+          className="h-11 gap-6 px-5"
+        >
+          <span className="hidden sm:block">{t("shop.header.search")}</span>
+          <ArrowRight className="size-4" />
+        </Button>
+      </form>
       {!query ? (
-        <div className="py-24 text-center text-slate-400">
-          <Search className="mx-auto mb-4 h-10 w-10 text-slate-200" />
-          <p className="text-sm">{t("shop.searchPage.emptyPrompt")}</p>
+        <div className="mt-10">
+          <p className="mb-5 text-xs text-muted-foreground">
+            {t("shop.home.shopByCategory")}
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                to="/products"
+                search={{ category: category.name }}
+                className="flex items-center gap-6 border border-border px-5 py-3 text-sm transition-colors hover:border-foreground"
+              >
+                {category.name}
+                <ArrowRight className="size-3" />
+              </Link>
+            ))}
+          </div>
+          <p className="py-24 text-sm text-muted-foreground">
+            {t("shop.searchPage.emptyPrompt")}
+          </p>
         </div>
       ) : (
         <SearchResults query={query} />
@@ -96,7 +123,6 @@ function RouteComponent() {
     </div>
   );
 }
-
 function SearchResults({ query }: { query: string }) {
   const { t } = useI18n();
   const {
@@ -105,50 +131,44 @@ function SearchResults({ query }: { query: string }) {
     isError,
     isPending,
   } = useQuery(shopSearchResultsQueryOptions(query));
-
-  if (isPending) {
-    return <ShopSearchPending />;
-  }
-
-  if (isError) {
-    throw error;
-  }
-
+  if (isPending) return <ShopSearchPending />;
+  if (isError) throw error;
   return (
-    <>
-      <div className="mt-10 mb-6 flex items-end justify-between border-b border-slate-100 pb-4">
-        <div>
-          <h2 className="text-xl font-light text-slate-900">
-            {t("shop.searchPage.resultsFor")}{" "}
-            <span className="font-semibold">"{query}"</span>
-          </h2>
-          <p className="mt-0.5 text-sm text-slate-400">
-            {t(
-              products.length === 1
-                ? "shop.searchPage.productCount_one"
-                : "shop.searchPage.productCount_other",
-              { count: products.length },
-            )}
-          </p>
-        </div>
+    <section className="pt-10">
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-lg">
+          {t("shop.searchPage.resultsFor")} “{query}”
+        </h2>
+        <p className="text-xs text-muted-foreground">
+          {t(
+            products.length === 1
+              ? "shop.searchPage.productCount_one"
+              : "shop.searchPage.productCount_other",
+            { count: products.length },
+          )}
+        </p>
       </div>
-
-      {products.length === 0 ? (
-        <div className="py-20 text-center">
-          <p className="text-lg font-light text-slate-500">
-            {t("shop.searchPage.noResults", { query })}
-          </p>
-          <p className="mt-2 text-sm text-slate-400">
-            {t("shop.searchPage.noResultsHint")}
-          </p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-4 lg:gap-8">
+      {products.length ? (
+        <div className="grid grid-cols-2 gap-x-5 gap-y-10 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+      ) : (
+        <div className="border-y border-border py-20">
+          <p className="text-xl">{t("shop.searchPage.noResults", { query })}</p>
+          <p className="mt-3 text-sm text-muted-foreground">
+            {t("shop.searchPage.noResultsHint")}
+          </p>
+          <Link
+            to="/products"
+            className="mt-8 inline-flex items-center gap-6 text-sm transition-colors hover:text-muted-foreground"
+          >
+            {t("shop.home.shopAll")}
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
       )}
-    </>
+    </section>
   );
 }

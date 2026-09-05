@@ -1,5 +1,5 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import {
   CheckCircle,
   ChevronDown,
@@ -18,8 +18,13 @@ import {
   shopUserOrdersQueryOptions,
 } from "@/lib/shop/query-options";
 import { formatPrice } from "@/lib/utils";
+import { getSession } from "@/server/getSession";
 
 export const Route = createFileRoute("/(shop)/myorders")({
+  beforeLoad: async ({ location }) => {
+    if (!(await getSession()))
+      throw redirect({ to: "/login", search: { redirect: location.href } });
+  },
   loader: ({ context }) =>
     Promise.all([
       context.queryClient.ensureQueryData(shopUserOrdersQueryOptions()),

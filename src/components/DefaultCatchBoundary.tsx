@@ -1,53 +1,50 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
-import {
-  ErrorComponent,
-  Link,
-  rootRouteId,
-  useMatch,
-  useRouter,
-} from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 
 import { useI18n } from "@/lib/i18n";
 
 import { Button } from "./ui/button";
-
-export function DefaultCatchBoundary({ error }: Readonly<ErrorComponentProps>) {
+export function DefaultCatchBoundary({
+  error,
+  reset,
+}: Readonly<ErrorComponentProps>) {
   const router = useRouter();
-  const { t } = useI18n();
-  const isRoot = useMatch({
-    strict: false,
-    select: (state) => state.id === rootRouteId,
-  });
-
+  const { t, locale } = useI18n();
   console.error(error);
-
   return (
-    <div className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 p-4">
-      <ErrorComponent error={error} />
-      <div className="flex flex-wrap items-center gap-2">
+    <div
+      role="alert"
+      className="shop-theme mx-auto flex min-h-[60vh] max-w-lg flex-col items-start justify-center px-6 py-16"
+    >
+      <p className="mb-5 text-xs tracking-widest text-muted-foreground">
+        OGKIFY
+      </p>
+      <h1 className="text-3xl font-medium">
+        {locale === "en"
+          ? "Unable to load this page"
+          : locale === "zh-CN"
+            ? "暂时无法载入页面"
+            : "暫時無法載入頁面"}
+      </h1>
+      <p className="mt-4 text-sm leading-7 text-muted-foreground">
+        {locale === "en"
+          ? "Please try again in a moment. Your saved items will still be here."
+          : locale === "zh-CN"
+            ? "请稍后再试，你已保存的资料不会因此丢失。"
+            : "請稍後再試，你已儲存的資料不會因此遺失。"}
+      </p>
+      <div className="mt-8 flex items-center gap-6">
         <Button
-          type="button"
-          onClick={() => {
-            router.invalidate();
+          onClick={async () => {
+            await router.invalidate();
+            reset();
           }}
         >
           {t("common.actions.retry")}
         </Button>
-        {isRoot ? (
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
-          >
-            {t("common.actions.home")}
-          </Link>
-        ) : (
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center gap-2 h-9 px-4 bg-secondary text-secondary-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
-          >
-            {t("common.actions.goBack")}
-          </Link>
-        )}
+        <Link to="/" className="text-sm underline underline-offset-4">
+          {t("common.actions.home")}
+        </Link>
       </div>
     </div>
   );

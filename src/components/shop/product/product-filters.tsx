@@ -23,7 +23,7 @@ const sortOptions = [
 function FilterSortSelect() {
   const { search, updateSearch } = useProductFilterNavigation();
   const { t } = useI18n();
-  const currentSort = search.sort || "featured";
+  const currentSort = search.sort || "newest";
 
   return (
     <section className="space-y-4">
@@ -37,7 +37,12 @@ function FilterSortSelect() {
         }
       >
         <SelectTrigger className="h-11 w-full rounded-lg border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none">
-          <SelectValue placeholder={t("shop.productFilters.sortBy")} />
+          <SelectValue placeholder={t("shop.productFilters.sortBy")}>
+            {t(
+              sortOptions.find((option) => option.value === currentSort)
+                ?.labelKey ?? "shop.productFilters.sortNewest",
+            )}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent
           alignItemWithTrigger={false}

@@ -18,8 +18,14 @@ export const Route = createFileRoute("/(shop)")({
 function RouteComponent() {
   return (
     <div className="shop-theme flex min-h-screen flex-col">
+      <a
+        href="#store-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-background focus:p-4"
+      >
+        跳至主要內容
+      </a>
       <Header />
-      <main className="flex-1">
+      <main id="store-content" className="flex-1">
         <Outlet />
       </main>
       <Footer />

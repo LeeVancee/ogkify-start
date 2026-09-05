@@ -39,7 +39,8 @@ const addToCart = createServerFn({ method: "POST" })
     }
 
     const product = await db.query.products.findFirst({
-      where: { id: data.productId },
+      where: { id: data.productId, isArchived: false },
+      with: { colors: true, sizes: true },
     });
 
     if (!product) {
@@ -47,7 +48,16 @@ const addToCart = createServerFn({ method: "POST" })
       return { error: "product not found", success: false };
     }
 
-    console.log("try to add product to cart", session.user.id, data.productId);
+    if (
+      (product.colors.length > 0 && !data.colorId) ||
+      (data.colorId &&
+        !product.colors.some((option) => option.colorId === data.colorId)) ||
+      (product.sizes.length > 0 && !data.sizeId) ||
+      (data.sizeId &&
+        !product.sizes.some((option) => option.sizeId === data.sizeId))
+    ) {
+      return { success: false, error: "Please select a valid product option" };
+    }
 
     let cart = await db.query.carts.findFirst({
       where: { userId: session.user.id },
@@ -119,7 +129,7 @@ export const handleAddToCartFormAction = createServerFn({ method: "POST" })
       throw new Error("Quantity is required");
     }
 
-    const quantity = Number.parseInt(quantityValue, 10);
+    const quantity = Number(quantityValue);
 
     if (Number.isNaN(quantity)) {
       throw new Error("Quantity must be a valid integer");
@@ -179,7 +189,7 @@ export const getUserCart = createServerFn().handler(async () => {
     name: item.product.name,
     price: item.product.price,
     quantity: item.quantity,
-    image: getRequiredCartImage(item.product.images[0]?.url, item.productId),
+    image: item.product.images[0]?.url ?? "/product-placeholder.svg",
     colorId: item.colorId,
     colorName: item.color ? item.color.name : null,
     colorValue: item.color ? item.color.value : null,
@@ -193,14 +203,6 @@ export const getUserCart = createServerFn().handler(async () => {
     totalItems: formattedItems.reduce((sum, item) => sum + item.quantity, 0),
   };
 });
-
-function getRequiredCartImage(imageUrl: string | undefined, productId: string) {
-  if (!imageUrl) {
-    throw new Error(`Cart item image is missing for product ${productId}`);
-  }
-
-  return imageUrl;
-}
 
 export const removeFromCart = createServerFn({ method: "POST" })
   .validator((cartItemId: string) => cartItemIdSchema.parse(cartItemId))

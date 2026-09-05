@@ -49,39 +49,39 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: #f6f7f5;
-  --foreground: #202420;
+  --radius: 0.375rem;
+  --background: #faf9f6;
+  --foreground: #20201e;
   --card: #ffffff;
-  --card-foreground: #202420;
+  --card-foreground: #20201e;
   --popover: #ffffff;
-  --popover-foreground: #202420;
-  --primary: #27332a;
+  --popover-foreground: #20201e;
+  --primary: #20201e;
   --primary-foreground: #ffffff;
-  --secondary: #edf0ec;
-  --secondary-foreground: #27332a;
-  --muted: #e8ece7;
-  --muted-foreground: #687069;
-  --accent: #e6ebe6;
-  --accent-foreground: #27332a;
+  --secondary: #f0efeb;
+  --secondary-foreground: #20201e;
+  --muted: #eeede9;
+  --muted-foreground: #77766f;
+  --accent: #eeede9;
+  --accent-foreground: #20201e;
   --destructive: #b42318;
   --destructive-foreground: #ffffff;
-  --border: #2024201a;
-  --input: #20242026;
-  --ring: #718777;
-  --chart-1: #718777;
+  --border: #20201e1a;
+  --input: #20201e26;
+  --ring: #89877f;
+  --chart-1: #89877f;
   --chart-2: #52665a;
   --chart-3: #98a79b;
   --chart-4: #c0cbc1;
   --chart-5: #36463b;
   --sidebar: #eef1ed;
   --sidebar-foreground: #2b332d;
-  --sidebar-primary: #27332a;
+  --sidebar-primary: #20201e;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: #e1e8e1;
-  --sidebar-accent-foreground: #27332a;
-  --sidebar-border: #20242014;
-  --sidebar-ring: #718777;
+  --sidebar-accent-foreground: #20201e;
+  --sidebar-border: #20201e14;
+  --sidebar-ring: #89877f;
 }
 
 @layer base {
@@ -305,7 +305,7 @@ body {
 }
 
 .shop-theme .hover\:bg-slate-700:hover {
-  background-color: #354239;
+  background-color: #3d3c37;
 }
 
 .shop-theme .hover\:bg-slate-100:hover,
@@ -328,7 +328,7 @@ body {
 
 @layer components {
   .shop-shell {
-    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+    @apply mx-auto w-full max-w-[1440px] px-5 sm:px-8 lg:px-14;
   }
 
   .shop-section-title {
@@ -336,7 +336,7 @@ body {
   }
 
   .shop-pill-button {
-    @apply inline-flex h-10 items-center justify-center gap-2 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-all duration-200 hover:bg-[#4a453e] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-ring;
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-all duration-200 hover:bg-[#3d3c37] active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-ring;
   }
 
   .geist-panel {
@@ -346,4 +346,21 @@ body {
   .geist-label {
     @apply text-xs font-medium uppercase tracking-normal text-muted-foreground;
   }
+}
+
+/* Storefront: warm paper, ink, and product-led editorial spacing. */
+.shop-theme { background: var(--background); }
+.shop-theme :is(.rounded-xl, .rounded-lg) { border-radius: 4px; }
+.shop-theme :is(.shadow-sm, .shadow-2xl) { box-shadow: none; }
+.shop-theme :is(button, a, input, select):focus-visible { outline: 2px solid var(--foreground); outline-offset: 4px; }
+.shop-theme button { cursor: pointer; }
+.shop-theme button:disabled { cursor: not-allowed; }
+.product-photo {
+  background: transparent;
+  border-radius: 0.875rem;
+}
+.product-photo img { mix-blend-mode: multiply; }
+.store-wordmark { font-weight: 650; font-size: 27px; letter-spacing: -1.5px; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }

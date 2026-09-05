@@ -1,8 +1,6 @@
-import { Link } from "@tanstack/react-router";
+import { cn } from "@/lib/utils";
 
-import { useI18n } from "@/lib/i18n";
-import { cn, formatPrice } from "@/lib/utils";
-
+import ProductCard from "./product-card";
 export interface SimpleProduct {
   id: string;
   name: string;
@@ -15,74 +13,25 @@ export interface SimpleProduct {
   rating?: number;
   reviewCount?: number;
 }
-
-interface ProductGridProps {
+export function ProductGrid({
+  products,
+  className,
+}: {
   products: Array<SimpleProduct>;
   className?: string;
-}
-
-export function ProductGrid({ products, className }: ProductGridProps) {
-  const { t } = useI18n();
-
+}) {
   return (
     <div
       className={cn(
-        "grid grid-cols-2 gap-5 sm:gap-6 lg:grid-cols-3 lg:gap-8",
+        "grid grid-cols-2 gap-x-4 gap-y-10 sm:gap-x-6 lg:grid-cols-3",
         className,
       )}
     >
       {products.map((product) => (
-        <Link
+        <ProductCard
           key={product.id}
-          to="/product/$id"
-          params={{ id: product.id }}
-          className="group cursor-pointer rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-        >
-          <div className="relative mb-3 aspect-3/4 overflow-hidden rounded-md bg-muted">
-            <img
-              src={product.images[0]}
-              alt={product.name}
-              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-            />
-            {product.isNew ? (
-              <span className="absolute left-3 top-3 rounded-md bg-foreground px-2.5 py-1 text-[10px] font-medium uppercase text-background">
-                {t("shop.productFilters.newBadge")}
-              </span>
-            ) : null}
-            {product.originalPrice ? (
-              <span className="absolute right-3 top-3 rounded-md bg-destructive px-2.5 py-1 text-[10px] font-medium uppercase text-destructive-foreground">
-                {t("shop.productFilters.saleBadge")}
-              </span>
-            ) : null}
-          </div>
-
-          {product.category ? (
-            <p className="mb-1 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
-              {product.category}
-            </p>
-          ) : null}
-          <h3 className="truncate text-sm font-medium text-foreground">
-            {product.name}
-          </h3>
-          <div className="mt-1 flex items-center gap-2">
-            <span className="text-sm text-foreground tabular-nums">
-              {formatPrice(product.price)}
-            </span>
-            {product.originalPrice ? (
-              <span className="text-xs text-muted-foreground/60 line-through">
-                {formatPrice(product.originalPrice)}
-              </span>
-            ) : null}
-          </div>
-
-          {typeof product.rating === "number" &&
-          typeof product.reviewCount === "number" ? (
-            <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <span>★ {product.rating}</span>
-              <span>({product.reviewCount})</span>
-            </div>
-          ) : null}
-        </Link>
+          product={{ ...product, image: product.images[0] ?? null }}
+        />
       ))}
     </div>
   );

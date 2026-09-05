@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { eq } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import type Stripe from "stripe";
 import { z } from "zod";
 
@@ -101,7 +101,6 @@ export async function synchronizePaidOrder(orderId: string, userId: string) {
   }
 
   if (order.paymentStatus === "PAID") {
-    await clearUserCartByUserId(userId);
     return order;
   }
 
@@ -118,7 +117,6 @@ export async function synchronizePaidOrder(orderId: string, userId: string) {
   }
 
   await markOrderPaidFromPaymentIntent(paymentIntent);
-  await clearUserCartByUserId(userId);
 
   const updatedOrder = await db.query.orders.findFirst({
     where: { id: orderId },
@@ -170,6 +168,12 @@ async function getRequiredUserCart(userId: string) {
 
   if (!cart || cart.items.length === 0) {
     throw new Error("Cart is empty");
+  }
+
+  if (cart.items.some((item) => item.product.isArchived)) {
+    throw new Error(
+      "A product in your cart is no longer available. Remove it before checkout.",
+    );
   }
 
   return cart;
@@ -352,7 +356,6 @@ async function markOrderPaidFromPaymentIntent(
   paymentIntent: Stripe.PaymentIntent,
 ) {
   const orderId = paymentIntent.metadata?.orderId;
-  const userId = paymentIntent.metadata?.userId;
 
   if (!orderId) {
     throw new Error("Order ID not found in payment intent metadata");
@@ -384,28 +387,21 @@ async function markOrderPaidFromPaymentIntent(
       : paymentIntent.latest_charge
     : null;
 
-  await db
-    .update(orders)
-    .set({
-      status: "PAID",
-      paymentStatus: "PAID",
-      paymentIntent: paymentIntent.id,
-      phone: charge?.billing_details?.phone || null,
-      shippingAddress: formatStripeAddress(charge?.billing_details?.address),
-      updatedAt: new Date(),
-    })
-    .where(eq(orders.id, orderId));
-
-  if (userId) {
-    await clearUserCartByUserId(userId);
-  }
+  await completePaidOrder(orderId, {
+    paymentIntent: paymentIntent.id,
+    phone:
+      paymentIntent.shipping?.phone ||
+      charge?.billing_details?.phone ||
+      undefined,
+    shippingAddress:
+      formatStripeAddress(paymentIntent.shipping?.address) || undefined,
+  });
 }
 
 async function markOrderPaidFromCheckoutSession(
   session: Stripe.Checkout.Session,
 ) {
   const orderId = session.metadata?.orderId;
-  const userId = session.metadata?.userId;
 
   if (!orderId) {
     throw new Error("Order ID not found in checkout session metadata");
@@ -434,21 +430,11 @@ async function markOrderPaidFromCheckoutSession(
     throw new Error(`Checkout session mismatch for order ${orderId}`);
   }
 
-  await db
-    .update(orders)
-    .set({
-      status: "PAID",
-      paymentStatus: "PAID",
-      paymentIntent: sessionPaymentIntentId,
-      phone: session.customer_details?.phone,
-      shippingAddress: formatStripeAddress(session.customer_details?.address),
-      updatedAt: new Date(),
-    })
-    .where(eq(orders.id, orderId));
-
-  if (userId) {
-    await clearUserCartByUserId(userId);
-  }
+  if (session.payment_status !== "paid") return;
+  await completePaidOrder(orderId, {
+    paymentIntent: sessionPaymentIntentId,
+    phone: session.customer_details?.phone || undefined,
+  });
 }
 
 async function markOrderPaymentFailed(paymentIntent: Stripe.PaymentIntent) {
@@ -465,13 +451,19 @@ async function markOrderPaymentFailed(paymentIntent: Stripe.PaymentIntent) {
       paymentStatus: "FAILED",
       updatedAt: new Date(),
     })
-    .where(eq(orders.id, orderId))
+    .where(
+      and(
+        eq(orders.id, orderId),
+        eq(orders.paymentIntent, paymentIntent.id),
+        eq(orders.paymentStatus, "UNPAID"),
+      ),
+    )
     .returning({
       id: orders.id,
     });
 
   if (!updatedOrder) {
-    throw new Error(`Failed to update failed payment for order ${orderId}`);
+    return;
   }
 }
 
@@ -505,14 +497,65 @@ async function markOrderRefunded(charge: Stripe.Charge) {
   }
 }
 
-async function clearUserCartByUserId(userId: string) {
-  const userCart = await db.query.carts.findFirst({
-    where: { userId },
+// Payment completion and removal of purchased quantities happen once together.
+// Refreshing an old receipt must never clear a shopper's new cart.
+async function completePaidOrder(
+  orderId: string,
+  details: {
+    paymentIntent: string | null;
+    phone?: string;
+    shippingAddress?: string;
+  },
+) {
+  await db.transaction(async (tx) => {
+    const [paidOrder] = await tx
+      .update(orders)
+      .set({
+        ...details,
+        status: "PAID",
+        paymentStatus: "PAID",
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(orders.id, orderId),
+          inArray(orders.paymentStatus, ["UNPAID", "FAILED"]),
+        ),
+      )
+      .returning({ userId: orders.userId });
+    if (!paidOrder) return;
+    const cart = await tx.query.carts.findFirst({
+      where: { userId: paidOrder.userId },
+    });
+    if (!cart) return;
+    await tx.execute(
+      sql`select id from cart_items where cart_id = ${cart.id} for update`,
+    );
+    const items = await tx.query.cartItems.findMany({
+      where: { cartId: cart.id },
+    });
+    const purchasedItems = await tx.query.orderItems.findMany({
+      where: { orderId },
+    });
+    for (const item of items) {
+      const purchasedQuantity = purchasedItems
+        .filter(
+          (purchased) =>
+            purchased.productId === item.productId &&
+            purchased.colorId === item.colorId &&
+            purchased.sizeId === item.sizeId,
+        )
+        .reduce((total, purchased) => total + purchased.quantity, 0);
+      if (!purchasedQuantity) continue;
+      if (item.quantity <= purchasedQuantity)
+        await tx.delete(cartItems).where(eq(cartItems.id, item.id));
+      else
+        await tx
+          .update(cartItems)
+          .set({ quantity: item.quantity - purchasedQuantity })
+          .where(eq(cartItems.id, item.id));
+    }
   });
-
-  if (userCart) {
-    await db.delete(cartItems).where(eq(cartItems.cartId, userCart.id));
-  }
 }
 
 function formatStripeAddress(

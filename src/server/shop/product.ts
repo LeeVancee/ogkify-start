@@ -1,12 +1,14 @@
+import { notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
 
 import { db } from "@/db";
 
 export const getProduct = createServerFn()
-  .validator((id: string) => id)
+  .validator((id: string) => z.uuid().parse(id))
   .handler(async ({ data: id }) => {
     const product = await db.query.products.findFirst({
-      where: { id },
+      where: { id, isArchived: false },
       with: {
         category: true,
         colors: {
@@ -24,7 +26,7 @@ export const getProduct = createServerFn()
     });
 
     if (!product) {
-      throw new Error(`Product not found: ${id}`);
+      throw notFound();
     }
 
     return {
@@ -44,7 +46,9 @@ export const getProduct = createServerFn()
         name: ps.size.name,
         value: ps.size.value,
       })),
-      images: product.images.map((image) => image.url),
+      images: product.images.length
+        ? product.images.map((image) => image.url)
+        : ["/product-placeholder.svg"],
       inStock: true,
       freeShipping: true,
     };
@@ -70,6 +74,8 @@ export const getRelatedProducts = createServerFn()
       name: product.name,
       description: product.description,
       price: product.price,
-      images: product.images.map((image) => image.url),
+      images: product.images.length
+        ? product.images.map((image) => image.url)
+        : ["/product-placeholder.svg"],
     }));
   });

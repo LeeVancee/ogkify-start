@@ -2,7 +2,7 @@ export const supportedLocales = ["en", "zh-TW", "zh-CN"] as const;
 
 export type Locale = (typeof supportedLocales)[number];
 
-export const defaultLocale: Locale = "en";
+export const defaultLocale: Locale = "zh-TW";
 
 export const localeCookieName = "ogkify-locale";
 

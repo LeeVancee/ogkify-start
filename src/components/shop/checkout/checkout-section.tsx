@@ -12,13 +12,13 @@ export function CheckoutSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-lg border border-slate-200 bg-slate-50/60 p-4">
+    <section className="border-t border-border pt-6 pb-3">
       <div className="mb-4 flex gap-3">
-        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-slate-700 shadow-sm ring-1 ring-slate-200">
+        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-foreground">
           {icon}
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">{title}</h2>
+          <h2 className="text-base font-medium text-slate-900">{title}</h2>
           <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
         </div>
       </div>

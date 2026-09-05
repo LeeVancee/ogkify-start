@@ -6,13 +6,13 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { adminSessionQueryOptions } from "@/lib/admin/query-options";
 
 export const Route = createFileRoute("/dashboard")({
-  beforeLoad: async ({ context }) => {
+  beforeLoad: async ({ context, location }) => {
     const session = await context.queryClient.ensureQueryData(
       adminSessionQueryOptions(),
     );
 
     if (!session) {
-      throw redirect({ to: "/login" });
+      throw redirect({ to: "/login", search: { redirect: location.href } });
     }
 
     if (session.user.role !== "admin") {

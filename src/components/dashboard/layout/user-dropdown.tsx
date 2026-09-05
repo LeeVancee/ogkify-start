@@ -1,3 +1,4 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
 import { LogOut, Settings, Store } from "lucide-react";
 
@@ -16,12 +17,15 @@ import { authClient } from "@/lib/auth-client";
 
 export function DashboardUserDropdown() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: session, isPending } = authClient.useSession();
 
   const handleLogout = () => {
     authClient.signOut({
       fetchOptions: {
-        onSuccess: () => {
+        onSuccess: async () => {
+          await queryClient.cancelQueries();
+          queryClient.clear();
           router.navigate({ to: "/" });
         },
       },

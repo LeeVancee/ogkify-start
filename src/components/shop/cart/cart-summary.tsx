@@ -21,7 +21,7 @@ export function CartSummary({
       className={
         isSheet
           ? "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
-          : "h-fit rounded-xl border border-slate-200 bg-white p-6 lg:sticky lg:top-24"
+          : "h-fit bg-secondary p-7 lg:sticky lg:top-24"
       }
     >
       {!isSheet ? (
