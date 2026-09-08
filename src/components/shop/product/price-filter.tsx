@@ -40,20 +40,28 @@ export function PriceFilter({ maxPrice = 5000 }: PriceFilterProps) {
 
   return (
     <section className="space-y-4">
-      <h3 className="text-xs font-semibold tracking-wide text-slate-500">
+      <h3 className="text-xs font-medium text-muted-foreground">
         {t("shop.productFilters.priceRange")}
       </h3>
-      <div className="space-y-4">
+      <div className="space-y-6 pt-2">
         <Slider
+          aria-label={t("shop.productFilters.priceRange")}
           value={[currentMinPrice, currentMaxPrice]}
           min={0}
           max={maxPrice}
           step={50}
           onValueChange={handleChange}
         />
-        <div className="flex items-center justify-between text-sm text-slate-500">
-          <span>{formatPrice(currentMinPrice)}</span>
-          <span>{formatPrice(currentMaxPrice)}</span>
+        <div className="flex items-center justify-between gap-2 text-xs tabular-nums text-foreground">
+          <span className="border border-border px-3 py-2.5">
+            {formatPrice(currentMinPrice)}
+          </span>
+          <span aria-hidden="true" className="text-muted-foreground">
+            —
+          </span>
+          <span className="border border-border px-3 py-2.5">
+            {formatPrice(currentMaxPrice)}
+          </span>
         </div>
       </div>
     </section>

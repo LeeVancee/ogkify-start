@@ -5,22 +5,24 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { Loader2, Mail, MapPin, ShieldCheck } from "lucide-react";
+import { ArrowRight, Loader2, LockKeyhole } from "lucide-react";
 import type React from "react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { CheckoutSection } from "@/components/shop/checkout/checkout-section";
-import { Button } from "@/components/ui/button";
 import { useI18n } from "@/lib/i18n";
+import { formatPrice } from "@/lib/utils";
 import { updateCheckoutOrderDetails } from "@/server/shop/orders";
 
 export function CheckoutPaymentForm({
   orderId,
   customerEmail,
+  totalAmount,
 }: {
   orderId: string;
   customerEmail: string;
+  totalAmount: number;
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -119,12 +121,8 @@ export function CheckoutPaymentForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <CheckoutSection
-        icon={<Mail className="h-4 w-4" />}
-        title={t("shop.checkoutPage.contact")}
-        description={t("shop.checkoutPage.contactDescription")}
-      >
+    <form onSubmit={handleSubmit} className="space-y-7">
+      <CheckoutSection step="01" title={t("shop.checkoutPage.contact")}>
         <LinkAuthenticationElement
           options={{
             defaultValues: {
@@ -137,11 +135,7 @@ export function CheckoutPaymentForm({
         />
       </CheckoutSection>
 
-      <CheckoutSection
-        icon={<MapPin className="h-4 w-4" />}
-        title={t("shop.checkoutPage.shippingAddress")}
-        description={t("shop.checkoutPage.shippingAddressDescription")}
-      >
+      <CheckoutSection step="02" title={t("shop.checkoutPage.shippingAddress")}>
         <AddressElement
           options={{
             mode: "shipping",
@@ -169,11 +163,7 @@ export function CheckoutPaymentForm({
         />
       </CheckoutSection>
 
-      <CheckoutSection
-        icon={<ShieldCheck className="h-4 w-4" />}
-        title={t("shop.checkoutPage.payment")}
-        description={t("shop.checkoutPage.paymentDescription")}
-      >
+      <CheckoutSection step="03" title={t("shop.checkoutPage.payment")}>
         <PaymentElement
           options={{
             defaultValues: {
@@ -189,11 +179,10 @@ export function CheckoutPaymentForm({
         />
       </CheckoutSection>
 
-      <Button
+      <button
         type="submit"
-        size="lg"
         disabled={!stripe || !elements || isSubmitting}
-        className="w-full"
+        className="commerce-primary w-full"
       >
         {isSubmitting ? (
           <>
@@ -201,9 +190,18 @@ export function CheckoutPaymentForm({
             {t("shop.cart.processing")}
           </>
         ) : (
-          t("shop.checkoutPage.paySecurely")
+          <>
+            <span className="flex items-center gap-2">
+              <LockKeyhole className="size-4" />
+              {t("shop.checkoutPage.paySecurely")}
+            </span>
+            <span className="flex items-center gap-3 tabular-nums">
+              {formatPrice(totalAmount)}
+              <ArrowRight className="size-4" />
+            </span>
+          </>
         )}
-      </Button>
+      </button>
     </form>
   );
 }

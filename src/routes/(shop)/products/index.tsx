@@ -117,8 +117,8 @@ function CategoriesPage() {
       </div>
 
       <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
-        <SheetContent className="shop-theme overflow-y-auto p-6">
-          <SheetHeader className="mb-6 p-0">
+        <SheetContent className="shop-theme overflow-y-auto p-6 data-[side=right]:w-full data-[side=right]:sm:max-w-sm">
+          <SheetHeader className="sr-only">
             <SheetTitle>{t("shop.productFilters.filters")}</SheetTitle>
           </SheetHeader>
           {mobileFilters}

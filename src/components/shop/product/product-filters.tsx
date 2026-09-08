@@ -27,7 +27,7 @@ function FilterSortSelect() {
 
   return (
     <section className="space-y-4">
-      <h3 className="text-xs font-semibold tracking-wide text-slate-500">
+      <h3 className="text-xs font-medium text-muted-foreground">
         {t("shop.productFilters.sortBy")}
       </h3>
       <Select
@@ -36,7 +36,7 @@ function FilterSortSelect() {
           updateSearch({ sort: value || "featured", page: 1 })
         }
       >
-        <SelectTrigger className="h-11 w-full rounded-lg border-slate-200 bg-white px-4 text-sm text-slate-700 shadow-none">
+        <SelectTrigger className="h-11 w-full rounded-sm border-border bg-transparent px-3 text-sm text-foreground shadow-none">
           <SelectValue placeholder={t("shop.productFilters.sortBy")}>
             {t(
               sortOptions.find((option) => option.value === currentSort)
@@ -62,10 +62,36 @@ function FilterSortSelect() {
 }
 
 export function ProductFilters({ categories, maxPrice = 5000 }: FilterProps) {
+  const { t } = useI18n();
+  const { search, resetSearch } = useProductFilterNavigation();
+  const hasFilters = Boolean(
+    search.category ||
+    search.minPrice ||
+    search.maxPrice !== undefined ||
+    search.featured ||
+    search.search ||
+    search.sort,
+  );
+
   return (
-    <div className="grid gap-10">
+    <div className="grid gap-7">
+      <div className="flex min-h-8 items-center justify-between gap-2 border-b border-border pr-10 pb-5 sm:pr-0">
+        <h2 className="text-sm font-semibold">
+          {t("shop.productFilters.filters")}
+        </h2>
+        <button
+          type="button"
+          disabled={!hasFilters}
+          onClick={resetSearch}
+          className="text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground disabled:opacity-35"
+        >
+          {t("shop.productFilters.resetFilters")}
+        </button>
+      </div>
       <CategoryFilter categories={categories} />
-      <PriceFilter maxPrice={maxPrice} />
+      <div className="border-y border-border py-7">
+        <PriceFilter maxPrice={maxPrice} />
+      </div>
       <FilterSortSelect />
     </div>
   );

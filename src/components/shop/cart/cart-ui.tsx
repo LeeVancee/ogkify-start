@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { useI18n } from "@/lib/i18n";
@@ -136,15 +136,12 @@ export function CartLineItem({
 }: CartLineItemProps) {
   const { t } = useI18n();
   const isSheet = variant === "sheet";
-  const itemClasses = isSheet
-    ? "rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
-    : "flex gap-5 border-b border-border py-6";
+  const itemClasses = "flex gap-4 border-b border-border py-6 sm:gap-6";
   const imageClasses = isSheet
-    ? "h-20 w-20 object-cover"
-    : "h-28 w-24 shrink-0 object-cover";
-  const quantityButtonClasses = isSheet
-    ? "flex h-7 w-7 items-center justify-center rounded-full text-slate-500 transition-colors hover:bg-white hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
-    : "flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:border-slate-400 hover:text-slate-900 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer";
+    ? "h-32 w-24 bg-secondary object-cover"
+    : "h-36 w-24 bg-secondary object-cover sm:h-44 sm:w-36";
+  const quantityButtonClasses =
+    "flex size-9 items-center justify-center text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground disabled:opacity-35";
 
   const content = (
     <>
@@ -157,14 +154,14 @@ export function CartLineItem({
         <img src={item.image} alt={item.name} className={imageClasses} />
       </Link>
 
-      <div className="min-w-0 flex-1">
+      <div className="flex min-w-0 flex-1 flex-col justify-between py-1">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <Link
               to="/product/$id"
               params={{ id: item.productId }}
               onClick={onClose}
-              className="block truncate text-sm font-semibold text-slate-900 transition-colors hover:text-slate-600"
+              className="block text-sm font-medium leading-6 text-foreground transition-colors hover:text-muted-foreground sm:text-base"
             >
               {item.name}
             </Link>
@@ -182,21 +179,15 @@ export function CartLineItem({
             type="button"
             onClick={() => onRemove(item.id)}
             disabled={isMutating}
-            className="rounded-lg p-1 text-slate-300 transition-colors hover:text-red-500 disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer"
+            className="-mr-2 -mt-2 flex size-9 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive disabled:opacity-35"
             aria-label={t("shop.cart.removeLabel", { name: item.name })}
           >
-            <Trash2 className="h-4 w-4" />
+            <X className="h-4 w-4" strokeWidth={1.5} />
           </button>
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-3">
-          <div
-            className={
-              isSheet
-                ? "inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-2 py-1"
-                : "flex items-center gap-2"
-            }
-          >
+          <div className="inline-flex items-center border border-border">
             <button
               type="button"
               onClick={() => onQuantityChange(item, item.quantity - 1)}
@@ -229,8 +220,8 @@ export function CartLineItem({
   );
 
   return (
-    <div className={itemClasses}>
-      {isSheet ? <div className="flex gap-4">{content}</div> : content}
-    </div>
+    <article className={itemClasses} aria-busy={isMutating}>
+      {content}
+    </article>
   );
 }

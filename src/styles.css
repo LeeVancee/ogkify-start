@@ -364,3 +364,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
 }
+
+@layer components {
+  .commerce-primary {
+    @apply inline-flex min-h-13 items-center justify-between gap-3 bg-foreground px-5 py-3.5 text-sm font-medium text-background transition-colors duration-200 hover:bg-[#3d3c37] active:translate-y-px disabled:cursor-not-allowed disabled:opacity-50;
+  }
+}

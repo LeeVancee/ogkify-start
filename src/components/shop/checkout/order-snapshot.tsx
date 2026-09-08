@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
+import { SecurePaymentNote } from "@/components/shop/cart/secure-payment-note";
 import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
 
@@ -23,13 +24,13 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
   const { t } = useI18n();
 
   return (
-    <div className="bg-secondary p-6 sm:p-8">
-      <div className="mb-5 flex items-center justify-between gap-4">
+    <div className="border-t-2 border-foreground bg-secondary/60 p-6 sm:p-8">
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-slate-900">
+          <h2 className="text-lg font-medium tracking-tight text-foreground">
             {t("shop.cart.orderSummary")}
           </h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-2 break-all font-mono text-[10px] text-muted-foreground">
             {t("shop.checkoutPage.orderNumber", {
               orderNumber: order.orderNumber,
             })}
@@ -37,25 +38,25 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
         </div>
         <Link
           to="/cart"
-          className="text-sm font-medium text-slate-500 transition-colors hover:text-slate-900"
+          className="text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
         >
           {t("shop.checkoutPage.backToCart")}
         </Link>
       </div>
 
-      <div className="space-y-3">
+      <div className="divide-y divide-border">
         {order.items.map((item) => (
-          <div key={item.id} className="flex gap-4 border-b border-border py-5">
+          <div key={item.id} className="flex gap-3 py-5">
             <img
               src={item.imageUrl}
               alt={item.productName}
-              className="h-24 w-20 shrink-0 object-cover"
+              className="h-24 w-20 shrink-0 bg-background object-cover"
             />
             <div className="min-w-0 flex-1">
               <Link
                 to="/product/$id"
                 params={{ id: item.productId }}
-                className="block truncate text-sm font-semibold text-slate-900 transition-colors hover:text-slate-600"
+                className="block text-sm font-medium leading-5 text-foreground transition-colors hover:text-muted-foreground"
               >
                 {item.productName}
               </Link>
@@ -75,7 +76,7 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
         ))}
       </div>
 
-      <div className="mt-6 space-y-3 border-t border-slate-100 pt-5 text-sm">
+      <div className="mt-4 space-y-4 border-t border-border pt-6 text-sm">
         <div className="flex justify-between text-slate-500">
           <span>{t("shop.cart.subtotal")}</span>
           <span className="font-medium text-slate-900">
@@ -88,10 +89,15 @@ export function OrderSnapshot({ order }: { order: CheckoutOrder }) {
             {t("shop.cart.free")}
           </span>
         </div>
-        <div className="flex justify-between text-base font-semibold text-slate-900">
+        <div className="flex items-baseline justify-between border-t border-border pt-5 font-medium text-foreground">
           <span>{t("shop.cart.total")}</span>
-          <span className="tabular-nums">{formatPrice(order.totalAmount)}</span>
+          <span className="text-3xl tracking-tight tabular-nums">
+            {formatPrice(order.totalAmount)}
+          </span>
         </div>
+      </div>
+      <div className="mt-6 border-t border-border pt-5">
+        <SecurePaymentNote />
       </div>
     </div>
   );

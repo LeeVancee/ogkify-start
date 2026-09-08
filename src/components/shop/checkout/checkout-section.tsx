@@ -1,27 +1,22 @@
 import type React from "react";
 
 export function CheckoutSection({
-  icon,
+  step,
   title,
-  description,
   children,
 }: {
-  icon: React.ReactNode;
+  step: string;
   title: string;
-  description: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="border-t border-border pt-6 pb-3">
-      <div className="mb-4 flex gap-3">
-        <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center text-foreground">
-          {icon}
-        </div>
-        <div>
-          <h2 className="text-base font-medium text-slate-900">{title}</h2>
-          <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
-        </div>
-      </div>
+    <section className="border-t border-border pt-7 pb-2">
+      <h2 className="mb-6 flex items-center gap-3 text-lg font-medium tracking-tight">
+        <span className="inline-flex size-7 items-center justify-center rounded-full border border-border text-[11px] font-normal tabular-nums text-muted-foreground">
+          {step}
+        </span>
+        {title}
+      </h2>
       {children}
     </section>
   );

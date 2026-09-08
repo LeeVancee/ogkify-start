@@ -16,7 +16,7 @@ function RouteComponent() {
   return (
     <div className="shop-shell py-12 sm:py-16">
       <div className="flex gap-10 lg:gap-14">
-        <aside className="hidden w-44 shrink-0 border-r border-border pr-8 sm:block lg:w-52">
+        <aside className="hidden w-48 shrink-0 self-start sm:sticky sm:top-28 sm:block lg:w-56">
           <ProductFilters categories={categories} />
         </aside>
 

@@ -51,20 +51,17 @@ export function CartSheet({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="shop-theme w-full gap-0 border-border bg-background p-0 sm:max-w-lg"
+        className="shop-theme gap-0 border-border bg-background p-0 data-[side=right]:w-full data-[side=right]:sm:max-w-[480px]"
       >
-        <SheetHeader className="border-b border-border bg-card/92 px-5 py-5 backdrop-blur-sm">
-          <div className="flex items-start justify-between gap-4 pr-8">
+        <SheetHeader className="shrink-0 border-b border-border px-6 py-7 sm:px-8">
+          <div className="flex items-center gap-3 pr-8">
             <div>
-              <p className="text-[11px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
-                {t("shop.cart.eyebrow")}
-              </p>
-              <SheetTitle className="mt-2 text-xl font-semibold text-foreground">
+              <SheetTitle className="text-3xl font-medium tracking-tight text-foreground">
                 {t("shop.cart.title")}
               </SheetTitle>
             </div>
             {cartData.totalItems > 0 ? (
-              <span className="rounded-full border border-border bg-secondary px-2.5 py-1 text-xs font-medium text-muted-foreground">
+              <span className="text-xs tabular-nums text-muted-foreground">
                 {t(
                   cartData.totalItems === 1
                     ? "shop.cart.itemCount_one"
@@ -74,7 +71,7 @@ export function CartSheet({
               </span>
             ) : null}
           </div>
-          <SheetDescription className="mt-2 text-sm leading-6 text-muted-foreground">
+          <SheetDescription className="sr-only">
             {cartData.totalItems > 0
               ? t("shop.cart.descriptionWithItems", {
                   count: lineItemCount,
@@ -85,8 +82,24 @@ export function CartSheet({
         </SheetHeader>
 
         {isLoading ? (
-          <div className="flex flex-1 items-center justify-center bg-secondary/35 px-6 py-16 text-sm text-muted-foreground">
-            {t("shop.cart.loading")}
+          <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-8 py-8 text-sm text-muted-foreground">
+            <span role="status" className="sr-only">
+              {t("shop.cart.loading")}
+            </span>
+            {[0, 1, 2].map((row) => (
+              <div
+                key={row}
+                aria-hidden="true"
+                className="flex w-full animate-pulse gap-4"
+              >
+                <div className="h-32 w-24 bg-secondary" />
+                <div className="flex-1 space-y-4 py-2">
+                  <div className="h-4 w-3/4 bg-secondary" />
+                  <div className="h-3 w-1/2 bg-secondary" />
+                  <div className="mt-8 h-8 w-24 bg-secondary" />
+                </div>
+              </div>
+            ))}
           </div>
         ) : isError ? (
           <div className="flex flex-1 items-center justify-center bg-secondary/35 px-6 py-16 text-center text-sm text-muted-foreground">
@@ -96,8 +109,8 @@ export function CartSheet({
           <CartSheetEmpty onOpenChange={onOpenChange} />
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto bg-secondary/45 px-5 py-5">
-              <div className="space-y-3 pb-6">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 sm:px-8">
+              <div className="pb-2">
                 {items.map((item) => (
                   <CartLineItem
                     key={item.id}
@@ -112,33 +125,34 @@ export function CartSheet({
               </div>
             </div>
 
-            <SheetFooter className="gap-4 border-t border-border bg-card/94 px-5 py-5 shadow-sm backdrop-blur-sm">
+            <SheetFooter className="shrink-0 gap-4 border-t border-border bg-secondary/40 px-6 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-8">
               <CartSummary
                 subtotal={subtotal}
                 isCheckingOut={cartActions.isCheckingOut}
                 onCheckout={cartActions.checkout}
                 variant="sheet"
               />
-              <SecurePaymentNote />
-              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <Link
-                  to="/cart"
-                  onClick={() => onOpenChange(false)}
-                  className="inline-flex items-center justify-center rounded-xl border border-border px-4 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-secondary"
-                >
-                  {t("shop.cart.viewCart")}
-                </Link>
-                <button
-                  type="button"
-                  onClick={cartActions.checkout}
-                  disabled={cartActions.isCheckingOut}
-                  className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-foreground px-4 py-3 text-sm font-semibold text-background transition-colors hover:bg-[#354239] disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {cartActions.isCheckingOut
-                    ? t("shop.cart.processing")
-                    : t("shop.cart.checkout")}
-                </button>
+              <button
+                type="button"
+                onClick={cartActions.checkout}
+                disabled={cartActions.isCheckingOut || cartActions.isMutating}
+                className="commerce-primary w-full"
+              >
+                {cartActions.isCheckingOut
+                  ? t("shop.cart.processing")
+                  : t("shop.cart.checkout")}
+                <ArrowRight className="size-4" />
+              </button>
+              <div className="flex justify-center">
+                <SecurePaymentNote />
               </div>
+              <Link
+                to="/cart"
+                onClick={() => onOpenChange(false)}
+                className="py-1 text-center text-xs text-muted-foreground underline decoration-border underline-offset-4 transition-colors hover:text-foreground"
+              >
+                {t("shop.cart.viewCart")}
+              </Link>
             </SheetFooter>
           </>
         )}
@@ -155,9 +169,9 @@ function CartSheetEmpty({
   const { t } = useI18n();
 
   return (
-    <div className="flex flex-1 flex-col items-center justify-center bg-secondary/35 px-6 py-16 text-center">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-card text-muted-foreground shadow-sm">
-        <ShoppingBag className="h-7 w-7" />
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center overflow-y-auto px-8 py-12 text-center">
+      <div className="flex h-24 w-24 items-center justify-center bg-secondary/60 text-muted-foreground">
+        <ShoppingBag className="h-9 w-9" strokeWidth={1} />
       </div>
       <h3 className="mt-6 text-xl font-semibold text-foreground">
         {t("shop.cart.emptyTitle")}
@@ -165,17 +179,6 @@ function CartSheetEmpty({
       <p className="mt-3 max-w-sm text-sm leading-6 text-muted-foreground">
         {t("shop.cart.emptyDescription")}
       </p>
-      <div className="mt-6 flex max-w-sm flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground/75">
-        <span className="rounded-full border border-border bg-card/50 px-3 py-1.5">
-          {t("shop.cart.fastCheckout")}
-        </span>
-        <span className="rounded-full border border-border bg-card/50 px-3 py-1.5">
-          {t("shop.cart.freeShipping")}
-        </span>
-        <span className="rounded-full border border-border bg-card/50 px-3 py-1.5">
-          {t("shop.cart.securePayment")}
-        </span>
-      </div>
       <Link
         to="/products"
         onClick={() => onOpenChange(false)}

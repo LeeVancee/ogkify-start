@@ -1,9 +1,14 @@
+import { ArrowRight, Loader2 } from "lucide-react";
+
 import { useI18n } from "@/lib/i18n";
 import { formatPrice } from "@/lib/utils";
+
+import { SecurePaymentNote } from "./secure-payment-note";
 
 interface CartSummaryProps {
   subtotal: number;
   isCheckingOut: boolean;
+  isUpdating?: boolean;
   onCheckout: () => void;
   variant?: "page" | "sheet";
 }
@@ -11,6 +16,7 @@ interface CartSummaryProps {
 export function CartSummary({
   subtotal,
   isCheckingOut,
+  isUpdating = false,
   onCheckout,
   variant = "page",
 }: CartSummaryProps) {
@@ -20,12 +26,12 @@ export function CartSummary({
     <div
       className={
         isSheet
-          ? "rounded-xl border border-slate-200 bg-slate-50 px-4 py-3"
-          : "h-fit bg-secondary p-7 lg:sticky lg:top-24"
+          ? ""
+          : "h-fit border-t-2 border-foreground bg-secondary/60 p-6 sm:p-8 lg:sticky lg:top-28"
       }
     >
       {!isSheet ? (
-        <h2 className="mb-5 text-xs font-semibold uppercase tracking-widest text-slate-400">
+        <h2 className="mb-8 text-lg font-medium tracking-tight text-foreground">
           {t("shop.cart.orderSummary")}
         </h2>
       ) : null}
@@ -42,24 +48,34 @@ export function CartSummary({
             {t("shop.cart.free")}
           </span>
         </div>
-        <div className="flex justify-between border-t border-slate-100 pt-3 text-slate-900">
+        <div className="flex items-baseline justify-between border-t border-border pt-5 text-foreground">
           <span className="font-semibold">{t("shop.cart.total")}</span>
-          <span className="tabular-nums font-semibold">
+          <span className="text-2xl font-medium tracking-tight tabular-nums">
             {formatPrice(subtotal)}
           </span>
         </div>
       </div>
       {!isSheet ? (
-        <button
-          type="button"
-          onClick={onCheckout}
-          disabled={isCheckingOut}
-          className="mt-6 w-full rounded-lg bg-slate-900 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer"
-        >
-          {isCheckingOut
-            ? t("shop.cart.processing")
-            : t("shop.cart.proceedToCheckout")}
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={onCheckout}
+            disabled={isCheckingOut || isUpdating}
+            className="commerce-primary mt-7 w-full"
+          >
+            {isCheckingOut
+              ? t("shop.cart.processing")
+              : t("shop.cart.proceedToCheckout")}
+            {isCheckingOut ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <ArrowRight className="size-4" />
+            )}
+          </button>
+          <div className="mt-4">
+            <SecurePaymentNote />
+          </div>
+        </>
       ) : null}
     </div>
   );

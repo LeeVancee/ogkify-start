@@ -2,7 +2,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { Loader2, LockKeyhole } from "lucide-react";
+import { ArrowLeft, Loader2, LockKeyhole } from "lucide-react";
 import { z } from "zod";
 
 import { CheckoutMessage } from "@/components/shop/checkout/checkout-message";
@@ -14,7 +14,11 @@ import { shopCheckoutOrderQueryOptions } from "@/lib/shop/query-options";
 import { getSession } from "@/server/getSession";
 
 const stripePromise = env.VITE_STRIPE_PUBLISHABLE_KEY
-  ? loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY)
+  ? loadStripe(env.VITE_STRIPE_PUBLISHABLE_KEY, {
+      developerTools: {
+        assistant: { enabled: false },
+      },
+    })
   : null;
 
 const searchParamsSchema = z.object({
@@ -96,27 +100,28 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
 
   return (
     <div className="shop-shell py-12 sm:py-16">
-      <div className="mb-10 border-b border-border pb-8">
+      <div className="mb-10">
         <nav className="mb-6 flex items-center gap-4 text-xs text-muted-foreground">
-          <Link to="/cart" className="hover:text-foreground">
-            01 — {t("shop.cart.title")}
+          <Link
+            to="/cart"
+            className="inline-flex items-center gap-2 transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="size-3.5" />
+            {t("shop.cart.title")}
           </Link>
           <span>/</span>
-          <span className="text-foreground">
-            02 — {t("shop.checkoutPage.payment")}
+          <span aria-current="step" className="text-foreground">
+            {t("shop.checkoutPage.payment")}
           </span>
         </nav>
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">
-          {t("shop.checkoutPage.eyebrow")}
-        </p>
-        <h1 className="mt-3 text-4xl font-medium tracking-tight text-slate-900">
+        <h1 className="mt-3 text-4xl font-medium tracking-[-0.04em] text-foreground sm:text-5xl">
           {t("shop.checkoutPage.title")}
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.8fr)] lg:gap-20">
         <div className="min-w-0">
-          <div className="mb-5 flex items-center gap-2 text-sm font-medium text-slate-700">
+          <div className="mb-7 flex items-center gap-2 text-xs text-muted-foreground">
             <LockKeyhole className="h-4 w-4" />
             {t("shop.checkoutPage.encryptedByStripe")}
           </div>
@@ -128,13 +133,13 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
               appearance: {
                 theme: "stripe",
                 variables: {
-                  borderRadius: "4px",
+                  borderRadius: "2px",
                   colorPrimary: "#20201e",
                   colorText: "#20201e",
                   colorTextSecondary: "#77766f",
                   colorDanger: "#dc2626",
-                  colorBackground: "#ffffff",
-                  fontFamily: "Geist, sans-serif",
+                  colorBackground: "#faf9f6",
+                  fontFamily: "Arial, sans-serif",
                   fontSizeBase: "15px",
                   spacingUnit: "4px",
                 },
@@ -158,6 +163,7 @@ function CheckoutPageContent({ orderId }: { orderId: string }) {
             <CheckoutPaymentForm
               orderId={checkoutResult.order.id}
               customerEmail={checkoutResult.customerEmail}
+              totalAmount={checkoutResult.order.totalAmount}
             />
           </Elements>
         </div>
