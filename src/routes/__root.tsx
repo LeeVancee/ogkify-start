@@ -48,7 +48,7 @@ export const Route = createRootRouteWithContext<{
         //  suppressHydrationWarning: true,
       },
 
-      { rel: "icon", href: "/ogkify-mark.svg" },
+      { rel: "icon", type: "image/svg+xml", href: "/tanstack-favicon.svg" },
     ],
   }),
 
