@@ -30,7 +30,7 @@ export default function ProductCard({ product }: { product: Product }) {
         )}
         <span
           aria-hidden="true"
-          className="absolute bottom-3 right-3 flex size-8 items-center justify-center bg-background opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+          className="absolute right-3 bottom-3 flex size-8 items-center justify-center rounded-lg bg-background opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
         >
           <ArrowUpRight className="size-4" />
         </span>
